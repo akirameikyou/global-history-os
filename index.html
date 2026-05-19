@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Global History OS</title>
+    <style>
+        body { margin: 0; background: #000; color: #fff; overflow: hidden; font-family: sans-serif; }
+        #globeViz { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #ui-layer { position: absolute; bottom: 20px; left: 20px; z-index: 100; pointer-events: none; }
+        .info-panel { background: rgba(0,0,0,0.7); padding: 15px; border-left: 3px solid #ffaa00; pointer-events: auto; }
+    </style>
+</head>
+<body>
+    <div id="globeViz"></div>
+
+    <div id="ui-layer">
+        <div class="info-panel">
+            <h1 id="year-display">1854</h1>
+            <p>Global History OS v1.0 - Initializing...</p>
+        </div>
+    </div>
+
+    <script src="//unpkg.com/three"></script>
+    <script src="//unpkg.com/globe.gl"></script>
+
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
