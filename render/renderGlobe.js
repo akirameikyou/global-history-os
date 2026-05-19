@@ -1,38 +1,42 @@
-export function createGlobe(container) {
-    const globe = Globe()
-        (container)
-        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-        .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png');
+import { generateWorldState } from './engine/historyEngine.js';
+import { createGlobe, renderWorld } from './render/renderGlobe.js';
 
-    return globe;
-}
+const DATA_URL = './data/data.json';
+let globalData = null;
+let globe = null;
 
-export function renderWorld(globe, state) {
-    // イベント（点）の描画
-    globe.pointsData(state.visibleEvents)
-        .pointLat('lat')
-        .pointLng('lng')
-        .pointColor(d => d.category === 'politics' ? '#ff4444' : '#00ffcc')
-        .pointLabel('title')
-        .pointRadius(0.5);
+async function init() {
+    try {
+        const response = await fetch(DATA_URL);
+        globalData = await response.json();
 
-    // 因果関係（弧）の描画
-    globe.arcsData(state.arcs)
-        .arcStartLat('startLat')
-        .arcStartLng('startLng')
-        .arcEndLat('endLat')
-        .arcEndLng('endLng')
-        .arcColor('color')
-        .arcDashLength(0.4)
-        .arcDashGap(0.2)
-        .arcDashAnimateTime(2000)
-        .arcAltitude('altitude')
-        .arcLabel('title');
-    
-    // カメラ位置を最初のイベントへ
-    if (state.visibleEvents.length > 0) {
-        const first = state.visibleEvents[0];
-        globe.pointOfView({ lat: first.lat, lng: first.lng, altitude: 2 }, 1000);
+        const container = document.getElementById('globeViz');
+        globe = createGlobe(container);
+
+        // 初期表示 (1830年から開始)
+        update(1830);
+
+        // スライダー操作イベントの登録
+        const slider = document.getElementById('time-slider');
+        slider.addEventListener('input', (e) => {
+            const year = parseInt(e.target.value);
+            update(year);
+        });
+
+    } catch(error) {
+        console.error('History OS Initialization Failed:', error);
     }
 }
+
+function update(year) {
+    // UIの年表示を更新
+    document.getElementById('year-display').innerText = year;
+    
+    // エンジンで計算
+    const state = generateWorldState(globalData, year);
+    
+    // 描画実行
+    renderWorld(globe, state);
+}
+
+init();
