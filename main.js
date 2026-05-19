@@ -1,77 +1,8 @@
-import {
-  generateWorldState
-}
-from './engine/historyEngine.js';
-
-import {
-  createGlobe,
-  renderWorld
-}
-from './render/renderGlobe.js';
-
-
-// =====================================
-// DATA SOURCE
-// 後から自由に変更可能
-// =====================================
-
-const DATA_URL =
-  './data/data.json';
-
-
-// =====================================
-// INITIAL YEAR
-// =====================================
-
-const INITIAL_YEAR = 1854;
-
-
-// =====================================
-// APP INITIALIZE
-// =====================================
-
-async function init() {
-
-  try {
-
-    // JSONロード
-    const response =
-      await fetch(DATA_URL);
-
-    const data =
-      await response.json();
-
-    // Globe生成
-    const container =
-      document.getElementById('globeViz');
-
-    const globe =
-      createGlobe(container);
-
-    // World State生成
-    const state =
-      generateWorldState(
-        data,
-        INITIAL_YEAR
-      );
-
-    // 描画
-    renderWorld(globe, state);
-
-    console.log(
-      'History OS Initialized',
-      state
-    );
-
-  } catch(error) {
-
-    console.error(
-      'Failed to load history data:',
-      error
-    );
-
-  }
-
-}
-
-init();
+<div id="ui-layer">
+    <div class="info-panel">
+        <div style="font-size: 0.8em; color: #aaa; margin-bottom: 5px;">TIME NAVIGATION</div>
+        <h1 id="year-display" style="margin: 0; color: #fff; font-size: 3em;">1830</h1>
+        <input type="range" id="time-slider" min="1830" max="1870" value="1830" style="width: 100%; margin: 20px 0;">
+        <div id="event-log" style="font-size: 0.9em; color: #00d2ff;">Drag slider to traverse history</div>
+    </div>
+</div>
