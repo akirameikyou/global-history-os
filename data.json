@@ -1,0 +1,72 @@
+{
+  "version": "1.0.0",
+  "entities": {
+    "P_MANJIRO": {
+      "type": "PERSON",
+      "label": { "ja": "ジョン万次郎", "en": "John Manjiro" },
+      "tags": ["Translator", "Sailor", "Bridge"]
+    },
+    "P_HOKUSAI": {
+      "type": "PERSON",
+      "label": { "ja": "葛飾北斎", "en": "Katsushika Hokusai" },
+      "tags": ["Artist", "Ukiyo-e", "Influencer"]
+    },
+    "P_PERRY": {
+      "type": "PERSON",
+      "label": { "ja": "マシュー・ペリー", "en": "Matthew Perry" },
+      "tags": ["Commodore", "Diplomat", "Navy"]
+    }
+  },
+  "events": [
+    {
+      "id": "EV_1831_GREAT_WAVE",
+      "timestamp": "1831",
+      "category": "CULTURE",
+      "actors": ["P_HOKUSAI"],
+      "location": { "lat": 35.3, "lng": 139.5, "label": "Kanagawa-oki" },
+      "content": {
+        "ja": "『富嶽三十六景 神奈川沖浪裏』発表。太平洋の猛威が芸術として固定される。",
+        "en": "Publication of 'The Great Wave off Kanagawa'."
+      },
+      "causality": {
+        "consequences": [
+          { "target_id": "EV_1860_JAPONISME", "type": "CATALYST", "strength": 0.8 }
+        ]
+      },
+      "influence": { "culture": 0.95, "science": 0.1, "politics": 0.05 }
+    },
+    {
+      "id": "EV_1841_DRIFT",
+      "timestamp": "1841",
+      "category": "MIGRATION",
+      "actors": ["P_MANJIRO"],
+      "location": { "lat": 30.4, "lng": 140.3, "label": "Torishima" },
+      "content": {
+        "ja": "万次郎、鳥島へ漂着。北斎が描いた『波』の只中を物理的に横断し、米国へ。",
+        "en": "Manjiro drifted at Torishima, crossing the 'Great Wave' to America."
+      },
+      "causality": {
+        "consequences": [
+          { "target_id": "EV_1853_KUROFUNE", "type": "DIRECT", "strength": 0.9 }
+        ]
+      },
+      "influence": { "migration": 0.9, "science": 0.4, "politics": 0.5 }
+    },
+    {
+      "id": "EV_1853_KUROFUNE",
+      "timestamp": "1853",
+      "category": "POLITICS",
+      "actors": ["P_PERRY"],
+      "location": { "lat": 35.2, "lng": 139.6, "label": "Uraga" },
+      "content": {
+        "ja": "ペリー来航。万次郎の持ち帰った知識が、日本の外交的防衛の基盤となる。",
+        "en": "Commodore Perry arrives. Manjiro's knowledge becomes foundational for Japan's diplomacy."
+      },
+      "causality": {
+        "preconditions": ["EV_1841_DRIFT"],
+        "consequences": []
+      },
+      "influence": { "politics": 0.98, "military": 0.9, "economy": 0.7 }
+    }
+  ]
+}
