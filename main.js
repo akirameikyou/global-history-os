@@ -1,7 +1,7 @@
 import { generateWorldState } from './engine/historyEngine.js';
 import { createGlobe, renderWorld } from './render/renderGlobe.js';
 
-// データファイルの場所（./ をつけることで現在のフォルダから探しに行きます）
+
 const DATA_URL = './data/data.json';
 
 let globalData = null;
