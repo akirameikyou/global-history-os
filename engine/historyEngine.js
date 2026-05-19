@@ -1,151 +1,26 @@
-export function generateWorldState(
-  data,
-  year
-) {
+// engine/historyEngine.js
 
-  // =====================================
-  // 指定年以前のイベント抽出
-  // =====================================
+export function generateWorldState(events, currentYear) {
+    // データが届いていない場合は空の状態を返す（これでエラーが消えます）
+    if (!events || !Array.isArray(events)) return { visibleEvents: [], arcs: [] };
 
-  const visibleEvents =
-    data.events.filter(
-      event => event.year <= year
-    );
-
-
-  // =====================================
-  // ID高速検索Map
-  // =====================================
-
-  const eventMap =
-    new Map();
-
-  visibleEvents.forEach(event => {
-
-    eventMap.set(
-      event.id,
-      event
-    );
-
-  });
-
-
-  // =====================================
-  // Arc生成
-  // =====================================
-
-  const arcs = [];
-
-
-  visibleEvents.forEach(sourceEvent => {
-
-    const consequences =
-      sourceEvent
-        ?.causality
-        ?.consequences || [];
-
-
-    consequences.forEach(targetId => {
-
-      const targetEvent =
-        eventMap.get(targetId);
-
-      // 指定年にまだ存在しない場合
-      if (!targetEvent) return;
-
-
-      arcs.push({
-
-        startLat: sourceEvent.lat,
-        startLng: sourceEvent.lng,
-
-        endLat: targetEvent.lat,
-        endLng: targetEvent.lng,
-
-        color:
-          getCategoryColor(
-            sourceEvent.category
-          ),
-
-        altitude:
-          calculateAltitude(
-            sourceEvent.importance
-          ),
-
-        sourceId: sourceEvent.id,
-
-        targetId: targetEvent.id,
-
-        title:
-          `${sourceEvent.title} → ${targetEvent.title}`,
-
-        causal: true
-
-      });
-
+    const visibleEvents = events.filter(e => e.year <= currentYear);
+    
+    // 因果関係（線）の計算
+    const arcs = [];
+    visibleEvents.forEach(event => {
+        if (event.causality && event.causality.consequences) {
+            event.causality.consequences.forEach(targetId => {
+                const target = events.find(e => e.id === targetId && e.year <= currentYear);
+                if (target) {
+                    arcs.push({
+                        startLat: event.lat, startLng: event.lng,
+                        endLat: target.lat, endLng: target.lng
+                    });
+                }
+            });
+        }
     });
 
-  });
-
-
-  // =====================================
-  // 出力State
-  // =====================================
-
-  return {
-
-    year,
-
-    visibleEvents,
-
-    arcs
-
-  };
-
-}
-
-
-// =====================================
-// CATEGORY COLOR
-// =====================================
-
-function getCategoryColor(category) {
-
-  const colors = {
-
-    politics: '#ff5555',
-
-    diplomacy: '#ffaa00',
-
-    science: '#55aaff',
-
-    culture: '#55ffcc',
-
-    military: '#ff2222',
-
-    migration: '#ffffff'
-
-  };
-
-  return (
-    colors[category] ||
-    '#cccccc'
-  );
-
-}
-
-
-// =====================================
-// ARC ALTITUDE
-// =====================================
-
-function calculateAltitude(
-  importance = 0.5
-) {
-
-  return (
-    0.08 +
-    importance * 0.25
-  );
-
+    return { visibleEvents, arcs };
 }
