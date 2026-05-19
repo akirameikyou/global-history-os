@@ -1,7 +1,7 @@
 // engine/historyEngine.js
 
 export function generateWorldState(events, currentYear) {
-    // データが届いていない場合は空の状態を返す（これでエラーが消えます）
+    // データが読み込めていない場合に備えてこの2行を追加・修正
     if (!events || !Array.isArray(events)) return { visibleEvents: [], arcs: [] };
 
     const visibleEvents = events.filter(e => e.year <= currentYear);
