@@ -1,8 +1,42 @@
-<div id="ui-layer">
-    <div class="info-panel">
-        <div style="font-size: 0.8em; color: #aaa; margin-bottom: 5px;">TIME NAVIGATION</div>
-        <h1 id="year-display" style="margin: 0; color: #fff; font-size: 3em;">1830</h1>
-        <input type="range" id="time-slider" min="1830" max="1870" value="1830" style="width: 100%; margin: 20px 0;">
-        <div id="event-log" style="font-size: 0.9em; color: #00d2ff;">Drag slider to traverse history</div>
-    </div>
-</div>
+import { generateWorldState } from './engine/historyEngine.js';
+import { createGlobe, renderWorld } from './render/renderGlobe.js';
+
+const DATA_URL = './data/data.json';
+let globalData = null;
+let globe = null;
+
+async function init() {
+    try {
+        const response = await fetch(DATA_URL);
+        globalData = await response.json();
+
+        const container = document.getElementById('globeViz');
+        globe = createGlobe(container);
+
+        // 初期表示 (1830年から開始)
+        update(1830);
+
+        // スライダー操作イベントの登録
+        const slider = document.getElementById('time-slider');
+        slider.addEventListener('input', (e) => {
+            const year = parseInt(e.target.value);
+            update(year);
+        });
+
+    } catch(error) {
+        console.error('History OS Initialization Failed:', error);
+    }
+}
+
+function update(year) {
+    // UIの年表示を更新
+    document.getElementById('year-display').innerText = year;
+    
+    // エンジンで計算
+    const state = generateWorldState(globalData, year);
+    
+    // 描画実行
+    renderWorld(globe, state);
+}
+
+init();
