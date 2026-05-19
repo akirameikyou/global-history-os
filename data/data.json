@@ -1,0 +1,72 @@
+{
+  "events": [
+
+    {
+      "id": "black-ships",
+
+      "title": "黒船来航",
+
+      "year": 1853,
+
+      "lat": 35.44,
+      "lng": 139.64,
+
+      "category": "politics",
+
+      "importance": 1.0,
+
+      "causality": {
+
+        "consequences": [
+          "opening-japan"
+        ]
+
+      }
+    },
+
+    {
+      "id": "opening-japan",
+
+      "title": "日本開国",
+
+      "year": 1854,
+
+      "lat": 35.68,
+      "lng": 139.76,
+
+      "category": "diplomacy",
+
+      "importance": 0.95,
+
+      "causality": {
+
+        "consequences": [
+          "meiji-restoration"
+        ]
+
+      }
+    },
+
+    {
+      "id": "meiji-restoration",
+
+      "title": "明治維新",
+
+      "year": 1868,
+
+      "lat": 35.68,
+      "lng": 139.76,
+
+      "category": "politics",
+
+      "importance": 1.0,
+
+      "causality": {
+
+        "consequences": []
+
+      }
+    }
+
+  ]
+}
