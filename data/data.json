@@ -4,28 +4,19 @@
       "id": "manjiro-drift",
       "title": "ジョン万次郎漂流",
       "year": 1841,
-      "lat": 30.48, "lng": 140.30,
+      "lat": 30.48, "lng": 140.3,
       "category": "migration",
       "importance": 0.7,
       "causality": { "consequences": ["black-ships"] }
     },
     {
       "id": "black-ships",
-      "title": "黒船来航 (ペリー大将)",
+      "title": "黒船来航",
       "year": 1853,
-      "lat": 35.20, "lng": 139.66,
+      "lat": 35.2, "lng": 139.6,
       "category": "politics",
       "importance": 1.0,
       "causality": { "consequences": ["treaty-kanagawa"] }
-    },
-    {
-      "id": "treaty-kanagawa",
-      "title": "日米和親条約",
-      "year": 1854,
-      "lat": 35.44, "lng": 139.64,
-      "category": "diplomacy",
-      "importance": 0.9,
-      "causality": { "consequences": [] }
     }
   ]
 }
