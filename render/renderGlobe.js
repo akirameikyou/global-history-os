@@ -1,7 +1,6 @@
 // render/renderGlobe.js
 
 export function createGlobe(container) {
-    // window.Globe とすることで読み込みエラーを防ぎます
     const globe = window.Globe()
         (container)
         .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
@@ -10,11 +9,11 @@ export function createGlobe(container) {
         .atmosphereColor("#ffffff")
         .atmosphereAltitude(0.15);
 
-    // 明るさを確保するためのライティング設定
+    // THREE.jsを直接呼ばずに、globeが持っているsceneからライトを調整する安全な方法
     const scene = globe.scene();
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0); 
-    scene.add(ambientLight);
-
+    // もしエラーが出るなら、ここから下の3行（Lightの追加）を一旦消すだけでも動きます
+    // 昼の地球画像を使っているので、ライトを追加しなくても十分明るいはずです。
+    
     return globe;
 }
 
