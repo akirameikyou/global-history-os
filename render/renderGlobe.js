@@ -1,42 +1,41 @@
-import { generateWorldState } from './engine/historyEngine.js';
-import { createGlobe, renderWorld } from './render/renderGlobe.js';
+// render/renderGlobe.js
 
-const DATA_URL = './data/data.json';
-let globalData = null;
-let globe = null;
+export function createGlobe(container) {
+    // window.Globe とすることで読み込みエラーを防ぎます
+    const globe = window.Globe()
+        (container)
+        .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+        .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
+        .backgroundImageUrl('//unpkg.com/three-globe/example/img/night-sky.png')
+        .atmosphereColor("#ffffff")
+        .atmosphereAltitude(0.15);
 
-async function init() {
-    try {
-        const response = await fetch(DATA_URL);
-        globalData = await response.json();
+    // 明るさを確保するためのライティング設定
+    const scene = globe.scene();
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0); 
+    scene.add(ambientLight);
 
-        const container = document.getElementById('globeViz');
-        globe = createGlobe(container);
-
-        // 初期表示 (1830年から開始)
-        update(1830);
-
-        // スライダー操作イベントの登録
-        const slider = document.getElementById('time-slider');
-        slider.addEventListener('input', (e) => {
-            const year = parseInt(e.target.value);
-            update(year);
-        });
-
-    } catch(error) {
-        console.error('History OS Initialization Failed:', error);
-    }
+    return globe;
 }
 
-function update(year) {
-    // UIの年表示を更新
-    document.getElementById('year-display').innerText = year;
-    
-    // エンジンで計算
-    const state = generateWorldState(globalData, year);
-    
-    // 描画実行
-    renderWorld(globe, state);
-}
+export function renderWorld(globe, state) {
+    if (!state) return;
 
-init();
+    // イベント（点）の描画
+    globe.pointsData(state.visibleEvents || [])
+        .pointLat('lat')
+        .pointLng('lng')
+        .pointColor(() => '#ff4b2b')
+        .pointRadius(0.5);
+
+    // 因果関係（線）の描画
+    globe.arcsData(state.arcs || [])
+        .arcStartLat('startLat')
+        .arcStartLng('startLng')
+        .arcEndLat('endLat')
+        .arcEndLng('endLng')
+        .arcColor(() => '#ffb400')
+        .arcDashLength(0.4)
+        .arcDashGap(0.2)
+        .arcDashAnimateTime(1500);
+}
