@@ -1,122 +1,193 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
-
-<title>
-History OS Sandbox
-</title>
+<title>Sandbox Globe</title>
 
 <style>
 
-html,
-body{
-
+html,body{
 margin:0;
-padding:0;
-
 width:100%;
 height:100%;
-
 overflow:hidden;
-
 background:black;
-
-font-family:
-"Noto Sans JP",
-sans-serif;
-
+font-family:sans-serif;
 }
 
 #globeViz{
-
-position:fixed;
-
+position:absolute;
 inset:0;
-
 }
 
-.title{
+.city-label{
 
 position:absolute;
 
-top:20px;
-
-left:20px;
-
-z-index:10;
-
 color:white;
 
-font-size:28px;
+font-size:22px;
+font-weight:700;
 
-letter-spacing:3px;
-
-}
-#labelsLayer{
-
-position:fixed;
-
-inset:0;
+text-shadow:
+0 0 10px rgba(0,0,0,1),
+0 0 20px rgba(0,0,0,1);
 
 pointer-events:none;
 
-z-index:20;
-
-}
-
-.city-label{
-
-position:absolute;
-
-color:white;
-
-font-size:24px;
-
-font-weight:bold;
-
-transform:
-translate(-50%,-50%);
-
-text-shadow:
-0 0 10px black;
-
 white-space:nowrap;
 
-}
-.city-label{
-  position:absolute;
-  color:white;
-  font-size:20px;
-  font-weight:bold;
-  pointer-events:none;
-  transform:translate(-50%, -50%);
-  white-space:nowrap;
-}
-</style>
+/* ← 重要 */
+transform:translate(-50%,-50%);
 
+will-change:transform,left,top;
+
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="title">
-SANDBOX
-</div>
-
 <div id="globeViz"></div>
 
-<script
-type="module"
-src="./main.js"
-></script>
+<script type="module">
+
+import Globe from 'https://unpkg.com/globe.gl?module';
+
+const world =
+Globe()(document.getElementById('globeViz'))
+
+.globeImageUrl(
+'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
+)
+
+.backgroundColor('black')
+
+.width(window.innerWidth)
+.height(window.innerHeight);
+
+const labels = [
+
+{
+name:'東京',
+lat:35.68,
+lng:139.69
+},
+
+{
+name:'ハワイ',
+lat:21.30,
+lng:-157.85
+}
+
+];
+
+const labelEls = [];
+
+labels.forEach(city=>{
+
+const div =
+document.createElement('div');
+
+div.className =
+'city-label';
+
+div.innerText =
+city.name;
+
+document.body.appendChild(div);
+
+labelEls.push({
+
+el:div,
+lat:city.lat,
+lng:city.lng
+
+});
+
+});
+
+function updateLabels(){
+
+const camera =
+world.camera();
+
+const camPos =
+camera.position.clone().normalize();
+
+labelEls.forEach(label=>{
+
+const pos =
+world.getCoords(
+label.lat,
+label.lng,
+0.02
+);
+
+const surface =
+pos.clone().normalize();
+
+const dot =
+surface.dot(camPos);
+
+if(dot <= 0.18){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+const screen =
+world.getScreenCoords(
+label.lat,
+label.lng
+);
+
+if(!screen){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+label.el.style.display =
+'block';
+
+label.el.style.left =
+screen.x + 'px';
+
+label.el.style.top =
+screen.y + 'px';
+
+});
+
+requestAnimationFrame(
+updateLabels
+);
+
+}
+
+updateLabels();
+
+window.addEventListener(
+'resize',
+()=>{
+
+world
+.width(window.innerWidth)
+.height(window.innerHeight);
+
+}
+);
+
+</script>
 
 </body>
-
 </html>
