@@ -1,6 +1,10 @@
 import Globe
 from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
 
+/* =========================
+CREATE GLOBE
+========================= */
+
 export function createGlobe(container){
 
 const globe = Globe()(container)
@@ -13,11 +17,21 @@ const globe = Globe()(container)
 'https://unpkg.com/three-globe/example/img/earth-topology.png'
 )
 
-.backgroundColor('#000');
+.backgroundColor('#000')
+
+.showAtmosphere(true)
+
+.atmosphereColor('#46dfff')
+
+.atmosphereAltitude(0.18);
 
 return globe;
 
 }
+
+/* =========================
+RENDER STATE
+========================= */
 
 export function renderState(
 globe,
@@ -25,6 +39,10 @@ state
 ){
 
 globe
+
+/* =========================
+POINTS
+========================= */
 
 .pointsData(
 state.visibleEvents
@@ -40,7 +58,13 @@ state.visibleEvents
 
 .pointRadius(0.12)
 
-.arcsData(state.arcs)
+/* =========================
+ARCS
+========================= */
+
+.arcsData(
+state.arcs || []
+)
 
 .arcStartLat(d=>d.startLat)
 
@@ -50,16 +74,64 @@ state.visibleEvents
 
 .arcEndLng(d=>d.endLng)
 
-.arcColor(()=>'#ffe27a')
+.arcColor(()=>
+'#46dfff'
+)
 
 .arcStroke(0.8)
-
-.arcAltitude(0.18)
 
 .arcDashLength(0.4)
 
 .arcDashGap(0.2)
 
-.arcDashAnimateTime(2500);
+.arcDashAnimateTime(2500)
+
+/* =========================
+HTML LABELS
+========================= */
+
+.htmlElementsData(
+state.visibleEvents
+)
+
+.htmlLat(d=>d.lat)
+
+.htmlLng(d=>d.lng)
+
+.htmlElement(d=>{
+
+const el =
+document.createElement('div');
+
+el.innerHTML =
+d.title;
+
+el.style.color =
+'white';
+
+el.style.fontSize =
+'18px';
+
+el.style.fontWeight =
+'700';
+
+el.style.whiteSpace =
+'nowrap';
+
+el.style.pointerEvents =
+'none';
+
+el.style.textShadow =
+`
+0 0 10px #000,
+0 0 20px #000
+`;
+
+el.style.transform =
+'translate(-50%,-50%)';
+
+return el;
+
+});
 
 }
