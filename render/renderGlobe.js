@@ -44,8 +44,6 @@ state.visibleEvents
 
 .labelText(d=>d.text)
 
-.labelTypeFace('Noto Sans JP')
-
 .labelSize(1.8)
 
 .labelDotRadius(0.25)
