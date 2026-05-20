@@ -8,6 +8,8 @@ document.getElementById(
 'labelsLayer'
 );
 
+if(!layer) return;
+
 layer.innerHTML = '';
 
 const labels = [];
@@ -46,10 +48,16 @@ label.lat,
 label.lng
 );
 
-/* globe内部の裏面判定 */
+if(!pos){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
 
 if(
-!pos ||
 pos.x < 0 ||
 pos.x > window.innerWidth ||
 pos.y < 0 ||
@@ -63,6 +71,26 @@ return;
 
 }
 
+label.el.style.display =
+'block';
+
+label.el.style.left =
+pos.x + 'px';
+
+label.el.style.top =
+pos.y + 'px';
+
+});
+
+requestAnimationFrame(
+animateLabels
+);
+
+}
+
+animateLabels();
+
+}
 /* 表示 */
 
 label.el.style.display =
