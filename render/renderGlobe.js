@@ -30,7 +30,7 @@ return globe;
 }
 
 /* =========================
-RENDER STATE
+RENDER
 ========================= */
 
 export function renderState(
@@ -38,11 +38,11 @@ globe,
 state
 ){
 
-globe
-
 /* =========================
 POINTS
 ========================= */
+
+globe
 
 .pointsData(
 state.visibleEvents
@@ -56,11 +56,13 @@ state.visibleEvents
 
 .pointAltitude(0.02)
 
-.pointRadius(0.12)
+.pointRadius(0.12);
 
 /* =========================
 ARCS
 ========================= */
+
+globe
 
 .arcsData(
 state.arcs || []
@@ -74,9 +76,7 @@ state.arcs || []
 
 .arcEndLng(d=>d.endLng)
 
-.arcColor(()=>
-'#46dfff'
-)
+.arcColor(()=>'#46dfff')
 
 .arcStroke(0.8)
 
@@ -84,11 +84,13 @@ state.arcs || []
 
 .arcDashGap(0.2)
 
-.arcDashAnimateTime(2500)
+.arcDashAnimateTime(2500);
 
 /* =========================
 HTML LABELS
 ========================= */
+
+globe
 
 .htmlElementsData(
 state.visibleEvents
@@ -98,12 +100,21 @@ state.visibleEvents
 
 .htmlLng(d=>d.lng)
 
+.htmlAltitude(0.03)
+
 .htmlElement(d=>{
+
+/* wrapper */
+
+const wrapper =
+document.createElement('div');
+
+/* label */
 
 const el =
 document.createElement('div');
 
-el.innerHTML =
+el.innerText =
 d.title;
 
 el.style.color =
@@ -130,7 +141,11 @@ el.style.textShadow =
 el.style.transform =
 'translate(-50%,-50%)';
 
-return el;
+/* append */
+
+wrapper.appendChild(el);
+
+return wrapper;
 
 });
 
