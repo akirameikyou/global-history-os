@@ -162,7 +162,7 @@ y * camera.position.y
 +
 z * camera.position.z;
 
-if(dot < 0){
+if(dot > 0){
 
 label.el.style.display =
 'none';
