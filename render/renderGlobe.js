@@ -9,25 +9,30 @@ export function createGlobe(container) {
         .atmosphereColor("#ffffff")
         .atmosphereAltitude(0.15);
 
-    // THREE.jsを直接呼ばずに、globeが持っているsceneからライトを調整する安全な方法
-    const scene = globe.scene();
-    // もしエラーが出るなら、ここから下の3行（Lightの追加）を一旦消すだけでも動きます
-    // 昼の地球画像を使っているので、ライトを追加しなくても十分明るいはずです。
-    
     return globe;
 }
 
 export function renderWorld(globe, state) {
     if (!state) return;
 
-    // イベント（点）の描画
+    // 1. 点（イベント場所）の描画
     globe.pointsData(state.visibleEvents || [])
         .pointLat('lat')
         .pointLng('lng')
         .pointColor(() => '#ff4b2b')
-        .pointRadius(0.5);
+        .pointRadius(0.6);
 
-    // 因果関係（線）の描画
+    // 2. ラベル（文字情報）の描画 ★ここを追加！
+    globe.labelsData(state.visibleEvents || [])
+        .labelLat('lat')
+        .labelLng('lng')
+        .labelText('title')     // data.json の "title" を表示
+        .labelSize(1.5)         // 文字の大きさ
+        .labelDotRadius(0)      // 文字の横の点は不要なので0に
+        .labelColor(() => 'rgba(255, 255, 255, 0.9)') // 白文字
+        .labelResolution(2);    // 文字をクッキリさせる
+
+    // 3. 因果関係（線）の描画
     globe.arcsData(state.arcs || [])
         .arcStartLat('startLat')
         .arcStartLng('startLng')
