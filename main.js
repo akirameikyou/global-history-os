@@ -1,48 +1,79 @@
-import { generateWorldState } from './engine/historyEngine.js';
+import { generateWorldState }
+from '/engine/historyEngine.js';
 
 import {
-  createGlobe,
-  renderState
-} from './render/renderGlobe.js';
+createGlobe,
+renderState
+}
+from '/render/renderGlobe.js';
 
-const DATA_URL = './data/data.json';
+const DATA_URL = '/data/data.json';
 
-const response = await fetch(DATA_URL, {
-  cache:'no-store'
+const response = await fetch(DATA_URL,{
+cache:'no-store'
 });
 
 const data = await response.json();
 
-const globe = createGlobe(
-  document.getElementById('globeViz')
+const globe =
+createGlobe(
+document.getElementById('globeViz')
 );
 
-const slider = document.getElementById('yearSlider');
-const yearLabel = document.getElementById('yearLabel');
-const eventsContainer = document.getElementById('events');
+const slider =
+document.getElementById('yearSlider');
+
+const yearLabel =
+document.getElementById('yearLabel');
+
+const eventsContainer =
+document.getElementById('events');
 
 function update(){
 
-  const year = parseInt(slider.value);
+const year =
+parseInt(slider.value);
 
-  yearLabel.innerHTML = year;
+yearLabel.innerHTML = year;
 
-  const state = generateWorldState(data, year);
+const state =
+generateWorldState(
+data,
+year
+);
 
-  renderState(globe, state);
+renderState(
+globe,
+state
+);
 
-  renderEvents(state.visibleEvents);
+eventsContainer.innerHTML = '';
+
+state.visibleEvents.forEach(event=>{
+
+eventsContainer.innerHTML += `
+
+<div class="event">
+
+<div class="event-year">
+${event.year}
+</div>
+
+<div class="event-title">
+${event.title}
+</div>
+
+</div>
+
+`;
+
+});
+
 }
 
-function renderEvents(events){
+slider.addEventListener(
+'input',
+update
+);
 
-  eventsContainer.innerHTML = '';
-
-  events.forEach(event => {
-
-    eventsContainer.innerHTML += `
-      <div class="event">
-        <div class="event-year">
-          ${event.year}
-        </div>
 update();
