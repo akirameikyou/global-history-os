@@ -92,3 +92,45 @@ update
 );
 
 update();
+function updateLabels(
+globe,
+state
+){
+
+const layer =
+document.getElementById(
+'labelsLayer'
+);
+
+layer.innerHTML = '';
+
+state.visibleEvents.forEach(event=>{
+
+const pos =
+globe.getScreenCoords(
+event.lat,
+event.lng
+);
+
+if(!pos) return;
+
+const div =
+document.createElement('div');
+
+div.className =
+'city-label';
+
+div.innerHTML =
+event.title;
+
+div.style.left =
+pos.x + 'px';
+
+div.style.top =
+pos.y + 'px';
+
+layer.appendChild(div);
+
+});
+
+}
