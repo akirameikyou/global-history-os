@@ -146,7 +146,7 @@ const phi =
 (90 - label.lat) * Math.PI / 180;
 
 const theta =
-(label.lng) * Math.PI / 180;
+(label.lng - 12) * Math.PI / 180;
 
 const x =
 Math.sin(phi) * Math.cos(theta);
