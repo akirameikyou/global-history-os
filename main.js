@@ -139,7 +139,40 @@ globe.getScreenCoords(
 label.lat,
 label.lng
 );
+const camera =
+globe.camera();
 
+const x =
+Math.cos(label.lat * Math.PI/180)
+*
+Math.cos(label.lng * Math.PI/180);
+
+const y =
+Math.sin(label.lat * Math.PI/180);
+
+const z =
+Math.cos(label.lat * Math.PI/180)
+*
+Math.sin(label.lng * Math.PI/180);
+
+const dot =
+x * camera.position.x
++
+y * camera.position.y
++
+z * camera.position.z;
+
+if(dot < 0){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+label.el.style.display =
+'block';
 if(!pos) return;
 
 label.el.style.left =
