@@ -43,6 +43,8 @@ encodeURIComponent(d.text)
 }))
 )
 
+.labelsData(state.labels)
+
 .labelText(d=>d.text)
 
 .labelSize(1.8)
@@ -51,7 +53,9 @@ encodeURIComponent(d.text)
 
 .labelColor(()=>'#ffffff')
 
-.labelResolution(4)
+.labelResolution(8)
+
+.labelIncludeDot(true)
 
 .arcsData(state.arcs)
 
