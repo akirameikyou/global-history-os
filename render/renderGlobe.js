@@ -36,9 +36,6 @@ lat:d.lat,
 lng:d.lng,
 
 text:
-unescape(
-encodeURIComponent(d.text)
-)
 
 }))
 )
