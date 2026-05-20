@@ -3,134 +3,237 @@
 
 <head>
 
-<link
-rel="preconnect"
-href="https://fonts.googleapis.com">
-
-<link
-rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
-rel="stylesheet">
-
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>GLOBAL HISTORY MAP</title>
-<link
-rel="preconnect"
-href="https://fonts.googleapis.com">
 
-<link
-rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link
-href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap"
-rel="stylesheet">
 <style>
 
-html,body{
-  margin:0;
-  overflow:hidden;
-  background:#000;
-  color:white;
+html,
+body{
 
-  font-family:
-  'Noto Sans JP',
-  sans-serif;
+margin:0;
+padding:0;
+
+width:100%;
+height:100%;
+
+overflow:hidden;
+
+background:#000;
+
+font-family:
+"Noto Sans JP",
+sans-serif;
+
+color:white;
+
 }
+
+/* =========================
+GLOBE
+========================= */
 
 #globeViz{
+
 position:fixed;
+
 inset:0;
+
+z-index:1;
+
 }
 
+/* =========================
+TITLE
+========================= */
+
 .title{
+
 position:absolute;
-top:18px;
-width:100%;
-text-align:center;
+
+top:20px;
+
+left:50%;
+
+transform:translateX(-50%);
+
 z-index:10;
+
+text-align:center;
+
 pointer-events:none;
+
 }
 
 .title h1{
+
 margin:0;
-font-size:48px;
-letter-spacing:6px;
+
+font-size:64px;
+
+font-weight:700;
+
+letter-spacing:8px;
+
 }
 
 .title p{
-margin-top:8px;
-color:#46dfff;
-letter-spacing:4px;
-font-size:12px;
-}
 
-.timeline{
-position:absolute;
-left:50%;
-transform:translateX(-50%);
-bottom:60px;
-width:60%;
-z-index:20;
-}
+margin-top:12px;
 
-#yearLabel{
-text-align:center;
-margin-top:14px;
-color:#46dfff;
-font-size:32px;
-letter-spacing:4px;
-}
-
-input[type="range"]{
-width:100%;
-accent-color:#46dfff;
-}
-
-.left-panel{
-position:absolute;
-top:120px;
-left:24px;
-width:320px;
-height:60vh;
-overflow:auto;
-background:rgba(0,0,0,.35);
-border:1px solid rgba(255,255,255,.08);
-padding:24px;
-z-index:10;
-backdrop-filter:blur(10px);
-}
-
-.left-panel h2{
-color:#46dfff;
-letter-spacing:4px;
 font-size:14px;
-margin-top:0;
+
+letter-spacing:5px;
+
+color:#46dfff;
+
 }
 
-.event{
-margin-bottom:22px;
-border-left:3px solid #46dfff;
-padding-left:14px;
+/* =========================
+LEFT PANEL
+========================= */
+
+.events-panel{
+
+position:absolute;
+
+left:20px;
+
+top:120px;
+
+width:340px;
+
+height:560px;
+
+border:1px solid
+rgba(255,255,255,0.08);
+
+background:
+rgba(0,0,0,0.35);
+
+backdrop-filter:
+blur(8px);
+
+z-index:20;
+
+padding:24px;
+
+box-sizing:border-box;
+
+overflow:auto;
+
+}
+
+.events-panel h2{
+
+margin:0 0 30px 0;
+
+font-size:18px;
+
+letter-spacing:4px;
+
+color:#46dfff;
+
+}
+
+/* =========================
+EVENT ITEM
+========================= */
+
+.event-item{
+
+position:relative;
+
+padding-left:20px;
+
+margin-bottom:36px;
+
+}
+
+.event-item::before{
+
+content:'';
+
+position:absolute;
+
+left:0;
+top:0;
+
+width:2px;
+height:60px;
+
+background:#46dfff;
+
 }
 
 .event-year{
+
+font-size:18px;
+
 color:#46dfff;
-letter-spacing:2px;
-margin-bottom:6px;
+
+margin-bottom:10px;
+
 }
 
 .event-title{
-line-height:1.8;
-font-size:13px;
+
+font-size:16px;
+
+line-height:1.6;
+
 }
+
+/* =========================
+TIMELINE
+========================= */
+
+.timeline{
+
+position:absolute;
+
+bottom:80px;
+
+left:50%;
+
+transform:translateX(-50%);
+
+width:60%;
+
+z-index:30;
+
+}
+
+#eraSlider{
+
+width:100%;
+
+}
+
+#yearLabel{
+
+text-align:center;
+
+margin-top:22px;
+
+font-size:56px;
+
+color:#46dfff;
+
+letter-spacing:6px;
+
+}
+
+/* =========================
+LABELS
+========================= */
+
 #labelsLayer{
 
 position:fixed;
@@ -139,7 +242,7 @@ inset:0;
 
 pointer-events:none;
 
-z-index:30;
+z-index:15;
 
 }
 
@@ -147,53 +250,82 @@ z-index:30;
 
 position:absolute;
 
-color:white;
-
-font-size:14px;
-
-text-shadow:
-0 0 8px rgba(0,0,0,.9);
-
-white-space:nowrap;
-
 transform:
 translate(-50%,-50%);
 
-font-family:
-'Noto Sans JP',
-sans-serif;
+color:white;
+
+font-size:18px;
+
+font-weight:700;
+
+text-shadow:
+0 0 10px #000,
+0 0 20px #000;
+
+white-space:nowrap;
 
 }
+
 </style>
+
 </head>
 
 <body>
 
+<!-- =========================
+GLOBE
+========================= -->
+
 <div id="globeViz"></div>
+
+<!-- =========================
+LABELS
+========================= -->
+
 <div id="labelsLayer"></div>
+
+<!-- =========================
+TITLE
+========================= -->
+
 <div class="title">
 
-<h1>GLOBAL HISTORY MAP</h1>
+<h1>
+GLOBAL HISTORY MAP
+</h1>
 
-<p>HISTORY OPERATING SYSTEM</p>
+<p>
+HISTORY OPERATING SYSTEM
+</p>
+
+</div>
+
+<!-- =========================
+LEFT PANEL
+========================= -->
+
+<div class="events-panel">
+
+<h2>
+WORLD EVENTS
+</h2>
+
+<div id="eventsList"></div>
 
 </div>
 
-<div class="left-panel">
-
-<h2>WORLD EVENTS</h2>
-
-<div id="events"></div>
-
-</div>
+<!-- =========================
+TIMELINE
+========================= -->
 
 <div class="timeline">
 
 <input
-id="yearSlider"
 type="range"
-min="1840"
-max="1870"
+id="eraSlider"
+min="1800"
+max="1900"
 value="1841"
 />
 
@@ -203,7 +335,15 @@ value="1841"
 
 </div>
 
-<script type="module" src="main.js"></script>
+<!-- =========================
+MAIN
+========================= -->
+
+<script
+type="module"
+src="./main.js"
+></script>
 
 </body>
+
 </html>
