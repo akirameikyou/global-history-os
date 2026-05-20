@@ -40,7 +40,6 @@ state.visibleEvents
 
 .pointRadius(0.12)
 
-
 .arcsData(state.arcs)
 
 .arcStartLat(d=>d.startLat)
