@@ -1,5 +1,5 @@
 import Globe
-from 'https://unpkg.com/globe.gl?module';
+from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
 
 export function createGlobe(container){
 
