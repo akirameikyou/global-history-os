@@ -260,7 +260,7 @@ const dot =
 FRONT ONLY
 ========================= */
 
-if(dot < 0.18){
+if(dot < 0.35){
 
 label.el.style.display =
 'none';
