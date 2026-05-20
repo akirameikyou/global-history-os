@@ -11,14 +11,12 @@ let globe = null;
  */
 async function init() {
     try {
-        // データの読み込みと文字コードの強制指定
-        const response = await fetch(DATA_URL);
+        // キャッシュを一切無視して最新のデータを取得する設定
+        const response = await fetch(DATA_URL, { cache: "no-store" });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        // 【文字化け対策】バイナリとして読み込み、UTF-8としてデコードする
-        const buffer = await response.arrayBuffer();
-        const decoder = new TextDecoder('utf-8');
-        const text = decoder.decode(buffer);
+        // サーバーから取得したデータをテキストとして読み込み、JSONに変換
+        const text = await response.text();
         const json = JSON.parse(text);
         
         globalData = json.events; // data.jsonの "events" 配列を取得
