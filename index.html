@@ -1,32 +1,62 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>Global History OS</title>
-    <style>
-        body { margin: 0; background: #000; color: #fff; overflow: hidden; }
-        #globeViz { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-        #ui-layer { position: absolute; bottom: 20px; left: 20px; z-index: 100; pointer-events: none; }
-        .info-panel { background: rgba(0,0,0,0.7); padding: 15px; border-left: 3px solid #ffaa00; pointer-events: auto; }
-    </style>
-    <script type="importmap">
-    {
-      "imports": {
-        "globe.gl": "https://esm.sh/globe.gl",
-        "three": "https://esm.sh/three"
-      }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>GLOBAL HISTORY MAP</title>
+
+  <style>
+    html,body{
+      margin:0;
+      overflow:hidden;
+      background:#000;
+      color:white;
+      font-family:"Noto Sans JP",sans-serif;
     }
-    </script>
-</head>
-<body>
-    <div id="globeViz"></div>
-    <div id="ui-layer">
-        <div class="info-panel">
-            <h1 id="year-display">1830</h1>
-            <input type="range" id="time-slider" min="1830" max="1870" value="1830">
-            <div id="event-log">History OS Active</div>
-        </div>
-    </div>
-    <script type="module" src="./main.js"></script>
-</body>
+
+    #globeViz{
+      position:fixed;
+      inset:0;
+    }
+
+    .title{
+      position:absolute;
+      top:18px;
+      width:100%;
+      text-align:center;
+      z-index:10;
+      pointer-events:none;
+    }
+
+    .title h1{
+      margin:0;
+      font-size:48px;
+      letter-spacing:6px;
+    }
+
+    .title p{
+      margin-top:8px;
+      color:#46dfff;
+      letter-spacing:4px;
+      font-size:12px;
+    }
+
+    .timeline{
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      bottom:60px;
+      width:60%;
+      z-index:20;
+    }
+
+    #yearLabel{
+      text-align:center;
+      margin-top:14px;
+      color:#46dfff;
+      font-size:32px;
+      letter-spacing:4px;
+    }
+
 </html>
