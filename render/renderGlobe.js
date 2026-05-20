@@ -14,13 +14,6 @@ const globe = Globe()(container)
 
 .backgroundColor('#000');
 
-const ambient = new THREE.AmbientLight(0xffffff, 1.2);
-globe.scene().add(ambient);
-
-const directional = new THREE.DirectionalLight(0xffffff, 1.4);
-directional.position.set(1,1,1);
-
-globe.scene().add(directional);
 
 return globe;
 
