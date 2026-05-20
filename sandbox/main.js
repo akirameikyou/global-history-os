@@ -7,20 +7,20 @@ from "./renderGlobe.js";
 const globe =
 createGlobe(
 document.getElementById(
-"globeViz"
+'globeViz'
 )
 );
 
 const events = [
 
 {
-title:"東京",
+title:'東京',
 lat:35.68,
 lng:139.69
 },
 
 {
-title:"ハワイ",
+title:'ハワイ',
 lat:21.30,
 lng:-157.85
 }
