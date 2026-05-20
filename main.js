@@ -7,7 +7,8 @@ async function init() {
     try {
         const response = await fetch(DATA_URL, { cache: "no-store" });
         const json = await response.json();
-        const globe = createGlobe(document.getElementById('globeViz'));
+        const container = document.getElementById('globeViz');
+        const globe = createGlobe(container);
         
         const slider = document.getElementById('time-slider');
         slider.addEventListener('input', (e) => {
@@ -17,11 +18,10 @@ async function init() {
             renderWorld(globe, state);
         });
 
-        // 初回起動
         const initialState = generateWorldState(json.events, 1830);
         renderWorld(globe, initialState);
     } catch(err) {
-        console.error("OS Initialization Error:", err);
+        console.error("Initialization Error:", err);
     }
 }
 init();
