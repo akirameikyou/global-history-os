@@ -11,31 +11,31 @@ let globe = null;
  */
 async function init() {
     try {
-        // キャッシュを一切無視して最新のデータを取得する設定
+        // キャッシュを無視して最新のデータを取得
         const response = await fetch(DATA_URL, { cache: "no-store" });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        // サーバーから取得したデータをテキストとして読み込み、JSONに変換
+        // テキストとして読み込み
         const text = await response.text();
         const json = JSON.parse(text);
         
-        globalData = json.events; // data.jsonの "events" 配列を取得
+        globalData = json.events;
 
         // 地球儀の土台を作成
         const container = document.getElementById('globeViz');
         if (!container) return;
         
+        // renderGlobe.js からインポートした関数を使用
         globe = createGlobe(container);
 
-        // 初期表示 (1830年)
+        // 初期表示
         update(1830);
 
         // スライダー操作イベントの登録
         const slider = document.getElementById('time-slider');
         if (slider) {
             slider.addEventListener('input', (e) => {
-                const year = parseInt(e.target.value);
-                update(year);
+                update(parseInt(e.target.value));
             });
         }
 
@@ -47,17 +47,14 @@ async function init() {
 }
 
 /**
- * 年代が変わるたびに実行される更新処理
+ * 年代更新処理
  */
 function update(year) {
-    // UIの年表示を更新
     const yearDisplay = document.getElementById('year-display');
     if (yearDisplay) yearDisplay.innerText = year;
     
-    // エンジン（historyEngine.js）でその年の状態を計算
+    // 状態計算と描画
     const state = generateWorldState(globalData, year);
-    
-    // 描画（renderGlobe.js）を実行
     renderWorld(globe, state);
 }
 
