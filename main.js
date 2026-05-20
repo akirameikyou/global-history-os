@@ -104,15 +104,9 @@ document.getElementById(
 
 layer.innerHTML = '';
 
+const labels = [];
+
 state.visibleEvents.forEach(event=>{
-
-const pos =
-globe.getScreenCoords(
-event.lat,
-event.lng
-);
-
-if(!pos) return;
 
 const div =
 document.createElement('div');
@@ -123,14 +117,45 @@ div.className =
 div.innerHTML =
 event.title;
 
-div.style.left =
-pos.x + 'px';
-
-div.style.top =
-pos.y + 'px';
-
 layer.appendChild(div);
 
+labels.push({
+
+el:div,
+
+lat:event.lat,
+lng:event.lng
+
 });
+
+});
+
+function animateLabels(){
+
+labels.forEach(label=>{
+
+const pos =
+globe.getScreenCoords(
+label.lat,
+label.lng
+);
+
+if(!pos) return;
+
+label.el.style.left =
+pos.x + 'px';
+
+label.el.style.top =
+pos.y + 'px';
+
+});
+
+requestAnimationFrame(
+animateLabels
+);
+
+}
+
+animateLabels();
 
 }
