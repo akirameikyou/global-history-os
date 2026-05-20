@@ -1,4 +1,5 @@
-import Globe from 'https://esm.sh/globe.gl';
+import Globe
+from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
 
 export function createGlobe(container){
 
@@ -14,7 +15,6 @@ const globe = Globe()(container)
 
 .backgroundColor('#000');
 
-
 return globe;
 
 }
@@ -29,16 +29,16 @@ globe
 .pointsData(
 state.visibleEvents
 )
-.labelsData(
-state.labels.map(d=>({
 
-lat:d.lat,
-lng:d.lng,
+.pointLat(d=>d.lat)
 
-text:
+.pointLng(d=>d.lng)
 
-}))
-)
+.pointColor(()=>'#46dfff')
+
+.pointAltitude(0.02)
+
+.pointRadius(0.12)
 
 .labelsData(state.labels)
 
@@ -56,21 +56,24 @@ text:
 
 .arcsData(state.arcs)
 
-.arcStroke(0.4)
+.arcStartLat(d=>d.startLat)
 
-.arcDashLength(1)
+.arcStartLng(d=>d.startLng)
 
-.arcDashGap(0.4)
+.arcEndLat(d=>d.endLat)
 
-.arcDashAnimateTime(4000)
-.pointLat(d=>d.lat)
+.arcEndLng(d=>d.endLng)
 
-.pointLng(d=>d.lng)
+.arcColor(()=>'#ffe27a')
 
-.pointColor(()=>'#46dfff')
+.arcStroke(0.8)
 
-.pointAltitude(0.02)
+.arcAltitude(0.18)
 
-.pointRadius(0.12);
+.arcDashLength(0.4)
+
+.arcDashGap(0.2)
+
+.arcDashAnimateTime(2500);
 
 }
