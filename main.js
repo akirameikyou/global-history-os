@@ -151,9 +151,11 @@ const y =
 Math.sin(label.lat * Math.PI/180);
 
 const z =
+-(
 Math.cos(label.lat * Math.PI/180)
 *
-Math.sin(label.lng * Math.PI/180);
+Math.sin(label.lng * Math.PI/180)
+);
 
 const dot =
 x * camera.position.x
