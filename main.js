@@ -56,6 +56,11 @@ globe,
 state
 );
 
+updateLabels(
+globe,
+state
+);
+
 eventsContainer.innerHTML =
 "";
 
