@@ -18,23 +18,23 @@ return;
 }
 
 /* =========================
-3D VISIBILITY CHECK
+CAMERA
 ========================= */
 
-const camera =
-globe.camera();
+const cam =
+globe.camera().position;
 
-/* lat lng → xyz */
+/* lat lng */
 
 const phi =
 (90 - label.lat) *
 Math.PI / 180;
 
 const theta =
-(label.lng + 180) *
+(label.lng) *
 Math.PI / 180;
 
-/* sphere point */
+/* sphere position */
 
 const x =
 Math.sin(phi) *
@@ -44,33 +44,30 @@ const y =
 Math.cos(phi);
 
 const z =
-Math.sin(phi) *
+-Math.sin(phi) *
 Math.sin(theta);
-
-/* camera direction */
-
-const camX =
-camera.position.x;
-
-const camY =
-camera.position.y;
-
-const camZ =
-camera.position.z;
 
 /* dot */
 
 const dot =
 
-(x * camX) +
-(y * camY) +
-(z * camZ);
+(x * cam.x) +
+(y * cam.y) +
+(z * cam.z);
 
 /* =========================
-HIDE BACKSIDE
+VISIBILITY
 ========================= */
 
-if(dot < 0){
+/*
+ここ重要
+
+0 = 地平線まで表示
+0.25 = 少し手前
+0.45 = 表側のみ
+*/
+
+if(dot < 0.45){
 
 label.el.style.display =
 'none';
@@ -110,7 +107,7 @@ pos.y + 'px';
 
 });
 
-/* next frame */
+/* next */
 
 requestAnimationFrame(
 animateLabels
