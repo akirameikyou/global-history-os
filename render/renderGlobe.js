@@ -29,7 +29,29 @@ globe
 .pointsData(
 state.visibleEvents
 )
+.labelsData(state.labels)
 
+.labelText(d=>d.text)
+
+.labelLat(d=>d.lat)
+
+.labelLng(d=>d.lng)
+
+.labelSize(1.2)
+
+.labelColor(()=>'#ffffff')
+
+.labelResolution(2)
+
+.arcsData(state.arcs)
+
+.arcStroke(0.4)
+
+.arcDashLength(1)
+
+.arcDashGap(0.4)
+
+.arcDashAnimateTime(4000)
 .pointLat(d=>d.lat)
 
 .pointLng(d=>d.lng)
