@@ -9,36 +9,12 @@
       "causality": { "consequences": ["manjiro-return"] }
     },
     {
-      "id": "manjiro-return",
-      "title": "万次郎帰国：英語・航海術の伝播",
-      "year": 1851,
-      "lat": 32.7, "lng": 132.5,
-      "category": "education",
-      "causality": { "consequences": ["black-ships"] }
-    },
-    {
       "id": "black-ships",
-      "title": "黒船来航（ペリー浦賀へ）",
+      "title": "黒船来航",
       "year": 1853,
       "lat": 35.2, "lng": 139.6,
       "category": "politics",
-      "causality": { "consequences": ["treaty-kanagawa", "meiji-restoration"] }
-    },
-    {
-      "id": "treaty-kanagawa",
-      "title": "日米和親条約締結",
-      "year": 1854,
-      "lat": 35.4, "lng": 139.6,
-      "category": "politics",
       "causality": { "consequences": ["meiji-restoration"] }
-    },
-    {
-      "id": "meiji-restoration",
-      "title": "明治維新：近代国家の誕生",
-      "year": 1868,
-      "lat": 35.0, "lng": 135.7,
-      "category": "politics",
-      "causality": []
     }
   ]
 }
