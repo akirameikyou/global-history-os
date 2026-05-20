@@ -1,49 +1,24 @@
 {
-  "events": [
+  "events":[
     {
-      "id": "torishima",
-      "title": "鳥島漂着",
-      "description": "ジョン万次郎、鳥島へ漂着。",
-      "year": 1841,
-      "lat": 30.48,
-      "lng": 140.3,
-      "category": "survival",
-      "importance": 0.9,
-      "actors": ["manjiro"],
-      "causality": {
-        "consequences": ["hawaii"]
-      }
+      "title":"鳥島漂着",
+      "year":1841,
+      "lat":30.48,
+      "lng":140.30
     },
+
     {
-      "id": "hawaii",
-      "title": "ハワイ渡航",
-      "description": "太平洋世界へ入る。",
-      "year": 1843,
-      "lat": 21.3,
-      "lng": -157.85,
-      "category": "migration",
-      "importance": 0.8,
-      "actors": ["manjiro"],
-      "causality": {
-        "consequences": ["fairhaven"]
-      }
+      "title":"ハワイ渡航",
+      "year":1843,
+      "lat":21.30,
+      "lng":-157.85
     },
+
     {
-      "id": "fairhaven",
-      "title": "フェアヘブン教育",
-      "description": "アメリカ教育を受ける。",
-      "year": 1847,
-      "lat": 41.63,
-      "lng": -70.9,
-      "category": "education",
-      "importance": 0.7,
-      "actors": ["manjiro"],
-      "causality": {
-        "consequences": ["black-ships"]
-      }
-    },
-    {
-      "id": "black-ships",
-      "title": "黒船来航",
-      "description": "日本開国の転換点。",
+      "title":"黒船来航",
+      "year":1853,
+      "lat":35.44,
+      "lng":139.64
+    }
+  ]
 }
