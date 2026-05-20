@@ -29,31 +29,29 @@ globe
 .pointsData(
 state.visibleEvents
 )
-.labelsData(state.labels)
+.labelsData(
+state.labels.map(d=>({
+
+lat:d.lat,
+lng:d.lng,
+
+text:
+unescape(
+encodeURIComponent(d.text)
+)
+
+}))
+)
+
 .labelText(d=>d.text)
 
-.labelLat(d=>d.lat)
+.labelSize(1.8)
 
-.labelLng(d=>d.lng)
+.labelDotRadius(0.25)
 
 .labelColor(()=>'#ffffff')
 
-.labelSize(1.4)
-
-.labelResolution(6)
-
-.labelDotRadius(0.3)
-.labelText(d=>d.text)
-
-.labelLat(d=>d.lat)
-
-.labelLng(d=>d.lng)
-
-.labelSize(1.2)
-
-.labelColor(()=>'#ffffff')
-
-.labelResolution(2)
+.labelResolution(4)
 
 .arcsData(state.arcs)
 
