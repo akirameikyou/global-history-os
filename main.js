@@ -13,10 +13,7 @@ LOAD DATA
 
 const response =
 await fetch(
-"./data/data.json",
-{
-cache:"no-store"
-}
+"./data/data.json"
 );
 
 const data =
@@ -39,7 +36,7 @@ globe.controls().autoRotate =
 true;
 
 globe.controls().autoRotateSpeed =
-0.35;
+0.4;
 
 /* =========================
 UI
@@ -60,19 +57,26 @@ document.getElementById(
 "eventsList"
 );
 
+const labelsLayer =
+document.getElementById(
+"labelsLayer"
+);
+
 /* =========================
-INITIAL YEAR
+STATE
 ========================= */
 
-let currentYear = 1841;
+let currentState = null;
 
 /* =========================
-RENDER APP
+RENDER
 ========================= */
 
 function renderApp(year){
 
-const state =
+/* state */
+
+currentState =
 generateWorldState(
 data,
 year
@@ -82,32 +86,19 @@ year
 
 renderState(
 globe,
-state
-);
-
-/* labels */
-
-updateLabels(
-globe,
-state
+currentState
 );
 
 /* year */
 
-if(yearLabel){
-
 yearLabel.innerHTML =
 year;
 
-}
-
-/* events panel */
-
-if(eventsList){
+/* left panel */
 
 eventsList.innerHTML = '';
 
-state.visibleEvents.forEach(
+currentState.visibleEvents.forEach(
 event=>{
 
 const div =
@@ -133,56 +124,9 @@ eventsList.appendChild(div);
 }
 );
 
-}
+/* labels */
 
-}
-
-/* =========================
-INITIAL RENDER
-========================= */
-
-renderApp(
-currentYear
-);
-
-/* =========================
-SLIDER
-========================= */
-
-if(slider){
-
-slider.addEventListener(
-"input",
-e=>{
-
-currentYear =
-parseInt(
-e.target.value
-);
-
-renderApp(
-currentYear
-);
-
-/* pause rotate */
-
-globe.controls().autoRotate =
-false;
-
-clearTimeout(
-window.rotateTimer
-);
-
-window.rotateTimer =
-setTimeout(()=>{
-
-globe.controls().autoRotate =
-true;
-
-},1500);
-
-}
-);
+updateLabels();
 
 }
 
@@ -190,30 +134,15 @@ true;
 LABELS
 ========================= */
 
-let animationStarted =
-false;
+let labels = [];
 
-function updateLabels(
-globe,
-state
-){
+function updateLabels(){
 
-const layer =
-document.getElementById(
-'labelsLayer'
-);
+labelsLayer.innerHTML = '';
 
-if(!layer) return;
+labels = [];
 
-/* clear */
-
-layer.innerHTML = '';
-
-const labels = [];
-
-/* create */
-
-state.visibleEvents.forEach(
+currentState.visibleEvents.forEach(
 event=>{
 
 const div =
@@ -225,13 +154,14 @@ div.className =
 div.innerHTML =
 event.title;
 
-layer.appendChild(div);
+labelsLayer.appendChild(div);
 
 labels.push({
 
 el:div,
 
 lat:event.lat,
+
 lng:event.lng
 
 });
@@ -239,13 +169,13 @@ lng:event.lng
 }
 );
 
-/* single animation loop */
+}
 
-if(animationStarted) return;
+/* =========================
+ANIMATION LOOP
+========================= */
 
-animationStarted = true;
-
-function animate(){
+function animateLabels(){
 
 labels.forEach(label=>{
 
@@ -264,13 +194,13 @@ return;
 
 }
 
-/* softer bounds */
+/* softer visibility */
 
 if(
-pos.x < -200 ||
-pos.x > window.innerWidth + 200 ||
-pos.y < -200 ||
-pos.y > window.innerHeight + 200
+pos.x < -300 ||
+pos.x > window.innerWidth + 300 ||
+pos.y < -300 ||
+pos.y > window.innerHeight + 300
 ){
 
 label.el.style.display =
@@ -291,14 +221,51 @@ pos.y + 'px';
 
 });
 
-/* next frame */
-
 requestAnimationFrame(
-animate
+animateLabels
 );
 
 }
 
-animate();
+animateLabels();
+
+/* =========================
+INITIAL
+========================= */
+
+renderApp(1841);
+
+/* =========================
+SLIDER
+========================= */
+
+slider.addEventListener(
+"input",
+e=>{
+
+const year =
+parseInt(
+e.target.value
+);
+
+renderApp(year);
+
+/* pause rotate */
+
+globe.controls().autoRotate =
+false;
+
+clearTimeout(
+window.rotateTimer
+);
+
+window.rotateTimer =
+setTimeout(()=>{
+
+globe.controls().autoRotate =
+true;
+
+},1500);
 
 }
+);
