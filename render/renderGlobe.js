@@ -1,5 +1,5 @@
-import Globe
-from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
+import Globe from 'https://esm.sh/globe.gl';
+import * as THREE from 'https://esm.sh/three';
 
 export function createGlobe(container){
 
@@ -14,6 +14,14 @@ const globe = Globe()(container)
 )
 
 .backgroundColor('#000');
+
+const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+globe.scene().add(ambient);
+
+const directional = new THREE.DirectionalLight(0xffffff, 1.4);
+directional.position.set(1,1,1);
+
+globe.scene().add(directional);
 
 return globe;
 
