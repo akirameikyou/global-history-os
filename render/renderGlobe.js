@@ -1,10 +1,11 @@
-import Globe from 'https://unpkg.com/globe.gl?module';
+import Globe
+from 'https://unpkg.com/globe.gl?module';
 
 export function createGlobe(container){
 
-  const globe = Globe()(container)
+const globe = Globe()(container)
 
-    .globeImageUrl(
+.globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
@@ -12,43 +13,31 @@ export function createGlobe(container){
 'https://unpkg.com/three-globe/example/img/earth-topology.png'
 )
 
-    .backgroundColor('#000')
+.backgroundColor('#000');
 
-    .pointAltitude(0.01)
+return globe;
 
-    .pointRadius('size')
-
-    .pointColor('color')
-
-    .labelText('text')
-
-    .labelSize(1.2)
-
-    .labelColor('color')
-
-    .labelResolution(2)
-
-    .arcStroke(0.5)
-
-    .arcDashLength(0.4)
-
-    .arcDashGap(0.2)
-
-    .arcDashAnimateTime(4000);
-
-  globe.controls().autoRotate = true;
-  globe.controls().autoRotateSpeed = 0.4;
-
-  return globe;
 }
 
-export function renderState(globe, state){
+export function renderState(
+globe,
+state
+){
 
-  globe.pointsData(state.points);
+globe
 
-  globe.labelsData(state.labels);
+.pointsData(
+state.visibleEvents
+)
 
-  globe.arcsData(state.arcs);
+.pointLat(d=>d.lat)
 
-  globe.pointOfView(state.camera, 1000);
+.pointLng(d=>d.lng)
+
+.pointColor(()=>'#46dfff')
+
+.pointAltitude(0.02)
+
+.pointRadius(0.12);
+
 }
