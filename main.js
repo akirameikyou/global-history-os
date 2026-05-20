@@ -8,7 +8,7 @@ renderState
 from "./render/renderGlobe.js";
 
 /* =========================
-DATA LOAD
+LOAD DATA
 ========================= */
 
 const response =
@@ -23,16 +23,14 @@ const data =
 await response.json();
 
 /* =========================
-GLOBE
+CREATE GLOBE
 ========================= */
 
 const globe =
 createGlobe(
-
 document.getElementById(
 "globeViz"
 )
-
 );
 
 /* auto rotate */
@@ -44,55 +42,112 @@ globe.controls().autoRotateSpeed =
 0.35;
 
 /* =========================
-INITIAL YEAR
-========================= */
-
-let currentYear = 1841;
-
-/* =========================
-INITIAL STATE
-========================= */
-
-let state =
-generateWorldState(
-data,
-currentYear
-);
-
-renderState(
-globe,
-state
-);
-
-updateLabels(
-globe,
-state
-);
-
-/* =========================
-YEAR LABEL
-========================= */
-
-const yearLabel =
-document.getElementById(
-"yearLabel"
-);
-
-if(yearLabel){
-
-yearLabel.innerHTML =
-currentYear;
-
-}
-
-/* =========================
-SLIDER
+UI
 ========================= */
 
 const slider =
 document.getElementById(
 "eraSlider"
 );
+
+const yearLabel =
+document.getElementById(
+"yearLabel"
+);
+
+const eventsList =
+document.getElementById(
+"eventsList"
+);
+
+/* =========================
+INITIAL YEAR
+========================= */
+
+let currentYear = 1841;
+
+/* =========================
+RENDER APP
+========================= */
+
+function renderApp(year){
+
+const state =
+generateWorldState(
+data,
+year
+);
+
+/* globe */
+
+renderState(
+globe,
+state
+);
+
+/* labels */
+
+updateLabels(
+globe,
+state
+);
+
+/* year */
+
+if(yearLabel){
+
+yearLabel.innerHTML =
+year;
+
+}
+
+/* events panel */
+
+if(eventsList){
+
+eventsList.innerHTML = '';
+
+state.visibleEvents.forEach(
+event=>{
+
+const div =
+document.createElement('div');
+
+div.className =
+'event-item';
+
+div.innerHTML = `
+
+<div class="event-year">
+${event.year}
+</div>
+
+<div class="event-title">
+${event.title}
+</div>
+
+`;
+
+eventsList.appendChild(div);
+
+}
+);
+
+}
+
+}
+
+/* =========================
+INITIAL RENDER
+========================= */
+
+renderApp(
+currentYear
+);
+
+/* =========================
+SLIDER
+========================= */
 
 if(slider){
 
@@ -101,32 +156,15 @@ slider.addEventListener(
 e=>{
 
 currentYear =
-parseInt(e.target.value);
+parseInt(
+e.target.value
+);
 
-if(yearLabel){
-
-yearLabel.innerHTML =
-currentYear;
-
-}
-
-state =
-generateWorldState(
-data,
+renderApp(
 currentYear
 );
 
-renderState(
-globe,
-state
-);
-
-updateLabels(
-globe,
-state
-);
-
-/* rotate stop */
+/* pause rotate */
 
 globe.controls().autoRotate =
 false;
@@ -152,6 +190,9 @@ true;
 LABELS
 ========================= */
 
+let animationStarted =
+false;
+
 function updateLabels(
 globe,
 state
@@ -164,11 +205,16 @@ document.getElementById(
 
 if(!layer) return;
 
+/* clear */
+
 layer.innerHTML = '';
 
 const labels = [];
 
-state.visibleEvents.forEach(event=>{
+/* create */
+
+state.visibleEvents.forEach(
+event=>{
 
 const div =
 document.createElement('div');
@@ -190,9 +236,16 @@ lng:event.lng
 
 });
 
-});
+}
+);
 
-function animateLabels(){
+/* single animation loop */
+
+if(animationStarted) return;
+
+animationStarted = true;
+
+function animate(){
 
 labels.forEach(label=>{
 
@@ -202,12 +255,22 @@ label.lat,
 label.lng
 );
 
+if(!pos){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+/* softer bounds */
+
 if(
-!pos ||
-pos.x < 0 ||
-pos.x > window.innerWidth ||
-pos.y < 0 ||
-pos.y > window.innerHeight
+pos.x < -200 ||
+pos.x > window.innerWidth + 200 ||
+pos.y < -200 ||
+pos.y > window.innerHeight + 200
 ){
 
 label.el.style.display =
@@ -228,12 +291,14 @@ pos.y + 'px';
 
 });
 
+/* next frame */
+
 requestAnimationFrame(
-animateLabels
+animate
 );
 
 }
 
-animateLabels();
+animate();
 
 }
