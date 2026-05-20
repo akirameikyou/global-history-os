@@ -1,27 +1,48 @@
-import { createGlobe, renderWorld } from './render/renderGlobe.js';
 import { generateWorldState } from './engine/historyEngine.js';
+
+import {
+  createGlobe,
+  renderState
+} from './render/renderGlobe.js';
 
 const DATA_URL = './data/data.json';
 
-async function init() {
-    try {
-        const response = await fetch(DATA_URL, { cache: "no-store" });
-        const json = await response.json();
-        const container = document.getElementById('globeViz');
-        const globe = createGlobe(container);
-        
-        const slider = document.getElementById('time-slider');
-        slider.addEventListener('input', (e) => {
-            const year = e.target.value;
-            document.getElementById('year-display').innerText = year;
-            const state = generateWorldState(json.events, year);
-            renderWorld(globe, state);
-        });
+const response = await fetch(DATA_URL, {
+  cache:'no-store'
+});
 
-        const initialState = generateWorldState(json.events, 1830);
-        renderWorld(globe, initialState);
-    } catch(err) {
-        console.error("Initialization Error:", err);
-    }
+const data = await response.json();
+
+const globe = createGlobe(
+  document.getElementById('globeViz')
+);
+
+const slider = document.getElementById('yearSlider');
+const yearLabel = document.getElementById('yearLabel');
+const eventsContainer = document.getElementById('events');
+
+function update(){
+
+  const year = parseInt(slider.value);
+
+  yearLabel.innerHTML = year;
+
+  const state = generateWorldState(data, year);
+
+  renderState(globe, state);
+
+  renderEvents(state.visibleEvents);
 }
-init();
+
+function renderEvents(events){
+
+  eventsContainer.innerHTML = '';
+
+  events.forEach(event => {
+
+    eventsContainer.innerHTML += `
+      <div class="event">
+        <div class="event-year">
+          ${event.year}
+        </div>
+update();
