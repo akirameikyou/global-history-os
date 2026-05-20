@@ -5,8 +5,12 @@ export function createGlobe(container){
   const globe = Globe()(container)
 
     .globeImageUrl(
-      'https://unpkg.com/three-globe/example/img/earth-night.jpg'
-    )
+'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
+)
+
+.bumpImageUrl(
+'https://unpkg.com/three-globe/example/img/earth-topology.png'
+)
 
     .backgroundColor('#000')
 
