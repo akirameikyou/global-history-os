@@ -36,8 +36,15 @@
     </div>
 
     <script src="https://unpkg.com/three"></script>
-    <script src="https://unpkg.com/globe.gl"></script>
-    
-    <script type="module" src="./main.js"></script>
+<script src="https://unpkg.com/globe.gl"></script>
+
+<script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+      "globe.gl": "https://unpkg.com/globe.gl"
+    }
+  }
+</script>
 </body>
 </html>
