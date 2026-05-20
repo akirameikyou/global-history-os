@@ -1,7 +1,6 @@
 import { generateWorldState } from './engine/historyEngine.js';
 import { createGlobe, renderWorld } from './render/renderGlobe.js';
 
-
 const DATA_URL = './data/data.json';
 
 let globalData = null;
@@ -12,11 +11,16 @@ let globe = null;
  */
 async function init() {
     try {
-        // データの読み込み
+        // データの読み込みと文字コードの強制指定
         const response = await fetch(DATA_URL);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
-        const json = await response.json();
+        // 【文字化け対策】バイナリとして読み込み、UTF-8としてデコードする
+        const buffer = await response.arrayBuffer();
+        const decoder = new TextDecoder('utf-8');
+        const text = decoder.decode(buffer);
+        const json = JSON.parse(text);
+        
         globalData = json.events; // data.jsonの "events" 配列を取得
 
         // 地球儀の土台を作成
