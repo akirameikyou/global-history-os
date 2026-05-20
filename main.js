@@ -68,6 +68,8 @@ STATE
 
 let currentState = null;
 
+let labels = [];
+
 /* =========================
 RENDER
 ========================= */
@@ -94,7 +96,9 @@ currentState
 yearLabel.innerHTML =
 year;
 
-/* left panel */
+/* =========================
+LEFT PANEL
+========================= */
 
 eventsList.innerHTML = '';
 
@@ -124,17 +128,17 @@ eventsList.appendChild(div);
 }
 );
 
-/* labels */
+/* =========================
+LABELS
+========================= */
 
 updateLabels();
 
 }
 
 /* =========================
-LABELS
+UPDATE LABELS
 ========================= */
-
-let labels = [];
 
 function updateLabels(){
 
@@ -172,7 +176,7 @@ lng:event.lng
 }
 
 /* =========================
-ANIMATION LOOP
+ANIMATE LABELS
 ========================= */
 
 function animateLabels(){
@@ -194,14 +198,69 @@ return;
 
 }
 
-/* softer visibility */
+/* =========================
+CAMERA CHECK
+========================= */
 
-if(
-pos.x < -300 ||
-pos.x > window.innerWidth + 300 ||
-pos.y < -300 ||
-pos.y > window.innerHeight + 300
-){
+const cam =
+globe.camera().position;
+
+/* lat lng → sphere */
+
+const phi =
+(90 - label.lat) *
+Math.PI / 180;
+
+const theta =
+(label.lng) *
+Math.PI / 180;
+
+/* sphere normal */
+
+const x =
+Math.sin(phi) *
+Math.cos(theta);
+
+const y =
+Math.cos(phi);
+
+const z =
+-Math.sin(phi) *
+Math.sin(theta);
+
+/* camera normalize */
+
+const camLen =
+Math.sqrt(
+
+(cam.x * cam.x) +
+(cam.y * cam.y) +
+(cam.z * cam.z)
+
+);
+
+const nx =
+cam.x / camLen;
+
+const ny =
+cam.y / camLen;
+
+const nz =
+cam.z / camLen;
+
+/* dot */
+
+const dot =
+
+(x * nx) +
+(y * ny) +
+(z * nz);
+
+/* =========================
+FRONT ONLY
+========================= */
+
+if(dot < 0.18){
 
 label.el.style.display =
 'none';
@@ -210,22 +269,51 @@ return;
 
 }
 
+/* =========================
+POSITION
+========================= */
+
 label.el.style.display =
 'block';
 
+/* optional offsets */
+
+let offsetX = 0;
+let offsetY = 0;
+
+/* Japan side */
+
+if(label.lng > 120){
+
+offsetX = -20;
+
+}
+
+/* Hawaii side */
+
+if(label.lng < -100){
+
+offsetX = 30;
+
+}
+
 label.el.style.left =
-pos.x + 'px';
+(pos.x + offsetX) + 'px';
 
 label.el.style.top =
-pos.y + 'px';
+(pos.y + offsetY) + 'px';
 
 });
+
+/* next frame */
 
 requestAnimationFrame(
 animateLabels
 );
 
 }
+
+/* start loop */
 
 animateLabels();
 
