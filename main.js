@@ -1,3 +1,41 @@
+function updateLabels(
+globe,
+state
+){
+
+const layer =
+document.getElementById(
+'labelsLayer'
+);
+
+layer.innerHTML = '';
+
+const labels = [];
+
+state.visibleEvents.forEach(event=>{
+
+const div =
+document.createElement('div');
+
+div.className =
+'city-label';
+
+div.innerHTML =
+event.title;
+
+layer.appendChild(div);
+
+labels.push({
+
+el:div,
+
+lat:event.lat,
+lng:event.lng
+
+});
+
+});
+
 function animateLabels(){
 
 labels.forEach(label=>{
@@ -45,3 +83,5 @@ animateLabels
 }
 
 animateLabels();
+
+}
