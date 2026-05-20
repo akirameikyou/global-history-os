@@ -1,33 +1,33 @@
 import { generateWorldState }
-from '/engine/historyEngine.js';
+from "./engine/historyEngine.js";
 
 import {
 createGlobe,
 renderState
 }
-from '/render/renderGlobe.js';
+from "./render/renderGlobe.js";
 
-const DATA_URL = '/data/data.json';
+const DATA_URL = "./data/data.json";
 
-const response = await fetch(DATA_URL,{
-cache:'no-store'
-});
+const response =
+await fetch(DATA_URL);
 
-const data = await response.json();
+const data =
+await response.json();
 
 const globe =
 createGlobe(
-document.getElementById('globeViz')
+document.getElementById("globeViz")
 );
 
 const slider =
-document.getElementById('yearSlider');
+document.getElementById("yearSlider");
 
 const yearLabel =
-document.getElementById('yearLabel');
+document.getElementById("yearLabel");
 
 const eventsContainer =
-document.getElementById('events');
+document.getElementById("events");
 
 function update(){
 
@@ -47,7 +47,7 @@ globe,
 state
 );
 
-eventsContainer.innerHTML = '';
+eventsContainer.innerHTML = "";
 
 state.visibleEvents.forEach(event=>{
 
@@ -72,7 +72,7 @@ ${event.title}
 }
 
 slider.addEventListener(
-'input',
+"input",
 update
 );
 
