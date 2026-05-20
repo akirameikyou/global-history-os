@@ -1,62 +1,149 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>GLOBAL HISTORY MAP</title>
+<title>GLOBAL HISTORY MAP</title>
 
-  <style>
-    html,body{
-      margin:0;
-      overflow:hidden;
-      background:#000;
-      color:white;
-      font-family:"Noto Sans JP",sans-serif;
-    }
+<style>
 
-    #globeViz{
-      position:fixed;
-      inset:0;
-    }
+html,body{
+margin:0;
+overflow:hidden;
+background:#000;
+color:white;
+font-family:"Noto Sans JP",sans-serif;
+}
 
-    .title{
-      position:absolute;
-      top:18px;
-      width:100%;
-      text-align:center;
-      z-index:10;
-      pointer-events:none;
-    }
+#globeViz{
+position:fixed;
+inset:0;
+}
 
-    .title h1{
-      margin:0;
-      font-size:48px;
-      letter-spacing:6px;
-    }
+.title{
+position:absolute;
+top:18px;
+width:100%;
+text-align:center;
+z-index:10;
+pointer-events:none;
+}
 
-    .title p{
-      margin-top:8px;
-      color:#46dfff;
-      letter-spacing:4px;
-      font-size:12px;
-    }
+.title h1{
+margin:0;
+font-size:48px;
+letter-spacing:6px;
+}
 
-    .timeline{
-      position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      bottom:60px;
-      width:60%;
-      z-index:20;
-    }
+.title p{
+margin-top:8px;
+color:#46dfff;
+letter-spacing:4px;
+font-size:12px;
+}
 
-    #yearLabel{
-      text-align:center;
-      margin-top:14px;
-      color:#46dfff;
-      font-size:32px;
-      letter-spacing:4px;
-    }
+.timeline{
+position:absolute;
+left:50%;
+transform:translateX(-50%);
+bottom:60px;
+width:60%;
+z-index:20;
+}
 
+#yearLabel{
+text-align:center;
+margin-top:14px;
+color:#46dfff;
+font-size:32px;
+letter-spacing:4px;
+}
+
+input[type="range"]{
+width:100%;
+accent-color:#46dfff;
+}
+
+.left-panel{
+position:absolute;
+top:120px;
+left:24px;
+width:320px;
+height:60vh;
+overflow:auto;
+background:rgba(0,0,0,.35);
+border:1px solid rgba(255,255,255,.08);
+padding:24px;
+z-index:10;
+backdrop-filter:blur(10px);
+}
+
+.left-panel h2{
+color:#46dfff;
+letter-spacing:4px;
+font-size:14px;
+margin-top:0;
+}
+
+.event{
+margin-bottom:22px;
+border-left:3px solid #46dfff;
+padding-left:14px;
+}
+
+.event-year{
+color:#46dfff;
+letter-spacing:2px;
+margin-bottom:6px;
+}
+
+.event-title{
+line-height:1.8;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="globeViz"></div>
+
+<div class="title">
+
+<h1>GLOBAL HISTORY MAP</h1>
+
+<p>HISTORY OPERATING SYSTEM</p>
+
+</div>
+
+<div class="left-panel">
+
+<h2>WORLD EVENTS</h2>
+
+<div id="events"></div>
+
+</div>
+
+<div class="timeline">
+
+<input
+id="yearSlider"
+type="range"
+min="1840"
+max="1870"
+value="1841"
+/>
+
+<div id="yearLabel">
+1841
+</div>
+
+</div>
+
+<script type="module" src="main.js"></script>
+
+</body>
 </html>
