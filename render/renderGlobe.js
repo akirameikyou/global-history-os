@@ -40,19 +40,6 @@ state.visibleEvents
 
 .pointRadius(0.12)
 
-.labelsData(state.labels)
-
-.labelText(d=>d.text)
-
-.labelSize(1.8)
-
-.labelDotRadius(0.25)
-
-.labelColor(()=>'#ffffff')
-
-.labelResolution(8)
-
-.labelIncludeDot(true)
 
 .arcsData(state.arcs)
 
