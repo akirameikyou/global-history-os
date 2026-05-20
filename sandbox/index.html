@@ -127,9 +127,36 @@ label.lng,
 0.02
 );
 
-const surface =
-pos.clone().normalize();
+const lat =
+label.lat * Math.PI / 180;
 
+const lng =
+-label.lng * Math.PI / 180;
+
+const x =
+Math.cos(lat) *
+Math.cos(lng);
+
+const y =
+Math.sin(lat);
+
+const z =
+Math.cos(lat) *
+Math.sin(lng);
+
+const length =
+Math.sqrt(
+x*x + y*y + z*z
+);
+
+const nx = x / length;
+const ny = y / length;
+const nz = z / length;
+
+const dot =
+(nx * camPos.x) +
+(ny * camPos.y) +
+(nz * camPos.z);
 const dot =
 surface.dot(camPos);
 
