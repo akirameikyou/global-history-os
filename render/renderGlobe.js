@@ -1,5 +1,4 @@
 import Globe from 'https://esm.sh/globe.gl';
-import * as THREE from 'https://esm.sh/three';
 
 export function createGlobe(container){
 
