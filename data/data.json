@@ -2,17 +2,21 @@
   "events": [
     {
       "id": "manjiro-drift",
-      "title": "ジョン万次郎：鳥島（漂流）", 
+      "title": "Manjiro (Drift)",
       "year": 1841,
       "lat": 30.48, "lng": 140.3,
-      "category": "migration"
+      "category": "migration",
+      "importance": 0.7,
+      "causality": { "consequences": ["black-ships"] }
     },
     {
-      "id": "perry-birth",
-      "title": "ペリー生誕：ニューポート",
-      "year": 1830,
-      "lat": 41.49, "lng": -71.31,
-      "category": "person"
+      "id": "black-ships",
+      "title": "Black Ships (Perry)",
+      "year": 1853,
+      "lat": 35.2, "lng": 139.6,
+      "category": "politics",
+      "importance": 1.0,
+      "causality": { "consequences": ["treaty-kanagawa"] }
     }
   ]
 }
