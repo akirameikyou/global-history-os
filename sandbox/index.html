@@ -58,6 +58,11 @@ will-change:transform,left,top;
 import Globe from 'https://esm.sh/globe.gl@2.32.0';
 
 const world =
+world.pointOfView({
+  lat:30,
+  lng:140,
+  altitude:2.2
+});  
 Globe()(document.getElementById('globeViz'))
 
 .globeImageUrl(
