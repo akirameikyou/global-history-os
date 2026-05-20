@@ -1,17 +1,18 @@
-// 読み込み方法を「名前付きインポート」ではなく「すべてをまとめて読み込む」形式に変更します
-import * as GlobeModule from 'globe.gl';
-
-// 読み込み先が GlobeModule.default にある場合と、GlobeModule 自体にある場合の両方に対応します
-const Globe = GlobeModule.default || GlobeModule;
+// globe.gl はデフォルトで関数としてエクスポートされています
+import Globe from 'globe.gl';
 
 export function createGlobe(container) {
-    return Globe(container)
+    // Globe() を実行する形で初期化します
+    const globe = Globe()(container)
         .globeImageUrl('//unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
         .backgroundColor('rgba(0,0,0,0)')
         .atmosphereColor('#46dfff')
         .atmosphereAltitude(0.14);
+    
+    return globe;
 }
 
 export function renderWorld(globe, state) {
-    console.log("Current Rendering State:", state);
+    if (!globe) return;
+    console.log("Rendering state:", state);
 }
