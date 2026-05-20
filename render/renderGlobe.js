@@ -30,7 +30,19 @@ globe
 state.visibleEvents
 )
 .labelsData(state.labels)
+.labelText(d=>d.text)
 
+.labelLat(d=>d.lat)
+
+.labelLng(d=>d.lng)
+
+.labelColor(()=>'#ffffff')
+
+.labelSize(1.4)
+
+.labelResolution(6)
+
+.labelDotRadius(0.3)
 .labelText(d=>d.text)
 
 .labelLat(d=>d.lat)
