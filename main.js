@@ -1,116 +1,155 @@
-function animateLabels(){
+import { generateWorldState }
+from "./engine/historyEngine.js";
 
-labels.forEach(label=>{
+import {
+createGlobe,
+renderState
+}
+from "./render/renderGlobe.js";
 
-const pos =
-globe.getScreenCoords(
-label.lat,
-label.lng
+/* =========================
+LOAD DATA
+========================= */
+
+const response =
+await fetch(
+"./data/data.json"
 );
 
-if(!pos){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
+const data =
+await response.json();
 
 /* =========================
-CAMERA
+CREATE GLOBE
 ========================= */
 
-const cam =
-globe.camera().position;
+const globe =
+createGlobe(
+document.getElementById(
+"globeViz"
+)
+);
 
-/* lat lng */
+/* auto rotate */
 
-const phi =
-(90 - label.lat) *
-Math.PI / 180;
+globe.controls().autoRotate =
+true;
 
-const theta =
-(label.lng) *
-Math.PI / 180;
-
-/* sphere position */
-
-const x =
-Math.sin(phi) *
-Math.cos(theta);
-
-const y =
-Math.cos(phi);
-
-const z =
--Math.sin(phi) *
-Math.sin(theta);
-
-/* dot */
-
-const dot =
-
-(x * cam.x) +
-(y * cam.y) +
-(z * cam.z);
+globe.controls().autoRotateSpeed =
+0.4;
 
 /* =========================
-VISIBILITY
+UI
 ========================= */
 
-/*
-ここ重要
+const slider =
+document.getElementById(
+"eraSlider"
+);
 
-0 = 地平線まで表示
-0.25 = 少し手前
-0.45 = 表側のみ
-*/
+const yearLabel =
+document.getElementById(
+"yearLabel"
+);
 
-if(dot < 0.45){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
+const eventsList =
+document.getElementById(
+"eventsList"
+);
 
 /* =========================
-SHOW
+RENDER
 ========================= */
 
-label.el.style.display =
-'block';
+function renderApp(year){
 
-/* offsets */
+const state =
+generateWorldState(
+data,
+year
+);
 
-let offsetX = 0;
+/* globe */
 
-if(label.lng > 100){
+renderState(
+globe,
+state
+);
 
-offsetX = -25;
+/* year */
+
+yearLabel.innerHTML =
+year;
+
+/* left panel */
+
+eventsList.innerHTML = '';
+
+state.visibleEvents.forEach(
+event=>{
+
+const div =
+document.createElement('div');
+
+div.className =
+'event-item';
+
+div.innerHTML = `
+
+<div class="event-year">
+${event.year}
+</div>
+
+<div class="event-title">
+${event.title}
+</div>
+
+`;
+
+eventsList.appendChild(div);
 
 }
-
-if(label.lng < -100){
-
-offsetX = 30;
-
-}
-
-label.el.style.left =
-(pos.x + offsetX) + 'px';
-
-label.el.style.top =
-pos.y + 'px';
-
-});
-
-/* next */
-
-requestAnimationFrame(
-animateLabels
 );
 
 }
+
+/* =========================
+INITIAL
+========================= */
+
+renderApp(1841);
+
+/* =========================
+SLIDER
+========================= */
+
+slider.addEventListener(
+"input",
+e=>{
+
+const year =
+parseInt(
+e.target.value
+);
+
+renderApp(year);
+
+/* rotate pause */
+
+globe.controls().autoRotate =
+false;
+
+clearTimeout(
+window.rotateTimer
+);
+
+window.rotateTimer =
+setTimeout(()=>{
+
+globe.controls().autoRotate =
+true;
+
+},1500);
+
+}
+);
