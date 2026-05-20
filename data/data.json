@@ -1,24 +1,83 @@
 {
   "events":[
+
     {
+      "id":"torishima",
+
       "title":"鳥島漂着",
+
       "year":1841,
+
       "lat":30.48,
-      "lng":140.30
+      "lng":140.30,
+
+      "category":"survival",
+
+      "importance":0.9,
+
+      "causality":{
+        "consequences":[
+          "hawaii"
+        ]
+      }
     },
 
     {
+      "id":"hawaii",
+
       "title":"ハワイ渡航",
+
       "year":1843,
+
       "lat":21.30,
-      "lng":-157.85
+      "lng":-157.85,
+
+      "category":"migration",
+
+      "importance":0.85,
+
+      "causality":{
+        "consequences":[
+          "black-ships"
+        ]
+      }
     },
 
     {
+      "id":"black-ships",
+
       "title":"黒船来航",
+
       "year":1853,
+
       "lat":35.44,
-      "lng":139.64
+      "lng":139.64,
+
+      "category":"politics",
+
+      "importance":1.0,
+
+      "causality":{
+        "consequences":[
+          "opening-japan"
+        ]
+      }
+    },
+
+    {
+      "id":"opening-japan",
+
+      "title":"日本開国",
+
+      "year":1854,
+
+      "lat":35.68,
+      "lng":139.76,
+
+      "category":"civilization",
+
+      "importance":0.95
     }
+
   ]
 }
