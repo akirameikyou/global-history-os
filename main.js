@@ -1,3 +1,8 @@
+import Globe from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
+
+import * as THREE
+from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+
 import { generateWorldState }
 from "./engine/historyEngine.js";
 
@@ -7,10 +12,13 @@ renderState
 }
 from "./render/renderGlobe.js";
 
-const DATA_URL = "./data/data.json";
+const DATA_URL =
+"./data/data.json";
 
 const response =
-await fetch(DATA_URL);
+await fetch(DATA_URL,{
+cache:'no-store'
+});
 
 const data =
 await response.json();
@@ -34,7 +42,8 @@ function update(){
 const year =
 parseInt(slider.value);
 
-yearLabel.innerHTML = year;
+yearLabel.innerHTML =
+year;
 
 const state =
 generateWorldState(
@@ -47,7 +56,8 @@ globe,
 state
 );
 
-eventsContainer.innerHTML = "";
+eventsContainer.innerHTML =
+"";
 
 state.visibleEvents.forEach(event=>{
 
