@@ -46,15 +46,21 @@ color:white;
 
 pointer-events:none;
 
-font-weight:600;
+font-weight:500;
 
 white-space:nowrap;
 
 transform:
 translate(-50%,-50%);
 
+font-size:10px;
+
+letter-spacing:0.4px;
+
 text-shadow:
-0 0 8px rgba(0,255,255,0.9);
+0 0 6px rgba(0,255,255,0.55);
+
+opacity:0.92;
 
 }
 
@@ -118,9 +124,9 @@ window.innerHeight
 world.pointOfView({
 
 lat:30,
-lng:140,
+lng:160,
 
-altitude:2.2
+altitude:2.0
 
 });
 
@@ -137,14 +143,8 @@ event.lat,
 lng:
 event.lng,
 
-year:
-event.year,
-
 importance:
-event.importance,
-
-relatedEvents:
-event.relatedEvents
+event.importance
 
 }));
 
@@ -163,6 +163,24 @@ e=>e.id===id
 
 if(!target) return;
 
+let color = '#66ffff';
+
+if(
+event.tags.includes('開国')
+){
+
+color = '#ffe066';
+
+}
+
+if(
+event.tags.includes('漂流')
+){
+
+color = '#88ffcc';
+
+}
+
 arcs.push({
 
 startLat:
@@ -177,12 +195,7 @@ target.lat,
 endLng:
 target.lng,
 
-color:[
-
-'#00ffff',
-'#ffff88'
-
-]
+color
 
 });
 
@@ -194,15 +207,15 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.25)
+.arcStroke(0.18)
 
-.arcDashLength(0.25)
+.arcAltitude(0.22)
 
-.arcDashGap(0.12)
+.arcDashLength(1)
 
-.arcDashAnimateTime(4000)
+.arcDashGap(0)
 
-.arcAltitude(0.12);
+.arcDashAnimateTime(0);
 
 world.ringsData([
 
@@ -211,15 +224,15 @@ world.ringsData([
 lat:36,
 lng:138,
 
-maxR:14,
+maxR:10,
 
-propagationSpeed:0.6,
+propagationSpeed:0.35,
 
-repeatPeriod:2600,
+repeatPeriod:3200,
 
 color:()=>
 
-'rgba(0,255,255,0.22)'
+'rgba(0,255,255,0.12)'
 
 }
 
@@ -249,17 +262,6 @@ document
 div.className =
 'city-label';
 
-const size =
-
-8 +
-
-(label.importance
-* 0.08);
-
-div.style.fontSize =
-
-size + 'px';
-
 div.innerText =
 label.name;
 
@@ -272,10 +274,7 @@ el:div,
 
 lat:label.lat,
 
-lng:label.lng,
-
-importance:
-label.importance
+lng:label.lng
 
 });
 
@@ -339,33 +338,15 @@ Math.cos(lat)
 *
 Math.sin(lng);
 
-const surface = {
-
-x,
-y,
-z
-
-};
-
 const dot =
 
-surface.x
-*
-camPos.x
-
+x * camPos.x
 +
-
-surface.y
-*
-camPos.y
-
+y * camPos.y
 +
+z * camPos.z;
 
-surface.z
-*
-camPos.z;
-
-if(dot < 0.15){
+if(dot < 0.18){
 
 label.el.style.display =
 'none';
