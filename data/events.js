@@ -6,8 +6,9 @@ id:'manjiro_birth',
 
 title:'中浜万次郎 誕生',
 
-label_en:
-'John Manjiro',
+placeName:'Cape Ashizuri',
+
+label_en:'John Manjiro',
 
 year:1827,
 
@@ -42,8 +43,9 @@ id:'manjiro_shipwreck',
 
 title:'漂流・無人島',
 
-label_en:
-'Shipwreck',
+placeName:'Pacific Ocean',
+
+label_en:'Shipwreck',
 
 year:1841,
 
@@ -79,8 +81,9 @@ id:'manjiro_america',
 
 title:'アメリカ渡航',
 
-label_en:
-'America',
+placeName:'New Bedford',
+
+label_en:'America',
 
 year:1843,
 
@@ -115,8 +118,9 @@ id:'manjiro_return',
 
 title:'日本帰国',
 
-label_en:
-'Return',
+placeName:'Naha',
+
+label_en:'Return',
 
 year:1851,
 
@@ -151,8 +155,9 @@ id:'kaikoku',
 
 title:'日本開国',
 
-label_en:
-'Opening',
+placeName:'Tokyo',
+
+label_en:'Opening',
 
 year:1854,
 
@@ -187,13 +192,14 @@ id:'meiji_restoration',
 
 title:'明治維新',
 
-label_en:
-'Meiji',
+placeName:'Kyoto',
+
+label_en:'Meiji',
 
 year:1868,
 
-lat:35.68,
-lng:139.76,
+lat:35.01,
+lng:135.76,
 
 importance:100,
 
