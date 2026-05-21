@@ -156,6 +156,43 @@ world.arcsData(arcs)
 .arcDashAnimateTime(2500)
 
 .arcAltitude(0.18);
+
+world.ringsData([
+
+{
+
+lat:36,
+lng:138,
+
+maxR:18,
+
+propagationSpeed:0.8,
+
+repeatPeriod:1800,
+
+color:()=>
+
+'rgba(0,255,255,0.45)'
+
+}
+
+])
+
+.ringColor('color')
+
+.ringMaxRadius('maxR')
+
+.ringPropagationSpeed(
+
+'propagationSpeed'
+
+)
+
+.ringRepeatPeriod(
+
+'repeatPeriod'
+
+);  
 const labelEls = [];
 
 labels.forEach(label=>{
