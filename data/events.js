@@ -6,6 +6,9 @@ id:'manjiro_birth',
 
 title:'中浜万次郎 誕生',
 
+label_en:
+'John Manjiro',
+
 year:1827,
 
 lat:32.78,
@@ -38,6 +41,9 @@ relatedEvents:[
 id:'manjiro_shipwreck',
 
 title:'漂流・無人島',
+
+label_en:
+'Shipwreck',
 
 year:1841,
 
@@ -73,6 +79,9 @@ id:'manjiro_america',
 
 title:'アメリカ渡航',
 
+label_en:
+'America',
+
 year:1843,
 
 lat:41.63,
@@ -105,6 +114,9 @@ relatedEvents:[
 id:'manjiro_return',
 
 title:'日本帰国',
+
+label_en:
+'Return',
 
 year:1851,
 
@@ -139,6 +151,9 @@ id:'kaikoku',
 
 title:'日本開国',
 
+label_en:
+'Opening',
+
 year:1854,
 
 lat:35.45,
@@ -171,6 +186,9 @@ relatedEvents:[
 id:'meiji_restoration',
 
 title:'明治維新',
+
+label_en:
+'Meiji',
 
 year:1868,
 
