@@ -112,7 +112,49 @@ relatedEvents:
 event.relatedEvents
 
 }));
+const arcs = [];
 
+events.forEach(event=>{
+
+event.relatedEvents.forEach(id=>{
+
+const target =
+events.find(e=>e.id===id);
+
+if(!target) return;
+
+arcs.push({
+
+startLat:event.lat,
+startLng:event.lng,
+
+endLat:target.lat,
+endLng:target.lng,
+
+color:[
+'#00ffff',
+'#ffff00'
+]
+
+});
+
+});
+
+});
+
+world.arcsData(arcs)
+
+.arcColor('color')
+
+.arcStroke(0.7)
+
+.arcDashLength(0.4)
+
+.arcDashGap(0.2)
+
+.arcDashAnimateTime(2500)
+
+.arcAltitude(0.18);
 const labelEls = [];
 
 labels.forEach(label=>{
