@@ -10,7 +10,7 @@ placeName:'Cape Ashizuri',
 
 label_en:'John Manjiro',
 
-placeType:'person',
+layer:'event',
 
 year:1827,
 
@@ -39,7 +39,7 @@ placeName:'Torishima',
 
 label_en:'Shipwreck',
 
-placeType:'event',
+layer:'event',
 
 year:1841,
 
@@ -69,7 +69,7 @@ placeName:'America',
 
 label_en:'America',
 
-placeType:'civilization',
+layer:'country',
 
 year:1843,
 
@@ -98,7 +98,7 @@ placeName:'Naha',
 
 label_en:'Return',
 
-placeType:'event',
+layer:'city',
 
 year:1851,
 
@@ -127,7 +127,7 @@ placeName:'Japan',
 
 label_en:'Japan',
 
-placeType:'nation',
+layer:'country',
 
 year:1854,
 
@@ -156,7 +156,7 @@ placeName:'Tokyo',
 
 label_en:'Tokyo',
 
-placeType:'city',
+layer:'city',
 
 year:1868,
 
