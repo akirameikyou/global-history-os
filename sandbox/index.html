@@ -1,16 +1,10 @@
 <!DOCTYPE html>
-<html lang="ja">
-
+<html lang="en">
 <head>
-
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
-
-<title>History OS</title>
+<title>History OS Sandbox</title>
 
 <style>
 
@@ -22,14 +16,16 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:black;
-font-family:sans-serif;
+font-family:
+Arial,
+sans-serif;
 
 }
 
 #globeViz{
 
-position:absolute;
-inset:0;
+width:100vw;
+height:100vh;
 
 }
 
@@ -39,27 +35,40 @@ position:absolute;
 
 color:white;
 
-font-size:10px;
-font-weight:400;
+font-size:15px;
+
+font-weight:500;
 
 pointer-events:none;
+
+text-shadow:
+0 0 6px rgba(120,220,255,0.9);
 
 white-space:nowrap;
 
 transform:
 translate(-50%,-50%);
 
-letter-spacing:0.5px;
+transition:
+opacity 0.2s;
 
-text-shadow:
-0 0 6px rgba(0,255,255,0.65);
+}
 
-opacity:0.92;
+.country-label{
+
+font-size:22px;
+
+font-weight:600;
+
+opacity:0.45;
+
+letter-spacing:2px;
+
+text-transform:uppercase;
 
 }
 
 </style>
-
 </head>
 
 <body>
@@ -68,68 +77,79 @@ opacity:0.92;
 
 <script type="module">
 
-import Globe from
-'https://esm.sh/globe.gl@2.32.0';
+import * as THREE
+from 'https://esm.sh/three@0.160.0';
+
+import Globe
+from 'https://esm.sh/globe.gl';
 
 import { events }
 from '../data/events.js';
 
 const world =
-
-Globe()(
+new Globe(
 document.getElementById(
 'globeViz'
 )
 )
 
 .globeImageUrl(
-'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
+'https://unpkg.com/three-globe/example/img/earth-night.jpg'
 )
 
-.backgroundColor('black')
+.bumpImageUrl(
+'https://unpkg.com/three-globe/example/img/earth-topology.png'
+)
 
-.width(window.innerWidth)
+.backgroundColor(
+'rgba(0,0,0,1)'
+);
 
-.height(window.innerHeight);
+world.controls().autoRotate =
+true;
 
-world.pointOfView({
+world.controls().autoRotateSpeed =
+0.35;
 
-lat:30,
-lng:140,
-altitude:2.2
-
-});
+world.camera().position.z =
+320;
 
 const arcs = [];
 
 events.forEach(event=>{
 
-event.relatedEvents.forEach(id=>{
+if(!event.relatedEvents) return;
+
+event.relatedEvents.forEach(targetId=>{
 
 const target =
-events.find(e=>e.id===id);
+events.find(
+e=>e.id === targetId
+);
 
 if(!target) return;
 
-const dx =
-event.lat - target.lat;
+const distance = Math.sqrt(
 
-const dy =
-event.lng - target.lng;
+Math.pow(
+event.lat - target.lat,
+2
+)
 
-const dist = Math.sqrt(
-(dx * dx) +
-(dy * dy)
++
+
+Math.pow(
+event.lng - target.lng,
+2
+)
+
 );
 
-let altitude =
-dist * 0.0035;
-
-if(altitude < 0.03)
-altitude = 0.03;
-
-if(altitude > 0.22)
-altitude = 0.22;
+const altitude =
+Math.min(
+distance * 0.0015,
+0.32
+);
 
 arcs.push({
 
@@ -139,7 +159,8 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:event.lineColor,
+color:event.lineColor
+|| '#66e0ff',
 
 altitude
 
@@ -153,9 +174,9 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.12)
-
 .arcAltitude('altitude')
+
+.arcStroke(0.45)
 
 .arcDashLength(1)
 
@@ -165,13 +186,21 @@ world.arcsData(arcs)
 
 const labelEls = [];
 
-events.forEach(event => {
+events.forEach(event=>{
 
 const div =
 document.createElement('div');
 
 div.className =
 'city-label';
+
+if(event.layer === 'country'){
+
+div.classList.add(
+'country-label'
+);
+
+}
 
 div.innerText =
 event.placeName;
@@ -185,42 +214,74 @@ el:div,
 lat:event.lat,
 lng:event.lng,
 
-event
+layer:event.layer
 
 });
 
 });
-
-const COUNTRY_ZOOM = 2.4;
-const CITY_ZOOM = 1.8;
-
-function getZoomLevel(){
-
-const altitude =
-world.pointOfView().altitude;
-
-if(altitude > COUNTRY_ZOOM){
-
-return 'country';
-
-}
-
-if(altitude > CITY_ZOOM){
-
-return 'city';
-
-}
-
-return 'event';
-
-}
 
 function updateLabels(){
 
-const zoomLevel =
-getZoomLevel();
+const camPos =
+world.camera()
+.position
+.clone()
+.normalize();
 
-labelEls.forEach(label => {
+labelEls.forEach(label=>{
+
+const phi =
+(90 - label.lat)
+* Math.PI / 180;
+
+const theta =
+(label.lng + 180)
+* Math.PI / 180;
+
+const pos =
+new THREE.Vector3(
+-Math.sin(phi)
+* Math.cos(theta),
+
+Math.cos(phi),
+
+Math.sin(phi)
+* Math.sin(theta)
+);
+
+const dot =
+camPos.dot(pos);
+
+const distance =
+world.camera()
+.position.length();
+
+let visible = false;
+
+if(label.layer === 'country'){
+
+visible =
+dot > 0.35
+&&
+distance > 260;
+
+}else if(label.layer === 'city'){
+
+visible =
+dot > 0.15
+&&
+distance < 260;
+
+}
+
+if(!visible){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
 
 const screen =
 world.getScreenCoords(
@@ -237,77 +298,14 @@ return;
 
 }
 
-const x =
-screen.x;
-
-const y =
-screen.y;
-
-const centerX =
-window.innerWidth / 2;
-
-const centerY =
-window.innerHeight / 2;
-
-const dx =
-x - centerX;
-
-const dy =
-y - centerY;
-
-const dist =
-Math.sqrt(dx * dx + dy * dy);
-
-const radius =
-Math.min(centerX, centerY) * 0.92;
-
-if(dist > radius){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-if(
-
-zoomLevel === 'country'
-&&
-label.event.layer !== 'country'
-
-){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-if(
-
-zoomLevel === 'city'
-&&
-label.event.layer === 'event'
-
-){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
 label.el.style.display =
 'block';
 
 label.el.style.left =
-`${x}px`;
+`${screen.x}px`;
 
 label.el.style.top =
-`${y}px`;
+`${screen.y}px`;
 
 });
 
@@ -319,24 +317,6 @@ updateLabels
 
 updateLabels();
 
-window.addEventListener(
-
-'resize',
-
-()=>{
-
-world
-
-.width(window.innerWidth)
-
-.height(window.innerHeight);
-
-}
-
-);
-
 </script>
-
 </body>
-
 </html>
