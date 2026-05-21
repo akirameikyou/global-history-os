@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
 
@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>History OS Sandbox</title>
+<title>Sandbox Globe</title>
 
 <style>
 
@@ -22,17 +22,14 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:black;
-
-font-family:
-Arial,
-sans-serif;
+font-family:sans-serif;
 
 }
 
 #globeViz{
 
-width:100vw;
-height:100vh;
+position:absolute;
+inset:0;
 
 }
 
@@ -42,9 +39,8 @@ position:absolute;
 
 color:white;
 
-font-size:13px;
-
-font-weight:500;
+font-size:14px;
+font-weight:bold;
 
 pointer-events:none;
 
@@ -54,7 +50,7 @@ transform:
 translate(-50%,-50%);
 
 text-shadow:
-0 0 5px rgba(120,220,255,0.75);
+0 0 10px rgba(0,0,0,1);
 
 }
 
@@ -68,28 +64,26 @@ text-shadow:
 
 <script type="module">
 
-import Globe
-from 'https://esm.sh/globe.gl';
+import Globe from
+'https://esm.sh/globe.gl@2.32.0';
 
-import { events }
-from '../data/events.js';
+const world =
 
-const world = Globe()(
-
+Globe()(
 document.getElementById(
 'globeViz'
-
 )
-
 )
 
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
-.backgroundColor(
-'black'
-);
+.backgroundColor('black')
+
+.width(window.innerWidth)
+
+.height(window.innerHeight);
 
 world.pointOfView({
 
@@ -99,18 +93,32 @@ altitude:2.2
 
 });
 
+import { events }
+from '../data/events.js';
+
+const labels =
+events.map(event => ({
+
+name:event.placeName,
+
+lat:event.lat,
+lng:event.lng,
+
+importance:event.importance,
+
+relatedEvents:
+event.relatedEvents
+
+}));
+
 const arcs = [];
 
 events.forEach(event=>{
 
-if(!event.relatedEvents) return;
-
-event.relatedEvents.forEach(targetId=>{
+event.relatedEvents.forEach(id=>{
 
 const target =
-events.find(
-e=>e.id === targetId
-);
+events.find(e=>e.id===id);
 
 if(!target) return;
 
@@ -122,9 +130,10 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:
-event.lineColor
-|| '#66e0ff'
+color:[
+'#00ffff',
+'#ffff00'
+]
 
 });
 
@@ -136,23 +145,19 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcAltitudeAutoScale(
-0.22
-)
-
-.arcStroke(
-0.12
-)
+.arcStroke(0.12)
 
 .arcDashLength(1)
 
 .arcDashGap(0)
 
-.arcDashAnimateTime(0);
+.arcDashAnimateTime(0)
+
+.arcAltitudeAutoScale(0.22);
 
 const labelEls = [];
 
-events.forEach(event=>{
+labels.forEach(label=>{
 
 const div =
 document.createElement('div');
@@ -160,17 +165,24 @@ document.createElement('div');
 div.className =
 'city-label';
 
-div.innerText =
-event.placeName;
+div.style.fontSize =
+'13px';
 
-document.body.appendChild(div);
+div.innerText =
+label.name;
+
+document.body
+.appendChild(div);
 
 labelEls.push({
 
 el:div,
 
-lat:event.lat,
-lng:event.lng
+lat:label.lat,
+lng:label.lng,
+
+importance:
+label.importance
 
 });
 
@@ -178,9 +190,17 @@ lng:event.lng
 
 function updateLabels(){
 
+const camPos =
+
+world.camera()
+.position
+.clone()
+.normalize();
+
 labelEls.forEach(label=>{
 
 const screen =
+
 world.getScreenCoords(
 
 label.lat,
@@ -188,15 +208,7 @@ label.lng
 
 );
 
-if(
-
-!screen
-||
-screen.x === undefined
-||
-screen.y === undefined
-
-){
+if(!screen){
 
 label.el.style.display =
 'none';
@@ -205,37 +217,44 @@ return;
 
 }
 
-const x =
-screen.x;
+const pos =
 
-const y =
-screen.y;
+world.getCoords(
 
-const centerX =
-window.innerWidth / 2;
+label.lat,
+label.lng,
+0.02
 
-const centerY =
-window.innerHeight / 2;
-
-const dx =
-x - centerX;
-
-const dy =
-y - centerY;
-
-const dist =
-Math.sqrt(
-dx * dx +
-dy * dy
 );
 
-const radius =
-Math.min(
-centerX,
-centerY
-) * 0.47;
+const len = Math.sqrt(
 
-if(dist > radius){
+(pos.x * pos.x) +
+
+(pos.y * pos.y) +
+
+(pos.z * pos.z)
+
+);
+
+const nx =
+pos.x / len;
+
+const ny =
+pos.y / len;
+
+const nz =
+pos.z / len;
+
+const dot =
+
+(nx * camPos.x) +
+
+(ny * camPos.y) +
+
+(nz * camPos.z);
+
+if(dot < 0.12){
 
 label.el.style.display =
 'none';
@@ -248,10 +267,10 @@ label.el.style.display =
 'block';
 
 label.el.style.left =
-`${x}px`;
+screen.x + 'px';
 
 label.el.style.top =
-`${y}px`;
+screen.y + 'px';
 
 });
 
@@ -282,5 +301,4 @@ world
 </script>
 
 </body>
-
 </html>
