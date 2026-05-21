@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
 
@@ -7,13 +7,10 @@
 
 <meta
 name="viewport"
-content=
-"width=device-width,initial-scale=1.0"
+content="width=device-width, initial-scale=1.0"
 />
 
-<title>
-History OS Sandbox
-</title>
+<title>Sandbox Globe</title>
 
 <style>
 
@@ -21,20 +18,18 @@ html,
 body{
 
 margin:0;
-padding:0;
-
+width:100%;
+height:100%;
 overflow:hidden;
-
 background:black;
-
 font-family:sans-serif;
 
 }
 
 #globeViz{
 
-width:100vw;
-height:100vh;
+position:absolute;
+inset:0;
 
 }
 
@@ -44,23 +39,18 @@ position:absolute;
 
 color:white;
 
-pointer-events:none;
+font-size:12px;
+font-weight:bold;
 
-font-weight:500;
+pointer-events:none;
 
 white-space:nowrap;
 
 transform:
-translate(0%,-50%);
-
-font-size:10px;
-
-letter-spacing:0.4px;
+translate(-50%,-50%);
 
 text-shadow:
-0 0 6px rgba(0,255,255,0.55);
-
-opacity:0.92;
+0 0 10px rgba(0,0,0,1);
 
 }
 
@@ -77,62 +67,38 @@ opacity:0.92;
 import Globe from
 'https://esm.sh/globe.gl@2.32.0';
 
-import {
-events
-}
-
-from
-'../data/events.js';
+import { events }
+from '../data/events.js';
 
 const world =
 
 Globe()(
-
-document
-.getElementById(
-
+document.getElementById(
 'globeViz'
-
 )
-
 )
 
 .globeImageUrl(
-
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
-
 )
 
-.backgroundColor(
+.backgroundColor('black')
 
-'black'
+.width(window.innerWidth)
 
-)
-
-.width(
-
-window.innerWidth
-
-)
-
-.height(
-
-window.innerHeight
-
-);
+.height(window.innerHeight);
 
 world.pointOfView({
 
 lat:30,
-lng:160,
-
-altitude:2.0
+lng:140,
+altitude:2.2
 
 });
 
 const labels =
 
-events.map(event=>({
+events.map(event => ({
 
 name:
 event.label_en,
@@ -143,8 +109,14 @@ event.lat,
 lng:
 event.lng,
 
+year:
+event.year,
+
 importance:
-event.importance
+event.importance,
+
+relatedEvents:
+event.relatedEvents
 
 }));
 
@@ -152,50 +124,25 @@ const arcs = [];
 
 events.forEach(event=>{
 
-event.relatedEvents
-.forEach(id=>{
+event.relatedEvents.forEach(id=>{
 
 const target =
-
-events.find(
-e=>e.id===id
-);
+events.find(e=>e.id===id);
 
 if(!target) return;
 
-let color = '#66ffff';
-
-if(
-event.tags.includes('開国')
-){
-
-color = '#ffe066';
-
-}
-
-if(
-event.tags.includes('漂流')
-){
-
-color = '#88ffcc';
-
-}
-
 arcs.push({
 
-startLat:
-event.lat,
+startLat:event.lat,
+startLng:event.lng,
 
-startLng:
-event.lng,
+endLat:target.lat,
+endLng:target.lng,
 
-endLat:
-target.lat,
-
-endLng:
-target.lng,
-
-color
+color:[
+'#00ffff',
+'#ffff00'
+]
 
 });
 
@@ -207,60 +154,40 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.18)
-
-.arcAltitude(0.22)
+.arcStroke(0.35)
 
 .arcDashLength(1)
 
 .arcDashGap(0)
 
-.arcDashAnimateTime(0);
+.arcDashAnimateTime(0)
 
-world.ringsData([
-
-{
-
-lat:36,
-lng:138,
-
-maxR:10,
-
-propagationSpeed:0.35,
-
-repeatPeriod:3200,
-
-color:()=>
-
-'rgba(0,255,255,0.12)'
-
-}
-
-])
-
-.ringColor('color')
-
-.ringMaxRadius('maxR')
-
-.ringPropagationSpeed(
-'propagationSpeed'
-)
-
-.ringRepeatPeriod(
-'repeatPeriod'
-);
+.arcAltitude(0.18);
 
 const labelEls = [];
 
 labels.forEach(label=>{
 
 const div =
-
-document
-.createElement('div');
+document.createElement('div');
 
 div.className =
 'city-label';
+
+const size =
+
+9 +
+(label.importance * 0.05);
+
+div.style.fontSize =
+size + 'px';
+
+div.style.color =
+'#ffffff';
+
+div.style.textShadow =
+
+'0 0 6px rgba(0,255,255,0.8)';
 
 div.innerText =
 label.name;
@@ -273,8 +200,10 @@ labelEls.push({
 el:div,
 
 lat:label.lat,
+lng:label.lng,
 
-lng:label.lng
+importance:
+label.importance
 
 });
 
@@ -284,8 +213,7 @@ function updateLabels(){
 
 const camPos =
 
-world
-.camera()
+world.camera()
 .position
 .clone()
 .normalize();
@@ -310,43 +238,44 @@ return;
 
 }
 
-const lat =
+const pos =
 
-label.lat
-* Math.PI
-/ 180;
+world.getCoords(
 
-const lng =
+label.lat,
+label.lng,
+0.02
 
-label.lng
-* Math.PI
-/ 180;
+);
 
-const x =
+const len = Math.sqrt(
 
-Math.cos(lat)
-*
-Math.cos(lng);
+(pos.x * pos.x) +
 
-const y =
+(pos.y * pos.y) +
 
-Math.sin(lat);
+(pos.z * pos.z)
 
-const z =
+);
 
-Math.cos(lat)
-*
-Math.sin(lng);
+const nx =
+pos.x / len;
+
+const ny =
+pos.y / len;
+
+const nz =
+pos.z / len;
 
 const dot =
 
-x * camPos.x
-+
-y * camPos.y
-+
-z * camPos.z;
+(nx * camPos.x) +
 
-if(dot < 0.18){
+(ny * camPos.y) +
+
+(nz * camPos.z);
+
+if(dot < 0.12){
 
 label.el.style.display =
 'none';
@@ -359,39 +288,32 @@ label.el.style.display =
 'block';
 
 label.el.style.left =
-
 screen.x + 'px';
 
 label.el.style.top =
-
 screen.y + 'px';
 
 });
 
 requestAnimationFrame(
-
 updateLabels
-
 );
 
 }
 
 updateLabels();
 
-window
-.addEventListener(
+window.addEventListener(
 
 'resize',
 
 ()=>{
 
-world.width(
-window.innerWidth
-);
+world
 
-world.height(
-window.innerHeight
-);
+.width(window.innerWidth)
+
+.height(window.innerHeight);
 
 }
 
@@ -400,5 +322,4 @@ window.innerHeight
 </script>
 
 </body>
-
 </html>
