@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>Sandbox Globe</title>
+<title>History OS</title>
 
 <style>
 
@@ -54,6 +54,115 @@ text-shadow:
 
 }
 
+#leftPanel{
+
+position:absolute;
+
+left:0;
+top:0;
+
+width:320px;
+height:100vh;
+
+background:
+rgba(0,0,0,0.72);
+
+backdrop-filter:
+blur(12px);
+
+border-right:
+1px solid rgba(255,255,255,0.08);
+
+padding:24px;
+
+box-sizing:border-box;
+
+color:white;
+
+overflow-y:auto;
+
+z-index:10;
+
+}
+
+.panel-title{
+
+font-size:28px;
+font-weight:700;
+
+margin-bottom:8px;
+
+}
+
+.panel-sub{
+
+font-size:13px;
+
+color:
+rgba(255,255,255,0.55);
+
+margin-bottom:28px;
+
+}
+
+.event-card{
+
+padding:14px;
+
+margin-bottom:14px;
+
+border:
+1px solid rgba(255,255,255,0.08);
+
+border-radius:14px;
+
+background:
+rgba(255,255,255,0.04);
+
+transition:0.25s;
+
+cursor:pointer;
+
+}
+
+.event-card:hover{
+
+background:
+rgba(0,255,255,0.08);
+
+border:
+1px solid rgba(0,255,255,0.3);
+
+}
+
+.event-year{
+
+font-size:12px;
+
+color:#66e0ff;
+
+margin-bottom:6px;
+
+}
+
+.event-title{
+
+font-size:17px;
+font-weight:600;
+
+margin-bottom:6px;
+
+}
+
+.event-place{
+
+font-size:13px;
+
+color:
+rgba(255,255,255,0.6);
+
+}
+
 </style>
 
 </head>
@@ -61,6 +170,20 @@ text-shadow:
 <body>
 
 <div id="globeViz"></div>
+
+<div id="leftPanel">
+
+<div class="panel-title">
+History OS
+</div>
+
+<div class="panel-sub">
+Civilization Meaning Interface
+</div>
+
+<div id="eventList"></div>
+
+</div>
 
 <script type="module">
 
@@ -267,6 +390,54 @@ updateLabels
 }
 
 updateLabels();
+
+const eventList =
+document.getElementById(
+'eventList'
+);
+
+events.forEach(event=>{
+
+const card =
+document.createElement('div');
+
+card.className =
+'event-card';
+
+card.innerHTML =
+
+`
+<div class="event-year">
+${event.year}
+</div>
+
+<div class="event-title">
+${event.title}
+</div>
+
+<div class="event-place">
+${event.placeName}
+</div>
+`;
+
+card.onclick = ()=>{
+
+world.pointOfView({
+
+lat:event.lat,
+lng:event.lng,
+altitude:1.2
+
+},
+1200
+
+);
+
+};
+
+eventList.appendChild(card);
+
+});
 
 window.addEventListener(
 
