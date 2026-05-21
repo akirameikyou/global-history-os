@@ -10,16 +10,12 @@ placeName:'Cape Ashizuri',
 
 label_en:'John Manjiro',
 
-layer:'event',
-
 year:1827,
 
 lat:32.78,
 lng:132.95,
 
 importance:70,
-
-lineColor:'#8affc1',
 
 relatedEvents:[
 
@@ -33,13 +29,11 @@ relatedEvents:[
 
 id:'manjiro_shipwreck',
 
-title:'漂流・無人島',
+title:'漂流・鳥島',
 
 placeName:'Torishima',
 
 label_en:'Shipwreck',
-
-layer:'event',
 
 year:1841,
 
@@ -47,8 +41,6 @@ lat:30.48,
 lng:140.30,
 
 importance:95,
-
-lineColor:'#63f5ff',
 
 relatedEvents:[
 
@@ -65,11 +57,9 @@ id:'manjiro_america',
 
 title:'アメリカ渡航',
 
-placeName:'America',
+placeName:'New Bedford',
 
 label_en:'America',
-
-layer:'country',
 
 year:1843,
 
@@ -77,8 +67,6 @@ lat:41.63,
 lng:-70.93,
 
 importance:100,
-
-lineColor:'#63d8ff',
 
 relatedEvents:[
 
@@ -98,16 +86,12 @@ placeName:'Naha',
 
 label_en:'Return',
 
-layer:'city',
-
 year:1851,
 
 lat:26.21,
 lng:127.68,
 
 importance:98,
-
-lineColor:'#7dffcf',
 
 relatedEvents:[
 
@@ -123,11 +107,9 @@ id:'kaikoku',
 
 title:'日本開国',
 
-placeName:'Japan',
+placeName:'Tokyo',
 
-label_en:'Japan',
-
-layer:'country',
+label_en:'Opening',
 
 year:1854,
 
@@ -135,8 +117,6 @@ lat:35.68,
 lng:139.76,
 
 importance:100,
-
-lineColor:'#b5ff6b',
 
 relatedEvents:[
 
@@ -154,9 +134,7 @@ title:'明治維新',
 
 placeName:'Tokyo',
 
-label_en:'Tokyo',
-
-layer:'city',
+label_en:'Meiji',
 
 year:1868,
 
@@ -164,8 +142,6 @@ lat:35.68,
 lng:139.76,
 
 importance:100,
-
-lineColor:'#ffe66b',
 
 relatedEvents:[]
 
