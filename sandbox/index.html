@@ -1,26 +1,36 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>Sandbox Globe</title>
 
 <style>
 
-html,body{
+html,
+body{
+
 margin:0;
 width:100%;
 height:100%;
 overflow:hidden;
 background:black;
 font-family:sans-serif;
+
 }
 
 #globeViz{
+
 position:absolute;
 inset:0;
+
 }
 
 .city-label{
@@ -36,7 +46,8 @@ pointer-events:none;
 
 white-space:nowrap;
 
-transform:translate(-50%,-50%);
+transform:
+translate(-50%,-50%);
 
 text-shadow:
 0 0 10px rgba(0,0,0,1);
@@ -44,6 +55,7 @@ text-shadow:
 }
 
 </style>
+
 </head>
 
 <body>
@@ -52,10 +64,16 @@ text-shadow:
 
 <script type="module">
 
-import Globe from 'https://esm.sh/globe.gl@2.32.0';
+import Globe from
+'https://esm.sh/globe.gl@2.32.0';
 
 const world =
-Globe()(document.getElementById('globeViz'))
+
+Globe()(
+document.getElementById(
+'globeViz'
+)
+)
 
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
@@ -70,7 +88,7 @@ Globe()(document.getElementById('globeViz'))
 world.pointOfView({
 
 lat:30,
-lng:170,
+lng:140,
 altitude:2.2
 
 });
@@ -78,15 +96,21 @@ altitude:2.2
 const labels = [
 
 {
+
 name:'東京',
+
 lat:35.68,
 lng:139.69
+
 },
 
 {
+
 name:'ハワイ',
+
 lat:21.30,
 lng:-157.85
+
 }
 
 ];
@@ -104,9 +128,9 @@ div.className =
 div.innerText =
 label.name;
 
-document.getElementById(
-'globeViz'
-).appendChild(div);
+document.body
+.appendChild(div);
+
 labelEls.push({
 
 el:div,
@@ -120,15 +144,22 @@ lng:label.lng
 
 function updateLabels(){
 
-const cam =
-world.camera().position.clone().normalize();
+const camPos =
+
+world.camera()
+.position
+.clone()
+.normalize();
 
 labelEls.forEach(label=>{
 
 const screen =
+
 world.getScreenCoords(
+
 label.lat,
 label.lng
+
 );
 
 if(!screen){
@@ -140,38 +171,44 @@ return;
 
 }
 
-const lat =
-label.lat * Math.PI / 180;
+const pos =
 
-const lng =
--label.lng * Math.PI / 180;
+world.getCoords(
 
-const phi =
-(90 - label.lat) *
-Math.PI / 180;
+label.lat,
+label.lng,
+0.02
 
-const theta =
-(label.lng) *
-Math.PI / 180;
+);
 
-const x =
-Math.sin(phi) *
-Math.cos(theta);
+const len = Math.sqrt(
 
-const y =
-Math.cos(phi);
+(pos.x * pos.x) +
 
-const z =
-Math.sin(phi) *
-Math.sin(theta);
+(pos.y * pos.y) +
+
+(pos.z * pos.z)
+
+);
+
+const nx =
+pos.x / len;
+
+const ny =
+pos.y / len;
+
+const nz =
+pos.z / len;
 
 const dot =
 
-(x * cam.x) +
-(y * cam.y) +
-(z * cam.z);
+(nx * camPos.x) +
 
-if(dot < 0.15){
+(ny * camPos.y) +
+
+(nz * camPos.z);
+
+if(dot < 0.12){
 
 label.el.style.display =
 'none';
@@ -200,14 +237,19 @@ updateLabels
 updateLabels();
 
 window.addEventListener(
+
 'resize',
+
 ()=>{
 
 world
+
 .width(window.innerWidth)
+
 .height(window.innerHeight);
 
 }
+
 );
 
 </script>
