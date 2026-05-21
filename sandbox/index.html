@@ -164,7 +164,26 @@ document.createElement('div');
 
 div.className =
 'city-label';
+const size =
 
+10 +
+(label.importance * 0.12);
+
+div.style.fontSize =
+size + 'px';
+
+div.style.color =
+'#ffffff';
+
+div.style.textShadow =
+
+'0 0 ' +
+
+(label.importance * 0.15)
+
++
+
+'px rgba(0,255,255,0.9)';
 div.innerText =
 label.name;
 
