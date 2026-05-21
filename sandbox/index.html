@@ -10,7 +10,7 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>Sandbox Globe</title>
+<title>History OS</title>
 
 <style>
 
@@ -39,8 +39,8 @@ position:absolute;
 
 color:white;
 
-font-size:12px;
-font-weight:bold;
+font-size:10px;
+font-weight:400;
 
 pointer-events:none;
 
@@ -49,8 +49,12 @@ white-space:nowrap;
 transform:
 translate(-50%,-50%);
 
+letter-spacing:0.5px;
+
 text-shadow:
-0 0 10px rgba(0,0,0,1);
+0 0 6px rgba(0,255,255,0.65);
+
+opacity:0.92;
 
 }
 
@@ -101,7 +105,7 @@ const labels =
 events.map(event => ({
 
 name:
-event.label_en,
+event.placeName,
 
 lat:
 event.lat,
@@ -109,14 +113,8 @@ event.lat,
 lng:
 event.lng,
 
-year:
-event.year,
-
 importance:
-event.importance,
-
-relatedEvents:
-event.relatedEvents
+event.importance
 
 }));
 
@@ -131,6 +129,44 @@ events.find(e=>e.id===id);
 
 if(!target) return;
 
+const dx =
+event.lat - target.lat;
+
+const dy =
+event.lng - target.lng;
+
+const dist = Math.sqrt(
+(dx * dx) +
+(dy * dy)
+);
+
+let altitude =
+dist * 0.0035;
+
+if(altitude < 0.03)
+altitude = 0.03;
+
+if(altitude > 0.22)
+altitude = 0.22;
+
+let color = '#66ffff';
+
+if(
+event.tags.includes('開国')
+){
+
+color = '#ffe066';
+
+}
+
+if(
+event.tags.includes('漂流')
+){
+
+color = '#88ffcc';
+
+}
+
 arcs.push({
 
 startLat:event.lat,
@@ -139,10 +175,8 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:[
-'#00ffff',
-'#ffff00'
-]
+color,
+altitude
 
 });
 
@@ -154,15 +188,48 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.35)
+.arcStroke(0.12)
+
+.arcAltitude('altitude')
 
 .arcDashLength(1)
 
 .arcDashGap(0)
 
-.arcDashAnimateTime(0)
+.arcDashAnimateTime(0);
 
-.arcAltitude(0.18);
+world.ringsData([
+
+{
+
+lat:36,
+lng:138,
+
+maxR:8,
+
+propagationSpeed:0.25,
+
+repeatPeriod:4200,
+
+color:()=>
+
+'rgba(0,255,255,0.08)'
+
+}
+
+])
+
+.ringColor('color')
+
+.ringMaxRadius('maxR')
+
+.ringPropagationSpeed(
+'propagationSpeed'
+)
+
+.ringRepeatPeriod(
+'repeatPeriod'
+);
 
 const labelEls = [];
 
@@ -173,21 +240,6 @@ document.createElement('div');
 
 div.className =
 'city-label';
-
-const size =
-
-9 +
-(label.importance * 0.05);
-
-div.style.fontSize =
-size + 'px';
-
-div.style.color =
-'#ffffff';
-
-div.style.textShadow =
-
-'0 0 6px rgba(0,255,255,0.8)';
 
 div.innerText =
 label.name;
@@ -200,10 +252,7 @@ labelEls.push({
 el:div,
 
 lat:label.lat,
-lng:label.lng,
-
-importance:
-label.importance
+lng:label.lng
 
 });
 
@@ -322,4 +371,5 @@ world
 </script>
 
 </body>
+
 </html>
