@@ -116,31 +116,6 @@ e=>e.id === targetId
 
 if(!target) return;
 
-const distance = Math.sqrt(
-
-Math.pow(
-event.lat - target.lat,
-2
-)
-
-+
-
-Math.pow(
-event.lng - target.lng,
-2
-)
-
-);
-
-let altitude =
-distance * 0.0014;
-
-if(altitude < 0.025)
-altitude = 0.025;
-
-if(altitude > 0.16)
-altitude = 0.16;
-
 arcs.push({
 
 startLat:event.lat,
@@ -149,10 +124,9 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:event.lineColor
-|| '#66e0ff',
-
-altitude
+color:
+event.lineColor
+|| '#66e0ff'
 
 });
 
@@ -164,9 +138,13 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcAltitude('altitude')
+.arcAltitudeAutoScale(
+0.22
+)
 
-.arcStroke(0.22)
+.arcStroke(
+0.12
+)
 
 .arcDashLength(1)
 
