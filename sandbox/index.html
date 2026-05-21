@@ -100,24 +100,6 @@ altitude:2.2
 
 });
 
-const labels =
-
-events.map(event => ({
-
-name:
-event.placeName,
-
-lat:
-event.lat,
-
-lng:
-event.lng,
-
-importance:
-event.importance
-
-}));
-
 const arcs = [];
 
 events.forEach(event=>{
@@ -149,24 +131,6 @@ altitude = 0.03;
 if(altitude > 0.22)
 altitude = 0.22;
 
-let color = '#66ffff';
-
-if(
-event.tags.includes('開国')
-){
-
-color = '#ffe066';
-
-}
-
-if(
-event.tags.includes('漂流')
-){
-
-color = '#88ffcc';
-
-}
-
 arcs.push({
 
 startLat:event.lat,
@@ -175,7 +139,8 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color,
+color:event.lineColor,
+
 altitude
 
 });
@@ -198,44 +163,7 @@ world.arcsData(arcs)
 
 .arcDashAnimateTime(0);
 
-world.ringsData([
-
-{
-
-lat:36,
-lng:138,
-
-maxR:8,
-
-propagationSpeed:0.25,
-
-repeatPeriod:4200,
-
-color:()=>
-
-'rgba(0,255,255,0.08)'
-
-}
-
-])
-
-.ringColor('color')
-
-.ringMaxRadius('maxR')
-
-.ringPropagationSpeed(
-'propagationSpeed'
-)
-
-.ringRepeatPeriod(
-'repeatPeriod'
-);
-
 const labelEls = [];
-
-const COUNTRY_ZOOM = 2.4;
-const CITY_ZOOM = 1.8;
-const EVENT_ZOOM = 1.2;
 
 events.forEach(event => {
 
@@ -262,6 +190,9 @@ event
 });
 
 });
+
+const COUNTRY_ZOOM = 2.4;
+const CITY_ZOOM = 1.8;
 
 function getZoomLevel(){
 
@@ -339,6 +270,36 @@ return;
 
 }
 
+if(
+
+zoomLevel === 'country'
+&&
+label.event.layer !== 'country'
+
+){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+if(
+
+zoomLevel === 'city'
+&&
+label.event.layer === 'event'
+
+){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
 label.el.style.display =
 'block';
 
@@ -347,39 +308,6 @@ label.el.style.left =
 
 label.el.style.top =
 `${y}px`;
-
-if(zoomLevel === 'country'){
-
-if(label.event.layer !== 'country'){
-
-label.el.style.display =
-'none';
-
-}
-
-}
-
-if(zoomLevel === 'city'){
-
-if(
-label.event.layer !== 'country'
-&&
-label.event.layer !== 'city'
-){
-
-label.el.style.display =
-'none';
-
-}
-
-}
-
-if(zoomLevel === 'event'){
-
-label.el.style.display =
-'block';
-
-}
 
 });
 
