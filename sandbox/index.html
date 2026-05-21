@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
@@ -29,20 +30,16 @@ position:absolute;
 color:white;
 
 font-size:22px;
-font-weight:700;
-
-text-shadow:
-0 0 10px rgba(0,0,0,1),
-0 0 20px rgba(0,0,0,1);
+font-weight:bold;
 
 pointer-events:none;
 
 white-space:nowrap;
 
-/* ← 重要 */
 transform:translate(-50%,-50%);
 
-will-change:transform,left,top;
+text-shadow:
+0 0 10px rgba(0,0,0,1);
 
 }
 
@@ -58,11 +55,6 @@ will-change:transform,left,top;
 import Globe from 'https://esm.sh/globe.gl@2.32.0';
 
 const world =
-world.pointOfView({
-  lat:30,
-  lng:140,
-  altitude:2.2
-});  
 Globe()(document.getElementById('globeViz'))
 
 .globeImageUrl(
@@ -72,7 +64,16 @@ Globe()(document.getElementById('globeViz'))
 .backgroundColor('black')
 
 .width(window.innerWidth)
+
 .height(window.innerHeight);
+
+world.pointOfView({
+
+lat:30,
+lng:140,
+altitude:2.2
+
+});
 
 const labels = [
 
@@ -92,7 +93,7 @@ lng:-157.85
 
 const labelEls = [];
 
-labels.forEach(city=>{
+labels.forEach(label=>{
 
 const div =
 document.createElement('div');
@@ -101,15 +102,16 @@ div.className =
 'city-label';
 
 div.innerText =
-city.name;
+label.name;
 
 document.body.appendChild(div);
 
 labelEls.push({
 
 el:div,
-lat:city.lat,
-lng:city.lng
+
+lat:label.lat,
+lng:label.lng
 
 });
 
@@ -117,20 +119,25 @@ lng:city.lng
 
 function updateLabels(){
 
-const camera =
-world.camera();
-
-const camPos =
-camera.position.clone().normalize();
+const cam =
+world.camera().position.clone().normalize();
 
 labelEls.forEach(label=>{
 
-const pos =
-world.getCoords(
+const screen =
+world.getScreenCoords(
 label.lat,
-label.lng,
-0.02
+label.lng
 );
+
+if(!screen){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
 
 const lat =
 label.lat * Math.PI / 180;
@@ -149,36 +156,13 @@ const z =
 Math.cos(lat) *
 Math.sin(lng);
 
-const length =
-Math.sqrt(
-x*x + y*y + z*z
-);
-
-const nx = x / length;
-const ny = y / length;
-const nz = z / length;
-
 const dot =
-(nx * camPos.x) +
-(ny * camPos.y) +
-(nz * camPos.z);
 
-if(dot <= 0.45){
+(x * cam.x) +
+(y * cam.y) +
+(z * cam.z);
 
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-const screen =
-world.getScreenCoords(
-label.lat,
-label.lng
-);
-
-if(!screen){
+if(dot < 0.35){
 
 label.el.style.display =
 'none';
