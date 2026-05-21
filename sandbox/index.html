@@ -184,8 +184,7 @@ const screen =
 world.getScreenCoords(
 
 label.lat,
-label.lng,
-0
+label.lng
 
 );
 
@@ -196,10 +195,47 @@ if(
 screen.x === undefined
 ||
 screen.y === undefined
-||
-screen.z > 1
 
 ){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+const x =
+screen.x;
+
+const y =
+screen.y;
+
+const centerX =
+window.innerWidth / 2;
+
+const centerY =
+window.innerHeight / 2;
+
+const dx =
+x - centerX;
+
+const dy =
+y - centerY;
+
+const dist =
+Math.sqrt(
+dx * dx +
+dy * dy
+);
+
+const radius =
+Math.min(
+centerX,
+centerY
+) * 0.47;
+
+if(dist > radius){
 
 label.el.style.display =
 'none';
@@ -212,10 +248,10 @@ label.el.style.display =
 'block';
 
 label.el.style.left =
-`${screen.x}px`;
+`${x}px`;
 
 label.el.style.top =
-`${screen.y}px`;
+`${y}px`;
 
 });
 
