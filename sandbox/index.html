@@ -1,8 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0"
+/>
 
 <title>History OS Sandbox</title>
 
@@ -16,6 +22,7 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:black;
+
 font-family:
 Arial,
 sans-serif;
@@ -35,40 +42,24 @@ position:absolute;
 
 color:white;
 
-font-size:15px;
+font-size:13px;
 
 font-weight:500;
 
 pointer-events:none;
-
-text-shadow:
-0 0 6px rgba(120,220,255,0.9);
 
 white-space:nowrap;
 
 transform:
 translate(-50%,-50%);
 
-transition:
-opacity 0.2s;
-
-}
-
-.country-label{
-
-font-size:22px;
-
-font-weight:600;
-
-opacity:0.45;
-
-letter-spacing:2px;
-
-text-transform:uppercase;
+text-shadow:
+0 0 5px rgba(120,220,255,0.75);
 
 }
 
 </style>
+
 </head>
 
 <body>
@@ -86,33 +77,29 @@ from 'https://esm.sh/globe.gl';
 import { events }
 from '../data/events.js';
 
-const world =
-new Globe(
+const world = Globe()(
+
 document.getElementById(
 'globeViz'
 )
+
 )
 
 .globeImageUrl(
-'https://unpkg.com/three-globe/example/img/earth-night.jpg'
-)
-
-.bumpImageUrl(
-'https://unpkg.com/three-globe/example/img/earth-topology.png'
+'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
 .backgroundColor(
-'rgba(0,0,0,1)'
+'black'
 );
 
-world.controls().autoRotate =
-true;
+world.pointOfView({
 
-world.controls().autoRotateSpeed =
-0.35;
+lat:30,
+lng:140,
+altitude:2.2
 
-world.camera().position.z =
-320;
+});
 
 const arcs = [];
 
@@ -145,11 +132,14 @@ event.lng - target.lng,
 
 );
 
-const altitude =
-Math.min(
-distance * 0.0015,
-0.32
-);
+let altitude =
+distance * 0.0014;
+
+if(altitude < 0.025)
+altitude = 0.025;
+
+if(altitude > 0.16)
+altitude = 0.16;
 
 arcs.push({
 
@@ -176,7 +166,7 @@ world.arcsData(arcs)
 
 .arcAltitude('altitude')
 
-.arcStroke(0.45)
+.arcStroke(0.22)
 
 .arcDashLength(1)
 
@@ -194,14 +184,6 @@ document.createElement('div');
 div.className =
 'city-label';
 
-if(event.layer === 'country'){
-
-div.classList.add(
-'country-label'
-);
-
-}
-
 div.innerText =
 event.placeName;
 
@@ -212,9 +194,7 @@ labelEls.push({
 el:div,
 
 lat:event.lat,
-lng:event.lng,
-
-layer:event.layer
+lng:event.lng
 
 });
 
@@ -240,6 +220,7 @@ const theta =
 
 const pos =
 new THREE.Vector3(
+
 -Math.sin(phi)
 * Math.cos(theta),
 
@@ -247,34 +228,13 @@ Math.cos(phi),
 
 Math.sin(phi)
 * Math.sin(theta)
+
 );
 
 const dot =
 camPos.dot(pos);
 
-const distance =
-world.camera()
-.position.length();
-
-let visible = false;
-
-if(label.layer === 'country'){
-
-visible =
-dot > 0.35
-&&
-distance > 260;
-
-}else if(label.layer === 'city'){
-
-visible =
-dot > 0.15
-&&
-distance < 380;
-
-}
-
-if(!visible){
+if(dot < 0.18){
 
 label.el.style.display =
 'none';
@@ -285,8 +245,10 @@ return;
 
 const screen =
 world.getScreenCoords(
+
 label.lat,
 label.lng
+
 );
 
 if(!screen){
@@ -317,6 +279,24 @@ updateLabels
 
 updateLabels();
 
+window.addEventListener(
+
+'resize',
+
+()=>{
+
+world
+
+.width(window.innerWidth)
+
+.height(window.innerHeight);
+
+}
+
+);
+
 </script>
+
 </body>
+
 </html>
