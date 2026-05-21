@@ -93,27 +93,25 @@ altitude:2.2
 
 });
 
-const labels = [
+import { events }
+from '../data/events.js';
 
-{
+const labels =
+events.map(event => ({
 
-name:'東京',
+name:event.title,
 
-lat:35.68,
-lng:139.69
+lat:event.lat,
+lng:event.lng,
 
-},
+year:event.year,
 
-{
+importance:event.importance,
 
-name:'ハワイ',
+relatedEvents:
+event.relatedEvents
 
-lat:21.30,
-lng:-157.85
-
-}
-
-];
+}));
 
 const labelEls = [];
 
