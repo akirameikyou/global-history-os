@@ -98,11 +98,14 @@ from '../data/events.js';
 
 const labels =
 events.map(event => ({
-
-name:event.placeName,
+importance:
+event.importance
+name:event.title,
 
 lat:event.lat,
 lng:event.lng,
+
+year:event.year,
 
 importance:event.importance,
 
@@ -110,7 +113,6 @@ relatedEvents:
 event.relatedEvents
 
 }));
-
 const arcs = [];
 
 events.forEach(event=>{
@@ -145,16 +147,15 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.12)
+.arcStroke(0.7)
 
-.arcDashLength(1)
+.arcDashLength(0.4)
 
-.arcDashGap(0)
+.arcDashGap(0.2)
 
-.arcDashAnimateTime(0)
+.arcDashAnimateTime(2500)
 
-.arcAltitudeAutoScale(0.22);
-
+.arcAltitude(0.18);
 const labelEls = [];
 
 labels.forEach(label=>{
@@ -164,10 +165,26 @@ document.createElement('div');
 
 div.className =
 'city-label';
+const size =
+
+10 +
+(label.importance * 0.12);
 
 div.style.fontSize =
-'13px';
+size + 'px';
 
+div.style.color =
+'#ffffff';
+
+div.style.textShadow =
+
+'0 0 ' +
+
+(label.importance * 0.15)
+
++
+
+'px rgba(0,255,255,0.9)';
 div.innerText =
 label.name;
 
