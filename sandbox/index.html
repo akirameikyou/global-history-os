@@ -146,16 +146,24 @@ label.lat * Math.PI / 180;
 const lng =
 -label.lng * Math.PI / 180;
 
+const phi =
+(90 - label.lat) *
+Math.PI / 180;
+
+const theta =
+(label.lng + 180) *
+Math.PI / 180;
+
 const x =
--Math.cos(lat) *
-Math.cos(lng);
+-Math.sin(phi) *
+Math.cos(theta);
 
 const y =
-Math.sin(lat);
+Math.cos(phi);
 
 const z =
-Math.cos(lat) *
-Math.sin(lng);
+Math.sin(phi) *
+Math.sin(theta);
 
 const dot =
 
