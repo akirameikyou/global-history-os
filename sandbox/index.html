@@ -68,9 +68,6 @@ text-shadow:
 
 <script type="module">
 
-import * as THREE
-from 'https://esm.sh/three@0.160.0';
-
 import Globe
 from 'https://esm.sh/globe.gl';
 
@@ -81,6 +78,7 @@ const world = Globe()(
 
 document.getElementById(
 'globeViz'
+
 )
 
 )
@@ -180,46 +178,7 @@ lng:event.lng
 
 function updateLabels(){
 
-const camPos =
-world.camera()
-.position
-.clone()
-.normalize();
-
 labelEls.forEach(label=>{
-
-const phi =
-(90 - label.lat)
-* Math.PI / 180;
-
-const theta =
-(label.lng + 180)
-* Math.PI / 180;
-
-const pos =
-new THREE.Vector3(
-
--Math.sin(phi)
-* Math.cos(theta),
-
-Math.cos(phi),
-
-Math.sin(phi)
-* Math.sin(theta)
-
-);
-
-const dot =
-camPos.dot(pos);
-
-if(dot < 0.18){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
 
 const screen =
 world.getScreenCoords(
@@ -238,14 +197,53 @@ return;
 
 }
 
+const x =
+screen.x;
+
+const y =
+screen.y;
+
+const centerX =
+window.innerWidth / 2;
+
+const centerY =
+window.innerHeight / 2;
+
+const dx =
+x - centerX;
+
+const dy =
+y - centerY;
+
+const dist =
+Math.sqrt(
+dx * dx +
+dy * dy
+);
+
+const radius =
+Math.min(
+centerX,
+centerY
+) * 0.92;
+
+if(dist > radius){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
 label.el.style.display =
 'block';
 
 label.el.style.left =
-`${screen.x}px`;
+`${x}px`;
 
 label.el.style.top =
-`${screen.y}px`;
+`${y}px`;
 
 });
 
