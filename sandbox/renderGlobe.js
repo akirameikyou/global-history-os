@@ -1,178 +1,251 @@
 import Globe
-from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
+from 'https://esm.sh/globe.gl@2.32.0';
 
-export function createGlobe(container){
+import { events }
+from '../data/events.js';
 
-const globe = Globe()(container)
+export const world = Globe()(
+
+document.getElementById(
+'globeViz'
+)
+
+)
 
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
-.bumpImageUrl(
-'https://unpkg.com/three-globe/example/img/earth-topology.png'
+.backgroundColor(
+'black'
 )
 
-.backgroundColor('#000')
+.width(window.innerWidth)
 
-.showAtmosphere(true)
+.height(window.innerHeight);
 
-.atmosphereColor('#46dfff')
+world.pointOfView({
 
-.atmosphereAltitude(0.15);
-
-return globe;
-
-}
-
-export function renderScene(
-globe,
-events
-){
-
-globe
-
-.pointsData(events)
-
-.pointLat(d=>d.lat)
-
-.pointLng(d=>d.lng)
-
-.pointColor(()=>'#46dfff')
-
-.pointAltitude(0.02)
-
-.pointRadius(0.12);
-
-createLabels(
-globe,
-events
-);
-
-}
-
-/* =========================
-DOM LABELS
-========================= */
-
-function createLabels(
-globe,
-events
-){
-
-const layer =
-document.createElement('div');
-
-layer.id = 'labelsLayer';
-
-document.body.appendChild(layer);
-
-events.forEach(event=>{
-
-const el =
-document.createElement('div');
-
-el.className =
-'city-label';
-
-el.innerHTML =
-event.title;
-
-layer.appendChild(el);
-
-event.el = el;
+lat:30,
+lng:160,
+altitude:2.2
 
 });
 
-function animate(){
+const arcs = [];
 
 events.forEach(event=>{
 
-const pos =
-globe.getScreenCoords(
-event.lat,
-event.lng
+event.relatedEvents.forEach(id=>{
+
+const target =
+events.find(
+e=>e.id===id
 );
 
-if(!pos){
+if(!target) return;
 
-event.el.style.display =
+arcs.push({
+
+startLat:event.lat,
+startLng:event.lng,
+
+endLat:target.lat,
+endLng:target.lng,
+
+color:'#66e0ff'
+
+});
+
+});
+
+});
+
+world.arcsData(arcs)
+
+.arcColor('color')
+
+.arcStroke(0.05)
+
+.arcDashLength(1)
+
+.arcDashGap(0)
+
+.arcDashAnimateTime(0)
+
+.arcAltitude(0.18);
+
+const labels = [];
+
+events.forEach(event=>{
+
+const exists =
+labels.find(
+l=>l.name===event.placeName
+);
+
+if(exists) return;
+
+labels.push({
+
+name:event.placeName,
+
+lat:event.lat,
+lng:event.lng
+
+});
+
+});
+
+const labelEls = [];
+
+labels.forEach(label=>{
+
+const div =
+document.createElement('div');
+
+div.style.position =
+'absolute';
+
+div.style.color =
+'white';
+
+div.style.fontSize =
+'12px';
+
+div.style.fontWeight =
+'500';
+
+div.style.pointerEvents =
 'none';
 
-return;
+div.style.whiteSpace =
+'nowrap';
 
-}
+div.style.transform =
+'translate(-50%,-50%)';
 
-const camera =
-globe.camera();
+div.style.textShadow =
+'0 0 6px rgba(0,0,0,1)';
+
+div.innerText =
+label.name;
+
+document.body.appendChild(div);
+
+labelEls.push({
+
+el:div,
+
+lat:label.lat,
+lng:label.lng
+
+});
+
+});
+
+function updateLabels(){
 
 const camPos =
-camera.position;
 
-const camLength =
-Math.sqrt(
-camPos.x * camPos.x +
-camPos.y * camPos.y +
-camPos.z * camPos.z
+world.camera()
+.position
+.clone()
+normalize?.() ||
+world.camera().position.clone().normalize();
+
+labelEls.forEach(label=>{
+
+const screen =
+
+world.getScreenCoords(
+
+label.lat,
+label.lng
+
 );
 
-const camX =
-camPos.x / camLength;
+if(!screen){
 
-const camY =
-camPos.y / camLength;
-
-const camZ =
-camPos.z / camLength;
-
-const lat =
-event.lat * Math.PI / 180;
-
-const lng =
--event.lng * Math.PI / 180;
-
-const x =
-Math.cos(lat) *
-Math.cos(lng);
-
-const y =
-Math.sin(lat);
-
-const z =
-Math.cos(lat) *
-Math.sin(lng);
-
-const dot =
-(x * camX) +
-(y * camY) +
-(z * camZ);
-
-if(dot < 0.15){
-
-event.el.style.display =
+label.el.style.display =
 'none';
 
 return;
 
 }
 
-event.el.style.display =
+const pos =
+
+world.getCoords(
+
+label.lat,
+label.lng,
+0.02
+
+);
+
+const len = Math.sqrt(
+
+(pos.x * pos.x) +
+
+(pos.y * pos.y) +
+
+(pos.z * pos.z)
+
+);
+
+const nx = pos.x / len;
+const ny = pos.y / len;
+const nz = pos.z / len;
+
+const dot =
+
+(nx * camPos.x) +
+
+(ny * camPos.y) +
+
+(nz * camPos.z);
+
+if(dot < 0.18){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+label.el.style.display =
 'block';
 
-event.el.style.left =
-pos.x + 'px';
+label.el.style.left =
+`${screen.x}px`;
 
-event.el.style.top =
-pos.y + 'px';
+label.el.style.top =
+`${screen.y}px`;
 
 });
 
 requestAnimationFrame(
-animate
+updateLabels
 );
 
 }
 
-animate();
+updateLabels();
+
+window.addEventListener(
+
+'resize',
+
+()=>{
+
+world
+
+.width(window.innerWidth)
+
+.height(window.innerHeight);
 
 }
+
+);
