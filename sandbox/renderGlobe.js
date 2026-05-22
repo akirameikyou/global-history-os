@@ -36,6 +36,8 @@ const arcs = [];
 
 events.forEach(event=>{
 
+if(!event.relatedEvents) return;
+
 event.relatedEvents.forEach(id=>{
 
 const target =
@@ -61,19 +63,19 @@ event.lng-target.lng,
 
 );
 
-let altitude = 0.08;
+let altitude = 0.06;
 
 if(distance > 80){
 
-altitude = 0.28;
+altitude = 0.24;
 
 }else if(distance > 40){
 
-altitude = 0.18;
+altitude = 0.14;
 
 }else{
 
-altitude = 0.06;
+altitude = 0.05;
 
 }
 
@@ -85,7 +87,9 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:'#66e0ff',
+color:
+event.lineColor
+|| '#66e0ff',
 
 altitude
 
@@ -99,28 +103,28 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.045)
+.arcAltitude('altitude')
+
+.arcStroke(0.04)
 
 .arcDashLength(1)
 
 .arcDashGap(0)
 
-.arcDashAnimateTime(0)
+.arcDashAnimateTime(0);
 
-.arcAltitude('altitude');
-
-const labels = [];
+const uniqueLabels = [];
 
 events.forEach(event=>{
 
 const exists =
-labels.find(
-l=>l.name===event.placeName
+uniqueLabels.find(
+e=>e.name===event.placeName
 );
 
 if(exists) return;
 
-labels.push({
+uniqueLabels.push({
 
 name:event.placeName,
 
@@ -133,37 +137,13 @@ lng:event.lng
 
 const labelEls = [];
 
-labels.forEach(label=>{
+uniqueLabels.forEach(label=>{
 
 const div =
 document.createElement('div');
 
-div.style.position =
-'absolute';
-
-div.style.color =
-'white';
-
-div.style.fontSize =
-'11px';
-
-div.style.fontWeight =
-'400';
-
-div.style.letterSpacing =
-'0.04em';
-
-div.style.pointerEvents =
-'none';
-
-div.style.whiteSpace =
-'nowrap';
-
-div.style.transform =
-'translate(-50%,-50%)';
-
-div.style.textShadow =
-'0 0 8px rgba(0,0,0,1)';
+div.className =
+'city-label';
 
 div.innerText =
 label.name;
@@ -201,7 +181,17 @@ label.lng
 
 );
 
-if(!screen){
+if(
+
+!screen
+||
+
+screen.x===undefined
+||
+
+screen.y===undefined
+
+){
 
 label.el.style.display =
 'none';
