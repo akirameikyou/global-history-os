@@ -5,6 +5,8 @@ id:'manjiro_birth',
 
 type:'person',
 
+startYear:1827,
+
 title:'中浜万次郎 誕生',
 
 year:'1827',
@@ -29,12 +31,14 @@ id:'manjiro_shipwreck',
 
 type:'person',
 
+startYear:1841,
+
 title:'漂流・鳥島',
 
 year:'1841',
 
 description:
-'漂流し鳥島へ漂着。人生最大の転換点。',
+'漂流し鳥島へ漂着。',
 
 lat:30.48,
 lng:140.30,
@@ -52,6 +56,8 @@ relatedEvents:[
 id:'manjiro_america',
 
 type:'person',
+
+startYear:1843,
 
 title:'アメリカ渡航',
 
@@ -77,12 +83,14 @@ id:'manjiro_return',
 
 type:'person',
 
+startYear:1851,
+
 title:'日本帰国',
 
 year:'1851',
 
 description:
-'帰国後、幕末日本へ海外知識を伝える。',
+'帰国後、海外知識を日本へ伝える。',
 
 lat:26.21,
 lng:127.68,
@@ -101,12 +109,14 @@ id:'kaikoku',
 
 type:'world',
 
+startYear:1854,
+
 title:'日本開国',
 
 year:'1854',
 
 description:
-'日米和親条約締結。日本は鎖国を終える。',
+'日米和親条約締結。',
 
 color:'#ffd95e',
 
@@ -122,6 +132,8 @@ relatedEvents:[]
 id:'civil_war',
 
 type:'world',
+
+startYear:1861,
 
 title:'南北戦争',
 
@@ -144,6 +156,8 @@ relatedEvents:[]
 id:'meiji',
 
 type:'world',
+
+startYear:1868,
 
 title:'明治維新',
 
