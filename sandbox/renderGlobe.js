@@ -148,11 +148,12 @@ function updateLabels(){
 
 const camPos =
 
+const camPos =
+
 world.camera()
 .position
 .clone()
-normalize?.() ||
-world.camera().position.clone().normalize();
+.normalize();
 
 labelEls.forEach(label=>{
 
