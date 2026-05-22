@@ -10,7 +10,9 @@ name="viewport"
 content="width=device-width, initial-scale=1.0"
 />
 
-<title>Global History Map</title>
+<title>
+Global History Map
+</title>
 
 <style>
 
@@ -21,7 +23,6 @@ margin:0;
 width:100%;
 height:100%;
 overflow:hidden;
-
 background:black;
 
 font-family:
@@ -33,7 +34,297 @@ sans-serif;
 #globeViz{
 
 position:absolute;
+
 inset:0;
+
+z-index:1;
+
+}
+
+.city-label{
+
+position:absolute;
+
+color:white;
+
+font-size:11px;
+
+font-weight:400;
+
+letter-spacing:0.04em;
+
+pointer-events:none;
+
+white-space:nowrap;
+
+transform:
+translate(-50%,-50%);
+
+text-shadow:
+0 0 8px rgba(0,0,0,1);
+
+z-index:5;
+
+}
+
+#title{
+
+position:absolute;
+
+top:34px;
+left:50%;
+
+transform:
+translateX(-50%);
+
+z-index:20;
+
+text-align:center;
+
+pointer-events:none;
+
+}
+
+.title-main{
+
+font-size:15px;
+
+letter-spacing:0.38em;
+
+font-weight:600;
+
+color:white;
+
+opacity:0.92;
+
+}
+
+.title-sub{
+
+margin-top:8px;
+
+font-size:11px;
+
+letter-spacing:0.16em;
+
+color:
+rgba(255,255,255,0.38);
+
+}
+
+.left-panel{
+
+position:absolute;
+
+top:70px;
+left:52px;
+
+width:360px;
+
+bottom:60px;
+
+overflow-y:auto;
+
+z-index:20;
+
+padding-right:12px;
+
+}
+
+.left-panel::-webkit-scrollbar{
+
+width:4px;
+
+}
+
+.left-panel::-webkit-scrollbar-thumb{
+
+background:
+rgba(255,255,255,0.16);
+
+border-radius:999px;
+
+}
+
+.section-title{
+
+font-size:13px;
+
+letter-spacing:0.28em;
+
+color:
+rgba(255,255,255,0.52);
+
+margin-bottom:26px;
+
+}
+
+.event-item{
+
+display:flex;
+
+gap:16px;
+
+padding:24px 0;
+
+border-bottom:
+
+1px solid rgba(255,255,255,0.08);
+
+}
+
+.event-bar{
+
+width:3px;
+
+border-radius:999px;
+
+flex-shrink:0;
+
+}
+
+.event-content{
+
+flex:1;
+
+}
+
+.event-year{
+
+font-size:13px;
+
+font-weight:600;
+
+margin-bottom:10px;
+
+}
+
+.event-title{
+
+font-size:20px;
+
+font-weight:700;
+
+line-height:1.5;
+
+margin-bottom:10px;
+
+color:white;
+
+}
+
+.event-description{
+
+font-size:14px;
+
+line-height:2;
+
+color:
+rgba(255,255,255,0.7);
+
+}
+
+.right-panel{
+
+position:absolute;
+
+top:70px;
+right:52px;
+
+width:260px;
+
+bottom:60px;
+
+overflow-y:auto;
+
+z-index:20;
+
+}
+
+.person-name{
+
+font-size:28px;
+
+font-weight:700;
+
+line-height:1.5;
+
+margin-bottom:10px;
+
+}
+
+.person-years{
+
+font-size:14px;
+
+letter-spacing:0.2em;
+
+color:#66e0ff;
+
+margin-bottom:30px;
+
+}
+
+.person-image{
+
+width:78px;
+height:78px;
+
+border-radius:999px;
+
+object-fit:cover;
+
+margin-bottom:28px;
+
+border:
+
+1px solid rgba(255,255,255,0.16);
+
+}
+
+.person-description{
+
+font-size:13px;
+
+line-height:2.1;
+
+color:
+rgba(255,255,255,0.78);
+
+font-weight:300;
+
+margin-bottom:40px;
+
+}
+
+.timeline-item{
+
+margin-bottom:32px;
+
+}
+
+.timeline-year{
+
+font-size:13px;
+
+font-weight:700;
+
+letter-spacing:0.16em;
+
+color:#66e0ff;
+
+margin-bottom:10px;
+
+}
+
+.timeline-text{
+
+font-size:14px;
+
+line-height:2;
+
+color:
+rgba(255,255,255,0.84);
 
 }
 
@@ -45,10 +336,150 @@ inset:0;
 
 <div id="globeViz"></div>
 
+<div id="title">
+
+<div class="title-main">
+GLOBAL HISTORY MAP
+</div>
+
+<div class="title-sub">
+Civilization Meaning Interface
+</div>
+
+</div>
+
+<div class="left-panel">
+
+<div class="section-title">
+WORLD EVENTS
+</div>
+
+<div id="worldEvents"></div>
+
+</div>
+
+<div class="right-panel">
+
+<div class="person-name">
+ジョン万次郎
+</div>
+
+<div class="person-years">
+1827 — 1898
+</div>
+
+<img
+class="person-image"
+src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Nakahama_Manjiro.jpg"
+/>
+
+<div class="person-description">
+
+日本とアメリカ文明を結んだ幕末の航海者。
+漂流からアメリカ渡航、帰国後の開国支援まで
+文明接続の象徴的人物。
+
+</div>
+
+<div id="timeline"></div>
+
+</div>
+
 <script type="module">
 
-import './renderGlobe.js';
-import './main.js';
+import { events }
+from '../data/events.js';
+
+import { world }
+from './renderGlobe.js';
+
+const worldEvents =
+events.filter(
+e=>e.type==='world'
+);
+
+const personTimeline =
+events.filter(
+e=>e.type==='person'
+);
+
+const worldEventsEl =
+document.getElementById(
+'worldEvents'
+);
+
+worldEvents.forEach(event=>{
+
+const item =
+document.createElement('div');
+
+item.className =
+'event-item';
+
+item.innerHTML = `
+
+<div
+class="event-bar"
+style="
+background:${event.color};
+"
+></div>
+
+<div class="event-content">
+
+<div
+class="event-year"
+style="
+color:${event.color};
+"
+>
+${event.year}
+</div>
+
+<div class="event-title">
+${event.title}
+</div>
+
+<div class="event-description">
+${event.description}
+</div>
+
+</div>
+
+`;
+
+worldEventsEl.appendChild(item);
+
+});
+
+const timeline =
+document.getElementById(
+'timeline'
+);
+
+personTimeline.forEach(event=>{
+
+const item =
+document.createElement('div');
+
+item.className =
+'timeline-item';
+
+item.innerHTML = `
+
+<div class="timeline-year">
+${event.year}
+</div>
+
+<div class="timeline-text">
+${event.description}
+</div>
+
+`;
+
+timeline.appendChild(item);
+
+});
 
 </script>
 
