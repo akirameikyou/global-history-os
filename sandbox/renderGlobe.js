@@ -148,8 +148,6 @@ function updateLabels(){
 
 const camPos =
 
-const camPos =
-
 world.camera()
 .position
 .clone()
