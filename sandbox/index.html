@@ -22,7 +22,7 @@ width:100%;
 height:100%;
 overflow:hidden;
 background:black;
-font-family:sans-serif;
+font-family:Arial,sans-serif;
 
 }
 
@@ -50,7 +50,33 @@ transform:
 translate(-50%,-50%);
 
 text-shadow:
-0 0 5px rgba(0,255,255,0.7);
+0 0 5px rgba(120,220,255,0.7);
+
+transition:0.25s;
+
+}
+
+#historyTitle{
+
+position:absolute;
+
+top:18px;
+left:50%;
+
+transform:
+translateX(-50%);
+
+color:white;
+
+font-size:15px;
+
+letter-spacing:3px;
+
+opacity:0.55;
+
+z-index:10;
+
+pointer-events:none;
 
 }
 
@@ -61,105 +87,173 @@ position:absolute;
 left:0;
 top:0;
 
-width:320px;
+width:260px;
 height:100vh;
-
-background:
-rgba(0,0,0,0.72);
-
-backdrop-filter:
-blur(12px);
-
-border-right:
-1px solid rgba(255,255,255,0.08);
 
 padding:24px;
 
 box-sizing:border-box;
 
+background:
+linear-gradient(
+90deg,
+rgba(0,0,0,0.72),
+rgba(0,0,0,0.18),
+transparent
+);
+
+backdrop-filter:
+blur(10px);
+
+z-index:5;
+
 color:white;
-
-overflow-y:auto;
-
-z-index:10;
 
 }
 
-.panel-title{
+.panelHeader{
 
-font-size:28px;
+font-size:12px;
+
+letter-spacing:2px;
+
+opacity:0.45;
+
+margin-bottom:18px;
+
+}
+
+.eventItem{
+
+padding:10px 0;
+
+border-bottom:
+1px solid rgba(255,255,255,0.06);
+
+cursor:pointer;
+
+transition:0.2s;
+
+}
+
+.eventItem:hover{
+
+opacity:1;
+
+transform:
+translateX(4px);
+
+}
+
+.eventYear{
+
+font-size:11px;
+
+color:#66e0ff;
+
+margin-bottom:4px;
+
+}
+
+.eventTitle{
+
+font-size:14px;
+
+font-weight:600;
+
+}
+
+#rightPanel{
+
+position:absolute;
+
+right:0;
+top:0;
+
+width:320px;
+height:100vh;
+
+padding:28px;
+
+box-sizing:border-box;
+
+background:
+linear-gradient(
+-90deg,
+rgba(0,0,0,0.72),
+rgba(0,0,0,0.18),
+transparent
+);
+
+backdrop-filter:
+blur(10px);
+
+z-index:5;
+
+color:white;
+
+}
+
+#detailName{
+
+font-size:32px;
 font-weight:700;
 
 margin-bottom:8px;
 
 }
 
-.panel-sub{
+#detailYears{
 
 font-size:13px;
 
+color:#66e0ff;
+
+margin-bottom:20px;
+
+}
+
+#detailText{
+
+font-size:14px;
+
+line-height:1.8;
+
 color:
-rgba(255,255,255,0.55);
+rgba(255,255,255,0.78);
 
 margin-bottom:28px;
 
 }
 
-.event-card{
+#detailTimeline{
 
-padding:14px;
+border-top:
+1px solid rgba(255,255,255,0.08);
+
+padding-top:18px;
+
+}
+
+.timelineItem{
 
 margin-bottom:14px;
 
-border:
-1px solid rgba(255,255,255,0.08);
-
-border-radius:14px;
-
-background:
-rgba(255,255,255,0.04);
-
-transition:0.25s;
-
-cursor:pointer;
-
 }
 
-.event-card:hover{
+.timelineYear{
 
-background:
-rgba(0,255,255,0.08);
-
-border:
-1px solid rgba(0,255,255,0.3);
-
-}
-
-.event-year{
-
-font-size:12px;
+font-size:11px;
 
 color:#66e0ff;
 
-margin-bottom:6px;
+margin-bottom:4px;
 
 }
 
-.event-title{
+.timelineText{
 
-font-size:17px;
-font-weight:600;
-
-margin-bottom:6px;
-
-}
-
-.event-place{
-
-font-size:13px;
-
-color:
-rgba(255,255,255,0.6);
+font-size:14px;
 
 }
 
@@ -171,41 +265,62 @@ rgba(255,255,255,0.6);
 
 <div id="globeViz"></div>
 
-<div id="leftPanel">
-
-<div class="panel-title">
-History OS
+<div id="historyTitle">
+HISTORY OS
 </div>
 
-<div class="panel-sub">
-Civilization Meaning Interface
+<div id="leftPanel">
+
+<div class="panelHeader">
+WORLD EVENTS
 </div>
 
 <div id="eventList"></div>
 
 </div>
 
+<div id="rightPanel">
+
+<div id="detailName">
+John Manjiro
+</div>
+
+<div id="detailYears">
+1827 - 1898
+</div>
+
+<div id="detailText">
+Japanese fisherman and historical bridge between Edo Japan and the United States during the final years of isolation.
+</div>
+
+<div id="detailTimeline"></div>
+
+</div>
+
 <script type="module">
 
-import Globe from
-'https://esm.sh/globe.gl@2.32.0';
+import Globe
+from 'https://esm.sh/globe.gl@2.32.0';
 
 import { events }
 from '../data/events.js';
 
-const world =
+const world = Globe()(
 
-Globe()(
 document.getElementById(
 'globeViz'
+
 )
+
 )
 
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
-.backgroundColor('black')
+.backgroundColor(
+'black'
+)
 
 .width(window.innerWidth)
 
@@ -214,7 +329,7 @@ document.getElementById(
 world.pointOfView({
 
 lat:30,
-lng:140,
+lng:160,
 altitude:2.2
 
 });
@@ -226,7 +341,9 @@ events.forEach(event=>{
 event.relatedEvents.forEach(id=>{
 
 const target =
-events.find(e=>e.id===id);
+events.find(
+e=>e.id===id
+);
 
 if(!target) return;
 
@@ -238,7 +355,9 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:'#66e0ff'
+color:
+event.lineColor
+|| '#66e0ff'
 
 });
 
@@ -250,7 +369,7 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.12)
+.arcStroke(0.06)
 
 .arcDashLength(1)
 
@@ -258,17 +377,29 @@ world.arcsData(arcs)
 
 .arcDashAnimateTime(0)
 
-.arcAltitudeAutoScale(0.22);
+.arcAltitudeAutoScale(0.18);
 
-const labels =
-events.map(event => ({
+const labels = [];
+
+events.forEach(event=>{
+
+const alreadyExists =
+labels.find(
+l=>l.name===event.placeName
+);
+
+if(alreadyExists) return;
+
+labels.push({
 
 name:event.placeName,
 
 lat:event.lat,
 lng:event.lng
 
-}));
+});
+
+});
 
 const labelEls = [];
 
@@ -283,8 +414,7 @@ div.className =
 div.innerText =
 label.name;
 
-document.body
-.appendChild(div);
+document.body.appendChild(div);
 
 labelEls.push({
 
@@ -346,14 +476,9 @@ const len = Math.sqrt(
 
 );
 
-const nx =
-pos.x / len;
-
-const ny =
-pos.y / len;
-
-const nz =
-pos.z / len;
+const nx = pos.x / len;
+const ny = pos.y / len;
+const nz = pos.z / len;
 
 const dot =
 
@@ -363,7 +488,7 @@ const dot =
 
 (nz * camPos.z);
 
-if(dot < 0.12){
+if(dot < 0.22){
 
 label.el.style.display =
 'none';
@@ -376,10 +501,10 @@ label.el.style.display =
 'block';
 
 label.el.style.left =
-screen.x + 'px';
+`${screen.x}px`;
 
 label.el.style.top =
-screen.y + 'px';
+`${screen.y}px`;
 
 });
 
@@ -396,31 +521,32 @@ document.getElementById(
 'eventList'
 );
 
+const detailTimeline =
+document.getElementById(
+'detailTimeline'
+);
+
 events.forEach(event=>{
 
-const card =
+const item =
 document.createElement('div');
 
-card.className =
-'event-card';
+item.className =
+'eventItem';
 
-card.innerHTML =
+item.innerHTML =
 
 `
-<div class="event-year">
+<div class="eventYear">
 ${event.year}
 </div>
 
-<div class="event-title">
+<div class="eventTitle">
 ${event.title}
-</div>
-
-<div class="event-place">
-${event.placeName}
 </div>
 `;
 
-card.onclick = ()=>{
+item.onclick = ()=>{
 
 world.pointOfView({
 
@@ -435,7 +561,29 @@ altitude:1.2
 
 };
 
-eventList.appendChild(card);
+eventList.appendChild(item);
+
+const timeline =
+document.createElement('div');
+
+timeline.className =
+'timelineItem';
+
+timeline.innerHTML =
+
+`
+<div class="timelineYear">
+${event.year}
+</div>
+
+<div class="timelineText">
+${event.title}
+</div>
+`;
+
+detailTimeline.appendChild(
+timeline
+);
 
 });
 
