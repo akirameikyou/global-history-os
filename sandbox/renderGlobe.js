@@ -275,3 +275,10 @@ world
 }
 
 );
+export let currentYear = 1850;
+
+export function setCurrentYear(year){
+
+currentYear = year;
+
+}
