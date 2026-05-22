@@ -587,7 +587,33 @@ ${event.description}
 timeline.appendChild(item);
 
 });
+const slider =
+document.getElementById(
+'yearSlider'
+);
 
+const timelineYear =
+document.getElementById(
+'timelineYear'
+);
+
+slider.addEventListener(
+
+'input',
+
+e=>{
+
+const year =
+parseInt(e.target.value);
+
+timelineYear.innerText =
+year;
+
+location.reload();
+
+}
+
+);
 </script>
 
 </body>
