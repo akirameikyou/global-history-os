@@ -1,83 +1,185 @@
 import Globe
-from 'https://esm.sh/globe.gl@2.32.0';
+from 'https://esm.sh/globe.gl';
+
+import * as THREE
+from 'https://esm.sh/three';
 
 import { events }
 from '../data/events.js';
 
-export const world = Globe()(
+export let currentYear = 1850;
 
+const container =
 document.getElementById(
 'globeViz'
-)
+);
 
-)
+export const world = Globe()(container)
 
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
 
-.backgroundColor(
-'black'
-)
-
-.width(window.innerWidth)
-
-.height(window.innerHeight);
+.backgroundColor('black');
 
 world.pointOfView({
 
 lat:30,
-lng:160,
-altitude:2.15
+lng:140,
+altitude:2.2
 
 });
 
+const camera =
+world.camera();
+
+const labelEls = [];
+
+function clearLabels(){
+
+labelEls.forEach(
+l=>l.el.remove()
+);
+
+labelEls.length = 0;
+
+}
+
+function createLabels(filtered){
+
+clearLabels();
+
+filtered.forEach(event=>{
+
+const div =
+document.createElement('div');
+
+div.className =
+'city-label';
+
+div.innerText =
+event.placeName;
+
+document.body.appendChild(div);
+
+labelEls.push({
+
+el:div,
+
+lat:event.lat,
+lng:event.lng
+
+});
+
+});
+
+}
+
+function updateLabels(){
+
+labelEls.forEach(label=>{
+
+const pos =
+world.getCoords(
+
+label.lat,
+label.lng,
+0.02
+
+);
+
+const cameraDir =
+camera.position.clone().normalize();
+
+const pointDir =
+new THREE.Vector3(
+
+pos.x,
+pos.y,
+pos.z
+
+).normalize();
+
+const dot =
+cameraDir.dot(pointDir);
+
+if(dot < 0.12){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+const screen =
+world.getScreenCoords(
+
+label.lat,
+label.lng,
+0.02
+
+);
+
+if(!screen){
+
+label.el.style.display =
+'none';
+
+return;
+
+}
+
+label.el.style.display =
+'block';
+
+label.el.style.left =
+`${screen.x}px`;
+
+label.el.style.top =
+`${screen.y}px`;
+
+});
+
+requestAnimationFrame(
+updateLabels
+);
+
+}
+
+function buildArcs(filtered){
+
 const arcs = [];
 
-events.forEach(event=>{
+filtered.forEach(event=>{
 
 if(!event.relatedEvents) return;
 
-event.relatedEvents.forEach(id=>{
+event.relatedEvents.forEach(targetId=>{
 
 const target =
-events.find(
-e=>e.id===id
+filtered.find(
+e=>e.id === targetId
 );
 
 if(!target) return;
 
-const distance = Math.sqrt(
+const dx =
+event.lng - target.lng;
 
-Math.pow(
-event.lat-target.lat,
-2
-)
+const dy =
+event.lat - target.lat;
 
-+
+const distance =
+Math.sqrt(dx*dx + dy*dy);
 
-Math.pow(
-event.lng-target.lng,
-2
-)
+let altitude = 0.05;
 
-);
-
-let altitude = 0.06;
-
-if(distance > 80){
-
+if(distance > 120)
 altitude = 0.24;
 
-}else if(distance > 40){
-
+else if(distance > 40)
 altitude = 0.14;
-
-}else{
-
-altitude = 0.05;
-
-}
 
 arcs.push({
 
@@ -105,7 +207,7 @@ world.arcsData(arcs)
 
 .arcAltitude('altitude')
 
-.arcStroke(0.04)
+.arcStroke(0.08)
 
 .arcDashLength(1)
 
@@ -113,150 +215,24 @@ world.arcsData(arcs)
 
 .arcDashAnimateTime(0);
 
-const uniqueLabels = [];
+}
 
-events.forEach(event=>{
+export function renderYear(year){
 
-const exists =
-uniqueLabels.find(
-e=>e.name===event.placeName
+currentYear = year;
+
+const filtered =
+events.filter(
+e=>e.startYear <= year
 );
 
-if(exists) return;
+createLabels(filtered);
 
-uniqueLabels.push({
-
-name:event.placeName,
-
-lat:event.lat,
-lng:event.lng
-
-});
-
-});
-
-const labelEls = [];
-
-uniqueLabels.forEach(label=>{
-
-const div =
-document.createElement('div');
-
-div.className =
-'city-label';
-
-div.innerText =
-label.name;
-
-document.body.appendChild(div);
-
-labelEls.push({
-
-el:div,
-
-lat:label.lat,
-lng:label.lng
-
-});
-
-});
-
-function updateLabels(){
-
-const camPos =
-
-world.camera()
-.position
-.clone()
-.normalize();
-
-labelEls.forEach(label=>{
-
-const screen =
-
-world.getScreenCoords(
-
-label.lat,
-label.lng
-
-);
-
-if(
-
-!screen
-||
-
-screen.x===undefined
-||
-
-screen.y===undefined
-
-){
-
-label.el.style.display =
-'none';
-
-return;
+buildArcs(filtered);
 
 }
 
-const pos =
-
-world.getCoords(
-
-label.lat,
-label.lng,
-0.02
-
-);
-
-const len = Math.sqrt(
-
-(pos.x * pos.x) +
-
-(pos.y * pos.y) +
-
-(pos.z * pos.z)
-
-);
-
-const nx = pos.x / len;
-const ny = pos.y / len;
-const nz = pos.z / len;
-
-const dot =
-
-(nx * camPos.x) +
-
-(ny * camPos.y) +
-
-(nz * camPos.z);
-
-if(dot < 0.22){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-label.el.style.display =
-'block';
-
-label.el.style.left =
-`${screen.x}px`;
-
-label.el.style.top =
-`${screen.y}px`;
-
-});
-
-requestAnimationFrame(
-updateLabels
-);
-
-}
+renderYear(currentYear);
 
 updateLabels();
 
@@ -275,10 +251,3 @@ world
 }
 
 );
-export let currentYear = 1850;
-
-export function setCurrentYear(year){
-
-currentYear = year;
-
-}
