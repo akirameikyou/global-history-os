@@ -212,6 +212,8 @@ z-index:10;
 
 color:white;
 
+overflow-y:auto;
+
 }
 
 #personName{
@@ -233,6 +235,18 @@ letter-spacing:2px;
 color:#66e0ff;
 
 margin-bottom:26px;
+
+}
+
+#personPortrait{
+
+width:100%;
+
+border-radius:18px;
+
+margin-bottom:24px;
+
+opacity:0.92;
 
 }
 
@@ -318,16 +332,19 @@ WORLD EVENTS
 
 <img
 id="personPortrait"
-src=""
-style="
-width:100%;
-border-radius:18px;
-margin-bottom:24px;
-opacity:0.92;
-"
+src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Nakahama_Manjirō.jpg"
 />
 
-<div id="personText"></div>
+<div id="personText">
+
+中浜万次郎（ジョン万次郎）は、
+江戸時代末期、日本とアメリカ文明を結ぶ象徴的存在となった人物。
+
+漂流後にアメリカへ渡り、
+英語・航海術・民主主義思想を学び、
+帰国後は幕末日本の開国へ大きな影響を与えた。
+
+</div>
 
 <div id="personTimeline"></div>
 
@@ -447,8 +464,7 @@ div.className =
 div.innerText =
 label.name;
 
-document.body
-.appendChild(div);
+document.body.appendChild(div);
 
 labelEls.push({
 
@@ -559,15 +575,6 @@ const eventList =
 document.getElementById(
 'eventList'
 );
-const personPortrait =
-document.getElementById(
-'personPortrait'
-);
-
-const personText =
-document.getElementById(
-'personText'
-);
 
 const personName =
 document.getElementById(
@@ -578,6 +585,17 @@ const personYears =
 document.getElementById(
 'personYears'
 );
+
+const personText =
+document.getElementById(
+'personText'
+);
+
+const personPortrait =
+document.getElementById(
+'personPortrait'
+);
+
 const personTimeline =
 document.getElementById(
 'personTimeline'
@@ -619,6 +637,18 @@ altitude:1.1
 1200
 
 );
+
+personName.innerText =
+event.title;
+
+personYears.innerText =
+event.year;
+
+personText.innerText =
+event.description || '';
+
+personPortrait.src =
+event.portrait || '';
 
 };
 
