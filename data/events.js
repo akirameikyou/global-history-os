@@ -1,167 +1,165 @@
 export const events = [
 
 {
-
 id:'manjiro_birth',
 
-type:'person_event',
+type:'person',
 
-title:'ジョン万次郎 誕生',
+title:'中浜万次郎 誕生',
 
-placeName:'Cape Ashizuri',
-
-year:1827,
-
-lat:32.78,
-lng:132.95,
+year:'1827',
 
 description:
 '土佐国中浜村に生まれる。',
 
-portrait:
-'https://upload.wikimedia.org/wikipedia/commons/0/0b/Nakahama_Manjirō.jpg',
+lat:32.78,
+lng:132.95,
+
+placeName:'Cape Ashizuri',
+
+lineColor:'#66e0ff',
 
 relatedEvents:[
-
 'manjiro_shipwreck'
-
 ]
-
 },
 
 {
-
 id:'manjiro_shipwreck',
 
-type:'person_event',
+type:'person',
 
 title:'漂流・鳥島',
 
-placeName:'Torishima',
-
-year:1841,
-
-lat:30.48,
-lng:140.30,
+year:'1841',
 
 description:
 '漂流し鳥島へ漂着。人生最大の転換点。',
 
-portrait:
-'https://upload.wikimedia.org/wikipedia/commons/0/0b/Nakahama_Manjirō.jpg',
+lat:30.48,
+lng:140.30,
+
+placeName:'Torishima',
+
+lineColor:'#66e0ff',
 
 relatedEvents:[
-
 'manjiro_america'
-
 ]
-
 },
 
 {
-
 id:'manjiro_america',
 
-type:'person_event',
+type:'person',
 
 title:'アメリカ渡航',
 
-placeName:'New Bedford',
-
-year:1843,
-
-lat:41.63,
-lng:-70.93,
+year:'1843',
 
 description:
 '航海術・英語・民主主義思想を学ぶ。',
 
-portrait:
-'https://upload.wikimedia.org/wikipedia/commons/0/0b/Nakahama_Manjirō.jpg',
+lat:41.63,
+lng:-70.93,
+
+placeName:'New Bedford',
+
+lineColor:'#66e0ff',
 
 relatedEvents:[
-
 'manjiro_return'
-
 ]
-
 },
 
 {
-
 id:'manjiro_return',
 
-type:'person_event',
+type:'person',
 
 title:'日本帰国',
 
-placeName:'Naha',
-
-year:1851,
-
-lat:26.21,
-lng:127.68,
+year:'1851',
 
 description:
 '帰国後、幕末日本へ海外知識を伝える。',
 
-portrait:
-'https://upload.wikimedia.org/wikipedia/commons/0/0b/Nakahama_Manjirō.jpg',
+lat:26.21,
+lng:127.68,
+
+placeName:'Naha',
+
+lineColor:'#66e0ff',
 
 relatedEvents:[
-
 'kaikoku'
-
 ]
-
 },
 
 {
-
 id:'kaikoku',
 
-type:'national_event',
+type:'world',
 
 title:'日本開国',
 
-placeName:'Tokyo',
-
-year:1854,
-
-lat:35.68,
-lng:139.76,
+year:'1854',
 
 description:
 '日米和親条約締結。日本は鎖国を終える。',
 
-relatedEvents:[
-
-'meiji_restoration'
-
-]
-
-},
-
-{
-
-id:'meiji_restoration',
-
-type:'national_event',
-
-title:'明治維新',
-
-placeName:'Tokyo',
-
-year:1868,
+color:'#ffd95e',
 
 lat:35.68,
 lng:139.76,
 
+placeName:'Tokyo',
+
+relatedEvents:[]
+},
+
+{
+id:'civil_war',
+
+type:'world',
+
+title:'南北戦争',
+
+year:'1861',
+
+description:
+'アメリカ国家構造を再定義した内戦。',
+
+color:'#ff5e5e',
+
+lat:38.90,
+lng:-77.03,
+
+placeName:'Washington',
+
+relatedEvents:[]
+},
+
+{
+id:'meiji',
+
+type:'world',
+
+title:'明治維新',
+
+year:'1868',
+
 description:
 '近代国家建設開始。',
 
-relatedEvents:[]
+color:'#66e0ff',
 
+lat:35.68,
+lng:139.76,
+
+placeName:'Tokyo',
+
+relatedEvents:[]
 }
 
 ];
