@@ -152,7 +152,7 @@ year:'1868',
 description:
 '近代国家建設開始。',
 
-color:'#66e0ff',
+color:'#7dff7a',
 
 lat:35.68,
 lng:139.76,
