@@ -243,30 +243,34 @@ padding-right:8px;
 
 }
 
-position:absolute;
+.right-panel::-webkit-scrollbar{
 
-top:70px;
-right:52px;
+width:4px;
 
-width:260px;
+}
 
-bottom:60px;
+.right-panel::-webkit-scrollbar-thumb{
 
-overflow-y:auto;
+background:
+rgba(255,255,255,0.16);
 
-z-index:20;
+border-radius:999px;
 
 }
 
 .person-name{
 
-font-size:28px;
+font-size:42px;
 
 font-weight:700;
 
-line-height:1.5;
+line-height:1.25;
 
-margin-bottom:10px;
+margin-bottom:14px;
+
+color:white;
+
+letter-spacing:0.02em;
 
 }
 
@@ -284,14 +288,14 @@ margin-bottom:30px;
 
 .person-image{
 
-width:78px;
-height:78px;
+width:92px;
+height:92px;
 
 border-radius:999px;
 
 object-fit:cover;
 
-margin-bottom:28px;
+margin-bottom:30px;
 
 border:
 
@@ -301,22 +305,24 @@ border:
 
 .person-description{
 
-font-size:13px;
+font-size:14px;
 
-line-height:2.1;
+line-height:2.15;
 
 color:
 rgba(255,255,255,0.78);
 
 font-weight:300;
 
-margin-bottom:40px;
+margin-bottom:46px;
+
+max-width:320px;
 
 }
 
 .timeline-item{
 
-margin-bottom:32px;
+margin-bottom:34px;
 
 }
 
