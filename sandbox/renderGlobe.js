@@ -28,7 +28,7 @@ world.pointOfView({
 
 lat:30,
 lng:160,
-altitude:2.2
+altitude:2.15
 
 });
 
@@ -45,6 +45,38 @@ e=>e.id===id
 
 if(!target) return;
 
+const distance = Math.sqrt(
+
+Math.pow(
+event.lat-target.lat,
+2
+)
+
++
+
+Math.pow(
+event.lng-target.lng,
+2
+)
+
+);
+
+let altitude = 0.08;
+
+if(distance > 80){
+
+altitude = 0.28;
+
+}else if(distance > 40){
+
+altitude = 0.18;
+
+}else{
+
+altitude = 0.06;
+
+}
+
 arcs.push({
 
 startLat:event.lat,
@@ -53,7 +85,9 @@ startLng:event.lng,
 endLat:target.lat,
 endLng:target.lng,
 
-color:'#66e0ff'
+color:'#66e0ff',
+
+altitude
 
 });
 
@@ -65,7 +99,7 @@ world.arcsData(arcs)
 
 .arcColor('color')
 
-.arcStroke(0.05)
+.arcStroke(0.045)
 
 .arcDashLength(1)
 
@@ -73,7 +107,7 @@ world.arcsData(arcs)
 
 .arcDashAnimateTime(0)
 
-.arcAltitude(0.18);
+.arcAltitude('altitude');
 
 const labels = [];
 
@@ -111,10 +145,13 @@ div.style.color =
 'white';
 
 div.style.fontSize =
-'12px';
+'11px';
 
 div.style.fontWeight =
-'500';
+'400';
+
+div.style.letterSpacing =
+'0.04em';
 
 div.style.pointerEvents =
 'none';
@@ -126,7 +163,7 @@ div.style.transform =
 'translate(-50%,-50%)';
 
 div.style.textShadow =
-'0 0 6px rgba(0,0,0,1)';
+'0 0 8px rgba(0,0,0,1)';
 
 div.innerText =
 label.name;
@@ -205,7 +242,7 @@ const dot =
 
 (nz * camPos.z);
 
-if(dot < 0.18){
+if(dot < 0.22){
 
 label.el.style.display =
 'none';
