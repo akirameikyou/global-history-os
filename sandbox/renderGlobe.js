@@ -29,6 +29,18 @@ altitude:2.15
 
 const labelEls = [];
 
+function isActive(event, year){
+
+if(event.endYear){
+
+return event.startYear <= year && year <= event.endYear;
+
+}
+
+return event.startYear <= year;
+
+}
+
 function clearLabels(){
 
 labelEls.forEach(label=>{
@@ -314,7 +326,7 @@ currentYear = year;
 
 const filtered =
 events.filter(
-event=>event.startYear <= year
+event=>isActive(event, year)
 );
 
 createLabels(filtered);
