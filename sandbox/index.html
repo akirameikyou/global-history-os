@@ -539,7 +539,17 @@ item.className =
 
 item.onclick = ()=>{
 
-moveToEvent(event);
+world.pointOfView(
+
+{
+lat:event.lat,
+lng:event.lng,
+altitude:1.6
+},
+
+1200
+
+);
 
 };
 
