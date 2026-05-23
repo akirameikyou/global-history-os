@@ -506,22 +506,45 @@ renderYear
 
 from './renderGlobe.js';
 
-const worldEvents =
-events.filter(
-e=>e.type==='world'
-);
-
-const personTimeline =
-events.filter(
-e=>e.type==='person'
-);
-
 const worldEventsEl =
 document.getElementById(
 'worldEvents'
 );
 
-worldEvents.forEach(event=>{
+const timeline =
+document.getElementById(
+'timeline'
+);
+
+function renderUI(year){
+
+worldEventsEl.innerHTML = '';
+
+timeline.innerHTML = '';
+
+const filteredWorld =
+events.filter(
+
+e=>
+
+e.type==='world'
+&&
+e.startYear <= year
+
+);
+
+const filteredPerson =
+events.filter(
+
+e=>
+
+e.type==='person'
+&&
+e.startYear <= year
+
+);
+
+filteredWorld.forEach(event=>{
 
 const item =
 document.createElement('div');
@@ -565,12 +588,7 @@ worldEventsEl.appendChild(item);
 
 });
 
-const timeline =
-document.getElementById(
-'timeline'
-);
-
-personTimeline.forEach(event=>{
+filteredPerson.forEach(event=>{
 
 const item =
 document.createElement('div');
@@ -593,6 +611,10 @@ ${event.description}
 timeline.appendChild(item);
 
 });
+
+}
+
+renderUI(1850);
 const slider =
 document.getElementById(
 'yearSlider'
