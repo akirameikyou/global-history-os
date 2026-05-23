@@ -1,291 +1,38 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
 <meta charset="UTF-8" />
-
-<meta
-name="viewport"
-content="width=device-width, initial-scale=1.0"
-/>
-
-<title>
-Global History Map
-</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Global History Map</title>
 
 <style>
-
-html,
-body{
-
-margin:0;
-width:100%;
-height:100%;
-overflow:hidden;
-background:black;
-
-font-family:
-Arial,
-sans-serif;
-
-}
-
-#globeViz{
-
-position:absolute;
-inset:0;
-z-index:1;
-
-}
-
-.city-label{
-
-position:absolute;
-color:white;
-font-size:11px;
-font-weight:400;
-letter-spacing:0.04em;
-pointer-events:none;
-white-space:nowrap;
-transform:translate(-50%,-50%);
-text-shadow:0 0 8px rgba(0,0,0,1);
-z-index:5;
-
-}
-
-#title{
-
-position:absolute;
-top:34px;
-left:50%;
-transform:translateX(-50%);
-z-index:20;
-text-align:center;
-pointer-events:none;
-
-}
-
-.title-main{
-
-font-size:15px;
-letter-spacing:0.38em;
-font-weight:600;
-color:white;
-opacity:0.92;
-
-}
-
-.title-sub{
-
-margin-top:8px;
-font-size:11px;
-letter-spacing:0.16em;
-color:rgba(255,255,255,0.38);
-
-}
-
-.left-panel{
-
-position:absolute;
-top:70px;
-left:52px;
-width:360px;
-bottom:60px;
-overflow-y:auto;
-z-index:20;
-padding-right:12px;
-
-}
-
-.section-title{
-
-font-size:13px;
-letter-spacing:0.28em;
-color:rgba(255,255,255,0.52);
-margin-bottom:26px;
-
-}
-
-.event-item{
-
-display:flex;
-gap:16px;
-padding:24px 0;
-border-bottom:1px solid rgba(255,255,255,0.08);
-cursor:pointer;
-
-}
-
-.event-bar{
-
-width:3px;
-border-radius:999px;
-flex-shrink:0;
-
-}
-
-.event-content{
-
-flex:1;
-
-}
-
-.event-year{
-
-font-size:13px;
-font-weight:600;
-margin-bottom:10px;
-
-}
-
-.event-title{
-
-font-size:20px;
-font-weight:700;
-line-height:1.5;
-margin-bottom:10px;
-color:white;
-
-}
-
-.event-description{
-
-font-size:14px;
-line-height:2;
-color:rgba(255,255,255,0.7);
-
-}
-
-.right-panel{
-
-position:absolute;
-top:70px;
-right:52px;
-width:340px;
-bottom:60px;
-overflow-y:auto;
-z-index:20;
-padding-right:8px;
-
-}
-
-.person-name{
-
-font-size:28px;
-font-weight:700;
-line-height:1.18;
-margin-bottom:16px;
-color:white;
-letter-spacing:0.18em;
-text-transform:uppercase;
-
-}
-
-.person-years{
-
-font-size:14px;
-letter-spacing:0.2em;
-color:#66e0ff;
-margin-bottom:30px;
-
-}
-
-.person-image{
-
-width:92px;
-height:92px;
-border-radius:999px;
-object-fit:cover;
-margin-bottom:30px;
-border:1px solid rgba(255,255,255,0.16);
-
-}
-
-.person-description{
-
-font-size:14px;
-line-height:2.15;
-color:rgba(255,255,255,0.78);
-font-weight:300;
-margin-bottom:46px;
-max-width:320px;
-
-}
-
-.timeline-item{
-
-margin-bottom:34px;
-cursor:pointer;
-
-}
-
-.timeline-year{
-
-font-size:13px;
-font-weight:700;
-letter-spacing:0.16em;
-color:#66e0ff;
-margin-bottom:10px;
-
-}
-
-.timeline-text{
-
-font-size:14px;
-line-height:2;
-color:rgba(255,255,255,0.84);
-
-}
-
-#timelineBar{
-
-position:absolute;
-left:50%;
-bottom:38px;
-transform:translateX(-50%);
-z-index:30;
-width:520px;
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:12px;
-
-}
-
-#timelineYear{
-
-font-size:14px;
-letter-spacing:0.25em;
-color:white;
-opacity:0.8;
-
-}
-
-#yearSlider{
-
-width:520px;
-appearance:none;
-height:2px;
-background:rgba(255,255,255,0.25);
-outline:none;
-
-}
-
-#yearSlider::-webkit-slider-thumb{
-
-appearance:none;
-width:14px;
-height:14px;
-border-radius:999px;
-background:#66e0ff;
-cursor:pointer;
-box-shadow:0 0 18px rgba(102,224,255,0.8);
-
-}
-
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:black;font-family:Arial,sans-serif;}
+#globeViz{position:absolute;inset:0;z-index:1;}
+.city-label{position:absolute;color:white;font-size:11px;font-weight:400;letter-spacing:0.04em;pointer-events:none;white-space:nowrap;transform:translate(-50%,-50%);text-shadow:0 0 8px rgba(0,0,0,1);z-index:5;}
+#title{position:absolute;top:34px;left:50%;transform:translateX(-50%);z-index:20;text-align:center;pointer-events:none;}
+.title-main{font-size:15px;letter-spacing:0.38em;font-weight:600;color:white;opacity:0.92;}
+.title-sub{margin-top:8px;font-size:11px;letter-spacing:0.16em;color:rgba(255,255,255,0.38);}
+.left-panel{position:absolute;top:70px;left:52px;width:360px;bottom:60px;overflow-y:auto;z-index:20;padding-right:12px;}
+.section-title{font-size:13px;letter-spacing:0.28em;color:rgba(255,255,255,0.52);margin-bottom:26px;}
+.event-item{display:flex;gap:16px;padding:24px 0;border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;}
+.event-bar{width:3px;border-radius:999px;flex-shrink:0;}
+.event-content{flex:1;}
+.event-year{font-size:13px;font-weight:600;margin-bottom:10px;}
+.event-title{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:10px;color:white;}
+.event-description{font-size:14px;line-height:2;color:rgba(255,255,255,0.7);}
+.right-panel{position:absolute;top:70px;right:52px;width:340px;bottom:60px;overflow-y:auto;z-index:20;padding-right:8px;}
+.person-name{font-size:28px;font-weight:700;line-height:1.18;margin-bottom:16px;color:white;letter-spacing:0.18em;text-transform:uppercase;}
+.person-years{font-size:14px;letter-spacing:0.2em;color:#66e0ff;margin-bottom:30px;}
+.person-image{width:92px;height:92px;border-radius:999px;object-fit:cover;margin-bottom:30px;border:1px solid rgba(255,255,255,0.16);}
+.person-description{font-size:14px;line-height:2.15;color:rgba(255,255,255,0.78);font-weight:300;margin-bottom:46px;max-width:320px;}
+.timeline-item{margin-bottom:34px;cursor:pointer;}
+.timeline-year{font-size:13px;font-weight:700;letter-spacing:0.16em;color:#66e0ff;margin-bottom:10px;}
+.timeline-text{font-size:14px;line-height:2;color:rgba(255,255,255,0.84);}
+#timelineBar{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);z-index:30;width:520px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+#timelineYear{font-size:14px;letter-spacing:0.25em;color:white;opacity:0.8;}
+#yearSlider{width:520px;appearance:none;height:2px;background:rgba(255,255,255,0.25);outline:none;}
+#yearSlider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:999px;background:#66e0ff;cursor:pointer;box-shadow:0 0 18px rgba(102,224,255,0.8);}
 </style>
-
 </head>
 
 <body>
@@ -293,244 +40,113 @@ box-shadow:0 0 18px rgba(102,224,255,0.8);
 <div id="globeViz"></div>
 
 <div id="title">
-
-<div class="title-main">
-GLOBAL HISTORY MAP
-</div>
-
-<div class="title-sub">
-Civilization Meaning Interface
-</div>
-
+<div class="title-main">GLOBAL HISTORY MAP</div>
+<div class="title-sub">Civilization Meaning Interface</div>
 </div>
 
 <div class="left-panel">
-
-<div class="section-title">
-WORLD EVENTS
-</div>
-
+<div class="section-title">WORLD EVENTS</div>
 <div id="worldEvents"></div>
-
 </div>
 
 <div class="right-panel">
-
-<div class="person-name">
-JOHN<br>
-MANJIRO
-</div>
-
-<div class="person-years">
-1827 — 1898
-</div>
-
-<img
-class="person-image"
-src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Nakahama_Manjiro.jpg"
-/>
-
+<div class="person-name">JOHN<br>MANJIRO</div>
+<div class="person-years">1827 — 1898</div>
+<img class="person-image" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Nakahama_Manjiro.jpg"/>
 <div class="person-description">
 ジョン万次郎は、日本とアメリカを結んだ
 幕末のキーパーソン。
 </div>
-
 <div id="timeline"></div>
-
 </div>
 
 <div id="timelineBar">
-
-<div id="timelineYear">
-1850
-</div>
-
-<input
-type="range"
-id="yearSlider"
-min="1820"
-max="1870"
-value="1850"
-/>
-
+<div id="timelineYear">1850</div>
+<input type="range" id="yearSlider" min="1820" max="1870" value="1850"/>
 </div>
 
 <script type="module">
+import { events } from '../data/events.js';
+import { world, renderYear } from './renderGlobe.js';
 
-import { events }
-from '../data/events.js';
-
-import {
-
-renderYear,
-moveCamera
-
-}
-
-from './renderGlobe.js';
-
-const worldEventsEl =
-document.getElementById(
-'worldEvents'
-);
-
-const timeline =
-document.getElementById(
-'timeline'
-);
-
-const slider =
-document.getElementById(
-'yearSlider'
-);
-
-const timelineYear =
-document.getElementById(
-'timelineYear'
-);
+const worldEventsEl = document.getElementById('worldEvents');
+const timeline = document.getElementById('timeline');
+const slider = document.getElementById('yearSlider');
+const timelineYear = document.getElementById('timelineYear');
 
 function isActive(event, year){
-
-if(event.endYear){
-
-return event.startYear <= year && year <= event.endYear;
-
-}
-
-return event.startYear <= year;
-
+  if(event.endYear){
+    return event.startYear <= year && year <= event.endYear;
+  }
+  return event.startYear <= year;
 }
 
 function renderUI(year){
+  worldEventsEl.innerHTML = '';
+  timeline.innerHTML = '';
 
-worldEventsEl.innerHTML = '';
+  const worldEvents = events.filter(
+    event => event.type === 'world' && isActive(event, year)
+  );
 
-timeline.innerHTML = '';
+  const personEvents = events.filter(
+    event => event.type === 'person' && isActive(event, year)
+  );
 
-const worldEvents =
-events.filter(
-event=>event.type==='world' && isActive(event, year)
-);
+  worldEvents.forEach(event=>{
+    const item = document.createElement('div');
+    item.className = 'event-item';
 
-const personEvents =
-events.filter(
-event=>event.type==='person' && isActive(event, year)
-);
+    item.innerHTML = `
+      <div class="event-bar" style="background:${event.color};"></div>
+      <div class="event-content">
+        <div class="event-year" style="color:${event.color};">${event.year}</div>
+        <div class="event-title">${event.title}</div>
+        <div class="event-description">${event.description}</div>
+      </div>
+    `;
 
-worldEvents.forEach(event=>{
+    item.onclick = ()=>{
+      world.pointOfView({
+        lat:event.lat,
+        lng:event.lng,
+        altitude:1.6
+      },1200);
+    };
 
-const item =
-document.createElement('div');
+    worldEventsEl.appendChild(item);
+  });
 
-item.className =
-'event-item';
+  personEvents.forEach(event=>{
+    const item = document.createElement('div');
+    item.className = 'timeline-item';
 
-item.onclick = ()=>{
+    item.innerHTML = `
+      <div class="timeline-year">${event.year}</div>
+      <div class="timeline-text">${event.description}</div>
+    `;
 
-moveCamera(
-event.lat,
-event.lng,
-1.6
-);
+    item.onclick = ()=>{
+      world.pointOfView({
+        lat:event.lat,
+        lng:event.lng,
+        altitude:1.4
+      },1200);
+    };
 
-};
-
-item.innerHTML = `
-
-<div
-class="event-bar"
-style="
-background:${event.color};
-"
-></div>
-
-<div class="event-content">
-
-<div
-class="event-year"
-style="
-color:${event.color};
-"
->
-${event.year}
-</div>
-
-<div class="event-title">
-${event.title}
-</div>
-
-<div class="event-description">
-${event.description}
-</div>
-
-</div>
-
-`;
-
-worldEventsEl.appendChild(item);
-
-});
-
-personEvents.forEach(event=>{
-
-const item =
-document.createElement('div');
-
-item.className =
-'timeline-item';
-
-item.onclick = ()=>{
-
-moveCamera(
-event.lat,
-event.lng,
-1.4
-);
-
-};
-
-item.innerHTML = `
-
-<div class="timeline-year">
-${event.year}
-</div>
-
-<div class="timeline-text">
-${event.description}
-</div>
-
-`;
-
-timeline.appendChild(item);
-
-});
-
+    timeline.appendChild(item);
+  });
 }
 
 renderUI(1850);
 
-slider.addEventListener(
-
-'input',
-
-e=>{
-
-const year =
-parseInt(e.target.value);
-
-timelineYear.innerText =
-year;
-
-renderYear(year);
-
-renderUI(year);
-
-}
-
-);
-
+slider.addEventListener('input', e=>{
+  const year = parseInt(e.target.value);
+  timelineYear.innerText = year;
+  renderYear(year);
+  renderUI(year);
+});
 </script>
 
 </body>
-
 </html>
