@@ -585,7 +585,23 @@ ${event.description}
 `;
 
 worldEventsEl.appendChild(item);
+item.style.cursor = 'pointer';
 
+item.onclick = ()=>{
+
+world.pointOfView(
+
+{
+lat:event.lat,
+lng:event.lng,
+altitude:1.6
+},
+
+1200
+
+);
+
+};
 });
 
 filteredPerson.forEach(event=>{
