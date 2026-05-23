@@ -131,21 +131,6 @@ padding-right:12px;
 
 }
 
-.left-panel::-webkit-scrollbar{
-
-width:4px;
-
-}
-
-.left-panel::-webkit-scrollbar-thumb{
-
-background:
-rgba(255,255,255,0.16);
-
-border-radius:999px;
-
-}
-
 .section-title{
 
 font-size:13px;
@@ -168,8 +153,9 @@ gap:16px;
 padding:24px 0;
 
 border-bottom:
-
 1px solid rgba(255,255,255,0.08);
+
+cursor:pointer;
 
 }
 
@@ -243,21 +229,6 @@ padding-right:8px;
 
 }
 
-.right-panel::-webkit-scrollbar{
-
-width:4px;
-
-}
-
-.right-panel::-webkit-scrollbar-thumb{
-
-background:
-rgba(255,255,255,0.16);
-
-border-radius:999px;
-
-}
-
 .person-name{
 
 font-size:28px;
@@ -300,7 +271,6 @@ object-fit:cover;
 margin-bottom:30px;
 
 border:
-
 1px solid rgba(255,255,255,0.16);
 
 }
@@ -325,6 +295,8 @@ max-width:320px;
 .timeline-item{
 
 margin-bottom:34px;
+
+cursor:pointer;
 
 }
 
@@ -352,6 +324,7 @@ color:
 rgba(255,255,255,0.84);
 
 }
+
 #timelineBar{
 
 position:absolute;
@@ -420,6 +393,7 @@ box-shadow:
 0 0 18px rgba(102,224,255,0.8);
 
 }
+
 </style>
 
 </head>
@@ -427,22 +401,7 @@ box-shadow:
 <body>
 
 <div id="globeViz"></div>
-<div id="timelineBar">
 
-<div id="timelineYear">
-1850
-</div>
-
-<input
-type="range"
-id="yearSlider"
-
-min="1820"
-max="1870"
-value="1850"
-/>
-
-</div>
 <div id="title">
 
 <div class="title-main">
@@ -482,13 +441,27 @@ src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Nakahama_Manjiro.jpg"
 />
 
 <div class="person-description">
-
-ジョン万次郎は、漂流からアメリカ渡航
-帰国後の開国支援まで文明接続の象徴的人物。
-
+ジョン万次郎は、日本とアメリカを結んだ
+幕末のキーパーソン。
 </div>
 
 <div id="timeline"></div>
+
+</div>
+
+<div id="timelineBar">
+
+<div id="timelineYear">
+1850
+</div>
+
+<input
+type="range"
+id="yearSlider"
+min="1820"
+max="1870"
+value="1850"
+/>
 
 </div>
 
@@ -516,41 +489,73 @@ document.getElementById(
 'timeline'
 );
 
+const slider =
+document.getElementById(
+'yearSlider'
+);
+
+const timelineYear =
+document.getElementById(
+'timelineYear'
+);
+
+function isActive(event, year){
+
+if(event.endYear){
+
+return event.startYear <= year && year <= event.endYear;
+
+}
+
+return event.startYear <= year;
+
+}
+
+function moveToEvent(event){
+
+world.pointOfView(
+
+{
+lat:event.lat,
+lng:event.lng,
+altitude:1.35
+},
+
+1200
+
+);
+
+}
+
 function renderUI(year){
 
 worldEventsEl.innerHTML = '';
 
 timeline.innerHTML = '';
 
-const filteredWorld =
+const worldEvents =
 events.filter(
-
-e=>
-
-e.type==='world'
-&&
-e.startYear <= year
-
+event=>event.type==='world' && isActive(event, year)
 );
 
-const filteredPerson =
+const personEvents =
 events.filter(
-
-e=>
-
-e.type==='person'
-&&
-e.startYear <= year
-
+event=>event.type==='person' && isActive(event, year)
 );
 
-filteredWorld.forEach(event=>{
+worldEvents.forEach(event=>{
 
 const item =
 document.createElement('div');
 
 item.className =
 'event-item';
+
+item.onclick = ()=>{
+
+moveToEvent(event);
+
+};
 
 item.innerHTML = `
 
@@ -585,32 +590,22 @@ ${event.description}
 `;
 
 worldEventsEl.appendChild(item);
-item.style.cursor = 'pointer';
 
-item.onclick = ()=>{
-
-world.pointOfView(
-
-{
-lat:event.lat,
-lng:event.lng,
-altitude:1.6
-},
-
-1200
-
-);
-
-};
 });
 
-filteredPerson.forEach(event=>{
+personEvents.forEach(event=>{
 
 const item =
 document.createElement('div');
 
 item.className =
 'timeline-item';
+
+item.onclick = ()=>{
+
+moveToEvent(event);
+
+};
 
 item.innerHTML = `
 
@@ -625,37 +620,12 @@ ${event.description}
 `;
 
 timeline.appendChild(item);
-item.style.cursor = 'pointer';
 
-item.onclick = ()=>{
-
-world.pointOfView(
-
-{
-lat:event.lat,
-lng:event.lng,
-altitude:1.4
-},
-
-1200
-
-);
-
-};
 });
 
 }
 
 renderUI(1850);
-const slider =
-document.getElementById(
-'yearSlider'
-);
-
-const timelineYear =
-document.getElementById(
-'timelineYear'
-);
 
 slider.addEventListener(
 
@@ -668,11 +638,15 @@ parseInt(e.target.value);
 
 timelineYear.innerText =
 year;
+
 renderYear(year);
+
 renderUI(year);
+
 }
 
 );
+
 </script>
 
 </body>
