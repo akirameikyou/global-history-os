@@ -27,6 +27,19 @@ lng:160,
 altitude:2.15
 });
 
+export function moveCamera(lat,lng,altitude=1.6){
+
+world.pointOfView(
+{
+lat,
+lng,
+altitude
+},
+1200
+);
+
+}
+
 const labelEls = [];
 
 function isActive(event, year){
