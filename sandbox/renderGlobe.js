@@ -277,7 +277,7 @@ e=>e.startYear <= year
 createLabels(filtered);
 
 buildArcs(filtered);
-
+buildRings(filtered);
 }
 
 renderYear(currentYear);
