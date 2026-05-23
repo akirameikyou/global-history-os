@@ -599,10 +599,19 @@ item.className =
 
 item.onclick = ()=>{
 
-moveToEvent(event);
+world.pointOfView(
+
+{
+lat:event.lat,
+lng:event.lng,
+altitude:1.4
+},
+
+1200
+
+);
 
 };
-
 item.innerHTML = `
 
 <div class="timeline-year">
