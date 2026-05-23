@@ -146,7 +146,55 @@ updateLabels
 );
 
 }
+function buildRings(filtered){
 
+const rings = [];
+
+filtered.forEach(event=>{
+
+if(event.id === 'kaikoku'){
+
+rings.push({
+
+lat:35.68,
+lng:139.76,
+
+color:'#ffd95e',
+
+maxR:8
+
+});
+
+}
+
+if(event.id === 'civil_war'){
+
+rings.push({
+
+lat:39.82,
+lng:-98.57,
+
+color:'#ff5e5e',
+
+maxR:14
+
+});
+
+}
+
+});
+
+world.ringsData(rings)
+
+.ringColor('color')
+
+.ringMaxRadius('maxR')
+
+.ringPropagationSpeed(1.8)
+
+.ringRepeatPeriod(1400);
+
+}
 function buildArcs(filtered){
 
 const arcs = [];
