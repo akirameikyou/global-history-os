@@ -162,8 +162,14 @@ function buildAreas(filtered) {
 
   if (bordersVisible) {
     geoLayers.modern_borders.features.forEach(border => {
-      areas.push(border);
-    });
+  areas.push({
+    ...border,
+    properties: {
+      ...border.properties,
+      layer: 'modern_borders'
+    }
+  });
+});
   }
 
   setHistoryLayer(world, areas);
