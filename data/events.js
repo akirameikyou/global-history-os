@@ -67,7 +67,10 @@ color:'#ffd95e',
 lat:35.68,
 lng:139.76,
 placeName:'Tokyo',
-geoLayer:'japan_1854',
+geoCountry:'Japan',
+areaColor:'rgba(255,217,94,0.24)',
+strokeColor:'rgba(255,217,94,0.75)',
+endYear:1868,
 relatedEvents:[]
 },
 
