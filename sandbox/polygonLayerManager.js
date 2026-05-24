@@ -1,26 +1,51 @@
-let baseGeoPolygons = [];
+let countryFeatures = [];
+let bordersVisible = false;
 let historyPolygons = [];
 let semanticPolygons = [];
 
-function isBorderPolygon(d) {
-  return d.properties?.type === 'border' ||
-    d.properties?.layer === 'modern_borders' ||
-    d.properties?.name === 'modern_borders';
+function getCountryName(feature) {
+  const p = feature.properties || {};
+
+  return (
+    p.ADMIN ||
+    p.NAME ||
+    p.name ||
+    p.NAME_EN ||
+    p.SOVEREIGNT ||
+    p.country ||
+    ''
+  );
+}
+
+export function getCountryPolygons(countryName, extraProperties = {}) {
+  return countryFeatures
+    .filter(feature => {
+      const name = getCountryName(feature);
+      return name === countryName;
+    })
+    .map(feature => ({
+      ...feature,
+      properties: {
+        ...feature.properties,
+        ...extraProperties
+      }
+    }));
 }
 
 export function setBaseGeoLayer(world, geojson) {
-  baseGeoPolygons = geojson.features.map(feature => ({
-    ...feature,
-    __layer: 'base_geo'
-  }));
+  countryFeatures = geojson.features || [];
+  applyPolygonLayers(world);
+}
 
+export function setBordersVisible(world, visible) {
+  bordersVisible = visible;
   applyPolygonLayers(world);
 }
 
 export function setHistoryLayer(world, polygons) {
   historyPolygons = polygons.map(poly => ({
     ...poly,
-    __layer: isBorderPolygon(poly) ? 'border' : 'history'
+    __layer: 'history'
   }));
 
   applyPolygonLayers(world);
@@ -41,8 +66,15 @@ export function setSemanticLayer(world, polygons) {
 }
 
 export function applyPolygonLayers(world) {
+  const borderPolygons = bordersVisible
+    ? countryFeatures.map(feature => ({
+        ...feature,
+        __layer: 'border'
+      }))
+    : [];
+
   const combined = [
-    ...baseGeoPolygons,
+    ...borderPolygons,
     ...historyPolygons,
     ...semanticPolygons
   ];
@@ -50,46 +82,40 @@ export function applyPolygonLayers(world) {
   world
     .polygonsData(combined)
     .polygonCapColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.06)';
-      if (d.__layer === 'border') return 'rgba(255,255,255,0.00)';
+      if (d.__layer === 'border') return 'rgba(0,0,0,0)';
       if (d.__layer === 'history') {
-        return d.properties?.color || d.color || 'rgba(255, 180, 60, 0.35)';
+        return d.properties?.color || 'rgba(255, 180, 60, 0.35)';
       }
       if (d.__layer === 'semantic') {
-        return d.properties?.color || d.color || 'rgba(120, 255, 180, 0.35)';
+        return d.properties?.color || 'rgba(120, 255, 180, 0.35)';
       }
-      return 'rgba(255,255,255,0.1)';
+      return 'rgba(0,0,0,0)';
     })
     .polygonSideColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.00)';
-      if (d.__layer === 'border') return 'rgba(255,255,255,0.00)';
+      if (d.__layer === 'border') return 'rgba(0,0,0,0)';
       if (d.__layer === 'history') {
-        return d.properties?.color || d.color || 'rgba(255, 180, 60, 0.10)';
+        return d.properties?.color || 'rgba(255, 180, 60, 0.08)';
       }
       if (d.__layer === 'semantic') {
-        return d.properties?.color || d.color || 'rgba(120, 255, 180, 0.10)';
+        return d.properties?.color || 'rgba(120, 255, 180, 0.08)';
       }
-      return 'rgba(255,255,255,0.05)';
+      return 'rgba(0,0,0,0)';
     })
     .polygonStrokeColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(180, 220, 255, 0.28)';
-      if (d.__layer === 'border') {
-        return d.properties?.stroke || 'rgba(255,255,255,0.45)';
-      }
+      if (d.__layer === 'border') return 'rgba(180,220,255,0.32)';
       if (d.__layer === 'history') {
-        return d.properties?.stroke || d.stroke || d.properties?.color || 'rgba(255, 220, 120, 0.75)';
+        return d.properties?.stroke || d.properties?.color || 'rgba(255,220,120,0.75)';
       }
       if (d.__layer === 'semantic') {
-        return d.properties?.stroke || d.stroke || 'rgba(120, 255, 180, 0.75)';
+        return d.properties?.stroke || 'rgba(120,255,180,0.75)';
       }
-      return 'white';
+      return 'rgba(255,255,255,0.2)';
     })
     .polygonAltitude(d => {
-      if (d.__layer === 'base_geo') return 0.001;
       if (d.__layer === 'border') return 0.001;
       if (d.__layer === 'history') return 0.006;
       if (d.__layer === 'semantic') return 0.012;
-      return 0.003;
+      return 0.001;
     })
     .polygonsTransitionDuration(0);
 }
