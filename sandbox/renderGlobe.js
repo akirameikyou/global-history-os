@@ -3,7 +3,7 @@ import * as THREE from 'https://esm.sh/three';
 
 import { events } from '../data/events.js';
 import { geoLayers } from '../data/geoLayers.js';
-
+import { loadGeoJsonLayer } from "./geoJsonLayer.js";
 export let currentYear = 1850;
 
 const container =
