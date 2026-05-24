@@ -156,25 +156,41 @@ function buildAreas(filtered) {
   const areas = [];
 
   filtered.forEach(event => {
+
+    // 正式GeoJSON国家表示
+    if (event.geoCountry) {
+
+      const countryAreas = getCountryPolygons(
+        event.geoCountry,
+        {
+          color:
+            event.areaColor ||
+            event.color ||
+            'rgba(255,217,94,0.24)',
+
+          stroke:
+            event.strokeColor ||
+            event.color ||
+            'rgba(255,217,94,0.75)'
+        }
+      );
+
+      countryAreas.forEach(area => {
+        areas.push(area);
+      });
+
+      return;
+    }
+
+    // 旧experimental layer
     if (!event.geoLayer) return;
 
     const layer = geoLayers[event.geoLayer];
+
     if (!layer) return;
 
     areas.push(layer);
   });
-
-  if (bordersVisible) {
-    geoLayers.modern_borders.features.forEach(border => {
-  areas.push({
-    ...border,
-    properties: {
-      ...border.properties,
-      layer: 'modern_borders'
-    }
-  });
-});
-  }
 
   setHistoryLayer(world, areas);
 }
