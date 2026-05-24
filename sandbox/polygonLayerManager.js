@@ -50,7 +50,7 @@ export function applyPolygonLayers(world) {
   world
     .polygonsData(combined)
     .polygonCapColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.12)';
+      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.06)';
       if (d.__layer === 'border') return 'rgba(255,255,255,0.00)';
       if (d.__layer === 'history') {
         return d.properties?.color || d.color || 'rgba(255, 180, 60, 0.35)';
@@ -61,35 +61,35 @@ export function applyPolygonLayers(world) {
       return 'rgba(255,255,255,0.1)';
     })
     .polygonSideColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.03)';
+      if (d.__layer === 'base_geo') return 'rgba(80, 120, 160, 0.00)';
       if (d.__layer === 'border') return 'rgba(255,255,255,0.00)';
       if (d.__layer === 'history') {
-        return d.properties?.color || d.color || 'rgba(255, 180, 60, 0.18)';
+        return d.properties?.color || d.color || 'rgba(255, 180, 60, 0.10)';
       }
       if (d.__layer === 'semantic') {
-        return d.properties?.color || d.color || 'rgba(120, 255, 180, 0.18)';
+        return d.properties?.color || d.color || 'rgba(120, 255, 180, 0.10)';
       }
       return 'rgba(255,255,255,0.05)';
     })
     .polygonStrokeColor(d => {
-      if (d.__layer === 'base_geo') return 'rgba(180, 220, 255, 0.35)';
+      if (d.__layer === 'base_geo') return 'rgba(180, 220, 255, 0.28)';
       if (d.__layer === 'border') {
-        return d.properties?.stroke || 'rgba(255,255,255,0.55)';
+        return d.properties?.stroke || 'rgba(255,255,255,0.45)';
       }
       if (d.__layer === 'history') {
-        return d.properties?.stroke || d.stroke || 'rgba(255, 220, 120, 0.9)';
+        return d.properties?.stroke || d.stroke || d.properties?.color || 'rgba(255, 220, 120, 0.75)';
       }
       if (d.__layer === 'semantic') {
-        return d.properties?.stroke || d.stroke || 'rgba(120, 255, 180, 0.9)';
+        return d.properties?.stroke || d.stroke || 'rgba(120, 255, 180, 0.75)';
       }
       return 'white';
     })
     .polygonAltitude(d => {
-      if (d.__layer === 'base_geo') return 0.003;
-      if (d.__layer === 'border') return 0.018;
-      if (d.__layer === 'history') return 0.012;
-      if (d.__layer === 'semantic') return 0.02;
-      return 0.005;
+      if (d.__layer === 'base_geo') return 0.001;
+      if (d.__layer === 'border') return 0.001;
+      if (d.__layer === 'history') return 0.006;
+      if (d.__layer === 'semantic') return 0.012;
+      return 0.003;
     })
-    .polygonsTransitionDuration(500);
+    .polygonsTransitionDuration(0);
 }
