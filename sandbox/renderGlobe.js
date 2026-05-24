@@ -177,7 +177,7 @@ function buildAreas(filtered){
       });
   }
 
-  world.polygonsData(areas)
+  import { setHistoryLayer } from './polygonLayerManager.js';
     .polygonCapColor(
       d=>d.properties.color || 'rgba(255,255,255,0.01)'
     )
