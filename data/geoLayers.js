@@ -26,7 +26,8 @@ coordinates:[[
 usa_civil_war:{
 type:'Feature',
 properties:{
-color:'rgba(255,94,94,0.22)'
+color:'rgba(255,94,94,0.22)',
+stroke:'rgba(255,94,94,0.75)'
 },
 geometry:{
 type:'Polygon',
