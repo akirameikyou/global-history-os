@@ -81,6 +81,17 @@ from './renderGlobe.js';
 
 const worldEventsEl = document.getElementById('worldEvents');
 const timeline = document.getElementById('timeline');
+
+ const borderToggle =
+document.getElementById(
+'borderToggle'
+);
+
+borderToggle.onclick = ()=>{
+
+toggleBorders();
+
+}; 
 const slider = document.getElementById('yearSlider');
 const timelineYear = document.getElementById('timelineYear');
 
