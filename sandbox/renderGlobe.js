@@ -10,7 +10,7 @@ const container =
 document.getElementById('globeViz');
 
 export const world = Globe()(container)
-
+loadGeoJsonLayer(world);
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
