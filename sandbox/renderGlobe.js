@@ -3,14 +3,15 @@ import * as THREE from 'https://esm.sh/three';
 
 import { events } from '../data/events.js';
 import { geoLayers } from '../data/geoLayers.js';
-import { loadGeoJsonLayer } from "./geoJsonLayer.js";
+import { loadGeoJsonLayer } from './geoJsonLayer.js';
+
 export let currentYear = 1850;
 
 const container =
 document.getElementById('globeViz');
 
 export const world = Globe()(container)
-loadGeoJsonLayer(world);
+
 .globeImageUrl(
 'https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg'
 )
@@ -20,6 +21,8 @@ loadGeoJsonLayer(world);
 .width(window.innerWidth)
 
 .height(window.innerHeight);
+
+loadGeoJsonLayer(world);
 
 world.pointOfView({
 lat:30,
@@ -34,364 +37,223 @@ const labelEls = [];
 export let bordersVisible = false;
 
 export function toggleBorders(){
-
-bordersVisible =
-!bordersVisible;
-
-renderYear(currentYear);
-
+  bordersVisible = !bordersVisible;
+  renderYear(currentYear);
 }
 
 function isActive(event, year){
-
-if(event.endYear){
-
-return event.startYear <= year
-&& year <= event.endYear;
-
-}
-
-return event.startYear <= year;
-
+  if(event.endYear){
+    return event.startYear <= year && year <= event.endYear;
+  }
+  return event.startYear <= year;
 }
 
 function clearLabels(){
-
-labelEls.forEach(
-l=>l.el.remove()
-);
-
-labelEls.length = 0;
-
+  labelEls.forEach( l=>l.el.remove() );
+  labelEls.length = 0;
 }
 
 function createLabels(filtered){
+  clearLabels();
 
-clearLabels();
+  const uniqueLabels = [];
 
-const uniqueLabels = [];
+  filtered.forEach(event=>{
+    if(
+      uniqueLabels.find(
+        label=>label.name===event.placeName
+      )
+    ) return;
 
-filtered.forEach(event=>{
+    uniqueLabels.push({
+      name:event.placeName,
+      lat:event.lat,
+      lng:event.lng
+    });
+  });
 
-if(
-uniqueLabels.find(
-label=>label.name===event.placeName
-)
-) return;
+  uniqueLabels.forEach(label=>{
+    const div = document.createElement('div');
+    div.className = 'city-label';
+    div.innerText = label.name;
+    document.body.appendChild(div);
 
-uniqueLabels.push({
-name:event.placeName,
-lat:event.lat,
-lng:event.lng
-});
-
-});
-
-uniqueLabels.forEach(label=>{
-
-const div =
-document.createElement('div');
-
-div.className =
-'city-label';
-
-div.innerText =
-label.name;
-
-document.body.appendChild(div);
-
-labelEls.push({
-
-el:div,
-
-lat:label.lat,
-lng:label.lng
-
-});
-
-});
-
+    labelEls.push({
+      el:div,
+      lat:label.lat,
+      lng:label.lng
+    });
+  });
 }
 
 function buildArcs(filtered){
+  const arcs = [];
 
-const arcs = [];
+  filtered.forEach(event=>{
+    if(!event.relatedEvents) return;
 
-filtered.forEach(event=>{
+    event.relatedEvents.forEach(targetId=>{
+      const target = filtered.find(
+        e=>e.id === targetId
+      );
 
-if(!event.relatedEvents) return;
+      if(!target) return;
 
-event.relatedEvents.forEach(targetId=>{
+      const dx = event.lng - target.lng;
+      const dy = event.lat - target.lat;
+      const distance = Math.sqrt(dx*dx + dy*dy);
 
-const target =
-filtered.find(
-e=>e.id === targetId
-);
+      let altitude = 0.05;
 
-if(!target) return;
+      if(distance > 120) altitude = 0.24;
+      else if(distance > 40) altitude = 0.14;
 
-const dx =
-event.lng - target.lng;
+      arcs.push({
+        startLat:event.lat,
+        startLng:event.lng,
+        endLat:target.lat,
+        endLng:target.lng,
+        color: event.lineColor || '#66e0ff',
+        altitude
+      });
+    });
+  });
 
-const dy =
-event.lat - target.lat;
-
-const distance =
-Math.sqrt(dx*dx + dy*dy);
-
-let altitude = 0.05;
-
-if(distance > 120)
-altitude = 0.24;
-
-else if(distance > 40)
-altitude = 0.14;
-
-arcs.push({
-
-startLat:event.lat,
-startLng:event.lng,
-
-endLat:target.lat,
-endLng:target.lng,
-
-color:
-event.lineColor
-|| '#66e0ff',
-
-altitude
-
-});
-
-});
-
-});
-
-world.arcsData(arcs)
-
-.arcColor('color')
-
-.arcAltitude('altitude')
-
-.arcStroke(0.08)
-
-.arcDashLength(1)
-
-.arcDashGap(0)
-
-.arcDashAnimateTime(0);
-
+  world.arcsData(arcs)
+    .arcColor('color')
+    .arcAltitude('altitude')
+    .arcStroke(0.08)
+    .arcDashLength(1)
+    .arcDashGap(0)
+    .arcDashAnimateTime(0);
 }
 
 function buildRings(filtered){
+  const rings = [];
 
-const rings = [];
+  filtered.forEach(event=>{
+    if(event.id === 'kaikoku'){
+      rings.push({
+        lat:35.68,
+        lng:139.76,
+        color:'#ffd95e',
+        maxR:8
+      });
+    }
 
-filtered.forEach(event=>{
+    if(event.id === 'civil_war'){
+      rings.push({
+        lat:39.82,
+        lng:-98.57,
+        color:'#ff5e5e',
+        maxR:14
+      });
+    }
+  });
 
-if(event.id === 'kaikoku'){
-
-rings.push({
-
-lat:35.68,
-lng:139.76,
-
-color:'#ffd95e',
-
-maxR:8
-
-});
-
-}
-
-if(event.id === 'civil_war'){
-
-rings.push({
-
-lat:39.82,
-lng:-98.57,
-
-color:'#ff5e5e',
-
-maxR:14
-
-});
-
-}
-
-});
-
-world.ringsData(rings)
-
-.ringColor('color')
-
-.ringMaxRadius('maxR')
-
-.ringPropagationSpeed(1.8)
-
-.ringRepeatPeriod(1400);
-
+  world.ringsData(rings)
+    .ringColor('color')
+    .ringMaxRadius('maxR')
+    .ringPropagationSpeed(1.8)
+    .ringRepeatPeriod(1400);
 }
 
 function buildAreas(filtered){
+  const areas = [];
 
-const areas = [];
+  filtered.forEach(event=>{
+    if(!event.geoLayer) return;
 
-filtered.forEach(event=>{
+    const layer = geoLayers[event.geoLayer];
+    if(!layer) return;
 
-if(!event.geoLayer) return;
+    areas.push(layer);
+  });
 
-const layer =
-geoLayers[event.geoLayer];
+  if(bordersVisible){
+    geoLayers.modern_borders.features
+      .forEach(border=>{
+        areas.push(border);
+      });
+  }
 
-if(!layer) return;
-
-areas.push(layer);
-
-});
-
-if(bordersVisible){
-
-geoLayers.modern_borders.features
-.forEach(border=>{
-
-areas.push(border);
-
-});
-
-}
-
-world.polygonsData(areas)
-
-.polygonCapColor(
-d=>d.properties.color
-|| 'rgba(255,255,255,0.01)'
-)
-
-.polygonSideColor(
-d=>d.properties.color
-|| 'rgba(255,255,255,0.01)'
-)
-
-.polygonStrokeColor(
-d=>
-d.properties.stroke
-|| 'rgba(255,255,255,0.18)'
-)
-
-.polygonAltitude(0.012)
-
-.polygonsTransitionDuration(500);
-
+  world.polygonsData(areas)
+    .polygonCapColor(
+      d=>d.properties.color || 'rgba(255,255,255,0.01)'
+    )
+    .polygonSideColor(
+      d=>d.properties.color || 'rgba(255,255,255,0.01)'
+    )
+    .polygonStrokeColor(
+      d=> d.properties.stroke || 'rgba(255,255,255,0.18)'
+    )
+    .polygonAltitude(0.012)
+    .polygonsTransitionDuration(500);
 }
 
 function updateLabels(){
+  labelEls.forEach(label=>{
+    const pos = world.getCoords(
+      label.lat,
+      label.lng,
+      0.02
+    );
 
-labelEls.forEach(label=>{
+    const cameraDir = camera.position.clone().normalize();
 
-const pos =
-world.getCoords(
+    const pointDir = new THREE.Vector3(
+      pos.x,
+      pos.y,
+      pos.z
+    ).normalize();
 
-label.lat,
-label.lng,
-0.02
+    const dot = cameraDir.dot(pointDir);
 
-);
+    if(dot < 0.12){
+      label.el.style.display = 'none';
+      return;
+    }
 
-const cameraDir =
-camera.position.clone().normalize();
+    const screen = world.getScreenCoords(
+      label.lat,
+      label.lng,
+      0.02
+    );
 
-const pointDir =
-new THREE.Vector3(
+    if(!screen){
+      label.el.style.display = 'none';
+      return;
+    }
 
-pos.x,
-pos.y,
-pos.z
+    label.el.style.display = 'block';
+    label.el.style.left = `${screen.x}px`;
+    label.el.style.top = `${screen.y}px`;
+  });
 
-).normalize();
-
-const dot =
-cameraDir.dot(pointDir);
-
-if(dot < 0.12){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-const screen =
-world.getScreenCoords(
-
-label.lat,
-label.lng,
-0.02
-
-);
-
-if(!screen){
-
-label.el.style.display =
-'none';
-
-return;
-
-}
-
-label.el.style.display =
-'block';
-
-label.el.style.left =
-`${screen.x}px`;
-
-label.el.style.top =
-`${screen.y}px`;
-
-});
-
-requestAnimationFrame(
-updateLabels
-);
-
+  requestAnimationFrame(updateLabels);
 }
 
 export function renderYear(year){
+  currentYear = year;
 
-currentYear = year;
+  const filtered = events.filter(
+    e=>isActive(e,year)
+  );
 
-const filtered =
-events.filter(
-e=>isActive(e,year)
-);
-
-createLabels(filtered);
-
-buildArcs(filtered);
-
-buildRings(filtered);
-
-buildAreas(filtered);
-
+  createLabels(filtered);
+  buildArcs(filtered);
+  buildRings(filtered);
+  buildAreas(filtered);
 }
 
 renderYear(currentYear);
-
 updateLabels();
 
 window.addEventListener(
-
-'resize',
-
-()=>{
-
-world
-
-.width(window.innerWidth)
-
-.height(window.innerHeight);
-
-}
-
+  'resize',
+  ()=>{
+    world
+      .width(window.innerWidth)
+      .height(window.innerHeight);
+  }
 );
