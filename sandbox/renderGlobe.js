@@ -37,7 +37,7 @@ export let bordersVisible = false;
 
 export function toggleBorders() {
   bordersVisible = !bordersVisible;
-  renderYear(currentYear);
+  setBordersVisible(world, bordersVisible);
 }
 
 function isActive(event, year) {
