@@ -74,7 +74,7 @@ endYear:1868,
 relatedEvents:[]
 },
 
-{
+},
 {
 id:'civil_war',
 type:'world',
@@ -92,6 +92,7 @@ areaColor:'rgba(255,94,94,0.22)',
 strokeColor:'rgba(255,94,94,0.75)',
 relatedEvents:[]
 },
+{
 
 {
 id:'meiji',
