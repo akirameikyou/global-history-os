@@ -135,13 +135,13 @@ function buildRings(filtered) {
     }
 
     if (event.id === 'civil_war') {
-      rings.push({
-        lat: 39.82,
-        lng: -98.57,
-        color: '#ff5e5e',
-        maxR: 14
-      });
-    }
+  rings.push({
+    lat: 38.0,
+    lng: -78.5,
+    color: '#ff5e5e',
+    maxR: 14
+  });
+}
   });
 
   world
