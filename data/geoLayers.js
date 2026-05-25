@@ -1,28 +1,5 @@
 export const geoLayers = {
 
-japan_1854:{
-type:'Feature',
-properties:{
-color:'rgba(255,217,94,0.24)'
-},
-geometry:{
-type:'Polygon',
-coordinates:[[
-[129,31],
-[132,34],
-[136,35],
-[140,41],
-[145,43],
-[146,39],
-[143,35],
-[139,33],
-[135,31],
-[131,30],
-[129,31]
-]]
-}
-},
-
 usa_civil_war:{
 type:'Feature',
 properties:{
