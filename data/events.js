@@ -60,6 +60,7 @@ relatedEvents:['kaikoku']
 id:'kaikoku',
 type:'world',
 startYear:1854,
+endYear:1868,
 title:'日本開国',
 year:'1854',
 description:'日米和親条約締結。',
@@ -70,11 +71,9 @@ placeName:'Tokyo',
 geoCountry:'Japan',
 areaColor:'rgba(255,217,94,0.24)',
 strokeColor:'rgba(255,217,94,0.75)',
-endYear:1868,
 relatedEvents:[]
 },
 
-},
 {
 id:'civil_war',
 type:'world',
@@ -92,7 +91,6 @@ areaColor:'rgba(255,94,94,0.22)',
 strokeColor:'rgba(255,94,94,0.75)',
 relatedEvents:[]
 },
-{
 
 {
 id:'meiji',
