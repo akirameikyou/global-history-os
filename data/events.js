@@ -75,6 +75,7 @@ relatedEvents:[]
 },
 
 {
+{
 id:'civil_war',
 type:'world',
 startYear:1861,
@@ -83,10 +84,12 @@ title:'南北戦争',
 year:'1861 — 1865',
 description:'アメリカ国家構造を再定義した内戦。',
 color:'#ff5e5e',
-lat:38.90,
-lng:-77.03,
-placeName:'Washington',
-geoLayer:'usa_civil_war',
+lat:38.0,
+lng:-78.5,
+placeName:'Virginia / Shenandoah',
+geoCountry:'United States of America',
+areaColor:'rgba(255,94,94,0.22)',
+strokeColor:'rgba(255,94,94,0.75)',
 relatedEvents:[]
 },
 
