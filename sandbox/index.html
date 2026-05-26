@@ -170,6 +170,17 @@ function getEraInfo(year){
 function renderTimelineEra(year){
   const era = getEraInfo(year);
   timelineEra.innerText = era ? `江戸後期・幕末 / ${era}` : '';
+} 
+function renderTimelineRoute(year){
+  const routeEvent = events.find(event =>
+    event.routeLabel &&
+    event.startYear <= year &&
+    (!event.endYear || year <= event.endYear)
+  );
+
+  timelineRoute.innerText = routeEvent
+    ? routeEvent.routeLabel
+    : '';
 }  
 function renderTimelineMeaning(year){
   const durationEvent = events.find(event =>
