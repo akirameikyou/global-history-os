@@ -2,7 +2,6 @@ import Globe from 'https://esm.sh/globe.gl';
 import * as THREE from 'https://esm.sh/three';
 
 import { events } from '../data/events.js';
-import { geoLayers } from '../data/geoLayers.js';
 import { loadGeoJsonLayer } from './geoJsonLayer.js';
 import {
   setHistoryLayer,
