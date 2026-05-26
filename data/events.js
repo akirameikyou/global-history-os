@@ -29,7 +29,7 @@ lat:30.48,
 lng:140.30,
 placeName:'Torishima',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_america']
+relatedEvents:['manjiro_hawaii']
 },
 
 {
