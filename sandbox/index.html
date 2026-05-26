@@ -178,8 +178,7 @@ function renderTimelineEra(year){
 function renderTimelineRoute(year){
   const routeEvent = events.find(event =>
     event.routeLabel &&
-    event.startYear <= year &&
-    (!event.endYear || year <= event.endYear)
+event.startYear === year
   );
 
   timelineRoute.innerText = routeEvent
