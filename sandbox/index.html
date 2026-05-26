@@ -235,9 +235,10 @@ function renderUI(year){
     item.className = 'timeline-item';
 
     item.innerHTML = `
-      <div class="timeline-year">${event.year}</div>
-      <div class="timeline-text">${event.description}</div>
-    `;
+  <div class="timeline-text">
+    ${event.year}　${event.description}
+  </div>
+`;
 
     item.onclick = () => {
       world.pointOfView({
