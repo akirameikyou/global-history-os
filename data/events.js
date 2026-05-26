@@ -33,6 +33,21 @@ relatedEvents:['manjiro_america']
 },
 
 {
+id:'manjiro_hawaii',
+type:'person',
+startYear:1841,
+title:'ハワイ滞在',
+year:'1841',
+description:'救助後、ハワイへ渡り、太平洋世界と接続する。',
+routeLabel:'HAWAII',
+lat:21.31,
+lng:-157.86,
+placeName:'Hawaii',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_america']
+},
+
+{
 id:'manjiro_america',
 type:'person',
 startYear:1843,
