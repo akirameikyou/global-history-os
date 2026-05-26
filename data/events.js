@@ -2,7 +2,7 @@ export const events = [
 
 {
 id:'manjiro_birth',
-type:'person_event',
+type:'person',
 startYear:1827,
 title:'中浜万次郎 誕生',
 year:'1827',
@@ -16,7 +16,7 @@ relatedEvents:['manjiro_shipwreck']
 
 {
 id:'manjiro_shipwreck',
-type:'person_event',
+type:'person',
 startYear:1841,
 title:'漂流・鳥島',
 year:'1841',
@@ -30,7 +30,7 @@ relatedEvents:['manjiro_america']
 
 {
 id:'manjiro_america',
-type:'person_event',
+type:'person',
 startYear:1843,
 title:'アメリカ渡航',
 year:'1843',
@@ -44,7 +44,7 @@ relatedEvents:['manjiro_return']
 
 {
 id:'manjiro_return',
-type:'person_event',
+type:'person',
 startYear:1851,
 title:'日本帰国',
 year:'1851',
