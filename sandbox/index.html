@@ -131,7 +131,18 @@ function isActive(event, year){
   }
   return event.startYear <= year;
 }
+function renderTimelineMeaning(year){
+  const durationEvent = events.find(event =>
+    event.timelineType === 'duration' &&
+    event.durationLabel &&
+    event.startYear <= year &&
+    year <= event.endYear
+  );
 
+  timelineMeaning.innerText = durationEvent
+    ? durationEvent.durationLabel
+    : '';
+}
 function renderUI(year){
   worldEventsEl.innerHTML = '';
   timeline.innerHTML = '';
