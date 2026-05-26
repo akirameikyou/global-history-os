@@ -206,16 +206,7 @@ renderUI(1850);
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
-  const durationEvent = events.find(event =>
-  event.timelineType === 'duration' &&
-  event.durationLabel &&
-  event.startYear <= year &&
-  year <= event.endYear
-);
-
-timelineMeaning.innerText = durationEvent
-  ? durationEvent.durationLabel
-  : '';
+  renderTimelineMeaning(year);
   renderYear(year);
   renderUI(year);
 });
