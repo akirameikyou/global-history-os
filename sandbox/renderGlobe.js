@@ -61,8 +61,8 @@ function createLabels(filtered) {
 
     uniqueLabels.push({
       name: event.placeName,
-      lat: event.lat,
-      lng: event.lng
+      lat: event.labelLat || event.lat,
+lng: event.labelLng || event.lng
     });
   });
 
