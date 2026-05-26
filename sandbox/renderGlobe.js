@@ -181,14 +181,7 @@ function buildAreas(filtered) {
       return;
     }
 
-    // 旧experimental layer
-    if (!event.geoLayer) return;
-
-    const layer = geoLayers[event.geoLayer];
-
-    if (!layer) return;
-
-    areas.push(layer);
+    
   });
 
   setHistoryLayer(world, areas);
