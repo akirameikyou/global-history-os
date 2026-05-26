@@ -143,6 +143,24 @@ function isActive(event, year){
   }
   return event.startYear <= year;
 }
+function getEraInfo(year){
+  if(year >= 1868) return '明治 / Meiji';
+  if(year >= 1865) return '慶応 / Keiō';
+  if(year >= 1864) return '元治 / Genji';
+  if(year >= 1861) return '文久 / Bunkyū';
+  if(year >= 1860) return '万延 / Man’en';
+  if(year >= 1854) return '安政 / Ansei';
+  if(year >= 1848) return '嘉永 / Kaei';
+  if(year >= 1844) return '弘化 / Kōka';
+  if(year >= 1830) return '天保 / Tenpō';
+  if(year >= 1818) return '文政 / Bunsei';
+  return '';
+}
+
+function renderTimelineEra(year){
+  const era = getEraInfo(year);
+  timelineEra.innerText = era ? `江戸後期・幕末 / ${era}` : '';
+}  
 function renderTimelineMeaning(year){
   const durationEvent = events.find(event =>
     event.timelineType === 'duration' &&
