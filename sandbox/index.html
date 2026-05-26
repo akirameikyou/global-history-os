@@ -238,6 +238,7 @@ renderTimelineMeaning(1850);
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
+  renderTimelineEra(year);
   renderTimelineMeaning(year);
   renderYear(year);
   renderUI(year);
