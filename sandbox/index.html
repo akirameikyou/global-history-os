@@ -176,15 +176,15 @@ function renderTimelineEra(year){
   timelineEra.innerText = era ? `江戸後期・幕末 / ${era}` : '';
 } 
 function renderTimelineRoute(year){
-  const routeEvent = events.find(event =>
+  const routeEvents = events.filter(event =>
     event.routeLabel &&
-event.startYear === year
+    event.startYear <= year
   );
 
-  timelineRoute.innerText = routeEvent
-    ? routeEvent.routeLabel
-    : '';
-}  
+  timelineRoute.innerText = routeEvents
+    .map(event => event.routeLabel)
+    .join('  /  ');
+}
 function renderTimelineMeaning(year){
   const durationEvent = events.find(event =>
     event.timelineType === 'duration' &&
