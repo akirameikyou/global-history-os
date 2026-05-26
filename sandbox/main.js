@@ -102,7 +102,7 @@ WORLD EVENTS
 events
 
 .filter(
-e=>e.type !== 'person_event'
+e=>e.type !== 'person'
 )
 
 .forEach(event=>{
