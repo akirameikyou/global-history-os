@@ -87,6 +87,8 @@ description:'長崎で取り調べを受ける。',
 routeLabel:'NAGASAKI',
 lat:32.75,
 lng:129.88,
+labelLat:33.25,
+labelLng:130.28,
 placeName:'Nagasaki',
 lineColor:'#66e0ff',
 relatedEvents:['kaikoku']
