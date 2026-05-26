@@ -128,7 +128,7 @@ relatedEvents:['kaikoku']
 id:'manjiro_kanrin',
 type:'person',
 startYear:1860,
-routeLabel:'KANRIN',
+routeLabel:'SAN FRANCISCO',
 title:'咸臨丸で再渡米',
 year:'1860',
 description:'咸臨丸に通訳として乗船し、再び太平洋を渡る。',
