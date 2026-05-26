@@ -195,11 +195,16 @@ renderUI(1850);
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
-  if (year === 1841) {
-  timelineMeaning.innerText = '鳥島143日サバイバル';
-} else {
-  timelineMeaning.innerText = '';
-}
+  const durationEvent = events.find(event =>
+  event.timelineType === 'duration' &&
+  event.durationLabel &&
+  event.startYear <= year &&
+  year <= event.endYear
+);
+
+timelineMeaning.innerText = durationEvent
+  ? durationEvent.durationLabel
+  : '';
   renderYear(year);
   renderUI(year);
 });
