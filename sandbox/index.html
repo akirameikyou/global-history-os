@@ -179,7 +179,7 @@ function renderTimelineRoute(year){
   const routeLabels = events
     .filter(event =>
       event.routeLabel &&
-      event.startYear <= year
+      event.startYear === year
     )
     .map(event => event.routeLabel);
 
