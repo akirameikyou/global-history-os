@@ -236,8 +236,11 @@ function renderUI(year){
 
     item.innerHTML = `
   <div class="timeline-text">
-    ${event.year}　${event.description}
-  </div>
+  <span class="timeline-inline-year">
+    ${event.year}
+  </span>
+  　${event.description}
+</div>
 `;
 
     item.onclick = () => {
