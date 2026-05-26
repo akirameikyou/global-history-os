@@ -69,137 +69,139 @@ backdrop-filter:blur(10px);
 
 <body>
 
-<div id="globeViz"></div>
+<body>
 
-<div id="title">
-<div class="title-main">GLOBAL HISTORY MAP</div>
-<div class="title-sub">Civilization Meaning Interface</div>
+<div id="app">
+
+  <header id="topBar">
+    <div class="logoArea">
+      <div class="appTitle">History OS</div>
+      <div class="modeTitle">John Manjiro Mode</div>
+    </div>
+  </header>
+
+  <main id="mainLayout">
+
+    <!-- LEFT : WORLD -->
+
+    <aside id="leftPanel">
+
+      <section class="panelSection">
+
+        <h2>WORLD EVENTS</h2>
+
+        <div class="eventItem">
+          <span class="year">1840</span>
+          アヘン戦争
+        </div>
+
+        <div class="eventItem">
+          <span class="year">1848</span>
+          ゴールドラッシュ
+        </div>
+
+        <div class="eventItem">
+          <span class="year">1853</span>
+          ペリー来航
+        </div>
+
+        <div class="eventItem">
+          <span class="year">1861</span>
+          アメリカ南北戦争
+        </div>
+
+      </section>
+
+    </aside>
+
+    <!-- CENTER : GLOBE -->
+
+    <section id="centerArea">
+      <div id="globeViz"></div>
+    </section>
+
+    <!-- RIGHT : PERSON -->
+
+    <aside id="rightPanel">
+
+      <section class="panelSection">
+
+        <h2>PERSON</h2>
+
+        <h3>中浜万次郎</h3>
+
+        <div class="timelineItem">
+          <span class="year">1827</span>
+          土佐清水周辺に生まれる
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1841</span>
+          漂流し鳥島へ漂着
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1841</span>
+          鳥島143日サバイバル
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1842</span>
+          ハワイへ
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1843</span>
+          アメリカ本土へ
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1848</span>
+          ゴールドラッシュ期
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1851</span>
+          琉球へ帰着
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1860</span>
+          咸臨丸で再渡米
+        </div>
+
+        <div class="timelineItem">
+          <span class="year">1898</span>
+          東京で死去
+        </div>
+
+      </section>
+
+    </aside>
+
+  </main>
+
+  <!-- BOTTOM TIMELINE -->
+
+  <footer id="bottomTimeline">
+
+    <div id="timelineTrack">
+
+      <div class="century">1600</div>
+      <div class="century">1700</div>
+      <div class="century activeCentury">1800</div>
+      <div class="century">1900</div>
+      <div class="century">2000</div>
+
+    </div>
+
+  </footer>
+
 </div>
 
-<div class="left-panel">
-<div class="section-title">WORLD EVENTS</div>
-<div id="worldEvents"></div>
-</div>
+<script type="module" src="./main.js"></script>
 
-<div class="right-panel">
-<div class="person-name">JOHN<br>MANJIRO</div>
-<div class="person-years">1827 — 1898</div>
-<img class="person-image" src="https://upload.wikimedia.org/wikipedia/commons/2/2c/Nakahama_Manjiro.jpg"/>
-<div class="person-description">
-ジョン万次郎は、日本とアメリカを結んだ
-幕末のキーパーソン。
-</div>
-<div id="timeline"></div>
-</div>
-<button id="borderToggle">
-BORDERS
-</button>
-<div id="timelineBar">
-<div id="timelineYear">1850</div>
-<input type="range" id="yearSlider" min="1820" max="1870" value="1850"/>
-</div>
-
-<script type="module">
-import { events } from '../data/events.js';
-import {
-
-world,
-renderYear,
-toggleBorders
-
-}
-
-from './renderGlobe.js';
-
-const worldEventsEl = document.getElementById('worldEvents');
-const timeline = document.getElementById('timeline');
-
- const borderToggle =
-document.getElementById(
-'borderToggle'
-);
-
-borderToggle.onclick = ()=>{
-
-toggleBorders();
-
-}; 
-const slider = document.getElementById('yearSlider');
-const timelineYear = document.getElementById('timelineYear');
-
-function isActive(event, year){
-  if(event.endYear){
-    return event.startYear <= year && year <= event.endYear;
-  }
-  return event.startYear <= year;
-}
-
-function renderUI(year){
-  worldEventsEl.innerHTML = '';
-  timeline.innerHTML = '';
-
-  const worldEvents = events.filter(
-    event => event.type === 'world' && isActive(event, year)
-  );
-
-  const personEvents = events.filter(
-    event => event.type === 'person' && isActive(event, year)
-  );
-
-  worldEvents.forEach(event=>{
-    const item = document.createElement('div');
-    item.className = 'event-item';
-
-    item.innerHTML = `
-      <div class="event-bar" style="background:${event.color};"></div>
-      <div class="event-content">
-        <div class="event-year" style="color:${event.color};">${event.year}</div>
-        <div class="event-title">${event.title}</div>
-        <div class="event-description">${event.description}</div>
-      </div>
-    `;
-
-    item.onclick = ()=>{
-      world.pointOfView({
-        lat:event.lat,
-        lng:event.lng,
-        altitude:1.6
-      },1200);
-    };
-
-    worldEventsEl.appendChild(item);
-  });
-
-  personEvents.forEach(event=>{
-    const item = document.createElement('div');
-    item.className = 'timeline-item';
-
-    item.innerHTML = `
-      <div class="timeline-year">${event.year}</div>
-      <div class="timeline-text">${event.description}</div>
-    `;
-
-    item.onclick = ()=>{
-      world.pointOfView({
-        lat:event.lat,
-        lng:event.lng,
-        altitude:1.4
-      },1200);
-    };
-
-    timeline.appendChild(item);
-  });
-}
-
-renderUI(1850);
-
-slider.addEventListener('input', e=>{
-  const year = parseInt(e.target.value);
-  timelineYear.innerText = year;
-  renderYear(year);
-  renderUI(year);
-});
-</script>
+</body>
 
 </body>
 </html>
