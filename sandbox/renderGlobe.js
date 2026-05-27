@@ -115,9 +115,9 @@ function buildArcs(filtered) {
     .arcColor('color')
     .arcAltitude('altitude')
     .arcStroke(0.08)
-    .arcDashLength(1)
-    .arcDashGap(0)
-    .arcDashAnimateTime(0);
+    .arcDashLength(0.55)
+.arcDashGap(0.18)
+.arcDashAnimateTime(4200);
 }
 
 function buildRings(filtered) {
