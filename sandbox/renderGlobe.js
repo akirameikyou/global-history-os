@@ -221,8 +221,13 @@ export function renderYear(year) {
 
   const filtered = events.filter(e => isActive(e, year));
 
+  const routeHistory = events.filter(e =>
+    e.type === 'person' &&
+    e.startYear <= year
+  );
+
   createLabels(filtered);
-  buildArcs(filtered);
+  buildArcs(routeHistory);
   buildRings(filtered);
   buildAreas(filtered);
 }
