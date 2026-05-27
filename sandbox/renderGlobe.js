@@ -230,7 +230,10 @@ export function renderYear(year) {
     e.startYear <= year
   );
 
-  createLabels(filtered);
+  createLabels([
+  ...filtered,
+  ...routeLabels
+]);
   buildArcs(routeHistory);
   buildRings(filtered);
   buildAreas(filtered);
