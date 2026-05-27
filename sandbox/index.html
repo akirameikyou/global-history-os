@@ -216,7 +216,30 @@ function getEraInfo(year){
   if(year >= 1818) return '文政 / Bunsei';
   return '';
 }
+function renderTimelineMarkers(){
+  timelineMarkers.innerHTML = '';
 
+  const markerYears = [
+    ...new Set(
+      events
+        .filter(event => event.type === 'person' || event.type === 'world')
+        .map(event => event.startYear)
+    )
+  ];
+
+  markerYears.forEach(markerYear => {
+    const ratio = (markerYear - 1800) / 100;
+
+    if (ratio < 0 || ratio > 1) return;
+
+    const marker = document.createElement('div');
+    marker.className = 'timeline-marker';
+    marker.style.left = `${ratio * 100}%`;
+    marker.title = String(markerYear);
+
+    timelineMarkers.appendChild(marker);
+  });
+}
 function renderTimelineEra(year){
   const era = getEraInfo(year);
   timelineEra.innerText = era ? `江戸後期・幕末 / ${era}` : '';
