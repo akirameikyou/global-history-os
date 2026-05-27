@@ -38,7 +38,9 @@ color:#66e0ff;
 font-weight:700;
 letter-spacing:0.12em;
 }
+
 #timelineBar{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);z-index:30;width:520px;display:flex;flex-direction:column;align-items:center;gap:12px;}
+
 #timelineYear{
 font-size:14px;
 letter-spacing:0.25em;
@@ -48,6 +50,7 @@ height:18px;
 line-height:18px;
 text-align:center;
 }
+
 #yearSlider{width:520px;appearance:none;height:2px;background:rgba(255,255,255,0.25);outline:none;}
 #yearSlider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:999px;background:#66e0ff;cursor:pointer;box-shadow:0 0 18px rgba(102,224,255,0.8);}
 
@@ -56,7 +59,6 @@ position:relative;
 width:520px;
 height:12px;
 margin-top:-2px;
-pointer-events:auto;
 }
 
 #timelineBaseLine{
@@ -66,6 +68,7 @@ top:6px;
 width:100%;
 height:1px;
 background:rgba(255,255,255,0.18);
+pointer-events:none;
 }
 
 #timelineWorldLayer{
@@ -74,36 +77,16 @@ left:0;
 top:0;
 width:100%;
 height:100%;
-pointer-events:none;  
-}
-.timeline-world-bar{
-position:absolute;
-height:3px;
-border-radius:999px;
-opacity:0.9;
+pointer-events:none;
 }
 
-.timeline-world-war{
-background:#ff5a5a;
-box-shadow:0 0 8px rgba(255,90,90,0.7);
-}
-
-.timeline-world-tech{
-background:#ffd95e;
-box-shadow:0 0 8px rgba(255,217,94,0.7);
-}
-
-.timeline-world-civilization{
-background:#57ffb1;
-box-shadow:0 0 8px rgba(87,255,177,0.7);
-}
 #timelineLifeLayer{
 position:absolute;
 left:0;
 top:0;
 width:100%;
 height:100%;
-pointer-events:none;  
+pointer-events:none;
 }
 
 .life-span-bar{
@@ -122,7 +105,7 @@ left:0;
 top:0;
 width:520px;
 height:12px;
-pointer-events:none;  
+pointer-events:none;
 }
 
 .timeline-marker{
@@ -135,6 +118,7 @@ background:#66e0ff;
 box-shadow:0 0 10px rgba(102,224,255,0.85);
 transform:translateX(-50%);
 }
+
 #timelineEra{
 margin-top:2px;
 margin-bottom:6px;
@@ -177,7 +161,8 @@ color:#66e0ff;
 opacity:0.8;
 height:18px;
 line-height:18px;
-} 
+}
+
 #borderToggle{
 position:absolute;
 right:40px;
@@ -191,30 +176,7 @@ letter-spacing:0.2em;
 font-size:11px;
 cursor:pointer;
 backdrop-filter:blur(10px);
-} 
-.timeline-world-bar{
-position:absolute;
-top:2px;
-height:3px;
-border-radius:999px;
-opacity:0.85;
-pointer-events:none;
 }
-
-.timeline-world-war{
-background:#ff5a5a;
-box-shadow:0 0 8px rgba(255,90,90,0.65);
-}
-
-.timeline-world-tech{
-background:#ffd95e;
-box-shadow:0 0 8px rgba(255,217,94,0.65);
-}
-
-.timeline-world-civilization{
-background:#57ffb1;
-box-shadow:0 0 8px rgba(87,255,177,0.65);
-}  
 </style>
 </head>
 
@@ -256,49 +218,29 @@ box-shadow:0 0 8px rgba(87,255,177,0.65);
   <div id="timelineYear">1850</div>
   <div id="timelineEra"></div>
   <div id="timelineRoute"></div>
+
   <input type="range" id="yearSlider" min="1800" max="1900" value="1850"/>
 
-<div id="timelineTrack">
-  <div id="timelineBaseLine"></div>
+  <div id="timelineTrack">
+    <div id="timelineBaseLine"></div>
 
-  <div id="timelineWorldLayer">
-  <div class="timeline-world-bar timeline-world-tech" style="left:38%;width:8%;"></div>
-  <div class="timeline-world-bar timeline-world-war" style="left:72%;width:10%;"></div>
-</div>
+    <div id="timelineWorldLayer"></div>
 
-  <div
-    class="timeline-world-bar timeline-world-war"
-    style="
-      left:72%;
-      width:10%;
-      top:0px;
-    ">
+    <div id="timelineLifeLayer">
+      <div class="life-span-bar" style="left:27%;width:71%;"></div>
+    </div>
+
+    <div id="timelineMarkers"></div>
   </div>
 
-  <div
-    class="timeline-world-bar timeline-world-tech"
-    style="
-      left:38%;
-      width:8%;
-      top:0px;
-    ">
-  </div>
-
-</div>
-
-  <div id="timelineLifeLayer">
-    <div class="life-span-bar" style="left:27%;width:71%;"></div>
-  </div>
-
-  <div id="timelineMarkers"></div>
-</div>
   <div id="timelineTicks">
-  <span>1800</span>
-  <span>1825</span>
-  <span>1850</span>
-  <span>1875</span>
-  <span>1900</span>
-</div>
+    <span>1800</span>
+    <span>1825</span>
+    <span>1850</span>
+    <span>1875</span>
+    <span>1900</span>
+  </div>
+
   <div id="timelineMeaning"></div>
 </div>
 
@@ -319,7 +261,8 @@ const timelineYear = document.getElementById('timelineYear');
 const timelineMeaning = document.getElementById('timelineMeaning');
 const timelineEra = document.getElementById('timelineEra');
 const timelineRoute = document.getElementById('timelineRoute');
-const timelineMarkers = document.getElementById('timelineMarkers');  
+const timelineMarkers = document.getElementById('timelineMarkers');
+
 borderToggle.onclick = () => {
   toggleBorders();
 };
@@ -330,6 +273,7 @@ function isActive(event, year){
   }
   return event.startYear <= year;
 }
+
 function getEraInfo(year){
   if(year >= 1868) return '明治 / Meiji';
   if(year >= 1865) return '慶応 / Keiō';
@@ -343,6 +287,7 @@ function getEraInfo(year){
   if(year >= 1818) return '文政 / Bunsei';
   return '';
 }
+
 function renderTimelineMarkers(){
   timelineMarkers.innerHTML = '';
 
@@ -367,10 +312,12 @@ function renderTimelineMarkers(){
     timelineMarkers.appendChild(marker);
   });
 }
+
 function renderTimelineEra(year){
   const era = getEraInfo(year);
   timelineEra.innerText = era ? `江戸後期・幕末 / ${era}` : '';
-} 
+}
+
 function renderTimelineRoute(year){
   const routeLabels = events
     .filter(event =>
@@ -383,6 +330,7 @@ function renderTimelineRoute(year){
 
   timelineRoute.innerText = uniqueRouteLabels.join('  /  ');
 }
+
 function renderTimelineMeaning(year){
   const durationEvent = events.find(event =>
     event.timelineType === 'duration' &&
@@ -395,6 +343,7 @@ function renderTimelineMeaning(year){
     ? durationEvent.durationLabel
     : '';
 }
+
 function renderUI(year){
   worldEventsEl.innerHTML = '';
   timeline.innerHTML = '';
@@ -404,10 +353,10 @@ function renderUI(year){
   );
 
   const personEvents = events.filter(
-  event =>
-    event.type === 'person' &&
-    event.startYear <= year
-);
+    event =>
+      event.type === 'person' &&
+      event.startYear <= year
+  );
 
   worldEvents.forEach(event => {
     const item = document.createElement('div');
@@ -438,13 +387,13 @@ function renderUI(year){
     item.className = 'timeline-item';
 
     item.innerHTML = `
-  <div class="timeline-text">
-  <span class="timeline-inline-year">
-    ${event.year}
-  </span>
-  　${event.description}
-</div>
-`;
+      <div class="timeline-text">
+        <span class="timeline-inline-year">
+          ${event.year}
+        </span>
+        　${event.description}
+      </div>
+    `;
 
     item.onclick = () => {
       world.pointOfView({
@@ -457,6 +406,7 @@ function renderUI(year){
     timeline.appendChild(item);
   });
 }
+
 renderTimelineMarkers();
 renderYear(1850);
 renderUI(1850);
@@ -467,7 +417,7 @@ renderTimelineMeaning(1850);
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
-  
+
   renderTimelineEra(year);
   renderTimelineRoute(year);
   renderTimelineMeaning(year);
