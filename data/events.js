@@ -189,8 +189,8 @@ description:'近代国家建設開始。',
 color:'#7dff7a',
 lat:35.68,
 lng:139.76,
-labelLat:35.55,
-labelLng:140.45,  
+labelLat:35.35,
+labelLng:140.85,
 placeName:'Tokyo',
 relatedEvents:[]
 }
