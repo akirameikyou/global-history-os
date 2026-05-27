@@ -220,6 +220,10 @@ export function renderYear(year) {
   currentYear = year;
 
   const filtered = events.filter(e => isActive(e, year));
+  const routeLabels = events.filter(e =>
+  e.type === 'person' &&
+  e.startYear <= year
+);
 
   const routeHistory = events.filter(e =>
     e.type === 'person' &&
