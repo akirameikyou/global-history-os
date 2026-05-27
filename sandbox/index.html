@@ -299,6 +299,10 @@ renderTimelineMeaning(1850);
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
+  const sliderMin = parseInt(slider.min);
+const sliderMax = parseInt(slider.max);
+const sliderRatio = (year - sliderMin) / (sliderMax - sliderMin);
+timelineYear.style.transform = `translateX(${sliderRatio * 520}px)`;
   renderTimelineEra(year);
   renderTimelineRoute(year);
   renderTimelineMeaning(year);
