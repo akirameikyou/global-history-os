@@ -354,7 +354,16 @@ const timelineWorldLayer = document.getElementById('timelineWorldLayer');
 borderToggle.onclick = () => {
   toggleBorders();
 };
+let personLinksVisible = false;
 
+personLinkToggle.onclick = () => {
+  personLinksVisible = !personLinksVisible;
+
+  timelineSubLanes.style.display =
+    personLinksVisible
+      ? 'flex'
+      : 'none';
+};
 function isActive(event, year){
   if(event.endYear){
     return event.startYear <= year && year <= event.endYear;
