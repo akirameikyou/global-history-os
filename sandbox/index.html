@@ -305,7 +305,36 @@ function getEraInfo(year){
   if(year >= 1818) return '文政 / Bunsei';
   return '';
 }
+function renderTimelineWorldBars(){
+  timelineWorldLayer.innerHTML = '';
 
+  const worldBarEvents = events.filter(event =>
+    event.type === 'world' &&
+    event.endYear &&
+    event.startYear >= 1800 &&
+    event.startYear <= 1900
+  );
+
+  worldBarEvents.forEach(event => {
+    const startRatio = (event.startYear - 1800) / 100;
+    const endRatio = (event.endYear - 1800) / 100;
+
+    const left = Math.max(0, startRatio) * 100;
+    const right = Math.min(1, endRatio) * 100;
+    const width = Math.max(1, right - left);
+
+    const bar = document.createElement('div');
+    bar.className = 'timeline-world-bar';
+    bar.style.left = `${left}%`;
+    bar.style.width = `${width}%`;
+    bar.style.background = event.color || '#ff5a5a';
+    bar.style.boxShadow = `0 0 6px ${event.color || '#ff5a5a'}`;
+
+    bar.title = `${event.year} ${event.title}`;
+
+    timelineWorldLayer.appendChild(bar);
+  });
+}
 function renderTimelineMarkers(){
   timelineMarkers.innerHTML = '';
 
