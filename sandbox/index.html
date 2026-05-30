@@ -461,6 +461,17 @@ function getEraInfo(year){
   if(year >= 1818) return '文政 / Bunsei';
   return '';
 }
+function showLinkCard(person){
+  linkCardKicker.innerText = 'P-LINK / PERSON';
+  linkCardTitle.innerText = person.fullName || person.label;
+  linkCardYears.innerText = `${person.birthYear} — ${person.deathYear}`;
+  linkCardText.innerText = person.relation || '';
+  linkCard.style.display = 'block';
+}
+
+linkCardClose.onclick = () => {
+  linkCard.style.display = 'none';
+};  
 function renderPersonLinks(){
   timelineSubLanes.innerHTML = '';
 
