@@ -494,7 +494,9 @@ function renderPersonLinks(){
         style="left:${left}%;width:${width}%;">
       </div>
     `;
-
+lane.onclick = () => {
+  showLinkCard(person);
+};
     timelineSubLanes.appendChild(lane);
   });
 }  
