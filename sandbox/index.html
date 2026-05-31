@@ -522,7 +522,23 @@ function showLinkCard(person){
   linkCardKicker.innerText = 'P-LINK / PERSON';
   linkCardTitle.innerText = person.fullName || person.label;
   linkCardYears.innerText = `${person.birthYear} — ${person.deathYear}`;
+  linkCardRelationType.innerText = person.relationType || '';
   linkCardText.innerText = person.relation || '';
+
+  if(person.portrait){
+    linkCardPortrait.innerHTML = `<img src="${person.portrait}" alt="${person.fullName || person.label}">`;
+  }else{
+    linkCardPortrait.innerText = person.label.slice(0, 2);
+  }
+
+  if(person.achievements && person.achievements.length){
+    linkCardAchievements.innerHTML = person.achievements
+      .map(item => `<div>・${item}</div>`)
+      .join('');
+  }else{
+    linkCardAchievements.innerHTML = '';
+  }
+
   linkCard.style.display = 'block';
 }
 
