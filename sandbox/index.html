@@ -573,12 +573,44 @@ function getEraInfo(year){
   if(year >= 1818) return '文政 / Bunsei';
   return '';
 }
+function goToConnection(year, focus){
+  slider.value = year;
+  timelineYear.innerText = year;
+
+  renderTimelineEra(year);
+  renderTimelineRoute(year);
+  renderTimelineMeaning(year);
+  renderYear(year);
+  renderUI(year);
+
+  if(focus === 'torishima'){
+    const torishimaEvent = events.find(event =>
+      event.startYear === year &&
+      (
+        event.title?.includes('鳥島') ||
+        event.description?.includes('鳥島') ||
+        event.routeLabel === 'TORISHIMA'
+      )
+    );
+
+    world.pointOfView({
+      lat: torishimaEvent?.lat ?? 30.48,
+      lng: torishimaEvent?.lng ?? 140.30,
+      altitude: 1.45
+    }, 1200);
+  }
+}
+
 function showLinkCard(person){
-  linkCardKicker.innerText = 'P-LINK / PERSON';
+  linkCardKicker.innerText = person.relationType
+    ? `P-LINK / PERSON / ${person.relationType}`
+    : 'P-LINK / PERSON';
+
   linkCardTitle.innerText = person.fullName || person.label;
   linkCardYears.innerText = `${person.birthYear} — ${person.deathYear}`;
-  linkCardRelationType.innerText = person.relationType || '';
+  linkCardRelationType.innerText = '';
   linkCardText.innerText = person.relation || '';
+  linkCardAchievements.innerHTML = '';
 
   if(person.portrait){
     linkCardPortrait.innerHTML = `<img src="${person.portrait}" alt="${person.fullName || person.label}">`;
@@ -586,13 +618,6 @@ function showLinkCard(person){
     linkCardPortrait.innerText = person.label.slice(0, 2);
   }
 
-  if(person.achievements && person.achievements.length){
-    linkCardAchievements.innerHTML = person.achievements
-      .map(item => `<div>・${item}</div>`)
-      .join('');
-  }else{
-    linkCardAchievements.innerHTML = '';
-  }
   if(person.connectionTrace && person.connectionTrace.length){
     linkCardTrace.innerHTML = `
       <div class="link-card-trace-title">CONNECTION TRACE</div>
@@ -601,9 +626,11 @@ function showLinkCard(person){
           <span class="link-card-trace-year">${item.year}</span>
           <span
             class="${item.goToYear ? 'link-card-trace-link' : ''}"
-            data-go-year="${item.goToYear || ''}">
+            data-go-year="${item.goToYear || ''}"
+            data-focus="${item.focus || ''}">
             ${item.text}
           </span>
+          ${item.detail ? `<div>${item.detail}</div>` : ''}
         </div>
       `).join('')}
     `;
@@ -613,22 +640,15 @@ function showLinkCard(person){
 
       el.onclick = () => {
         const year = parseInt(el.dataset.goYear);
-        slider.value = year;
-        timelineYear.innerText = year;
-
-        renderTimelineEra(year);
-        renderTimelineRoute(year);
-        renderTimelineMeaning(year);
-        renderYear(year);
-        renderUI(year);
+        goToConnection(year, el.dataset.focus);
       };
     });
   }else{
     linkCardTrace.innerHTML = '';
   }
+
   linkCard.style.display = 'block';
 }
-
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
 };  
