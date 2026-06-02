@@ -590,7 +590,39 @@ function showLinkCard(person){
   }else{
     linkCardAchievements.innerHTML = '';
   }
+  if(person.connectionTrace && person.connectionTrace.length){
+    linkCardTrace.innerHTML = `
+      <div class="link-card-trace-title">CONNECTION TRACE</div>
+      ${person.connectionTrace.map(item => `
+        <div class="link-card-trace-item">
+          <span class="link-card-trace-year">${item.year}</span>
+          <span
+            class="${item.goToYear ? 'link-card-trace-link' : ''}"
+            data-go-year="${item.goToYear || ''}">
+            ${item.text}
+          </span>
+        </div>
+      `).join('')}
+    `;
 
+    linkCardTrace.querySelectorAll('[data-go-year]').forEach(el => {
+      if(!el.dataset.goYear) return;
+
+      el.onclick = () => {
+        const year = parseInt(el.dataset.goYear);
+        slider.value = year;
+        timelineYear.innerText = year;
+
+        renderTimelineEra(year);
+        renderTimelineRoute(year);
+        renderTimelineMeaning(year);
+        renderYear(year);
+        renderUI(year);
+      };
+    });
+  }else{
+    linkCardTrace.innerHTML = '';
+  }
   linkCard.style.display = 'block';
 }
 
