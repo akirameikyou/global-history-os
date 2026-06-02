@@ -498,36 +498,34 @@ const timelineRoute = document.getElementById('timelineRoute');
 const timelineMarkers = document.getElementById('timelineMarkers');
 const timelineWorldLayer = document.getElementById('timelineWorldLayer');
 const personLinks = [
-  {
+ {
   id:'whitfield',
   label:'WHITFIELD',
   birthYear:1804,
   deathYear:1886,
   fullName:'William H. Whitfield',
-  relationType:'DIRECT LINK / RESCUER',
+  relationType:'DIRECT LINK',
   portrait:'',
   relation:'漂流後の万次郎を救助したアメリカ捕鯨船長。万次郎が太平洋世界へ接続される起点となった人物。',
-  achievements:[
-    'ジョン万次郎を救助した捕鯨船長。',
-    '万次郎をアメリカ社会へ導いた重要人物。',
-    '万次郎の教育と国際経験の起点となった。'
+  connectionTrace:[
+    {
+      year:1841,
+      text:'漂流し、鳥島へ漂着する。',
+      detail:'ジョン万次郎を救助した捕鯨船長。万次郎をアメリカ社会へ導き、教育と国際経験の起点となった。',
+      goToYear:1841,
+      focus:'torishima'
+    },
+    {
+      year:1846,
+      text:'万次郎、捕鯨船フランクリン号で出航。',
+      detail:'航海術を学ぶため、マサチューセッツを出港。ホイットフィールド船長と一旦別れる。'
+    },
+    {
+      year:1852,
+      text:'フェアヘーブンで再会。これが最後の対面となる。',
+      detail:'帰国の途中でホイットフィールド船長のもとを訪ね、数年ぶりに再会した。'
+    }
   ]
-    ,
-connectionTrace:[
-  {
-    year:1841,
-    text:'Manjiro rescued',
-    goToYear:1841
-  },
-  {
-    year:1846,
-    text:'Manjiro leaves on the Franklin'
-  },
-  {
-    year:1852,
-    text:'Reunion at Fairhaven / final meeting'
-  }
-]
 },
   {
     id:'perry',
