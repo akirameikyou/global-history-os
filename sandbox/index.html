@@ -552,6 +552,10 @@ personLinkToggle.onclick = () => {
     personLinksVisible
       ? 'flex'
       : 'none';
+
+  if(!personLinksVisible){
+    linkCard.style.display = 'none';
+  }
 };
 function isActive(event, year){
   if(event.endYear){
