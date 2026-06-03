@@ -164,6 +164,24 @@ relatedEvents:[]
 },
 
 {
+id:'gold_rush',
+type:'world',
+startYear:1848,
+endYear:1855,
+title:'カリフォルニア・ゴールドラッシュ',
+year:'1848 — 1855',
+description:'金鉱発見を契機に人々がカリフォルニアへ殺到。太平洋世界と万次郎の帰国資金形成にも関わる出来事。',
+color:'#ffd95e',
+lat:37.77,
+lng:-122.42,
+placeName:'San Francisco',
+geoCountry:'United States of America',
+areaColor:'rgba(255,217,94,0.18)',
+strokeColor:'rgba(255,217,94,0.65)',
+relatedEvents:['manjiro_kanrin']
+},
+  
+{
 id:'civil_war',
 type:'world',
 startYear:1861,
