@@ -10,7 +10,7 @@ description:'土佐国中浜村に生まれる。',
 lat:32.78,
 lng:132.95,
 labelLat:32.45,
-labelLng:133.35,  
+labelLng:133.35,
 placeName:'Ashizuri',
 lineColor:'#66e0ff',
 relatedEvents:['manjiro_shipwreck']
@@ -61,7 +61,22 @@ lat:41.63,
 lng:-70.93,
 placeName:'New Bedford',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_return_ryukyu']
+relatedEvents:['manjiro_gold_rush']
+},
+
+{
+id:'manjiro_gold_rush',
+type:'person',
+startYear:1850,
+routeLabel:'GOLD RUSH',
+title:'カリフォルニア金山へ',
+year:'1850',
+description:'ゴールドラッシュに参加。約70日で600ドルを得て、帰国資金を確保する。',
+lat:37.77,
+lng:-122.42,
+placeName:'San Francisco / California',
+lineColor:'#66e0ff',
+relatedEvents:['gold_rush','manjiro_return_ryukyu']
 },
 
 {
@@ -122,10 +137,10 @@ description:'幕府に登用され、海外知識を日本へ伝える。',
 lat:35.68,
 lng:139.76,
 labelLat:35.78,
-labelLng:138.95,  
+labelLng:138.95,
 placeName:'Edo',
 lineColor:'#66e0ff',
-relatedEvents:['kaikoku']
+relatedEvents:['black_ships','treaty_kanagawa']
 },
 
 {
@@ -144,33 +159,13 @@ relatedEvents:['civil_war']
 },
 
 {
-id:'kaikoku',
-type:'world',
-startYear:1854,
-endYear:1868,
-title:'日本開国',
-year:'1854',
-description:'日米和親条約締結。日本は開国へ向かう。',
-color:'#ffd95e',
-lat:35.68,
-lng:139.76,
-labelLat:35.15,
-labelLng:140.85,  
-placeName:'Tokyo',
-geoCountry:'Japan',
-areaColor:'rgba(255,217,94,0.24)',
-strokeColor:'rgba(255,217,94,0.75)',
-relatedEvents:[]
-},
-
-{
 id:'gold_rush',
 type:'world',
 startYear:1848,
 endYear:1855,
 title:'カリフォルニア・ゴールドラッシュ',
 year:'1848 — 1855',
-description:'金鉱発見を契機に人々がカリフォルニアへ殺到。太平洋世界と万次郎の帰国資金形成にも関わる出来事。',
+description:'金鉱発見を契機に世界中から人々が流入。サンフランシスコは寒村から新興都市へ変貌し、万次郎の帰国資金形成にも関わった。',
 color:'#ffd95e',
 lat:37.77,
 lng:-122.42,
@@ -178,9 +173,49 @@ placeName:'San Francisco',
 geoCountry:'United States of America',
 areaColor:'rgba(255,217,94,0.18)',
 strokeColor:'rgba(255,217,94,0.65)',
-relatedEvents:['manjiro_kanrin']
+relatedEvents:['manjiro_gold_rush']
 },
-  
+
+{
+id:'black_ships',
+type:'world',
+startYear:1853,
+endYear:1853,
+title:'黒船来航',
+year:'1853',
+description:'ペリー率いる黒船艦隊が浦賀沖へ来航。日本とアメリカの接続が現実化する契機となった。',
+color:'#b58cff',
+lat:35.24,
+lng:139.72,
+labelLat:34.95,
+labelLng:140.65,
+placeName:'Uraga',
+geoCountry:'Japan',
+areaColor:'rgba(181,140,255,0.18)',
+strokeColor:'rgba(181,140,255,0.70)',
+relatedEvents:['treaty_kanagawa','manjiro_edo']
+},
+
+{
+id:'treaty_kanagawa',
+type:'world',
+startYear:1854,
+endYear:1854,
+title:'日米和親条約',
+year:'1854',
+description:'日米和親条約締結。黒船来航を経て、日本は開国へ向かう制度的接続点を迎えた。',
+color:'#66e0ff',
+lat:35.44,
+lng:139.64,
+labelLat:35.05,
+labelLng:140.45,
+placeName:'Kanagawa / Yokohama',
+geoCountry:'Japan',
+areaColor:'rgba(102,224,255,0.16)',
+strokeColor:'rgba(102,224,255,0.65)',
+relatedEvents:['black_ships','manjiro_edo']
+},
+
 {
 id:'civil_war',
 type:'world',
