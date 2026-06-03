@@ -169,7 +169,7 @@ description:'金鉱発見を契機に世界中から人々が流入。サンフ�
 color:'#ffd95e',
 lat:37.77,
 lng:-122.42,
-placeName:'San Francisco',
+placeName:'',
 geoCountry:'United States of America',
 areaColor:'rgba(255,217,94,0.18)',
 strokeColor:'rgba(255,217,94,0.65)',
