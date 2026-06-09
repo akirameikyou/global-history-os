@@ -780,7 +780,13 @@ function renderWorldLinks(){
         style="left:${left}%;width:${width}%;background:${link.color};box-shadow:0 0 8px ${link.color};">
       </div>
     `;
-
+    lane.onclick = () => {
+      world.pointOfView({
+        lat: link.lat,
+        lng: link.lng,
+        altitude: link.altitude || 1.6
+      }, 1200);
+    };
     timelineWorldLinks.appendChild(lane);
   });
 }  
