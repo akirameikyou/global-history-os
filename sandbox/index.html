@@ -740,7 +740,33 @@ function showLinkCard(person){
 }
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
-};  
+};
+function renderWorldLinks(){
+  timelineWorldLinks.innerHTML = '';
+
+  worldLinks.forEach(link => {
+    const startRatio = (link.startYear - 1800) / 100;
+    const endRatio = (link.endYear - 1800) / 100;
+
+    const left = Math.max(0, startRatio) * 100;
+    const right = Math.min(1, endRatio) * 100;
+    const width = Math.max(1, right - left);
+
+    const lane = document.createElement('div');
+    lane.className = 'timeline-world-link-lane';
+
+    lane.innerHTML = `
+      <div class="timeline-world-link-label">${link.label}</div>
+      <div class="timeline-world-link-line"></div>
+      <div
+        class="timeline-world-link-bar"
+        style="left:${left}%;width:${width}%;background:${link.color};box-shadow:0 0 8px ${link.color};">
+      </div>
+    `;
+
+    timelineWorldLinks.appendChild(lane);
+  });
+}  
 function renderPersonLinks(){
   timelineSubLanes.innerHTML = '';
 
