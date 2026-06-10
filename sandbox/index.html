@@ -945,6 +945,8 @@ linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
 };
 function showWorldLinkMapLabel(link){
+  if(!link) return;
+
   worldLinkMapLabel.innerHTML = `
     <div style="
       color:${link.color || 'white'};
