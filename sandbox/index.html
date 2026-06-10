@@ -962,9 +962,11 @@ function bringLinkCardToFront(){
   linkCard.style.zIndex = floatingSheetZIndex;
 }  
 linkCardKicker.onmousedown = e => {
+  bringLinkCardToFront();
+
   isDraggingLinkCard = true;
   linkCard.classList.add('dragging');
-
+  
   const rect = linkCard.getBoundingClientRect();
   linkCardDragOffsetX = e.clientX - rect.left;
   linkCardDragOffsetY = e.clientY - rect.top;
