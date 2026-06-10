@@ -584,16 +584,83 @@ const timelineWorldLayer = document.getElementById('timelineWorldLayer');
 const locationNotice = document.getElementById('locationNotice');
 const locationNoticeTitle = document.getElementById('locationNoticeTitle');
 const locationNoticePlace = document.getElementById('locationNoticePlace');
+const worldRoots = [
+ {
+  id:'american_independence',
+  label:'AMERICAN INDEPENDENCE',
+  year:'1776',
+  place:'Atlantic World / United States',
+  note:'海洋国家アメリカの出発点'
+ },
+ {
+  id:'pacific_whaling_roots',
+  label:'PACIFIC WHALING ROOTS',
+  year:'1790s',
+  place:'Atlantic to Pacific',
+  note:'捕鯨ネットワークの太平洋拡大'
+ }
+];
+
 const worldLinks = [
+ {
+  id:'rezanov_arrival',
+  label:'REZANOV ARRIVAL',
+  startYear:1804,
+  endYear:1804,
+  color:'#ffb36b',
+  lat:32.75,
+  lng:129.88,
+  altitude:1.55,
+  placeName:'Nagasaki / Japan',
+  regionName:'Russian approach to Japan'
+ },
+ {
+  id:'steam_revolution',
+  label:'STEAM REVOLUTION',
+  startYear:1807,
+  endYear:1807,
+  color:'#aaaaaa',
+  lat:40.71,
+  lng:-74.0,
+  altitude:1.65,
+  placeName:'Hudson River / New York',
+  regionName:'Steamship technology'
+ },
+ {
+  id:'napoleonic_end',
+  label:'NAPOLEONIC END',
+  startYear:1815,
+  endYear:1815,
+  color:'#d0d0ff',
+  lat:50.68,
+  lng:4.41,
+  altitude:1.65,
+  placeName:'Waterloo / Europe',
+  regionName:'British maritime supremacy'
+ },
+ {
+  id:'ikokusen_order',
+  label:'IKOKUSEN ORDER',
+  startYear:1825,
+  endYear:1825,
+  color:'#ffcc66',
+  lat:35.68,
+  lng:139.76,
+  altitude:1.5,
+  placeName:'Edo / Japan',
+  regionName:'Japanese coastal defense policy'
+ },
  {
   id:'opium_war',
   label:'OPIUM WAR',
   startYear:1839,
   endYear:1842,
   color:'#ff8b5e',
-  lat:31.2,
-  lng:121.5,
-  altitude:1.65
+  lat:22.3,
+  lng:114.1,
+  altitude:1.65,
+  placeName:'Pearl River Delta / Hong Kong',
+  regionName:'Qing China vs British Empire'
  },
  {
   id:'pacific_whaling',
@@ -603,7 +670,9 @@ const worldLinks = [
   color:'#66e0ff',
   lat:30.0,
   lng:160.0,
-  altitude:1.75
+  altitude:1.75,
+  placeName:'North Pacific Ocean',
+  regionName:'Pacific whaling network'
  },
  {
   id:'gold_rush',
@@ -613,7 +682,9 @@ const worldLinks = [
   color:'#ffd95e',
   lat:37.77,
   lng:-122.42,
-  altitude:1.6
+  altitude:1.6,
+  placeName:'San Francisco / California',
+  regionName:'Pacific Gateway'
  },
  {
   id:'perry_expedition',
@@ -623,7 +694,9 @@ const worldLinks = [
   color:'#b58cff',
   lat:26.21,
   lng:127.68,
-  altitude:1.55
+  altitude:1.55,
+  placeName:'Ryukyu / East Asia',
+  regionName:'US naval expedition route'
  },
  {
   id:'black_ships',
@@ -633,7 +706,9 @@ const worldLinks = [
   color:'#b58cff',
   lat:35.24,
   lng:139.72,
-  altitude:1.45
+  altitude:1.45,
+  placeName:'Uraga / Japan',
+  regionName:'Connection Hub'
  },
  {
   id:'treaty_kanagawa',
@@ -643,7 +718,9 @@ const worldLinks = [
   color:'#66e0ff',
   lat:35.44,
   lng:139.64,
-  altitude:1.45
+  altitude:1.45,
+  placeName:'Kanagawa / Yokohama',
+  regionName:'Treaty of Peace and Amity'
  },
  {
   id:'opening_of_japan',
@@ -653,7 +730,9 @@ const worldLinks = [
   color:'#7dff7a',
   lat:35.68,
   lng:139.76,
-  altitude:1.55
+  altitude:1.55,
+  placeName:'Japan',
+  regionName:'Opening of Japan'
  }
 ];
   
