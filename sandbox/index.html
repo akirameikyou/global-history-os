@@ -1029,7 +1029,7 @@ function renderWorldLinks(){
       </div>
     `;
 
-    lane.onclick = () => {
+        lane.onclick = () => {
       world.pointOfView({
         lat: link.lat,
         lng: link.lng,
@@ -1041,8 +1041,10 @@ function renderWorldLinks(){
         link.placeName || '',
         link.regionName || ''
       );
-    };
+
       showWorldLinkMapLabel(link);
+    };
+
     timelineWorldLinks.appendChild(lane);
   });
 }
