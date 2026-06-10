@@ -904,6 +904,20 @@ function showLinkCard(person){
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
 };
+
+function showLocationNotice(title, place, region){
+  locationNoticeTitle.innerText = title || '';
+  locationNoticePlace.innerText = region
+    ? `${place} / ${region}`
+    : place;
+
+  locationNotice.style.display = 'block';
+
+  clearTimeout(showLocationNotice.timer);
+  showLocationNotice.timer = setTimeout(() => {
+    locationNotice.style.display = 'none';
+  }, 3200);
+}  
 function renderWorldLinks(){
   timelineWorldLinks.innerHTML = '';
 
