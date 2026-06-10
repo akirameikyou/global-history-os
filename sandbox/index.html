@@ -955,6 +955,12 @@ let isDraggingLinkCard = false;
 let linkCardDragOffsetX = 0;
 let linkCardDragOffsetY = 0;
 
+let floatingSheetZIndex = 100;
+
+function bringLinkCardToFront(){
+  floatingSheetZIndex += 1;
+  linkCard.style.zIndex = floatingSheetZIndex;
+}  
 linkCardKicker.onmousedown = e => {
   isDraggingLinkCard = true;
   linkCard.classList.add('dragging');
