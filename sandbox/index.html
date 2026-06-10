@@ -951,6 +951,9 @@ function showLinkCard(person){
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
 };
+linkCard.onmousedown = () => {
+  bringLinkCardToFront();
+};  
 let isDraggingLinkCard = false;
 let linkCardDragOffsetX = 0;
 let linkCardDragOffsetY = 0;
