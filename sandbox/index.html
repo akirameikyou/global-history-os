@@ -951,6 +951,37 @@ function showLinkCard(person){
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
 };
+let isDraggingLinkCard = false;
+let linkCardDragOffsetX = 0;
+let linkCardDragOffsetY = 0;
+
+linkCardKicker.onmousedown = e => {
+  isDraggingLinkCard = true;
+  linkCard.classList.add('dragging');
+
+  const rect = linkCard.getBoundingClientRect();
+  linkCardDragOffsetX = e.clientX - rect.left;
+  linkCardDragOffsetY = e.clientY - rect.top;
+
+  linkCard.style.right = 'auto';
+  linkCard.style.bottom = 'auto';
+  linkCard.style.left = `${rect.left}px`;
+  linkCard.style.top = `${rect.top}px`;
+};
+
+document.addEventListener('mousemove', e => {
+  if(!isDraggingLinkCard) return;
+
+  linkCard.style.left = `${e.clientX - linkCardDragOffsetX}px`;
+  linkCard.style.top = `${e.clientY - linkCardDragOffsetY}px`;
+});
+
+document.addEventListener('mouseup', () => {
+  if(!isDraggingLinkCard) return;
+
+  isDraggingLinkCard = false;
+  linkCard.classList.remove('dragging');
+});  
 function showWorldLinkMapLabel(link){
   if(!link) return;
 
