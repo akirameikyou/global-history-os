@@ -946,7 +946,8 @@ function showLinkCard(person){
     linkCardTrace.innerHTML = '';
   }
 
-  linkCard.style.display = 'block';
+   linkCard.style.display = 'block';
+  bringLinkCardToFront();
 }
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
