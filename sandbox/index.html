@@ -1139,119 +1139,31 @@ function showLocationNotice(title, place, region){
     locationNotice.style.display = 'none';
   }, 3200);
 }  
-function renderWorldLinks(){
-  timelineWorldLinks.innerHTML = '';
-
-    const rootsLane = document.createElement('div');
-  rootsLane.className = 'timeline-world-link-lane';
-  rootsLane.style.height = rootsExpanded ? '22px' : '22px';
-
-  rootsLane.innerHTML = `
-    <div class="timeline-world-link-label">
-      ROOTS ${rootsExpanded ? '▾' : '▸'}
-    </div>
-  `;
-
-  rootsLane.onclick = () => {
-    rootsExpanded = !rootsExpanded;
-    renderWorldLinks();
-  };
-
-  timelineWorldLinks.appendChild(rootsLane);
-
-  if(rootsExpanded){
+if(rootsExpanded){
     const rootsContent = document.createElement('div');
+    rootsContent.className = 'timeline-world-roots-content';
 
-    rootsContent.style.marginLeft = '72px';
-    rootsContent.style.fontSize = '9px';
-    rootsContent.style.lineHeight = '1.6';
-    rootsContent.style.letterSpacing = '0.12em';
-    rootsContent.style.color = 'rgba(255,255,255,0.62)';
-    rootsContent.style.whiteSpace = 'nowrap';
+    rootsContent.innerHTML = worldRoots.map(root => {
+      const rootsStart = 1775;
+      const rootsEnd = 1800;
+      const range = rootsEnd - rootsStart;
 
-    rootsContent.innerHTML = worldRoots.map(root => `
-      <div>${root.label}　${root.year}</div>
-    `).join('');
+      const left = ((root.startYear - rootsStart) / range) * 100;
+      const width = Math.max(4, ((root.endYear - root.startYear) / range) * 100);
+
+      return `
+        <div style="position:relative; height:28px; margin-bottom:6px;">
+          <div style="position:absolute; left:0; top:0; font-size:9px; letter-spacing:0.12em; color:rgba(255,255,255,0.68); white-space:nowrap;">
+            ${root.year}　${root.label}
+          </div>
+          <div style="position:absolute; left:0; right:0; top:21px; height:1px; background:rgba(255,255,255,0.12);"></div>
+          <div style="position:absolute; left:${left}%; top:19px; width:${width}%; height:4px; border-radius:999px; background:${root.color}; box-shadow:0 0 8px ${root.color};"></div>
+        </div>
+      `;
+    }).join('');
 
     timelineWorldLinks.appendChild(rootsContent);
-  }
-
-  worldLinks.forEach(link => {
-    const startRatio = (link.startYear - 1800) / 100;
-    const endRatio = (link.endYear - 1800) / 100;
-
-    const left = Math.max(0, startRatio) * 100;
-    const right = Math.min(1, endRatio) * 100;
-    const width = Math.max(1, right - left);
-
-    const lane = document.createElement('div');
-    lane.className = 'timeline-world-link-lane';
-
-    lane.innerHTML = `
-      <div class="timeline-world-link-label">${link.label}</div>
-      <div class="timeline-world-link-line"></div>
-      <div
-        class="timeline-world-link-bar"
-        style="left:${left}%;width:${width}%;background:${link.color};box-shadow:0 0 8px ${link.color};">
-      </div>
-    `;
-
-        lane.onclick = () => {
-      world.pointOfView({
-        lat: link.lat,
-        lng: link.lng,
-        altitude: link.altitude || 1.6
-      }, 1200);
-
-      showLocationNotice(
-        link.label,
-        link.placeName || '',
-        link.regionName || ''
-      );
-
-      showWorldLinkMapLabel(link);
-    };
-
-    timelineWorldLinks.appendChild(lane);
-  });
 }
-function renderPersonLinks(){
-  timelineSubLanes.innerHTML = '';
-
-  personLinks.forEach(person => {
-    const startRatio = (person.birthYear - 1800) / 100;
-    const endRatio = (person.deathYear - 1800) / 100;
-
-    const left = Math.max(0, startRatio) * 100;
-    const right = Math.min(1, endRatio) * 100;
-    const width = Math.max(1, right - left);
-
-    const lane = document.createElement('div');
-    lane.className = 'timeline-sub-lane';
-
-    lane.innerHTML = `
-      <div class="timeline-sub-label">${person.label}</div>
-      <div class="timeline-sub-line"></div>
-      <div
-        class="timeline-sub-life"
-        style="left:${left}%;width:${width}%;">
-      </div>
-    `;
-lane.onclick = () => {
-  showLinkCard(person);
-};
-    timelineSubLanes.appendChild(lane);
-  });
-}  
-function renderTimelineWorldBars(){
-  timelineWorldLayer.innerHTML = '';
-
-  const worldBarEvents = events.filter(event =>
-    event.type === 'world' &&
-    event.endYear &&
-    event.startYear >= 1800 &&
-    event.startYear <= 1900
-  );
 
   worldBarEvents.forEach(event => {
     const startRatio = (event.startYear - 1800) / 100;
