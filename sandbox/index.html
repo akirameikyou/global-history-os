@@ -1022,9 +1022,56 @@ let floatingSheetZIndex = 100;
 
 function bringLinkCardToFront(){
   floatingSheetZIndex += 1;
-  linkCard.style.zIndex = floatingSheetZIndex;
-}  
-linkCardKicker.onmousedown = e => {
+     rootsContent.innerHTML = worldRoots.map(root => {
+      const rootsStart = 1775;
+      const rootsEnd = 1800;
+      const range = rootsEnd - rootsStart;
+
+      const left = ((root.startYear - rootsStart) / range) * 100;
+      const width = Math.max(
+        4,
+        ((root.endYear - root.startYear) / range) * 100
+      );
+
+      return `
+        <div style="
+          position:relative;
+          height:28px;
+          margin-bottom:6px;
+        ">
+          <div style="
+            position:absolute;
+            left:0;
+            top:0;
+            font-size:9px;
+            letter-spacing:0.12em;
+            color:rgba(255,255,255,0.68);
+            white-space:nowrap;">
+            ${root.year}　${root.label}
+          </div>
+
+          <div style="
+            position:absolute;
+            left:0;
+            right:0;
+            top:21px;
+            height:1px;
+            background:rgba(255,255,255,0.12);">
+          </div>
+
+          <div style="
+            position:absolute;
+            left:${left}%;
+            top:19px;
+            width:${width}%;
+            height:4px;
+            border-radius:999px;
+            background:${root.color};
+            box-shadow:0 0 8px ${root.color};">
+          </div>
+        </div>
+      `;
+    }).join('');
   bringLinkCardToFront();
 
   isDraggingLinkCard = true;
