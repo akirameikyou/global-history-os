@@ -1056,24 +1056,37 @@ function renderWorldLinks(){
   rootsLane.className = 'timeline-world-link-lane';
   rootsLane.style.height = '44px';
 
+    rootsLane.style.height = rootsExpanded ? '44px' : '14px';
+
   rootsLane.innerHTML = `
-    <div class="timeline-world-link-label">ROOTS ▾</div>
-    <div style="
-      position:absolute;
-      left:72px;
-      top:-11px;
-      font-size:9px;
-      line-height:1.6;
-      letter-spacing:0.12em;
-      color:rgba(255,255,255,0.62);
-      white-space:nowrap;">
-      ${worldRoots.map(root => `
-        <div>${root.label}　${root.year}</div>
-      `).join('')}
+    <div class="timeline-world-link-label">
+      ROOTS ${rootsExpanded ? '▾' : '▸'}
     </div>
   `;
 
+  rootsLane.onclick = () => {
+    rootsExpanded = !rootsExpanded;
+    renderWorldLinks();
+  };
+
   timelineWorldLinks.appendChild(rootsLane);
+
+  if(rootsExpanded){
+    const rootsContent = document.createElement('div');
+
+    rootsContent.style.marginLeft = '72px';
+    rootsContent.style.fontSize = '9px';
+    rootsContent.style.lineHeight = '1.6';
+    rootsContent.style.letterSpacing = '0.12em';
+    rootsContent.style.color = 'rgba(255,255,255,0.62)';
+    rootsContent.style.whiteSpace = 'nowrap';
+
+    rootsContent.innerHTML = worldRoots.map(root => `
+      <div>${root.label}　${root.year}</div>
+    `).join('');
+
+    timelineWorldLinks.appendChild(rootsContent);
+  }
 
   worldLinks.forEach(link => {
     const startRatio = (link.startYear - 1800) / 100;
