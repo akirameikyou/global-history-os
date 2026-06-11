@@ -1183,6 +1183,37 @@ function renderWorldLinks(){
   });
 }
 
+function renderPersonLinks(){
+  timelineSubLanes.innerHTML = '';
+
+  personLinks.forEach(person => {
+    const startRatio = (person.birthYear - 1800) / 100;
+    const endRatio = (person.deathYear - 1800) / 100;
+
+    const left = Math.max(0, startRatio) * 100;
+    const right = Math.min(1, endRatio) * 100;
+    const width = Math.max(1, right - left);
+
+    const lane = document.createElement('div');
+    lane.className = 'timeline-sub-lane';
+
+    lane.innerHTML = `
+      <div class="timeline-sub-label">${person.label}</div>
+      <div class="timeline-sub-line"></div>
+      <div
+        class="timeline-sub-life"
+        style="left:${left}%;width:${width}%;">
+      </div>
+    `;
+
+    lane.onclick = () => {
+      showLinkCard(person);
+    };
+
+    timelineSubLanes.appendChild(lane);
+  });
+}
+  
 function renderTimelineWorldBars(){
   timelineWorldLayer.innerHTML = '';
 
