@@ -833,12 +833,23 @@ let personLinksVisible = false;
 let worldLinksVisible = false;
 
 worldLinkToggle.onclick = () => {
+
   worldLinksVisible = !worldLinksVisible;
 
   timelineWorldLinks.style.display =
     worldLinksVisible
       ? 'flex'
       : 'none';
+
+  if(!worldLinksVisible){
+
+    worldLinkMapLabel.style.display = 'none';
+
+    if(locationNotice){
+      locationNotice.style.display = 'none';
+    }
+
+  }
 };
 personLinkToggle.onclick = () => {
   personLinksVisible = !personLinksVisible;
