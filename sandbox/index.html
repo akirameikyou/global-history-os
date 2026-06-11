@@ -1054,12 +1054,9 @@ function showLocationNotice(title, place, region){
 function renderWorldLinks(){
   timelineWorldLinks.innerHTML = '';
 
-  const rootsLane = document.createElement('div');
+    const rootsLane = document.createElement('div');
   rootsLane.className = 'timeline-world-link-lane';
-  rootsLane.style.height = '44px';
-
-    rootsLane.style.height = rootsExpanded ? '44px' : '14px';
-
+  rootsLane.style.height = rootsExpanded ? '22px' : '22px';
   rootsLane.innerHTML = `
     <div class="timeline-world-link-label">
       ROOTS ${rootsExpanded ? '▾' : '▸'}
