@@ -32,11 +32,21 @@ html,body{margin:0;width:100%;height:100%;overflow:hidden;background:black;font-
 
 .timeline-item{margin-bottom:34px;cursor:pointer;}
 .timeline-year{font-size:13px;font-weight:700;letter-spacing:0.16em;color:#66e0ff;margin-bottom:10px;}
-.timeline-text{font-size:14px;line-height:1.55;color:rgba(255,255,255,0.84);}
+.timeline-text{
+font-size:14px;
+line-height:1.55;
+color:rgba(255,255,255,0.84);
+display:flex;
+gap:10px;
+align-items:flex-start;
+}
+
 .timeline-inline-year{
 color:#66e0ff;
 font-weight:700;
 letter-spacing:0.12em;
+flex:0 0 44px;
+white-space:nowrap;
 }
 
 #timelineBar{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);z-index:30;width:520px;display:flex;flex-direction:column;align-items:center;gap:12px;}
