@@ -1201,12 +1201,20 @@ function renderWorldLinks(){
       ? `0 0 18px ${link.color}`
       : `0 0 4px ${link.color}`;
     
-    lane.innerHTML = `
-      <div class="timeline-world-link-label">${link.label}</div>
+        lane.innerHTML = `
+      <div class="timeline-world-link-label" style="opacity:${linkOpacity};">
+        ${link.label}
+      </div>
       <div class="timeline-world-link-line"></div>
       <div
         class="timeline-world-link-bar"
-        style="left:${left}%;width:${width}%;background:${link.color};box-shadow:0 0 8px ${link.color};">
+        style="
+          left:${left}%;
+          width:${width}%;
+          background:${link.color};
+          box-shadow:${linkGlow};
+          opacity:${linkOpacity};
+        ">
       </div>
     `;
 
