@@ -1340,10 +1340,11 @@ function renderUI(year){
   );
 
   const personEvents = events.filter(
-    event =>
-      event.type === 'person' &&
-      event.startYear <= year
-  );
+  event =>
+    event.type === 'person' &&
+    event.timelineVisible !== false &&
+    event.startYear <= year
+);
 
   worldEvents.forEach(event => {
     const item = document.createElement('div');
