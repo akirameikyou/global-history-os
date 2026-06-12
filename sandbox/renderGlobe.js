@@ -57,12 +57,13 @@ function createLabels(filtered) {
   const uniqueLabels = [];
 
   filtered.forEach(event => {
+    if (!event.placeName) return;
     if (uniqueLabels.find(label => label.name === event.placeName)) return;
 
     uniqueLabels.push({
       name: event.placeName,
       lat: event.labelLat || event.lat,
-lng: event.labelLng || event.lng
+      lng: event.labelLng || event.lng
     });
   });
 
@@ -79,6 +80,53 @@ lng: event.labelLng || event.lng
       lng: label.lng
     });
   });
+}
+
+function buildRoutePoints(routeHistory) {
+  const points = [];
+  const uniquePoints = [];
+
+  routeHistory.forEach(event => {
+    if (!event.placeName) return;
+    if (uniquePoints.find(p => p.name === event.placeName)) return;
+
+    uniquePoints.push({
+      name: event.placeName,
+      title: event.title,
+      description: event.description,
+      year: event.year || event.startYear,
+      lat: event.lat,
+      lng: event.lng,
+      color: event.color || '#66e0ff',
+      size: 0.28
+    });
+  });
+
+  uniquePoints.forEach(point => points.push(point));
+
+  world
+    .pointsData(points)
+    .pointLat('lat')
+    .pointLng('lng')
+    .pointColor('color')
+    .pointRadius('size')
+    .pointAltitude(0.012)
+    .pointResolution(24)
+    .onPointClick(point => {
+      createLabels([
+        {
+          placeName: point.name,
+          lat: point.lat,
+          lng: point.lng
+        }
+      ]);
+
+      console.log(
+        `ROUTE POINT: ${point.name} / ${point.year}`,
+        point.title,
+        point.description
+      );
+    });
 }
 
 function buildArcs(filtered) {
@@ -116,8 +164,8 @@ function buildArcs(filtered) {
     .arcAltitude('altitude')
     .arcStroke(0.08)
     .arcDashLength(0.55)
-.arcDashGap(0.18)
-.arcDashAnimateTime(4200);
+    .arcDashGap(0.18)
+    .arcDashAnimateTime(4200);
 }
 
 function buildRings(filtered) {
@@ -134,13 +182,13 @@ function buildRings(filtered) {
     }
 
     if (event.id === 'civil_war') {
-  rings.push({
-    lat: 38.0,
-    lng: -78.5,
-    color: '#ff5e5e',
-    maxR: 14
-  });
-}
+      rings.push({
+        lat: 38.0,
+        lng: -78.5,
+        color: '#ff5e5e',
+        maxR: 14
+      });
+    }
   });
 
   world
@@ -155,10 +203,7 @@ function buildAreas(filtered) {
   const areas = [];
 
   filtered.forEach(event => {
-
-    // 正式GeoJSON国家表示
     if (event.geoCountry) {
-
       const countryAreas = getCountryPolygons(
         event.geoCountry,
         {
@@ -180,8 +225,6 @@ function buildAreas(filtered) {
 
       return;
     }
-
-    
   });
 
   setHistoryLayer(world, areas);
@@ -220,20 +263,14 @@ export function renderYear(year) {
   currentYear = year;
 
   const filtered = events.filter(e => isActive(e, year));
-  const routeLabels = events.filter(e =>
-  e.type === 'person' &&
-  e.startYear <= year
-);
 
   const routeHistory = events.filter(e =>
     e.type === 'person' &&
     e.startYear <= year
   );
 
-  createLabels([
-  ...filtered,
-  ...routeLabels
-]);
+  clearLabels();
+  buildRoutePoints(routeHistory);
   buildArcs(routeHistory);
   buildRings(filtered);
   buildAreas(filtered);
