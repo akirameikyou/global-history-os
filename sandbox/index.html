@@ -1192,6 +1192,15 @@ function renderWorldLinks(){
   currentYear <= link.endYear;
     lane.className = 'timeline-world-link-lane';
 
+        const active =
+      currentYear >= link.startYear &&
+      currentYear <= link.endYear;
+
+    const linkOpacity = active ? '1' : '0.32';
+    const linkGlow = active
+      ? `0 0 18px ${link.color}`
+      : `0 0 4px ${link.color}`;
+    
     lane.innerHTML = `
       <div class="timeline-world-link-label">${link.label}</div>
       <div class="timeline-world-link-line"></div>
