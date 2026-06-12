@@ -1187,6 +1187,9 @@ function renderWorldLinks(){
     const width = Math.max(1, right - left);
 
     const lane = document.createElement('div');
+    const active =
+  currentYear >= link.startYear &&
+  currentYear <= link.endYear;
     lane.className = 'timeline-world-link-lane';
 
     lane.innerHTML = `
