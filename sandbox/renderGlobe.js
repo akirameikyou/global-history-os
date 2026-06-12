@@ -253,6 +253,15 @@ function buildRings(filtered) {
       });
     }
 
+  if (event.id === 'opium_war') {
+      rings.push({
+        lat: 22.3,
+        lng: 114.1,
+        color: '#ff5e5e',
+        maxR: 7
+      });
+    }
+    
     if (event.id === 'civil_war') {
       rings.push({
         lat: 38.0,
