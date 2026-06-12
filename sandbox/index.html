@@ -1205,13 +1205,25 @@ function renderWorldLinks(){
         altitude: link.altitude || 1.6
       }, 1200);
 
-      showLocationNotice(
+            showLocationNotice(
         link.label,
         link.placeName || '',
         link.regionName || ''
       );
 
       showWorldLinkMapLabel(link);
+
+      showWorldEventCard({
+        title: link.label,
+        year: link.startYear === link.endYear
+          ? String(link.startYear)
+          : `${link.startYear} — ${link.endYear}`,
+        color: link.color || '#E69445',
+        description: link.description || link.regionName || '',
+        cardText: link.cardText || link.description || link.regionName || '',
+        meaning: link.meaning || '',
+        placeName: link.placeName || ''
+      });
     };
 
     timelineWorldLinks.appendChild(lane);
