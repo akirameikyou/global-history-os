@@ -1276,13 +1276,13 @@ function renderTimelineMarkers(){
   timelineMarkers.innerHTML = '';
 
   const markerYears = [
-    ...new Set(
-      events
-        .filter(event => event.type === 'person' || event.type === 'world')
-        .map(event => event.startYear)
-    )
-  ];
-
+  ...new Set(
+    events
+      .filter(event => event.type === 'person')
+      .map(event => event.startYear)
+  )
+];
+  
   markerYears.forEach(markerYear => {
     const ratio = (markerYear - 1800) / 100;
 
