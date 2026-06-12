@@ -341,6 +341,25 @@ lineColor:'#66e0ff',
 relatedEvents:[]
 },
 
+  {
+id:'mexican_american_war',
+type:'world',
+startYear:1846,
+endYear:1848,
+title:'米墨戦争',
+year:'1846 — 1848',
+description:'アメリカとメキシコの戦争。カリフォルニアを含む西部領土の帰属を大きく変えた。',
+cardText:'万次郎がフランクリン号で捕鯨航海に出た1846年、北米大陸では米墨戦争が始まっていた。この戦争はカリフォルニアの帰属を変え、のちのゴールドラッシュ、サンフランシスコの急成長、万次郎の帰国資金形成につながる背景となった。',
+color:'#ff5e5e',
+lat:29.42,
+lng:-98.49,
+placeName:'Texas / Mexico Border',
+geoCountry:'United States of America',
+areaColor:'rgba(255,94,94,0.18)',
+strokeColor:'rgba(255,94,94,0.65)',
+relatedEvents:['gold_rush','manjiro_franklin','manjiro_gold_rush']
+},
+  
 {
 id:'gold_rush',
 type:'world',
