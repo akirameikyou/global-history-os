@@ -341,7 +341,7 @@ lineColor:'#66e0ff',
 relatedEvents:[]
 },
 
-  {
+{
 id:'mexican_american_war',
 type:'world',
 startYear:1846,
