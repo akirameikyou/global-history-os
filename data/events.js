@@ -342,6 +342,26 @@ relatedEvents:[]
 },
 
 {
+id:'opium_war',
+type:'world',
+startYear:1839,
+endYear:1842,
+title:'アヘン戦争',
+year:'1839 — 1842',
+description:'清とイギリスの戦争。東アジア秩序に大きな衝撃を与えた。',
+cardText:'アヘン戦争は中国とイギリスの戦争である。しかしHistory OSの視点では、その影響は中国だけに留まらない。清の敗北によって東アジアの秩序は大きく変化し、列強はアジアへの進出を加速させた。この変化はやがて日本にも及び、黒船来航と開国へつながっていく。万次郎が帰国した1851年、日本はすでにアヘン戦争後の世界の中に存在していた。',
+meaning:'東アジア秩序の転換点',
+color:'#ff5e5e',
+lat:22.3,
+lng:114.1,
+placeName:'Pearl River Delta / Hong Kong',
+geoCountry:'China',
+areaColor:'rgba(255,94,94,0.18)',
+strokeColor:'rgba(255,94,94,0.65)',
+relatedEvents:['black_ships','treaty_kanagawa','manjiro_return_ryukyu']
+},
+  
+{
 id:'mexican_american_war',
 type:'world',
 startYear:1846,
