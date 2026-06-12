@@ -1278,7 +1278,10 @@ function renderTimelineMarkers(){
   const markerYears = [
   ...new Set(
     events
-      .filter(event => event.type === 'person')
+      .filter(event =>
+  event.type === 'person' &&
+  event.timelineVisible !== false
+)
       .map(event => event.startYear)
   )
 ];
