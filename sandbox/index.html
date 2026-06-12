@@ -1431,12 +1431,14 @@ function renderUI(year){
     `;
 
     item.onclick = () => {
-      world.pointOfView({
-        lat: event.lat,
-        lng: event.lng,
-        altitude: 1.6
-      }, 1200);
-    };
+  world.pointOfView({
+    lat: event.lat,
+    lng: event.lng,
+    altitude: 1.6
+  }, 1200);
+
+  showWorldEventCard(event);
+};
 
     worldEventsEl.appendChild(item);
   });
