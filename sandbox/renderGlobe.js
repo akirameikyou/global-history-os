@@ -82,6 +82,53 @@ function createLabels(filtered) {
   });
 }
 
+function showRoutePointCard(point) {
+  let card = document.getElementById('route-point-card');
+
+  if (!card) {
+    card = document.createElement('div');
+    card.id = 'route-point-card';
+
+    card.style.position = 'fixed';
+    card.style.left = '50%';
+    card.style.bottom = '90px';
+    card.style.transform = 'translateX(-50%)';
+    card.style.width = '320px';
+    card.style.padding = '14px 16px';
+    card.style.background = 'rgba(5, 12, 22, 0.88)';
+    card.style.border = '1px solid rgba(102, 224, 255, 0.65)';
+    card.style.borderRadius = '12px';
+    card.style.color = '#ffffff';
+    card.style.fontFamily = 'serif';
+    card.style.zIndex = '30';
+    card.style.boxShadow = '0 0 18px rgba(102, 224, 255, 0.35)';
+
+    document.body.appendChild(card);
+  }
+
+  card.innerHTML = `
+    <div style="font-size:12px; color:#66e0ff; letter-spacing:0.08em;">
+      ROUTE POINT
+    </div>
+
+    <div style="font-size:20px; margin-top:4px;">
+      ${point.name}
+    </div>
+
+    <div style="font-size:13px; color:#ffd95e; margin-top:4px;">
+      ${point.year}
+    </div>
+
+    <div style="font-size:14px; line-height:1.6; margin-top:10px;">
+      ${point.title || ''}
+    </div>
+
+    <div style="font-size:13px; line-height:1.6; margin-top:8px; color:#d8e8ff;">
+      ${point.description || ''}
+    </div>
+  `;
+}
+
 function buildRoutePoints(routeHistory) {
   const points = [];
   const uniquePoints = [];
@@ -121,11 +168,7 @@ function buildRoutePoints(routeHistory) {
         }
       ]);
 
-      console.log(
-        `ROUTE POINT: ${point.name} / ${point.year}`,
-        point.title,
-        point.description
-      );
+      showRoutePointCard(point);
     });
 }
 
