@@ -56,10 +56,55 @@ startYear:1843,
 routeLabel:'NEW BEDFORD',
 title:'アメリカ渡航',
 year:'1843',
-description:'アメリカで航海術・英語・民主主義思想を学ぶ。',
+description:'フェアヘーブンで教育を受け、航海術・英語・民主主義思想を学ぶ。',
 lat:41.63,
 lng:-70.93,
-placeName:'New Bedford',
+placeName:'New Bedford / Fairhaven',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_franklin']
+},
+
+{
+id:'manjiro_franklin',
+type:'person',
+startYear:1846,
+routeLabel:'WHALING',
+title:'フランクリン号捕鯨航海',
+year:'1846',
+description:'捕鯨船フランクリン号に乗船し、世界の海へ向かう。',
+lat:41.63,
+lng:-70.93,
+placeName:'Fairhaven',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_fairhaven_return']
+},
+
+{
+id:'manjiro_fairhaven_return',
+type:'person',
+startYear:1849,
+routeLabel:'FAIRHAVEN',
+title:'捕鯨航海を終え帰還',
+year:'1849',
+description:'3年4ヶ月の捕鯨航海を終え、フェアヘーブンへ帰還する。',
+lat:41.6376,
+lng:-70.9036,
+placeName:'Fairhaven',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_goldfield']
+},
+
+{
+id:'manjiro_goldfield',
+type:'person',
+startYear:1850,
+routeLabel:'SACRAMENTO',
+title:'サクラメント金山',
+year:'1850',
+description:'ゴールドラッシュに参加し、帰国資金を得る。',
+lat:38.5816,
+lng:-121.4944,
+placeName:'Sacramento',
 lineColor:'#66e0ff',
 relatedEvents:['manjiro_gold_rush']
 },
@@ -71,7 +116,7 @@ startYear:1850,
 routeLabel:'GOLD RUSH',
 title:'カリフォルニア金山へ',
 year:'1850',
-description:'カリフォルニア金山へ入る。',
+description:'カリフォルニア金山へ入り、帰国のための資金を得る。',
 lat:37.77,
 lng:-122.42,
 placeName:'San Francisco / California',
@@ -90,6 +135,21 @@ description:'琉球へ上陸し、日本帰国への道が開かれる。',
 lat:26.21,
 lng:127.68,
 placeName:'Naha',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_satsuma']
+},
+
+{
+id:'manjiro_satsuma',
+type:'person',
+startYear:1851,
+routeLabel:'SATSUMA',
+title:'薩摩で取り調べ',
+year:'1851',
+description:'薩摩で取り調べを受け、西洋事情や航海術を伝える。',
+lat:31.5966,
+lng:130.5571,
+placeName:'Kagoshima',
 lineColor:'#66e0ff',
 relatedEvents:['manjiro_nagasaki']
 },
@@ -144,6 +204,23 @@ relatedEvents:['black_ships','treaty_kanagawa']
 },
 
 {
+id:'manjiro_treaty_support',
+type:'person',
+startYear:1854,
+routeLabel:'TREATY',
+title:'開国交渉期の支援',
+year:'1854',
+description:'日米交渉期、英文翻訳や海外事情の知識で幕府を支援する。',
+lat:35.44,
+lng:139.64,
+labelLat:35.05,
+labelLng:140.45,
+placeName:'Kanagawa / Yokohama',
+lineColor:'#66e0ff',
+relatedEvents:['treaty_kanagawa']
+},
+
+{
 id:'manjiro_kanrin',
 type:'person',
 startYear:1860,
@@ -153,9 +230,99 @@ year:'1860',
 description:'咸臨丸に通訳として乗船し、再び太平洋を渡る。',
 lat:37.77,
 lng:-122.42,
-placeName:'',
+placeName:'San Francisco',
 lineColor:'#66e0ff',
-relatedEvents:['civil_war']
+relatedEvents:['civil_war','manjiro_ogasawara']
+},
+
+{
+id:'manjiro_ogasawara',
+type:'person',
+startYear:1861,
+routeLabel:'OGASAWARA',
+title:'小笠原調査',
+year:'1861',
+description:'小笠原諸島調査に参加し、領土保全と捕鯨政策に関わる。',
+lat:27.075,
+lng:142.213,
+placeName:'Chichijima',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_satsuma_nagasaki']
+},
+
+{
+id:'manjiro_satsuma_nagasaki',
+type:'person',
+startYear:1864,
+routeLabel:'SATSUMA / NAGASAKI',
+title:'薩摩・長崎で教授',
+year:'1864',
+description:'薩摩・長崎などで航海術・測量・英語・造船を教える。',
+lat:32.75,
+lng:129.88,
+placeName:'Nagasaki / Kagoshima',
+lineColor:'#66e0ff',
+relatedEvents:['meiji','manjiro_second_america']
+},
+
+{
+id:'manjiro_second_america',
+type:'person',
+startYear:1870,
+routeLabel:'NEW YORK',
+title:'再渡米・欧州視察',
+year:'1870',
+description:'普仏戦争視察のため再渡米し、ニューヨークから英国へ向かう。',
+lat:40.7128,
+lng:-74.0060,
+placeName:'New York',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_fairhaven_revisit']
+},
+
+{
+id:'manjiro_fairhaven_revisit',
+type:'person',
+startYear:1870,
+routeLabel:'FAIRHAVEN',
+title:'フェアヘーブン再訪',
+year:'1870',
+description:'21年ぶりにホイットフィールド船長を訪問する。',
+lat:41.6376,
+lng:-70.9036,
+placeName:'Fairhaven',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_suez']
+},
+
+{
+id:'manjiro_suez',
+type:'person',
+startYear:1870,
+routeLabel:'SUEZ',
+title:'スエズ運河経由で帰国',
+year:'1870',
+description:'欧州視察の帰路、開通間もないスエズ運河を通り東回りで帰国する。',
+lat:30.0444,
+lng:32.5498,
+placeName:'Suez Canal',
+lineColor:'#66e0ff',
+relatedEvents:['manjiro_death']
+},
+
+{
+id:'manjiro_death',
+type:'person',
+startYear:1898,
+routeLabel:'TOKYO',
+title:'死去',
+year:'1898',
+description:'東京で死去。',
+lat:35.68,
+lng:139.76,
+placeName:'Tokyo',
+lineColor:'#66e0ff',
+relatedEvents:[]
 },
 
 {
@@ -173,7 +340,7 @@ placeName:'San Francisco / California',
 geoCountry:'United States of America',
 areaColor:'rgba(255,217,94,0.18)',
 strokeColor:'rgba(255,217,94,0.65)',
-relatedEvents:['manjiro_gold_rush']
+relatedEvents:['manjiro_gold_rush','manjiro_goldfield']
 },
 
 {
@@ -213,7 +380,7 @@ placeName:'Kanagawa / Yokohama',
 geoCountry:'Japan',
 areaColor:'rgba(102,224,255,0.16)',
 strokeColor:'rgba(102,224,255,0.65)',
-relatedEvents:['black_ships','manjiro_edo']
+relatedEvents:['black_ships','manjiro_edo','manjiro_treaty_support']
 },
 
 {
@@ -247,7 +414,7 @@ lng:139.76,
 labelLat:35.15,
 labelLng:140.85,
 placeName:'Tokyo',
-relatedEvents:[]
+relatedEvents:['manjiro_second_america']
 }
 
 ];
