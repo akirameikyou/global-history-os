@@ -76,7 +76,7 @@ lat:41.63,
 lng:-70.93,
 placeName:'Fairhaven',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_fairhaven_return']
+relatedEvents:['manjiro_pacific_whaling_grounds']
 },
 
 {
