@@ -97,21 +97,43 @@ function showRoutePointCard(point) {
     card.style.padding = '14px 16px';
     card.style.background = 'rgba(5, 12, 22, 0.88)';
     card.style.border = '1px solid rgba(102, 224, 255, 0.65)';
-    card.style.borderRadius = '12px';
+
+    // 角丸を少し弱める
+    card.style.borderRadius = '6px';
+
     card.style.color = '#ffffff';
-    card.style.fontFamily = 'serif';
+    card.style.fontFamily = 'sans-serif';
     card.style.zIndex = '30';
     card.style.boxShadow = '0 0 18px rgba(102, 224, 255, 0.35)';
 
     document.body.appendChild(card);
   }
 
+  card.style.display = 'block';
+
   card.innerHTML = `
-    <div style="font-size:12px; color:#66e0ff; letter-spacing:0.08em;">
+    <button
+      id="route-point-card-close"
+      style="
+        position:absolute;
+        top:8px;
+        right:10px;
+        background:transparent;
+        border:none;
+        color:#d8e8ff;
+        font-size:18px;
+        cursor:pointer;
+        line-height:1;
+      "
+    >
+      ×
+    </button>
+
+    <div style="font-size:12px; color:#66e0ff; letter-spacing:0.08em; padding-right:24px;">
       ROUTE POINT
     </div>
 
-    <div style="font-size:20px; margin-top:4px;">
+    <div style="font-size:20px; margin-top:4px; padding-right:24px;">
       ${point.name}
     </div>
 
@@ -127,6 +149,13 @@ function showRoutePointCard(point) {
       ${point.description || ''}
     </div>
   `;
+
+  const closeButton = document.getElementById('route-point-card-close');
+
+  closeButton.addEventListener('click', () => {
+    card.style.display = 'none';
+    clearLabels();
+  });
 }
 
 function buildRoutePoints(routeHistory) {
