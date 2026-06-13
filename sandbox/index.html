@@ -1536,6 +1536,8 @@ function createPinnedWorldEventCard(event) {
   card.style.boxShadow = '0 0 14px rgba(230,148,69,0.22)';
 
   card.className = 'pinned-world-card';
+  
+  card.style.cursor = 'move';
 
   card.innerHTML = `
     <button
