@@ -1544,6 +1544,21 @@ renderTimelineEra(1850);
 renderTimelineRoute(1850);
 renderTimelineMeaning(1850);
 
+function updateTimelineCursorLine() {
+  const cursorLine = document.getElementById('timelineCursorLine');
+
+  if (!cursorLine) return;
+
+  const year = parseInt(slider.value);
+  const ratio = (year - 1800) / 100;
+
+  cursorLine.style.left = `${ratio * 520}px`;
+  cursorLine.style.display =
+    timelineWorldLinks.style.display === 'flex'
+      ? 'block'
+      : 'none';
+}
+  
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
