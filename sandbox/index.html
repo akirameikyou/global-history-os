@@ -1597,11 +1597,10 @@ function updateTimelineCursorLine() {
   const visible =
     timelineWorldLinks.style.display === 'flex';
 
-  cursorLine.style.display =
+    cursorLine.style.display =
     visible ? 'block' : 'none';
 
-  cursorPointer.style.display =
-    visible ? 'block' : 'none';
+  cursorPointer.style.display = 'block';
 }
   
 slider.addEventListener('input', e => {
