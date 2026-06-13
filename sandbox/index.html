@@ -1602,6 +1602,29 @@ function updateTimelineCursorLine() {
 
   cursorPointer.style.display = 'block';
 }
+
+function showActiveWorldLayerCard(year) {
+  if (!worldLinksVisible) return;
+
+  const activeLink = worldLinks.find(link =>
+    year >= link.startYear &&
+    year <= link.endYear
+  );
+
+  if (!activeLink) return;
+
+  showWorldEventCard({
+    title: activeLink.label,
+    year: activeLink.startYear === activeLink.endYear
+      ? String(activeLink.startYear)
+      : `${activeLink.startYear} — ${activeLink.endYear}`,
+    color: activeLink.color || '#E69445',
+    description: activeLink.description || activeLink.regionName || '',
+    cardText: activeLink.cardText || activeLink.description || activeLink.regionName || '',
+    meaning: activeLink.meaning || '',
+    placeName: activeLink.placeName || ''
+  });
+}
   
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
