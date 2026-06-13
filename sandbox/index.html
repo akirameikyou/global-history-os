@@ -938,7 +938,7 @@ worldLinkToggle.onclick = () => {
       ? 'flex'
       : 'none';
 
-  if(!worldLinksVisible){
+   if(!worldLinksVisible){
 
     worldLinkMapLabel.style.display = 'none';
 
@@ -947,6 +947,8 @@ worldLinkToggle.onclick = () => {
     }
 
   }
+
+  updateTimelineCursorLine();
 };
 personLinkToggle.onclick = () => {
   personLinksVisible = !personLinksVisible;
