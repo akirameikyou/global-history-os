@@ -1583,6 +1583,13 @@ function createPinnedWorldEventCard(event) {
   `;
 
   document.body.appendChild(card);
+
+const closeButton =
+  card.querySelector('.pinned-card-close');
+
+closeButton.addEventListener('click', () => {
+  card.remove();
+});
 }
   
 function renderUI(year){
