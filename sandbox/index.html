@@ -65,17 +65,26 @@ text-align:center;
 
 #yearSlider{width:520px;appearance:none;height:2px;background:rgba(255,255,255,0.25);outline:none;}
 
-  #yearSlider::-webkit-slider-thumb{
+#yearSlider::-webkit-slider-thumb{
 appearance:none;
+
 width:0;
 height:0;
+
 border-left:6px solid transparent;
 border-right:6px solid transparent;
 border-top:14px solid #66e0ff;
+
 background:transparent;
 border-radius:0;
+
 cursor:pointer;
-filter:drop-shadow(0 0 8px rgba(102,224,255,0.9));
+
+filter:drop-shadow(
+  0 0 8px rgba(102,224,255,0.9)
+);
+
+margin-left:-6px;
 }
 
 #timelineTrack{
