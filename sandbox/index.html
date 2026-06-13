@@ -1571,18 +1571,35 @@ renderTimelineRoute(1850);
 renderTimelineMeaning(1850);
 
 function updateTimelineCursorLine() {
-  const cursorLine = document.getElementById('timelineCursorLine');
 
-  if (!cursorLine) return;
+  const cursorLine =
+    document.getElementById('timelineCursorLine');
+
+  const cursorPointer =
+    document.getElementById('timelineCursorPointer');
+
+  if (!cursorLine || !cursorPointer) return;
 
   const year = parseInt(slider.value);
-  const ratio = (year - 1800) / 100;
 
-  cursorLine.style.left = `${ratio * 520}px`;
+  const ratio =
+    (year - 1800) / 100;
+
+  const x =
+    ratio * 520;
+
+  cursorLine.style.left = `${x}px`;
+
+  cursorPointer.style.left = `${x}px`;
+
+  const visible =
+    timelineWorldLinks.style.display === 'flex';
+
   cursorLine.style.display =
-    timelineWorldLinks.style.display === 'flex'
-      ? 'block'
-      : 'none';
+    visible ? 'block' : 'none';
+
+  cursorPointer.style.display =
+    visible ? 'block' : 'none';
 }
   
 slider.addEventListener('input', e => {
