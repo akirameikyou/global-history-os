@@ -1512,6 +1512,11 @@ function showWorldEventCard(event) {
   closeButton.addEventListener('click', () => {
     card.style.display = 'none';
   });
+  const pinButton = document.getElementById('world-event-card-pin');
+
+pinButton.addEventListener('click', () => {
+  createPinnedWorldEventCard(event);
+});
 }
 
 function createPinnedWorldEventCard(event) {
