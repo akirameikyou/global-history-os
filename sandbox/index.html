@@ -1537,39 +1537,29 @@ function createPinnedWorldEventCard(event) {
 
   card.className = 'pinned-world-card';
 
-  card.innerHTML = 
-    
-    card.innerHTML = `
-  <button
-    class="pinned-card-close"
-    style="
-      position:absolute;
-      top:6px;
-      right:8px;
-      background:transparent;
-      border:none;
-      color:rgba(255,255,255,0.75);
-      font-size:16px;
-      cursor:pointer;
-      line-height:1;
-    "
-  >
-    ×
-  </button>
+  card.innerHTML = `
+    <button
+      class="pinned-card-close"
+      style="
+        position:absolute;
+        top:6px;
+        right:8px;
+        background:transparent;
+        border:none;
+        color:rgba(255,255,255,0.75);
+        font-size:16px;
+        cursor:pointer;
+        line-height:1;
+      "
+    >
+      ×
+    </button>
 
-  <div style="font-size:10px; letter-spacing:0.14em; opacity:0.62;">
-    PINNED WORLD EVENT
-  </div>
-
-  <div style="font-size:16px; margin-top:5px;">
-    ${event.title}
-  </div>
-  `
-    <div style="font-size:10px; letter-spacing:0.14em; opacity:0.62;">
+    <div style="font-size:10px; letter-spacing:0.14em; opacity:0.62; padding-right:22px;">
       PINNED WORLD EVENT
     </div>
 
-    <div style="font-size:16px; margin-top:5px;">
+    <div style="font-size:16px; margin-top:5px; padding-right:22px;">
       ${event.title}
     </div>
 
@@ -1584,12 +1574,11 @@ function createPinnedWorldEventCard(event) {
 
   document.body.appendChild(card);
 
-const closeButton =
-  card.querySelector('.pinned-card-close');
+  const closeButton = card.querySelector('.pinned-card-close');
 
-closeButton.addEventListener('click', () => {
-  card.remove();
-});
+  closeButton.addEventListener('click', () => {
+    card.remove();
+  });
 }
   
 function renderUI(year){
