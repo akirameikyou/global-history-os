@@ -1573,6 +1573,68 @@ pinButton.addEventListener('click', () => {
 });
 }
 
+function createPinnedPersonCard(person) {
+  const card = document.createElement('div');
+
+  card.style.position = 'fixed';
+  card.style.right = '52px';
+  card.style.top = `${90 + document.querySelectorAll('.pinned-person-card').length * 34}px`;
+  card.style.width = '280px';
+  card.style.padding = '12px 14px';
+  card.style.background = 'rgba(5, 12, 22, 0.92)';
+  card.style.border = '1px solid rgba(102,224,255,0.45)';
+  card.style.borderRadius = '6px';
+  card.style.color = '#ffffff';
+  card.style.fontFamily = 'sans-serif';
+  card.style.zIndex = '90';
+  card.style.boxShadow = '0 0 14px rgba(102,224,255,0.22)';
+
+  card.className = 'pinned-person-card';
+
+  card.innerHTML = `
+    <button
+      class="pinned-person-card-close"
+      style="
+        position:absolute;
+        top:6px;
+        right:8px;
+        background:transparent;
+        border:none;
+        color:rgba(255,255,255,0.75);
+        font-size:16px;
+        cursor:pointer;
+        line-height:1;
+      "
+    >
+      ×
+    </button>
+
+    <div style="font-size:10px; letter-spacing:0.14em; opacity:0.62; padding-right:22px;">
+      PINNED P-LINK
+    </div>
+
+    <div style="font-size:16px; margin-top:5px; padding-right:22px;">
+      ${person.fullName || person.label}
+    </div>
+
+    <div style="font-size:12px; color:#66e0ff; margin-top:4px;">
+      ${person.birthYear} — ${person.deathYear}
+    </div>
+
+    <div style="font-size:12px; line-height:1.55; margin-top:8px; opacity:0.82;">
+      ${person.relationType || ''}
+    </div>
+  `;
+
+  document.body.appendChild(card);
+
+  const closeButton = card.querySelector('.pinned-person-card-close');
+
+  closeButton.addEventListener('click', () => {
+    card.remove();
+  });
+}
+  
 function createPinnedWorldEventCard(event) {
   const card = document.createElement('div');
 
