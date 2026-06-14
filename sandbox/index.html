@@ -1132,11 +1132,9 @@ function showLinkCard(person){
   bringLinkCardToFront();
 
   personCardPinButton.onclick = () => {
-    console.log(
-      'PERSON PIN:',
-      person.fullName || person.label
-    );
-  };
+  createPinnedPersonCard(person);
+};
+  
 }
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
