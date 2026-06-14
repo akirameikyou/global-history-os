@@ -934,12 +934,37 @@ const personLinks = [
     }
   ]
 },
+  
   {
-    id:'perry',
-    label:'PERRY',
-    birthYear:1794,
-    deathYear:1858
-  },
+  id:'perry',
+  label:'PERRY',
+  birthYear:1794,
+  deathYear:1858,
+  fullName:'Matthew C. Perry',
+  relationType:'CIVILIZATION LINK',
+  portrait:'',
+  relation:'アメリカ海軍提督。蒸気船革命、太平洋捕鯨、中国貿易、アメリカ太平洋進出を背景に、1853年に浦賀へ来航した。History OSでは、日本を世界海洋ネットワークへ接続した Pacific Network Connector として位置付ける。',
+  connectionTrace:[
+    {
+      year:1852,
+      text:'東インド艦隊司令官として日本遠征を開始。',
+      detail:'ペリー遠征は、蒸気船時代の石炭補給港、捕鯨船保護、中国貿易、太平洋航路整備を背景に計画された。'
+    },
+    {
+      year:1853,
+      text:'黒船来航。浦賀沖に到達。',
+      detail:'アメリカ大統領フィルモアの国書を幕府へ提出。世界海洋ネットワークが日本へ到達した象徴的瞬間。',
+      goToYear:1853,
+      focus:'uraga'
+    },
+    {
+      year:1854,
+      text:'日米和親条約締結を主導。',
+      detail:'日本とアメリカの制度的接続点を形成。開国は単独事件ではなく、十九世紀文明流動の一部として進行した。'
+    }
+  ]
+},
+  
   {
     id:'ryoma',
     label:'RYOMA',
