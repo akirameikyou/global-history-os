@@ -1633,6 +1633,32 @@ function createPinnedPersonCard(person) {
   });
 }
   
+let isDragging = false;
+let offsetX = 0;
+let offsetY = 0;
+
+card.style.cursor = 'move';
+
+card.addEventListener('mousedown', e => {
+  isDragging = true;
+
+  offsetX = e.clientX - card.offsetLeft;
+  offsetY = e.clientY - card.offsetTop;
+
+  card.style.zIndex = '999';
+});
+
+document.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+
+  card.style.left = `${e.clientX - offsetX}px`;
+  card.style.top = `${e.clientY - offsetY}px`;
+  card.style.right = 'auto';
+});
+
+document.addEventListener('mouseup', () => {
+  isDragging = false;
+});  
 function createPinnedWorldEventCard(event) {
   const card = document.createElement('div');
 
