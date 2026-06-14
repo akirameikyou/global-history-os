@@ -1084,9 +1084,9 @@ function goToConnection(year, focus){
 
 function showLinkCard(person){
   linkCardKicker.innerText = person.relationType
-  ? `P-LINK / ${person.relationType}`
-  : 'P-LINK';
-  
+    ? `P-LINK / ${person.relationType}`
+    : 'P-LINK';
+
   linkCardTitle.innerText = person.fullName || person.label;
   linkCardYears.innerText = `${person.birthYear} — ${person.deathYear}`;
   linkCardRelationType.innerText = '';
@@ -1128,19 +1128,15 @@ function showLinkCard(person){
     linkCardTrace.innerHTML = '';
   }
 
-  }else{
-  linkCardTrace.innerHTML = '';
-}
+  linkCard.style.display = 'block';
+  bringLinkCardToFront();
 
-linkCard.style.display = 'block';
-bringLinkCardToFront();
-
-personCardPinButton.onclick = () => {
-  console.log(
-    'PERSON PIN:',
-    person.fullName || person.label
-  );
-};
+  personCardPinButton.onclick = () => {
+    console.log(
+      'PERSON PIN:',
+      person.fullName || person.label
+    );
+  };
 }
 linkCardClose.onclick = () => {
   linkCard.style.display = 'none';
