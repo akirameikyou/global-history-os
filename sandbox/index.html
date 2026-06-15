@@ -1738,14 +1738,19 @@ function renderUI(year){
     item.className = 'timeline-item';
 
     item.innerHTML = `
-      <div class="timeline-text">
-        <span class="timeline-inline-year">
-          ${event.year}
-        </span>
-        　${event.description}
-      </div>
-    `;
-
+  <div class="timeline-text">
+    <span class="timeline-inline-year">
+      ${event.year}
+    </span>
+    <span class="timeline-inline-separator">
+      │
+    </span>
+    <span class="timeline-inline-description">
+      ${event.description}
+    </span>
+  </div>
+`;
+    
     item.onclick = () => {
       world.pointOfView({
         lat: event.lat,
