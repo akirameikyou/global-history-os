@@ -1141,24 +1141,35 @@ document.addEventListener('mouseup', () => {
 function showWorldLinkMapLabel(link){  
   if(!link) return;
 
+  const coords = world.getScreenCoords(
+    link.lat,
+    link.lng,
+    0.02
+  );
+
   worldLinkMapLabel.innerHTML = `
     <div style="
       color:${link.color || 'white'};
-      font-size:12px;
+      font-size:11px;
       letter-spacing:0.18em;
       font-weight:400;
       text-shadow:0 0 10px rgba(0,0,0,1);">
       ${link.placeShort || link.placeName || link.label}
     </div>
     <div style="
-      margin-top:5px;
-      color:rgba(255,255,255,0.78);
+      margin-top:4px;
+      color:rgba(255,255,255,0.86);
       font-size:10px;
       letter-spacing:0.14em;
       text-shadow:0 0 10px rgba(0,0,0,1);">
       ${link.label}
     </div>
   `;
+
+  worldLinkMapLabel.style.display = 'block';
+  worldLinkMapLabel.style.left = `${coords.x}px`;
+  worldLinkMapLabel.style.top = `${coords.y - 22}px`;
+}
 
   worldLinkMapLabel.style.display = 'block';
   worldLinkMapLabel.style.left = '50%';
