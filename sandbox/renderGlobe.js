@@ -51,7 +51,7 @@ function clearLabels() {
   labelEls.length = 0;
 }
 
-function createLabels(filtered) {
+export function createLabels(filtered) {
   clearLabels();
 
   const uniqueLabels = [];
