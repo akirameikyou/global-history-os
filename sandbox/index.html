@@ -1290,7 +1290,9 @@ const active =
         link.regionName || ''
       );
 
-      showWorldLinkMapLabel(link);
+      setTimeout(() => {
+  showWorldLinkMapLabel(link);
+}, 1250);
 
       showWorldEventCard({
         title: link.label,
