@@ -5,26 +5,26 @@ export const personLinks = [
   birthYear:1804,
   deathYear:1886,
   fullName:'William H. Whitfield',
-  relationType:'DIRECT LINK',
+  relationType:'PACIFIC BRIDGE',
   portrait:'',
-  relation:'フェアヘーブンの捕鯨船長。1841年に遭難した中浜万次郎を救助し、帰国まで育ての親となった。後にマサチューセッツ州議会議員を務めた。',
+  relation:'アメリカの捕鯨船長。1841年、鳥島で漂流していた万次郎らを救助し、万次郎が太平洋世界へ接続される起点となった人物。',
   connectionTrace:[
     {
       year:1841,
-      text:'漂流し、鳥島へ漂着する。',
-      detail:'ジョン万次郎を救助した捕鯨船長。万次郎をアメリカ社会へ導き、教育と国際経験の起点となった。',
+      text:'鳥島で万次郎らを救助。',
+      detail:'漂流していた万次郎を救助し、ハワイ、アメリカへの道を開いた。',
       goToYear:1841,
       focus:'torishima'
     },
     {
-      year:1846,
-      text:'万次郎、捕鯨船フランクリン号で出航。',
-      detail:'航海術を学ぶため、マサチューセッツを出港。ホイットフィールド船長と一旦別れる。'
+      year:1843,
+      text:'万次郎をフェアヘーブンへ迎える。',
+      detail:'教育と生活の場を与え、万次郎の航海術・英語・世界認識の形成に関わった。'
     },
     {
-      year:1852,
-      text:'フェアヘーブンで再会。これが最後の対面となる。',
-      detail:'帰国の途中でホイットフィールド船長のもとを訪ね、数年ぶりに再会した。'
+      year:1870,
+      text:'万次郎と再会。',
+      detail:'万次郎は再渡米時にフェアヘーブンを訪れ、ホイットフィールドと再会した。'
     }
   ]
 },
@@ -35,26 +35,54 @@ export const personLinks = [
   birthYear:1794,
   deathYear:1858,
   fullName:'Matthew C. Perry',
-  relationType:'CIVILIZATION LINK',
+  relationType:'MARITIME CATALYST',
   portrait:'',
-  relation:'アメリカ海軍提督。蒸気船革命、太平洋捕鯨、中国貿易、アメリカ太平洋進出を背景に、1853年に浦賀へ来航した。History OSでは、日本を世界海洋ネットワークへ接続した Pacific Network Connector として位置付ける。',
+  relation:'アメリカ海軍提督。1853年に黒船艦隊を率いて浦賀へ来航し、日本を世界海洋ネットワークへ接続した人物。',
   connectionTrace:[
     {
       year:1852,
-      text:'東インド艦隊司令官として日本遠征を開始。',
-      detail:'ペリー遠征は、蒸気船時代の石炭補給港、捕鯨船保護、中国貿易、太平洋航路整備を背景に計画された。'
+      text:'日本遠征を開始。',
+      detail:'蒸気船、捕鯨、石炭補給、中国貿易を背景に、日本遠征が進められた。'
     },
     {
       year:1853,
       text:'黒船来航。浦賀沖に到達。',
-      detail:'アメリカ大統領フィルモアの国書を幕府へ提出。世界海洋ネットワークが日本へ到達した象徴的瞬間。',
+      detail:'世界海洋ネットワークが日本へ到達した象徴的な接続点。',
       goToYear:1853,
       focus:'uraga'
     },
     {
       year:1854,
-      text:'日米和親条約締結を主導。',
-      detail:'日本とアメリカの制度的接続点を形成。開国は単独事件ではなく、十九世紀文明流動の一部として進行した。'
+      text:'日米和親条約締結。',
+      detail:'日本とアメリカの制度的接続点を形成した。'
+    }
+  ]
+},
+
+{
+  id:'katsu',
+  label:'KATSU',
+  birthYear:1823,
+  deathYear:1899,
+  fullName:'Katsu Kaishu',
+  relationType:'WORLD UNDERSTANDING HUB',
+  portrait:'',
+  relation:'幕臣。海軍創設と近代航海術の導入を進め、万次郎の知識を受け取り、龍馬へとつなぐ接続点となった人物。',
+  connectionTrace:[
+    {
+      year:1853,
+      text:'黒船来航後、海防と海軍構想が重要化。',
+      detail:'ペリー来航後、日本は世界との接続を迫られ、勝海舟は海軍・航路・国際関係の視点から国家構想を進めた。'
+    },
+    {
+      year:1860,
+      text:'咸臨丸渡米。',
+      detail:'太平洋を越えた幕府使節の一環として、日本の海軍近代化を象徴する出来事となった。'
+    },
+    {
+      year:1860,
+      text:'坂本龍馬へ海軍思想を伝える。',
+      detail:'龍馬は勝海舟に師事し、海軍・航海・世界認識の重要性を学んだ。'
     }
   ]
 },
@@ -63,6 +91,32 @@ export const personLinks = [
   id:'ryoma',
   label:'RYOMA',
   birthYear:1836,
-  deathYear:1867
+  deathYear:1867,
+  fullName:'Sakamoto Ryoma',
+  relationType:'NETWORK CONNECTOR',
+  portrait:'',
+  relation:'土佐藩出身の志士。薩長同盟や海援隊の活動を通じ、幕末日本の人材・情報・思想を接続した人物。',
+  connectionTrace:[
+    {
+      year:1862,
+      text:'勝海舟に師事。',
+      detail:'海軍思想、航海術、世界認識を学び、海を接続の場として捉える視点を得た。'
+    },
+    {
+      year:1865,
+      text:'海援隊につながる活動を進める。',
+      detail:'海運・貿易・海軍を軸に、新しい日本の接続構想を進めた。'
+    },
+    {
+      year:1866,
+      text:'薩長同盟の成立に関与。',
+      detail:'対立していた勢力を結び、幕末日本の政治ネットワークを再編する接続点となった。'
+    },
+    {
+      year:1867,
+      text:'京都近江屋で暗殺。',
+      detail:'明治維新直前に31歳で生涯を終えた。'
+    }
+  ]
 }
 ];
