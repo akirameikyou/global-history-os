@@ -1635,8 +1635,10 @@ function createFocusPersonCard(person) {
   let offsetX = 0;
   let offsetY = 0;
 
-  card.addEventListener('mousedown', e => {
-    if(e.target.classList.contains('focus-person-card-close')) return;
+ card.addEventListener('mousedown', e => {
+    const dragHandle = e.target.closest('.focus-card-drag-handle');
+
+    if(!dragHandle) return;
 
     isDragging = true;
     offsetX = e.clientX - card.offsetLeft;
@@ -1644,6 +1646,8 @@ function createFocusPersonCard(person) {
 
     floatingSheetZIndex += 1;
     card.style.zIndex = floatingSheetZIndex;
+
+    dragHandle.style.cursor = 'grabbing';
   });
 
   document.addEventListener('mousemove', e => {
