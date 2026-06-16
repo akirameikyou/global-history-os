@@ -738,8 +738,7 @@ import { personLinks } from '../data/persons.js';
 import {
   world,
   renderYear,
-  toggleBorders,
-  createLabels
+  toggleBorders
 } from './renderGlobe.js';
 
 const worldEventsEl = document.getElementById('worldEvents');
@@ -1142,13 +1141,28 @@ document.addEventListener('mouseup', () => {
 function showWorldLinkMapLabel(link){  
   if(!link) return;
 
-  createLabels([
-    {
-      placeName: link.placeShort || link.placeName || link.label,
-      lat: link.lat,
-      lng: link.lng
-    }
-  ]);
+  worldLinkMapLabel.innerHTML = `
+    <div style="
+      color:${link.color || 'white'};
+      font-size:11px;
+      letter-spacing:0.18em;
+      font-weight:400;
+      text-shadow:0 0 10px rgba(0,0,0,1);">
+      ${link.placeShort || link.placeName || link.label}
+    </div>
+    <div style="
+      margin-top:4px;
+      color:rgba(255,255,255,0.86);
+      font-size:10px;
+      letter-spacing:0.14em;
+      text-shadow:0 0 10px rgba(0,0,0,1);">
+      ${link.label}
+    </div>
+  `;
+
+  worldLinkMapLabel.style.display = 'block';
+  worldLinkMapLabel.style.left = '50%';
+  worldLinkMapLabel.style.top = '46%';
 }
 function showLocationNotice(title, place, region){
   locationNoticeTitle.innerText = title || '';
@@ -1265,9 +1279,7 @@ const active =
         link.regionName || ''
       );
 
-      setTimeout(() => {
-  showWorldLinkMapLabel(link);
-}, 1250);
+      showWorldLinkMapLabel(link);
 
       showWorldEventCard({
         title: link.label,
