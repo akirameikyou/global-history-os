@@ -1659,6 +1659,8 @@ function createFocusPersonCard(person) {
 
   document.addEventListener('mouseup', () => {
     isDragging = false;
+
+    card.querySelector('.focus-card-drag-handle').style.cursor = 'grab';
   });
 }
   
