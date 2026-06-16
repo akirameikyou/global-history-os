@@ -1319,9 +1319,8 @@ function renderPersonLinks(){
     `;
 
     lane.onclick = () => {
-      showLinkCard(person);
-    };
-
+  createFocusPersonCard(person);
+};
     timelineSubLanes.appendChild(lane);
   });
 }
