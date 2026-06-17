@@ -100,6 +100,24 @@ function buildGridLines() {
   return paths;
 }
 
+export function toggleGrid() {
+
+  gridVisible = !gridVisible;
+
+  world
+    .pathsData(
+      gridVisible
+        ? buildGridLines()
+        : []
+    )
+    .pathPoints('points')
+    .pathPointLat(point => point[0])
+    .pathPointLng(point => point[1])
+    .pathColor('color')
+    .pathStroke(0.35)
+    .pathAltitude(0.006);
+}
+
 function isActive(event, year) {
   if (event.endYear) {
     return event.startYear <= year && year <= event.endYear;
