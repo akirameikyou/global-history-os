@@ -1795,9 +1795,12 @@ function createPinnedWorldEventCard(event) {
   const card = document.createElement('div');
 
   card.style.position = 'fixed';
-  card.style.right = '52px';
-  card.style.top = `${90 + document.querySelectorAll('.pinned-world-card').length * 28}px`;
-  card.style.width = '280px';
+
+const count = document.querySelectorAll('.pinned-world-card').length;
+
+card.style.left = `${430 + count * 28}px`;
+card.style.bottom = `${92 + count * 28}px`;
+card.style.width = '280px';
   card.style.padding = '12px 14px';
   card.style.background = 'rgba(12, 8, 5, 0.92)';
   card.style.border = '1px solid rgba(230,148,69,0.45)';
