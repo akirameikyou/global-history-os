@@ -1251,15 +1251,32 @@ const active =
       </div>
       <div class="timeline-world-link-line"></div>
       <div
-        class="timeline-world-link-bar"
-        style="
-          left:${left}%;
-          width:${width}%;
-          background:${link.color};
-          box-shadow:${linkGlow};
-          opacity:${linkOpacity};
-        ">
-      </div>
+  class="timeline-world-link-bar"
+  style="
+    left:${left}%;
+    width:${width}%;
+    background:${
+      link.barType === 'process'
+        ? `linear-gradient(
+            90deg,
+            rgba(102,224,255,0.05) 0%,
+            rgba(102,224,255,0.65) 22%,
+            rgba(102,224,255,1) 50%,
+            rgba(102,224,255,0.65) 78%,
+            rgba(102,224,255,0.05) 100%
+          )`
+        : link.color
+    };
+    box-shadow:${
+      link.barType === 'process'
+        ? '0 0 16px rgba(102,224,255,0.82)'
+        : linkGlow
+    };
+    opacity:${linkOpacity};
+    height:${link.barType === 'process' ? '7px' : '4px'};
+    top:${link.barType === 'process' ? '11px' : '13px'};
+  ">
+</div>
     `;
 
     lane.onclick = () => {
