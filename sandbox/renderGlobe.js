@@ -75,9 +75,12 @@ function buildGridLines() {
     }
 
     paths.push({
-      points,
-      color:'rgba(255,255,255,0.35)'
-    });
+  points,
+  color:
+    lat === 0
+      ? 'rgba(255,120,120,0.46)'
+      : 'rgba(255,255,255,0.35)'
+});
   }
 
   for (let lng = -180; lng <= 180; lng += 30) {
