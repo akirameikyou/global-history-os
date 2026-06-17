@@ -94,7 +94,7 @@ export const personLinks = [
   deathYear:1867,
   fullName:'Sakamoto Ryoma',
   relationType:'NETWORK CONNECTOR',
-  portrait:'',
+  portrait:'../assets/portraits/sakamoto-ryoma-portrait.jpg',
   relation:'土佐藩出身の志士。薩長同盟や海援隊の活動を通じ、幕末日本の人材・情報・思想を接続した人物。',
   connectionTrace:[
     {
