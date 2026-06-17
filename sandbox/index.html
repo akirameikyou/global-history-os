@@ -1139,32 +1139,18 @@ document.addEventListener('mouseup', () => {
   isDraggingLinkCard = false;
   linkCard.classList.remove('dragging');
 });
-function showWorldLinkMapLabel(link){  
+function showWorldLinkMapLabel(link){
   if(!link) return;
 
-  worldLinkMapLabel.innerHTML = `
-    <div style="
-      color:${link.color || 'white'};
-      font-size:11px;
-      letter-spacing:0.18em;
-      font-weight:400;
-      text-shadow:0 0 10px rgba(0,0,0,1);">
-      ${link.placeShort || link.placeName || link.label}
-    </div>
-    <div style="
-      margin-top:4px;
-      color:rgba(255,255,255,0.86);
-      font-size:10px;
-      letter-spacing:0.14em;
-      text-shadow:0 0 10px rgba(0,0,0,1);">
-      ${link.label}
-    </div>
-  `;
-
-  worldLinkMapLabel.style.display = 'block';
-  worldLinkMapLabel.style.left = '50%';
-  worldLinkMapLabel.style.top = '46%';
+  createLabels([
+    {
+      placeName: link.placeShort || link.placeName || link.label,
+      lat: link.lat,
+      lng: link.lng
+    }
+  ]);
 }
+
 function showLocationNotice(title, place, region){
   locationNoticeTitle.innerText = title || '';
   locationNoticePlace.innerText = region
