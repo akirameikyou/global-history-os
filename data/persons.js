@@ -6,7 +6,7 @@ export const personLinks = [
   deathYear:1886,
   fullName:'William H. Whitfield',
   relationType:'PACIFIC BRIDGE',
-  portrait:'',
+  portrait:'../assets/portraits/william-whitfield-portrait.jpg',
   relation:'アメリカの捕鯨船長。1841年、鳥島で漂流していた万次郎らを救助し、万次郎が太平洋世界へ接続される起点となった人物。',
   connectionTrace:[
     {
@@ -36,7 +36,7 @@ export const personLinks = [
   deathYear:1858,
   fullName:'Matthew C. Perry',
   relationType:'MARITIME CATALYST',
-  portrait:'',
+  portrait:'../assets/portraits/matthew-perry-portrait.jpg',
   relation:'アメリカ海軍提督。1853年に黒船艦隊を率いて浦賀へ来航し、日本を世界海洋ネットワークへ接続した人物。',
   connectionTrace:[
     {
@@ -66,7 +66,7 @@ export const personLinks = [
   deathYear:1899,
   fullName:'Katsu Kaishu',
   relationType:'WORLD UNDERSTANDING HUB',
-  portrait:'',
+  portrait:'../assets/portraits/katsu-kaishu-portrait.jpg',
   relation:'幕臣。海軍創設と近代航海術の導入を進め、万次郎の知識を受け取り、龍馬へとつなぐ接続点となった人物。',
   connectionTrace:[
     {
