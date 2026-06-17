@@ -61,6 +61,8 @@ export function toggleBorders() {
   setBordersVisible(world, bordersVisible);
 }
 
+let gridVisible = false;
+
 function isActive(event, year) {
   if (event.endYear) {
     return event.startYear <= year && year <= event.endYear;
