@@ -76,7 +76,7 @@ function buildGridLines() {
 
     paths.push({
       points,
-      color:'rgba(255,255,255,0.22)'
+      color:'rgba(255,255,255,0.35)'
     });
   }
 
