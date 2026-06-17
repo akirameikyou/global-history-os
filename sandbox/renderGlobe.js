@@ -96,7 +96,7 @@ function buildGridLines() {
       color:
         lng === 0
           ? 'rgba(102,224,255,0.42)'
-          : 'rgba(255,255,255,0.18)'
+          : 'rgba(255,255,255,0.25)'
     });
   }
 
