@@ -66,7 +66,7 @@ let gridVisible = false;
 function buildGridLines() {
   const paths = [];
 
-  for (let lat = -60; lat <= 60; lat += 30) {
+  for (let lat = -60; lat <= 60; lat += 15) {
 
     const points = [];
 
@@ -83,7 +83,7 @@ function buildGridLines() {
 });
   }
 
-  for (let lng = -180; lng <= 180; lng += 30) {
+  for (let lng = -180; lng <= 180; lng += 15) {
 
     const points = [];
 
