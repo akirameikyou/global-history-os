@@ -261,6 +261,15 @@ function buildRings(filtered) {
         maxR: 7
       });
     }
+
+  if (event.id === 'mexican_american_war') {
+  rings.push({
+    lat: 29.42,
+    lng: -98.49,
+    color: '#ff5e5e',
+    maxR: 10
+  });
+}
     
     if (event.id === 'civil_war') {
       rings.push({
