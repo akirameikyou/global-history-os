@@ -63,6 +63,43 @@ export function toggleBorders() {
 
 let gridVisible = false;
 
+function buildGridLines() {
+  const paths = [];
+
+  for (let lat = -60; lat <= 60; lat += 30) {
+
+    const points = [];
+
+    for (let lng = -180; lng <= 180; lng += 5) {
+      points.push([lat, lng]);
+    }
+
+    paths.push({
+      points,
+      color:'rgba(255,255,255,0.22)'
+    });
+  }
+
+  for (let lng = -180; lng <= 180; lng += 30) {
+
+    const points = [];
+
+    for (let lat = -80; lat <= 80; lat += 5) {
+      points.push([lat, lng]);
+    }
+
+    paths.push({
+      points,
+      color:
+        lng === 0
+          ? 'rgba(102,224,255,0.42)'
+          : 'rgba(255,255,255,0.18)'
+    });
+  }
+
+  return paths;
+}
+
 function isActive(event, year) {
   if (event.endYear) {
     return event.startYear <= year && year <= event.endYear;
