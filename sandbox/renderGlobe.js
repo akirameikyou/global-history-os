@@ -115,8 +115,7 @@ export function toggleGrid() {
     .pathPointLng(point => point[1])
     .pathColor('color')
     .pathStroke(0.35)
-    .pathAltitude(0.006);
-}
+  }
 
 function isActive(event, year) {
   if (event.endYear) {
