@@ -1798,8 +1798,10 @@ function createPinnedWorldEventCard(event) {
 
 const count = document.querySelectorAll('.pinned-world-card').length;
 
-card.style.left = `${430 + count * 28}px`;
-card.style.bottom = `${92 + count * 28}px`;
+card.style.left = `${460 + count * 28}px`;
+card.style.top = `${window.innerHeight - 260 - count * 28}px`;
+card.style.right = 'auto';
+card.style.bottom = 'auto';
 card.style.width = '280px';
   card.style.padding = '12px 14px';
   card.style.background = 'rgba(12, 8, 5, 0.92)';
