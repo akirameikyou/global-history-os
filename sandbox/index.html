@@ -1339,10 +1339,27 @@ function renderTimelineWorldBars(){
 
     const bar = document.createElement('div');
     bar.className = 'timeline-world-bar';
-    bar.style.left = `${left}%`;
-    bar.style.width = `${width}%`;
-    bar.style.background = event.color || '#ff5a5a';
-    bar.style.boxShadow = `0 0 6px ${event.color || '#ff5a5a'}`;
+bar.style.left = `${left}%`;
+bar.style.width = `${width}%`;
+
+if(event.barType === 'process'){
+  bar.style.top = '-4px';
+  bar.style.height = '7px';
+  bar.style.background = `
+    linear-gradient(
+      90deg,
+      rgba(102,224,255,0.05) 0%,
+      rgba(102,224,255,0.65) 22%,
+      rgba(102,224,255,1) 50%,
+      rgba(102,224,255,0.65) 78%,
+      rgba(102,224,255,0.05) 100%
+    )
+  `;
+  bar.style.boxShadow = '0 0 14px rgba(102,224,255,0.78)';
+}else{
+  bar.style.background = event.color || '#ff5a5a';
+  bar.style.boxShadow = `0 0 6px ${event.color || '#ff5a5a'}`;
+}
 
     bar.title = `${event.year} ${event.title}`;
 
