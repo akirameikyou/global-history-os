@@ -29,6 +29,28 @@ world.pointOfView({
   altitude: 2.15
 });
 
+// Presentation Mode: auto rotation
+const controls = world.controls();
+
+controls.autoRotate = true;
+controls.autoRotateSpeed = 0.35;
+
+let autoRotateResumeTimer = null;
+
+controls.addEventListener('start', () => {
+  controls.autoRotate = false;
+
+  clearTimeout(autoRotateResumeTimer);
+});
+
+controls.addEventListener('end', () => {
+  clearTimeout(autoRotateResumeTimer);
+
+  autoRotateResumeTimer = setTimeout(() => {
+    controls.autoRotate = true;
+  }, 4200);
+});
+
 const camera = world.camera();
 const labelEls = [];
 
