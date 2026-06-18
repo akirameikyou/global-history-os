@@ -286,29 +286,45 @@ function buildArcs(filtered) {
   const arcs = [];
 
   filtered.forEach(event => {
-    if (!event.relatedEvents) return;
+    if (event.relatedEvents) {
+      event.relatedEvents.forEach(targetId => {
+        const target = filtered.find(e => e.id === targetId);
+        if (!target) return;
 
-    event.relatedEvents.forEach(targetId => {
-      const target = filtered.find(e => e.id === targetId);
-      if (!target) return;
+        const dx = event.lng - target.lng;
+        const dy = event.lat - target.lat;
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
-      const dx = event.lng - target.lng;
-      const dy = event.lat - target.lat;
-      const distance = Math.sqrt(dx * dx + dy * dy);
+        let altitude = 0.05;
+        if (distance > 120) altitude = 0.24;
+        else if (distance > 40) altitude = 0.14;
 
-      let altitude = 0.05;
-      if (distance > 120) altitude = 0.24;
-      else if (distance > 40) altitude = 0.14;
-
-      arcs.push({
-        startLat: event.lat,
-        startLng: event.lng,
-        endLat: target.lat,
-        endLng: target.lng,
-        color: event.lineColor || '#66e0ff',
-        altitude
+        arcs.push({
+          startLat: event.lat,
+          startLng: event.lng,
+          endLat: target.lat,
+          endLng: target.lng,
+          color: event.lineColor || '#66e0ff',
+          altitude
+        });
       });
-    });
+    }
+
+    if (event.routeType === 'voyage' && event.routePoints) {
+      for (let i = 0; i < event.routePoints.length - 1; i++) {
+        const start = event.routePoints[i];
+        const end = event.routePoints[i + 1];
+
+        arcs.push({
+          startLat: start.lat,
+          startLng: start.lng,
+          endLat: end.lat,
+          endLng: end.lng,
+          color: '#66e0ff',
+          altitude: 0.18
+        });
+      }
+    }
   });
 
   world
