@@ -76,6 +76,37 @@ lat:41.63,
 lng:-70.93,
 placeName:'Fairhaven',
 lineColor:'#66e0ff',
+
+routeType:'voyage',
+routeName:'FRANKLIN WHALING VOYAGE',
+routePoints:[
+  {
+    label:'Fairhaven',
+    lat:41.6376,
+    lng:-70.9036
+  },
+  {
+    label:'Cape Horn',
+    lat:-55.98,
+    lng:-67.29
+  },
+  {
+    label:'Pacific Whaling Grounds',
+    lat:-10,
+    lng:-145
+  },
+  {
+    label:'Cape of Good Hope',
+    lat:-34.36,
+    lng:18.47
+  },
+  {
+    label:'Fairhaven',
+    lat:41.6376,
+    lng:-70.9036
+  }
+],
+
 relatedEvents:['manjiro_pacific_whaling_grounds']
 },
 
