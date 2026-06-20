@@ -168,9 +168,11 @@ routePoints:[
 
   {label:'South Atlantic Sailing Arc', lat:-32.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Cape Horn Sea Route', lat:-59.0, lng:-75.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+ {label:'Cape Horn Sea Route', lat:-59.0, lng:-75.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
+{label:'South Pacific Offshore', lat:-46.0, lng:-92.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+{label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
 
   {label:'South Pacific Northbound Arc', lat:-22.0, lng:-88.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
