@@ -162,22 +162,26 @@ routeName:'GOLD RUSH VOYAGE',
 routePoints:[
   {label:'Fairhaven', lat:41.6376, lng:-70.9036, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
 
-  {label:'North Atlantic Arc', lat:20.0, lng:-50.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'North Atlantic Arc', lat:25.0, lng:-58.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'João Pessoa Offshore', lat:-7.1, lng:-34.8, transport:'sailing', nodeType:'routeControl', historicalStatus:'estimated'},
+  {label:'Equatorial Atlantic Arc', lat:3.0, lng:-42.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'South Atlantic Arc', lat:-35.0, lng:-48.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Brazil Offshore Arc', lat:-18.0, lng:-38.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Cape Horn Offshore', lat:-56.0, lng:-67.0, transport:'sailing', nodeType:'voyagePoint', historicalStatus:'estimated'},
+  {label:'South Atlantic Arc', lat:-38.0, lng:-42.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'Cape Horn Sea Route', lat:-58.5, lng:-74.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
   {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
 
-  {label:'Peru Offshore', lat:-12.0, lng:-78.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'South Pacific Northbound Arc', lat:-25.0, lng:-86.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Baja California Offshore', lat:25.0, lng:-117.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Eastern Pacific Arc', lat:-5.0, lng:-103.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'California Offshore Arc', lat:25.0, lng:-123.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
   {label:'San Francisco', lat:37.7749, lng:-122.4194, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
-],  
+],
 relatedEvents:['manjiro_cape_horn']
 },
 
