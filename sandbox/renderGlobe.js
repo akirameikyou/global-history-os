@@ -321,7 +321,7 @@ function buildArcs(filtered) {
       endLat: end.lat,
       endLng: end.lng,
       color: event.lineColor || '#66e0ff',
-      altitude: 0.05,
+      altitude: 0.03,
       transport: start.transport || event.transport || 'sailing',
       routeRole: start.nodeType || 'routePoint'
     });
