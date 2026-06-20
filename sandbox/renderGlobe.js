@@ -311,20 +311,24 @@ function buildArcs(filtered) {
     }
 
     if (event.routeType === 'voyage' && event.routePoints) {
-      for (let i = 0; i < event.routePoints.length - 1; i++) {
-        const start = event.routePoints[i];
-        const end = event.routePoints[i + 1];
+  for (let i = 0; i < event.routePoints.length - 1; i++) {
+    const start = event.routePoints[i];
+    const end = event.routePoints[i + 1];
 
-        arcs.push({
-          startLat: start.lat,
-          startLng: start.lng,
-          endLat: end.lat,
-          endLng: end.lng,
-          color: '#66e0ff',
-          altitude: 0.18
-        });
-      }
-    }
+    arcs.push({
+      startLat: start.lat,
+      startLng: start.lng,
+      endLat: end.lat,
+      endLng: end.lng,
+      color: event.lineColor || '#66e0ff',
+      altitude: 0.12,
+      transport: start.transport || event.transport || 'sailing',
+      routeRole: start.nodeType || 'routePoint'
+    });
+  }
+
+  return;
+}
   });
 
   world
