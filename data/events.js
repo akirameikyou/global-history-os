@@ -157,6 +157,27 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+routeType:'voyage',
+routeName:'GOLD RUSH VOYAGE',
+routePoints:[
+  {label:'Fairhaven', lat:41.6376, lng:-70.9036, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
+
+  {label:'North Atlantic Arc', lat:20.0, lng:-50.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'João Pessoa Offshore', lat:-7.1, lng:-34.8, transport:'sailing', nodeType:'routeControl', historicalStatus:'estimated'},
+
+  {label:'South Atlantic Arc', lat:-35.0, lng:-48.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'Cape Horn Offshore', lat:-56.0, lng:-67.0, transport:'sailing', nodeType:'voyagePoint', historicalStatus:'estimated'},
+
+  {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
+
+  {label:'Peru Offshore', lat:-12.0, lng:-78.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'Baja California Offshore', lat:25.0, lng:-117.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'San Francisco', lat:37.7749, lng:-122.4194, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
+],  
 relatedEvents:['manjiro_cape_horn']
 },
 
