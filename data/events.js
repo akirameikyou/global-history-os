@@ -168,7 +168,7 @@ routePoints:[
 
   {label:'South Atlantic Sailing Arc', lat:-32.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
- {label:'Cape Horn Sea Route', lat:-59.0, lng:-75.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+ {label:'Cape Horn Sea Route', lat:-59.0, lng:-68.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
 {label:'South Pacific Offshore', lat:-46.0, lng:-92.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
