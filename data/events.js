@@ -162,23 +162,21 @@ routeName:'GOLD RUSH VOYAGE',
 routePoints:[
   {label:'Fairhaven', lat:41.6376, lng:-70.9036, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
 
-  {label:'North Atlantic Arc', lat:25.0, lng:-58.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'North Atlantic Arc', lat:22.0, lng:-55.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Equatorial Atlantic Arc', lat:3.0, lng:-42.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Brazil Offshore Arc', lat:-8.0, lng:-32.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Brazil Offshore Arc', lat:-18.0, lng:-38.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'South Atlantic Sailing Arc', lat:-32.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'South Atlantic Arc', lat:-38.0, lng:-42.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
-
-  {label:'Cape Horn Sea Route', lat:-58.5, lng:-74.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Cape Horn Sea Route', lat:-59.0, lng:-75.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
   {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
 
-  {label:'South Pacific Northbound Arc', lat:-25.0, lng:-86.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'South Pacific Northbound Arc', lat:-22.0, lng:-88.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'Eastern Pacific Arc', lat:-5.0, lng:-103.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Eastern Pacific Arc', lat:-2.0, lng:-104.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'California Offshore Arc', lat:25.0, lng:-123.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'California Offshore Arc', lat:26.0, lng:-124.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
   {label:'San Francisco', lat:37.7749, lng:-122.4194, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
 ],
