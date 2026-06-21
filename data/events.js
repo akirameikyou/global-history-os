@@ -157,6 +157,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+arcVisible:false,  
 routeType:'voyage',
 routeName:'GOLD RUSH VOYAGE',
 routePoints:[
