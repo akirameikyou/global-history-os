@@ -168,19 +168,11 @@ routePoints:[
 
   {label:'South Atlantic Sailing Arc', lat:-32.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
- {label:'Cape Horn Sea Route', lat:-59.0, lng:-68.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'Cape Horn Sea Route', lat:-59.0, lng:-68.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-{label:'South Pacific Offshore', lat:-46.0, lng:-92.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'South Pacific Offshore', lat:-46.0, lng:-92.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-{label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
-
-  {label:'South Pacific Northbound Arc', lat:-22.0, lng:-88.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
-
-  {label:'Eastern Pacific Arc', lat:-2.0, lng:-104.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
-
-  {label:'California Offshore Arc', lat:26.0, lng:-124.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
-
-  {label:'San Francisco', lat:37.7749, lng:-122.4194, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
+  {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
 ],
 relatedEvents:['manjiro_cape_horn']
 },
