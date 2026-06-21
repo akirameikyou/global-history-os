@@ -239,6 +239,17 @@ function showRoutePointCard(point) {
   });
 }
 
+function getNodeSize(event) {
+  if (event.historicalStatus === 'control') return 0.08;
+
+  if (event.nodeType === 'port') return 0.30;
+  if (event.nodeType === 'transportChange') return 0.18;
+  if (event.nodeType === 'voyagePoint') return 0.20;
+  if (event.nodeType === 'thought') return 0.22;
+  if (event.nodeType === 'document') return 0.22;
+
+  return 0.24;
+}
 function buildRoutePoints(routeHistory) {
   const points = [];
   const uniquePoints = [];
