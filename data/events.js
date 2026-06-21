@@ -214,7 +214,22 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
-arcVisible:false,  
+
+routeType:'voyage',
+routeName:'GOLD RUSH VOYAGE / VALPARAISO TO SAN FRANCISCO',
+routePoints:[
+  {label:'Valparaiso', lat:-33.0472, lng:-71.6127, transport:'sailing', nodeType:'port', historicalStatus:'documented'},
+
+  {label:'South Pacific Northbound Arc', lat:-22.0, lng:-88.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'Eastern Pacific Arc', lat:-2.0, lng:-104.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'California Offshore Arc', lat:26.0, lng:-124.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+
+  {label:'San Francisco', lat:37.7749, lng:-122.4194, transport:'sailing', nodeType:'port', historicalStatus:'documented'}
+],
+
+arcVisible:false,
 relatedEvents:['manjiro_sanfrancisco_arrival']
 },
 
