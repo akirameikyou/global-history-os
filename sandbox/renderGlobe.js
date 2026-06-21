@@ -297,7 +297,7 @@ function buildArcs(filtered) {
   const arcs = [];
 
   filtered.forEach(event => {
-    if (event.relatedEvents) {
+    if (event.relatedEvents && event.arcVisible !== false) {
       event.relatedEvents.forEach(targetId => {
         const target = filtered.find(e => e.id === targetId);
         if (!target) return;
