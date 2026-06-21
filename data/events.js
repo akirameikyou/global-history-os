@@ -202,6 +202,7 @@ nodeType:'voyagePoint',
 historicalStatus:'estimated',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+arcVisible:false,  
 relatedEvents:['manjiro_valparaiso']
 },
 
@@ -221,6 +222,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+arcVisible:false,  
 relatedEvents:['manjiro_sanfrancisco_arrival']
 },
 
