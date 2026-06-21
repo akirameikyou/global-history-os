@@ -255,7 +255,7 @@ function buildRoutePoints(routeHistory) {
       lat: event.lat,
       lng: event.lng,
       color: event.color || '#66e0ff',
-      size: 0.28
+      size: getNodeSize(event)
     });
   });
 
