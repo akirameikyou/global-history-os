@@ -233,6 +233,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+arcVisible:false,  
 relatedEvents:['manjiro_torishima_revisit']
 },
 
@@ -253,6 +254,7 @@ nodeType:'voyagePoint',
 historicalStatus:'estimated',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+arcVisible:false,  
 relatedEvents:['manjiro_honolulu_wind_failure']
 },
 
@@ -273,6 +275,7 @@ nodeType:'naturePoint',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+arcVisible:false,  
 relatedEvents:['manjiro_guam_second']
 },
 
