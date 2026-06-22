@@ -50,6 +50,54 @@ nodeType:'encounter',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+
+routeType:'voyage',
+routeName:'TORISHIMA TO HONOLULU',
+
+routePoints:[
+
+{
+label:'Torishima',
+lat:30.48,
+lng:140.30,
+nodeType:'port',
+historicalStatus:'documented'
+},
+
+{
+label:'North Pacific Whaling Grounds',
+lat:42.0,
+lng:165.0,
+nodeType:'routeControl',
+historicalStatus:'control'
+},
+
+{
+label:'Central Pacific Whaling Grounds',
+lat:28.0,
+lng:-170.0,
+nodeType:'routeControl',
+historicalStatus:'control'
+},
+
+{
+label:'Hawaii Approach',
+lat:23.5,
+lng:-160.0,
+nodeType:'routeControl',
+historicalStatus:'control'
+},
+
+{
+label:'Honolulu',
+lat:21.3069,
+lng:-157.8583,
+nodeType:'port',
+historicalStatus:'documented'
+}
+
+],
+
 arcVisible:false,
 relatedEvents:['manjiro_howland_honolulu_arrival']
 },
