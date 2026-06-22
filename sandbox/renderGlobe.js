@@ -326,16 +326,26 @@ function buildArcs(filtered) {
     const start = event.routePoints[i];
     const end = event.routePoints[i + 1];
 
-    arcs.push({
-      startLat: start.lat,
-      startLng: start.lng,
-      endLat: end.lat,
-      endLng: end.lng,
-      color: event.lineColor || '#66e0ff',
-      altitude: 0.03,
-      transport: start.transport || event.transport || 'sailing',
-      routeRole: start.nodeType || 'routePoint'
-    });
+    const dx = start.lng - end.lng;
+const dy = start.lat - end.lat;
+const distance = Math.sqrt(dx * dx + dy * dy);
+
+let altitude = 0.03;
+
+if (distance > 120) altitude = 0.18;
+else if (distance > 80) altitude = 0.12;
+else if (distance > 40) altitude = 0.07;
+
+arcs.push({
+  startLat: start.lat,
+  startLng: start.lng,
+  endLat: end.lat,
+  endLng: end.lng,
+  color: event.lineColor || '#66e0ff',
+  altitude,
+  transport: start.transport || event.transport || 'sailing',
+  routeRole: start.nodeType || 'routePoint'
+});
   }
 
   return;
