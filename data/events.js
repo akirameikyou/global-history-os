@@ -379,8 +379,8 @@ routePoints:[
 
   {
     label:'South Atlantic Return Arc',
-    lat:-35.0,
-    lng:-45.0,
+    lat:-8.0,
+    lng:-32.0,
     nodeType:'routeControl',
     historicalStatus:'control',
     transport:'sailing'
