@@ -275,6 +275,23 @@ nodeType:'naturePoint',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+routeType:'voyage',
+routeName:'HONOLULU OFFSHORE TO GUAM SECOND',
+routePoints:[
+  {label:'Honolulu Offshore', lat:22.0, lng:-157.5, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Equatorial South Pacific Arc', lat:0.0, lng:-165.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Samoa', lat:-13.83, lng:-171.75, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Tahiti', lat:-17.65, lng:-149.42, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Fiji Arc', lat:-18.0, lng:178.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Solomon Arc', lat:-9.5, lng:160.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],  
 arcVisible:false,  
 relatedEvents:['manjiro_samoa']
 },
