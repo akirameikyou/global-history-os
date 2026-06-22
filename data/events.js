@@ -118,6 +118,82 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+routeType:'voyage',
+routeName:'HONOLULU TO JAPAN WATERS LOOP',
+routePoints:[
+  {
+    label:'Honolulu',
+    lat:21.3069,
+    lng:-157.8583,
+    nodeType:'port',
+    historicalStatus:'documented',
+    transport:'sailing'
+  },
+
+  {
+    label:'South Pacific Departure Arc',
+    lat:8.0,
+    lng:-165.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Gilbert Islands Arc',
+    lat:1.8,
+    lng:173.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Guam Approach',
+    lat:13.44,
+    lng:144.65,
+    nodeType:'port',
+    historicalStatus:'documented',
+    transport:'sailing'
+  },
+
+  {
+    label:'East China Sea Arc',
+    lat:25.5,
+    lng:124.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Torishima Waters',
+    lat:30.48,
+    lng:140.30,
+    nodeType:'voyagePoint',
+    historicalStatus:'estimated',
+    transport:'sailing'
+  },
+
+  {
+    label:'Japan Offshore Arc',
+    lat:37.0,
+    lng:150.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Honolulu Offshore',
+    lat:22.0,
+    lng:-157.5,
+    nodeType:'naturePoint',
+    historicalStatus:'documented',
+    transport:'sailing'
+  }
+],
+arcVisible:false,  
 relatedEvents:['manjiro_honolulu_decision']
 },
 
