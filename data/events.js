@@ -425,6 +425,7 @@ nodeType:'voyagePoint',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+arcVisible:false  
 relatedEvents:['manjiro_america']
 },
 
