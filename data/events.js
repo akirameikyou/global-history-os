@@ -356,6 +356,10 @@ lat:26.21,
 lng:127.68,
 placeName:'Naha',
 lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'return_voyage_1851',  
 relatedEvents:['manjiro_satsuma']
 },
 
