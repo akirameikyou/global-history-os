@@ -338,6 +338,72 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
+routeType:'voyage',
+routeName:'GUAM TO FAIRHAVEN RETURN ROUTE',
+routePoints:[
+  {
+    label:'Guam',
+    lat:13.44,
+    lng:144.65,
+    nodeType:'port',
+    historicalStatus:'documented',
+    transport:'sailing'
+  },
+
+  {
+    label:'South Pacific Return Arc',
+    lat:-18.0,
+    lng:175.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Southern Ocean Approach',
+    lat:-48.0,
+    lng:-120.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Cape Horn Offshore',
+    lat:-60.0,
+    lng:-68.0,
+    nodeType:'voyagePoint',
+    historicalStatus:'documented',
+    transport:'sailing'
+  },
+
+  {
+    label:'South Atlantic Return Arc',
+    lat:-35.0,
+    lng:-45.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'North Atlantic Return Arc',
+    lat:10.0,
+    lng:-35.0,
+    nodeType:'routeControl',
+    historicalStatus:'control',
+    transport:'sailing'
+  },
+
+  {
+    label:'Fairhaven',
+    lat:41.6376,
+    lng:-70.9036,
+    nodeType:'port',
+    historicalStatus:'documented',
+    transport:'sailing'
+  }
+],  
 arcVisible:false,  
 relatedEvents:['manjiro_howland_cape_horn']
 },
