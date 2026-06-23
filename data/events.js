@@ -453,14 +453,56 @@ lat:41.63,
 lng:-70.93,
 placeName:'Fairhaven',
 lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
 
 routeType:'voyage',
 routeName:'FRANKLIN WHALING VOYAGE',
 
+routePoints:[
+  {label:'Fairhaven', lat:41.6376, lng:-70.9036, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Boston', lat:42.3601, lng:-71.0589, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'North Atlantic Arc', lat:34.0, lng:-45.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Faial Azores', lat:38.57, lng:-28.70, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Santiago Cape Verde', lat:14.93, lng:-23.51, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Equator Crossing', lat:0.0, lng:-20.0, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'South Atlantic Arc', lat:-25.0, lng:-18.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Cape of Good Hope', lat:-34.36, lng:18.47, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Indian Ocean Arc', lat:-35.0, lng:55.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Sunda Strait Arc', lat:-5.90, lng:105.90, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Western Pacific Arc', lat:-4.0, lng:150.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Bonin Port Lloyd', lat:27.08, lng:142.19, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'North Pacific Return Arc', lat:25.0, lng:170.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'North Pacific Homeward Arc', lat:32.0, lng:-145.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Fairhaven Return', lat:41.6376, lng:-70.9036, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
 
 relatedEvents:['manjiro_pacific_whaling_grounds']
 },
-
 {
 id:'manjiro_pacific_whaling_grounds',
 type:'person',
