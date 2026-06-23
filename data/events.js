@@ -50,7 +50,7 @@ nodeType:'encounter',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'john_howland_voyage_1841_1843',
-
+chapterId:'howland',
 routeType:'voyage',
 routeName:'TORISHIMA TO HONOLULU',
 
