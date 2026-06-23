@@ -390,7 +390,7 @@ routePoints:[
 
   {label:'Cape Horn Offshore', lat:-60.0, lng:-68.0, nodeType:'voyagePoint', historicalStatus:'documented', transport:'sailing'},
 
-  {label:'South Atlantic Arc', lat:-42.0, lng:-45.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+  {label:'South Atlantic Arc', lat:-40.0, lng:-40.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
   {label:'Brazil Offshore Arc', lat:-8.0, lng:-32.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
   
