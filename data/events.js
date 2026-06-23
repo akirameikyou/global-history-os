@@ -518,7 +518,7 @@ routePoints:[
 
   {label:'Brazil Offshore Arc', lat:-8.0, lng:-32.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
-  {label:'South Atlantic Sailing Arc', lat:-32.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
+  {label:'South Atlantic Sailing Arc', lat:-42.0, lng:-44.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
   {label:'Cape Horn Sea Route', lat:-59.0, lng:-68.0, transport:'sailing', nodeType:'routeControl', historicalStatus:'control'},
 
