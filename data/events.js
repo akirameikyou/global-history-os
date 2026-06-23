@@ -204,6 +204,24 @@ routePoints:[
   },
 
   {
+label:'North Pacific Return Arc',
+lat:34.0,
+lng:170.0,
+nodeType:'routeControl',
+historicalStatus:'control',
+transport:'sailing'
+},
+
+{
+label:'Central North Pacific Arc',
+lat:28.0,
+lng:-175.0,
+nodeType:'routeControl',
+historicalStatus:'control',
+transport:'sailing'
+},
+  
+  {
     label:'Honolulu Offshore',
     lat:22.0,
     lng:-157.5,
