@@ -475,10 +475,11 @@ export function renderYear(year) {
   const filtered = events.filter(e => isActive(e, year));
 
   const routeHistory = events.filter(e =>
-    e.type === 'person' &&
-    e.startYear <= year
-  );
-
+  e.type === 'person' &&
+  e.startYear <= year &&
+  isChapterVisible(e)
+);
+  
   clearLabels();
   
   buildRoutePoints(routeHistory);
