@@ -462,6 +462,13 @@ function updateLabels() {
   requestAnimationFrame(updateLabels);
 }
 
+function isChapterVisible(event) {
+  if (currentChapter === 'all') return true;
+  if (!event.chapterId) return true;
+
+  return event.chapterId === currentChapter;
+}
+
 export function renderYear(year) {
   currentYear = year;
 
