@@ -392,7 +392,7 @@ routePoints:[
 
   {label:'South Atlantic Arc', lat:-42.0, lng:-55.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
-  {label:'Brazil Offshore Arc', lat:-12.0, lng:-42.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+  {label:'Brazil Offshore Arc', lat:-8.0, lng:-32.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
   
   {label:'North Atlantic Return Arc', lat:22.0, lng:-45.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
