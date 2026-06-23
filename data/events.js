@@ -394,7 +394,7 @@ routePoints:[
 
   {label:'Brazil Offshore Arc', lat:-8.0, lng:-32.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
   
-  {label:'North Atlantic Return Arc', lat:22.0, lng:-45.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+  {label:'North Atlantic Return Arc', lat:30.0, lng:-45.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
   {label:'Fairhaven', lat:41.6376, lng:-70.9036, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
 ],
