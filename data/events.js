@@ -486,6 +486,8 @@ routePoints:[
 
   {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
 
+  {label:'West New Guinea Waters',lat:2.96,lng:132.71,nodeType:'routeControl',historicalStatus:'control',transport:'sailing'},
+
   {label:'Western Pacific Arc', lat:-4.0, lng:150.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
   {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
