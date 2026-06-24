@@ -462,6 +462,11 @@ function updateLabels() {
   requestAnimationFrame(updateLabels);
 }
 
+export function setRouteChapter(chapterId) {
+  currentChapter = chapterId;
+  renderYear(currentYear);
+}
+
 function isChapterVisible(event) {
   if (currentChapter === 'all') return true;
   if (!event.chapterId) return true;
