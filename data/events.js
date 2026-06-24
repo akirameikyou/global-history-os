@@ -478,7 +478,7 @@ routePoints:[
 
   {label:'South Atlantic Arc', lat:-25.0, lng:-18.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
-  {label:'Cape of Good Hope', lat:-40.50, lng:14.50, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+  {label:'Cape of Good Hope Offshore', lat:-36.8, lng:20.0, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
 
   {label:'New Amsterdam Island',lat:-37.84,lng:77.53,nodeType:'voyagePoint',historicalStatus:'documented',transport:'sailing'},
   
