@@ -1025,6 +1025,23 @@ borderToggle.onclick = () => {
 gridToggle.onclick = () => {
   toggleGrid();
 };
+
+chapterToggle.onclick = () => {
+
+  chapterIndex =
+    (chapterIndex + 1) %
+    chapterCycle.length;
+
+  const chapterId =
+    chapterCycle[chapterIndex];
+
+  setRouteChapter(chapterId);
+
+  chapterToggle.textContent =
+    'CHAPTER : ' +
+    chapterId.toUpperCase();
+
+};
   
 let personLinksVisible = false;
 let worldLinksVisible = false;
