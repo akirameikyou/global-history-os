@@ -567,6 +567,74 @@ relatedEvents:['manjiro_franklin_1848_guam']
 },
 
 {
+id:'manjiro_franklin_1848_guam',
+type:'person',
+timelineVisible:false,
+startYear:1848,
+routeLabel:'GUAM',
+title:'フランクリン号・グアム再寄港',
+year:'1848.02',
+description:'ホノルルを出帆後、ギルバート群島付近で捕鯨し、西北へ進んで1848年2月にグアム島アプラ港へ再び入港する。',
+lat:13.44,
+lng:144.65,
+placeName:'Apra Harbor, Guam',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1847-1848 HONOLULU TO GUAM',
+routePoints:[
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Gilbert Islands Whaling Grounds', lat:0.5, lng:173.0, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'Western Pacific Arc', lat:8.0, lng:160.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_franklin_manila_1848']
+},
+
+{
+id:'manjiro_franklin_manila_1848',
+type:'person',
+timelineVisible:false,
+startYear:1848,
+routeLabel:'MANILA',
+title:'マニラ寄港',
+year:'1848.05',
+description:'グアムを4月末に出帆し、デビス船長を病院へ入れるため、5月末にマニラ港へ入港する。',
+lat:14.5995,
+lng:120.9842,
+placeName:'Manila',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1848 GUAM TO MANILA',
+routePoints:[
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Philippine Sea Arc', lat:17.0, lng:132.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Manila', lat:14.5995, lng:120.9842, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_pacific_whaling_grounds']
+},
+  
+{
 id:'manjiro_pacific_whaling_grounds',
 type:'person',
 timelineVisible:false,
