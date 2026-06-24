@@ -480,6 +480,8 @@ routePoints:[
 
   {label:'Cape of Good Hope', lat:-40.50, lng:14.50, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
 
+  {label:'New Amsterdam Island',lat:-37.84,lng:77.53,nodeType:'voyagePoint',historicalStatus:'documented',transport:'sailing'},
+  
   {label:'Indian Ocean Arc', lat:-35.0, lng:55.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
   {label:'Sunda Strait Arc', lat:-5.90, lng:105.90, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
