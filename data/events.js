@@ -476,7 +476,7 @@ routePoints:[
 
   {label:'Equator Crossing', lat:0.0, lng:-20.0, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
 
-  {label:'South Atlantic Arc', lat:-25.0, lng:-18.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+  {label:'St Helena Offshore Arc', lat:-15.0, lng:-4.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
 
   {label:'Cape of Good Hope Offshore', lat:-36.8, lng:20.0, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
 
