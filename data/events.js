@@ -633,7 +633,91 @@ routePoints:[
   {label:'Manila', lat:14.5995, lng:120.9842, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
 ],
 
-relatedEvents:['manjiro_pacific_whaling_grounds']
+relatedEvents:['manjiro_franklin_honolulu_1848']
+},
+
+{
+id:'manjiro_franklin_honolulu_1848',
+type:'person',
+timelineVisible:false,
+startYear:1848,
+routeLabel:'HONOLULU',
+title:'フランクリン号・ホノルル再入港',
+year:'1848.10',
+description:'マニラを7月に出帆し、台湾東岸を北上、琉球列島を横切って、10月末にホノルルへ入港する。10月30日、万次郎はホイットフィールド船長へ手紙を書く。',
+lat:21.3069,
+lng:-157.8583,
+placeName:'Honolulu',
+lineColor:'#66e0ff',
+nodeType:'document',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1848 MANILA TO HONOLULU',
+routePoints:[
+  {label:'Manila', lat:14.5995, lng:120.9842, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'East Taiwan Waters', lat:23.5, lng:122.8, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Ryukyu Passage', lat:26.5, lng:130.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'North Pacific Arc', lat:28.0, lng:165.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_franklin_return_1849']
+},
+
+{
+id:'manjiro_franklin_return_1849',
+type:'person',
+timelineVisible:false,
+startYear:1849,
+routeLabel:'RETURN',
+title:'フランクリン号・帰航',
+year:'1848.11 — 1849.08',
+description:'ホノルルを11月に出帆し、西南へ針路をとって南洋群島で捕鯨する。1849年2月にセラム島へ寄港し、チモール、モーリシャス付近、喜望峰、セントヘレナ沖を経て、1849年8月末にニューベッドフォードへ入港する。',
+lat:41.6376,
+lng:-70.9036,
+placeName:'New Bedford / Fairhaven',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1848-1849 HOMEWARD ROUTE',
+routePoints:[
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'South Seas Whaling Grounds', lat:2.0, lng:170.0, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'Seram Island', lat:-3.1, lng:130.5, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Timor Waters', lat:-10.0, lng:125.0, nodeType:'voyagePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Indian Ocean Homeward Arc', lat:-22.0, lng:85.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Mauritius Offshore', lat:-20.2, lng:57.5, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Cape of Good Hope Offshore', lat:-36.8, lng:20.0, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'St Helena Offshore Arc', lat:-15.0, lng:-4.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'North Atlantic Homeward Arc', lat:18.0, lng:-35.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'New Bedford / Fairhaven', lat:41.6376, lng:-70.9036, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_fairhaven_return']
 },
   
 {
