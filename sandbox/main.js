@@ -1,5 +1,5 @@
-import { events }
-from '../data/events.js';
+import { events } from '../data/events.js';
+import { setRouteChapter, currentChapter } from './renderGlobe.js';
 
 const left =
 document.createElement('div');
