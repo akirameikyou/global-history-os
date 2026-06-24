@@ -102,7 +102,7 @@ const chapterButton = document.createElement('button');
 chapterButton.textContent = `CHAPTER: ${chapterList[chapterIndex].label}`;
 
 chapterButton.style.position = 'absolute';
-chapterButton.style.right = '34px';
+chapterButton.style.right = '470px';
 chapterButton.style.bottom = '34px';
 chapterButton.style.zIndex = '40';
 chapterButton.style.padding = '10px 16px';
