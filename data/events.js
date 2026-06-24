@@ -482,8 +482,6 @@ routePoints:[
 
   {label:'New Amsterdam Island',lat:-37.84,lng:77.53,nodeType:'voyagePoint',historicalStatus:'documented',transport:'sailing'},
   
-  {label:'Indian Ocean Arc', lat:-35.0, lng:55.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
-
   {label:'Sunda Strait Arc', lat:-5.90, lng:105.90, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
 
   {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
