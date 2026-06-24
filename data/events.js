@@ -487,7 +487,9 @@ routePoints:[
   {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
 
   ],
-
+relatedEvents:['manjiro_franklin_1847_guam']
+},
+  
 {
 id:'manjiro_franklin_1847_guam',
 type:'person',
