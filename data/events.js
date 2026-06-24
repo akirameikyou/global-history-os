@@ -566,9 +566,6 @@ routePoints:[
 relatedEvents:['manjiro_franklin_1848_guam']
 },
 
-  
-relatedEvents:['manjiro_pacific_whaling_grounds']
-},
 {
 id:'manjiro_pacific_whaling_grounds',
 type:'person',
