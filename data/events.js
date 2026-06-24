@@ -486,22 +486,7 @@ routePoints:[
 
   {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
 
-  {label:'West New Guinea Waters',lat:2.96,lng:132.71,nodeType:'routeControl',historicalStatus:'control',transport:'sailing'},
-
-  {label:'Western Pacific Arc', lat:-4.0, lng:150.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
-
-  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
-
-  {label:'Bonin Port Lloyd', lat:27.08, lng:142.19, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
-
-  {label:'North Pacific Return Arc', lat:25.0, lng:170.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
-
-  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
-
-  {label:'North Pacific Homeward Arc', lat:32.0, lng:-145.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
-
-  {label:'Fairhaven Return', lat:41.6376, lng:-70.9036, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
-],
+  ],
 
 relatedEvents:['manjiro_pacific_whaling_grounds']
 },
