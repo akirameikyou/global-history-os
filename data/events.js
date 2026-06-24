@@ -721,22 +721,6 @@ relatedEvents:['manjiro_fairhaven_return']
 },
   
 {
-id:'manjiro_pacific_whaling_grounds',
-type:'person',
-timelineVisible:false,
-startYear:1846,
-routeLabel:'PACIFIC WHALING',
-title:'太平洋捕鯨海域',
-year:'1846 — 1849',
-description:'フランクリン号の捕鯨航海で、万次郎は太平洋の捕鯨海域を経験する。都市ではなく、海そのものが学びと労働の場となった。',
-lat:-10,
-lng:-145,
-placeName:'Pacific Whaling Grounds',
-lineColor:'#66e0ff',
-relatedEvents:['manjiro_fairhaven_return']
-},
-  
-{
 id:'manjiro_fairhaven_return',
 type:'person',
 startYear:1849,
