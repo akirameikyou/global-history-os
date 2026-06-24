@@ -10,7 +10,7 @@ import {
 } from './polygonLayerManager.js';
 
 export let currentYear = 1850;
-let currentChapter = 'franklin';
+let currentChapter = 'howland';
 
 const container = document.getElementById('globeViz');
 
