@@ -800,6 +800,7 @@ nodeType:'voyagePoint',
 historicalStatus:'estimated',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 arcVisible:false,  
 relatedEvents:['manjiro_valparaiso']
 },
@@ -820,7 +821,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
-
+chapterId:'gold_rush',
 routeType:'voyage',
 routeName:'GOLD RUSH VOYAGE / VALPARAISO TO SAN FRANCISCO',
 routePoints:[
@@ -855,6 +856,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 relatedEvents:['manjiro_sacramento_steamship']
 },
 
@@ -874,6 +876,7 @@ nodeType:'transportChange',
 historicalStatus:'documented',
 transport:'steamship',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 relatedEvents:['manjiro_wagon_route']
 },
 
@@ -894,6 +897,7 @@ nodeType:'transportChange',
 historicalStatus:'estimated',
 transport:'wagon',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 relatedEvents:['manjiro_goldfield']
 },
 
@@ -913,6 +917,7 @@ nodeType:'voyagePoint',
 historicalStatus:'estimated',
 transport:'walking',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 relatedEvents:['manjiro_sanfrancisco_return']
 },
 
@@ -933,6 +938,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'wagon',
 voyageId:'goldrush_voyage_1850',
+chapterId:'gold_rush',  
 relatedEvents:['manjiro_elysia']
 },
 
