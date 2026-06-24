@@ -87,6 +87,45 @@ document.body.appendChild(
 right
 );
 
+const chapterList = [
+  { id:'all', label:'ALL' },
+  { id:'howland', label:'HOWLAND' },
+  { id:'franklin', label:'FRANKLIN' },
+  { id:'gold_rush', label:'GOLD RUSH' }
+];
+
+let chapterIndex = chapterList.findIndex(c => c.id === currentChapter);
+if (chapterIndex < 0) chapterIndex = 0;
+
+const chapterButton = document.createElement('button');
+
+chapterButton.textContent = `CHAPTER: ${chapterList[chapterIndex].label}`;
+
+chapterButton.style.position = 'absolute';
+chapterButton.style.right = '34px';
+chapterButton.style.bottom = '34px';
+chapterButton.style.zIndex = '40';
+chapterButton.style.padding = '10px 16px';
+chapterButton.style.borderRadius = '999px';
+chapterButton.style.border = '1px solid rgba(255,255,255,0.24)';
+chapterButton.style.background = 'rgba(0,0,0,0.46)';
+chapterButton.style.color = 'white';
+chapterButton.style.letterSpacing = '0.12em';
+chapterButton.style.fontSize = '11px';
+chapterButton.style.cursor = 'pointer';
+
+chapterButton.addEventListener('click', () => {
+  chapterIndex = (chapterIndex + 1) % chapterList.length;
+
+  const nextChapter = chapterList[chapterIndex];
+
+  chapterButton.textContent = `CHAPTER: ${nextChapter.label}`;
+
+  setRouteChapter(nextChapter.id);
+});
+
+document.body.appendChild(chapterButton);
+
 left.innerHTML =
 `
 <div style="
