@@ -556,6 +556,8 @@ routePoints:[
 
   {label:'Iheya / Manbikomire Waters', lat:27.05, lng:127.95, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
 
+  {label:'Izu Ocean Route', lat:29.94, lng:139.85, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
   {label:'Off Sendai Waters', lat:38.5, lng:144.0, nodeType:'encounter', historicalStatus:'estimated', transport:'sailing'},
 
   {label:'North Pacific Return Arc', lat:32.0, lng:170.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
