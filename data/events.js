@@ -488,6 +488,83 @@ routePoints:[
 
   ],
 
+{
+id:'manjiro_franklin_1847_guam',
+type:'person',
+timelineVisible:false,
+startYear:1847,
+routeLabel:'GUAM',
+title:'フランクリン号・グアム寄港',
+year:'1847.03',
+description:'フランクリン号は西太平洋を北上し、1847年3月3日にグアム島アプラ港へ入港する。万次郎は3月12日にホイットフィールド宛の手紙を書く。',
+lat:13.44,
+lng:144.65,
+placeName:'Apra Harbor, Guam',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1847 WEST PACIFIC ROUTE',
+routePoints:[
+  {label:'Kupang', lat:-10.17, lng:123.60, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'West New Guinea Waters', lat:2.96, lng:132.71, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'New Ireland Waters', lat:-4.15, lng:152.70, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'Solomon Islands Waters', lat:-9.65, lng:160.15, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_franklin_bonin_1847']
+},
+
+{
+id:'manjiro_franklin_bonin_1847',
+type:'person',
+timelineVisible:false,
+startYear:1847,
+routeLabel:'BONIN',
+title:'小笠原・ポートロイド寄港',
+year:'1847',
+description:'グアム出帆後、ボニン諸島ピール島のポートロイドに約10日停泊する。',
+lat:27.08,
+lng:142.19,
+placeName:'Port Lloyd / Peel Island',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'franklin_voyage_1846_1849',
+chapterId:'franklin',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'FRANKLIN 1847 JAPAN WATERS TO HONOLULU',
+routePoints:[
+  {label:'Guam', lat:13.44, lng:144.65, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Bonin Port Lloyd', lat:27.08, lng:142.19, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Iheya / Manbikomire Waters', lat:27.05, lng:127.95, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'Off Sendai Waters', lat:38.5, lng:144.0, nodeType:'encounter', historicalStatus:'estimated', transport:'sailing'},
+
+  {label:'North Pacific Return Arc', lat:32.0, lng:170.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_franklin_1848_guam']
+},
+
+  
 relatedEvents:['manjiro_pacific_whaling_grounds']
 },
 {
