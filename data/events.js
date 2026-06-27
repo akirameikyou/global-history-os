@@ -76,6 +76,11 @@ lat:30.48,
 lng:140.30,
 placeName:'Torishima',
 lineColor:'#66e0ff',
+nodeType:'survival',
+historicalStatus:'documented',
+transport:'survival',
+voyageId:'drift_voyage_1841',
+chapterId:'drift',  
 relatedEvents:['manjiro_torishima_rescue']
 },
 
