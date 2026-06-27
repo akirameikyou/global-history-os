@@ -227,9 +227,9 @@ function showRoutePointCard(point) {
       ${point.title || ''}
     </div>
 
-    <div style="font-size:13px; line-height:1.6; margin-top:8px; color:#d8e8ff;">
-      ${point.description || ''}
-    </div>
+    <div style="font-size:13px; line-height:1.7; margin-top:8px; color:#d8e8ff; white-space:pre-line;">
+  ${point.cardText || point.description || ''}
+</div>
   `;
 
   const closeButton = document.getElementById('route-point-card-close');
