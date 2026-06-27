@@ -260,15 +260,16 @@ function buildRoutePoints(routeHistory) {
     if (uniquePoints.find(p => p.name === event.placeName)) return;
 
     uniquePoints.push({
-      name: event.placeName,
-      title: event.title,
-      description: event.description,
-      year: event.year || event.startYear,
-      lat: event.lat,
-      lng: event.lng,
-      color: event.color || '#66e0ff',
-      size: getNodeSize(event)
-    });
+  name: event.placeName,
+  title: event.title,
+  description: event.description,
+  cardText: event.cardText,
+  year: event.year || event.startYear,
+  lat: event.lat,
+  lng: event.lng,
+  color: event.color || '#66e0ff',
+  size: getNodeSize(event)
+});
   });
 
   uniquePoints.forEach(point => points.push(point));
