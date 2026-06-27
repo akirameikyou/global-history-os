@@ -1001,19 +1001,29 @@ startYear:1850,
 routeLabel:'ELYSIA',
 title:'エリシア号でホノルルへ',
 year:'1850.08',
-description:'ホノルル行きの商船エリシア号に、初めて正式な船客として乗り込む。',
-lat:21.3069,
-lng:-157.8583,
-placeName:'Honolulu',
+description:'サンフランシスコでホノルル行きの商船エリシア号に、初めて正式な船客として乗り込む。',
+lat:37.7749,
+lng:-122.4194,
+placeName:'San Francisco',
 lineColor:'#66e0ff',
 nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
-voyageId:'goldrush_voyage_1850',
-chapterId:'return',  
+voyageId:'return_voyage_1851',
+chapterId:'return',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'ELYSIA / SAN FRANCISCO TO HONOLULU',
+routePoints:[
+  {label:'San Francisco', lat:37.7749, lng:-122.4194, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+  {label:'North Pacific Arc', lat:30.0, lng:-140.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'}
+],
+
 relatedEvents:['manjiro_honolulu_return_prepare']
 },
-
+  
 {
 id:'manjiro_honolulu_return_prepare',
 type:'person',
