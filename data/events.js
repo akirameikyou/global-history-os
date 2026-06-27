@@ -13,9 +13,54 @@ labelLat:32.45,
 labelLng:133.35,
 placeName:'Ashizuri',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_shipwreck']
+relatedEvents:['manjiro_usa_departure']
 },
 
+{
+id:'manjiro_usa_departure',
+type:'person',
+startYear:1841,
+routeLabel:'DRIFT',
+title:'宇佐浦から出航',
+year:'1841.01.05',
+description:'宇佐浦を出航し、足摺沖方面へ漁に向かう。',
+lat:33.496,
+lng:133.450,
+placeName:'Usaura',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'fishing_boat',
+voyageId:'drift_voyage_1841',
+chapterId:'drift',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'DRIFT VOYAGE / USAURA TO TORISHIMA',
+
+routePoints:[
+  {label:'Usaura', lat:33.496, lng:133.450, nodeType:'port', historicalStatus:'documented', transport:'fishing_boat'},
+
+  {label:'Yotsu Cape Offshore', lat:32.95, lng:132.95, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'fishing_boat'},
+
+  {label:'Sagaura Offshore', lat:32.78, lng:133.05, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'fishing_boat'},
+
+  {label:'Inomisaki / Shirahama Offshore', lat:32.75, lng:133.15, nodeType:'voyagePoint', historicalStatus:'estimated', transport:'fishing_boat'},
+
+  {label:'Ashizuri East Offshore', lat:32.72, lng:133.30, nodeType:'threshold', historicalStatus:'estimated', transport:'fishing_boat'},
+
+  {label:'Muroto Offshore Drift', lat:32.4, lng:134.5, nodeType:'driftPoint', historicalStatus:'estimated', transport:'drift'},
+
+  {label:'Kuroshio Drift Arc', lat:31.5, lng:136.5, nodeType:'naturePoint', historicalStatus:'estimated', transport:'current'},
+
+  {label:'Torishima Approach', lat:30.2, lng:139.4, nodeType:'routeControl', historicalStatus:'control', transport:'drift'},
+
+  {label:'Torishima', lat:30.48, lng:140.30, nodeType:'landing', historicalStatus:'documented', transport:'drift'}
+],
+
+relatedEvents:['manjiro_shipwreck']
+},
+  
 {
 id:'manjiro_shipwreck',
 type:'person',
