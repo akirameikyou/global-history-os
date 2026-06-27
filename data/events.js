@@ -1029,6 +1029,99 @@ nodeType:'thought',
 historicalStatus:'documented',
 transport:'preparation',
 voyageId:'return_voyage_1851',
+relatedEvents:['manjiro_sarah_boyd_departure']
+},
+
+{
+id:'manjiro_sarah_boyd_departure',
+type:'person',
+startYear:1850,
+routeLabel:'SARAH BOYD',
+title:'サラ・ボイド号で出帆',
+year:'1850.12',
+description:'12月17日、上海へ向かう商船サラ・ボイド号に便乗し、ホノルルを出帆する。',
+lat:21.3069,
+lng:-157.8583,
+placeName:'Honolulu',
+lineColor:'#66e0ff',
+nodeType:'port',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'RETURN VOYAGE / HONOLULU TO RYUKYU',
+
+routePoints:[
+  {label:'Honolulu', lat:21.3069, lng:-157.8583, nodeType:'port', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Samoa South Arc', lat:-12.0, lng:-170.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Central Pacific Return Arc', lat:-2.0, lng:175.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Western Pacific Shanghai Route', lat:10.0, lng:150.0, nodeType:'routeControl', historicalStatus:'control', transport:'sailing'},
+
+  {label:'Ryukyu Offshore', lat:25.9, lng:127.4, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'}
+],
+
+relatedEvents:['manjiro_ryukyu_offshore']
+},
+
+{
+id:'manjiro_ryukyu_offshore',
+type:'person',
+timelineVisible:false,
+startYear:1851,
+routeLabel:'RYUKYU',
+title:'琉球近海に接近',
+year:'1851.02',
+description:'2月1日、琉球近海に到達。ホイットモア船長の好意で海図を受け取り、望遠鏡で陸地が見える位置まで接近する。',
+lat:25.9,
+lng:127.4,
+placeName:'Ryukyu Offshore',
+lineColor:'#66e0ff',
+nodeType:'naturePoint',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+arcVisible:false,
+relatedEvents:['manjiro_adventure_launch']
+},
+
+{
+id:'manjiro_adventure_launch',
+type:'person',
+timelineVisible:false,
+startYear:1851,
+routeLabel:'ADVENTURE',
+title:'冒険号を降ろす',
+year:'1851.02',
+description:'2月2日、陸地から約10kmの地点で捕鯨ボート「冒険号」を降ろし、琉球上陸を目指す。',
+lat:26.05,
+lng:127.55,
+placeName:'Ryukyu Offshore',
+lineColor:'#66e0ff',
+nodeType:'transportChange',
+historicalStatus:'documented',
+transport:'boat',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'ADVENTURE BOAT / RYUKYU LANDING',
+
+routePoints:[
+  {label:'Ryukyu Offshore', lat:25.9, lng:127.4, nodeType:'naturePoint', historicalStatus:'documented', transport:'sailing'},
+
+  {label:'Adventure Launch Point', lat:26.05, lng:127.55, nodeType:'transportChange', historicalStatus:'documented', transport:'boat'},
+
+  {label:'Odo Beach', lat:26.13, lng:127.72, nodeType:'landing', historicalStatus:'documented', transport:'boat'}
+],
+
 relatedEvents:['manjiro_return_ryukyu']
 },
   
