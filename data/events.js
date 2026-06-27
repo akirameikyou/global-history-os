@@ -1010,6 +1010,7 @@ nodeType:'port',
 historicalStatus:'documented',
 transport:'sailing',
 voyageId:'goldrush_voyage_1850',
+chapterId:'return',  
 relatedEvents:['manjiro_honolulu_return_prepare']
 },
 
@@ -1029,6 +1030,7 @@ nodeType:'thought',
 historicalStatus:'documented',
 transport:'preparation',
 voyageId:'return_voyage_1851',
+chapterId:'return',  
 relatedEvents:['manjiro_sarah_boyd_departure']
 },
 
