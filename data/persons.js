@@ -119,7 +119,6 @@ export const personLinks = [
     }
   ]
 }
-];
 {
   id:'yodo',
   label:'YODO',
@@ -179,3 +178,5 @@ export const personLinks = [
     }
   ]
 },
+  
+];
