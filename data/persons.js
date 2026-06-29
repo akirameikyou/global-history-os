@@ -118,7 +118,7 @@ export const personLinks = [
       detail:'明治維新直前に31歳で生涯を終えた。'
     }
   ]
-}
+},
 {
   id:'yodo',
   label:'YODO',
