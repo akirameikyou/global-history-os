@@ -669,6 +669,59 @@ background:transparent;
 #linkCard::-webkit-scrollbar-thumb{
 background:rgba(255,255,255,0.28);
 border-radius:999px;
+} 
+@media (max-width: 768px){
+
+  #leftPanel,
+  .left-panel{
+    display:none;
+  }
+
+  #rightPanel,
+  .right-panel{
+    display:none;
+  }
+
+  #timelineBar{
+    width:92vw;
+    left:4vw;
+    transform:none;
+    bottom:86px;
+  }
+
+  #timeline{
+    width:92vw;
+  }
+
+  #chapterToggle,
+  #worldLinkToggle,
+  #personLinkToggle,
+  #gridToggle,
+  #borderToggle{
+    bottom:18px;
+    padding:8px 10px;
+    font-size:9px;
+    letter-spacing:0.08em;
+  }
+
+  #chapterToggle{ right:300px; }
+  #worldLinkToggle{ right:220px; }
+  #personLinkToggle{ right:150px; }
+  #gridToggle{ right:85px; }
+  #borderToggle{ right:12px; }
+
+  #route-point-card{
+    width:88vw !important;
+    bottom:72px !important;
+    font-size:13px;
+  }
+
+  #locationNotice{
+    max-width:86vw;
+    left:7vw;
+    right:auto;
+  }
+
 }  
 </style>
 </head>
