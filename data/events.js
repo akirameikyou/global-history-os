@@ -13,9 +13,13 @@ labelLat:32.45,
 labelLng:133.35,
 placeName:'Ashizuri',
 lineColor:'#66e0ff',
+nodeType:'origin',
+historicalStatus:'documented',
+chapterId:'drift',
+arcVisible:false,
 relatedEvents:['manjiro_usa_departure']
 },
-
+  
 {
 id:'manjiro_usa_departure',
 type:'person',
