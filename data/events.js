@@ -1166,13 +1166,19 @@ id:'manjiro_satsuma',
 type:'person',
 startYear:1851,
 routeLabel:'SATSUMA',
-title:'薩摩で取り調べ',
-year:'1851',
-description:'薩摩で取り調べを受け、西洋事情や航海術を伝える。',
+title:'鹿児島入り',
+year:'1851.08',
+description:'8月28日、鹿児島城下へ入り、島津斉彬から直接の御下問を受ける。',
 lat:31.5966,
 lng:130.5571,
 placeName:'Kagoshima',
 lineColor:'#66e0ff',
+nodeType:'interrogation',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+cardText:'1851年8月28日、万次郎たちは12日間の航海を経て鹿児島城下へ入る。薩摩藩主・島津斉彬から直接の御下問を受け、西洋事情、航海術、外国船、海外の生活について語った。ここで万次郎の経験は、単なる漂流民の証言ではなく、日本側が世界を知るための情報として扱われ始める。',
 relatedEvents:['manjiro_nagasaki']
 },
 
@@ -1181,33 +1187,133 @@ id:'manjiro_nagasaki',
 type:'person',
 startYear:1851,
 routeLabel:'NAGASAKI',
-title:'長崎で取り調べ',
-year:'1851',
-description:'長崎で取り調べを受ける。',
+title:'長崎奉行所で尋問',
+year:'1851.10',
+description:'10月23日に長崎へ入り、長崎奉行所で繰り返し尋問を受ける。',
 lat:32.75,
 lng:129.88,
 labelLat:33.15,
 labelLng:128.55,
 placeName:'Nagasaki',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_tosa_return']
+nodeType:'interrogation',
+historicalStatus:'documented',
+transport:'sailing',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+cardText:'1851年10月23日、長崎港へ到着。10月下旬から長崎奉行所で取り調べを受け、約50日の間に18回引き出されて尋問された。翌年まで長崎での生活は続いたが、牢屋暮らしは比較的寛大で、寺参りや市中見物も許されることがあった。ここでは、万次郎の知識と経験が幕府の情報として記録されていく。',
+relatedEvents:['manjiro_tosa_departure']
 },
 
 {
-id:'manjiro_tosa_return',
+id:'manjiro_tosa_departure',
 type:'person',
 startYear:1852,
 routeLabel:'TOSA',
-title:'土佐へ帰郷',
-year:'1852',
-description:'土佐へ戻り、故郷へ帰る。',
-lat:32.78,
-lng:132.95,
-placeName:'Ashizuri',
+title:'長崎を出て土佐へ向かう',
+year:'1852.08',
+description:'8月10日、土佐藩からの迎えとともに長崎を出発し、土佐へ向かう。',
+lat:32.75,
+lng:129.88,
+placeName:'Nagasaki',
 lineColor:'#66e0ff',
-relatedEvents:['manjiro_edo']
+nodeType:'departure',
+historicalStatus:'documented',
+transport:'walking',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+arcVisible:false,
+
+routeType:'voyage',
+routeName:'RETURN ROUTE / NAGASAKI TO TOSA',
+
+routePoints:[
+  {label:'Nagasaki', lat:32.75, lng:129.88, nodeType:'port', historicalStatus:'documented', transport:'walking'},
+
+  {label:'Isahaya', lat:32.84, lng:130.05, nodeType:'routeControl', historicalStatus:'documented', transport:'walking'},
+
+  {label:'Ariake Sea Crossing', lat:32.95, lng:130.35, nodeType:'routeControl', historicalStatus:'estimated', transport:'boat'},
+
+  {label:'Moji', lat:33.95, lng:130.96, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+
+  {label:'Sanyodo Route', lat:34.25, lng:131.50, nodeType:'routeControl', historicalStatus:'control', transport:'walking'},
+
+  {label:'Mitajiri', lat:34.05, lng:131.57, nodeType:'port', historicalStatus:'estimated', transport:'boat'},
+
+  {label:'Mitsuhama', lat:33.87, lng:132.70, nodeType:'port', historicalStatus:'estimated', transport:'boat'},
+
+  {label:'Kuma Highlands', lat:33.65, lng:132.90, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+
+  {label:'Tosa Border', lat:33.55, lng:133.10, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+
+  {label:'Kochi Castle Town', lat:33.56, lng:133.53, nodeType:'interrogation', historicalStatus:'documented', transport:'walking'}
+],
+
+relatedEvents:['manjiro_kochi_interrogation']
 },
 
+{
+id:'manjiro_kochi_interrogation',
+type:'person',
+startYear:1852,
+routeLabel:'KOCHI',
+title:'高知城下で尋問',
+year:'1852.08',
+description:'8月25日、高知城下へ入り、山内容堂・吉田東洋らによる尋問を受ける。',
+lat:33.56,
+lng:133.53,
+placeName:'Kochi',
+lineColor:'#66e0ff',
+nodeType:'interrogation',
+historicalStatus:'documented',
+transport:'walking',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+cardText:'1852年8月25日、高知城下へ入る。土佐藩主・山内容堂、吉田東洋らによる尋問を受け、海外事情、航海術、アメリカ社会について詳しく語った。尋問は70日余りに及び、これは単なる取調べではなく、土佐藩が西洋事情を学ぶ機会でもあった。',
+relatedEvents:['manjiro_usa_return']
+},
+
+{
+id:'manjiro_usa_return',
+type:'person',
+startYear:1852,
+routeLabel:'USA',
+title:'宇佐へ帰る',
+year:'1852.11',
+description:'11月、三人そろって宇佐へ戻る。',
+lat:33.496,
+lng:133.450,
+placeName:'Usaura',
+lineColor:'#66e0ff',
+nodeType:'returnPoint',
+historicalStatus:'documented',
+transport:'walking',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+relatedEvents:['manjiro_mother_reunion']
+},
+
+{
+id:'manjiro_mother_reunion',
+type:'person',
+startYear:1852,
+routeLabel:'NAKAHAMA',
+title:'母・汐との再会',
+year:'1852.11',
+description:'11月16日、中浜で母・汐と11年10か月ぶりに再会する。',
+lat:32.78,
+lng:132.95,
+placeName:'Nakahama / Ashizuri',
+lineColor:'#66e0ff',
+nodeType:'reunion',
+historicalStatus:'documented',
+transport:'walking',
+voyageId:'return_voyage_1851',
+chapterId:'return',
+cardText:'1852年11月16日、万次郎は中浜へ帰郷する。庄屋の家へ挨拶に行くと、母・汐が駆け付け、親子は11年10か月ぶりに再会した。この日は旧暦では嘉永五年十月五日。漂流へ出た日も旧暦一月五日であり、万次郎は同じ「五日」に故郷へ戻ることになった。',
+relatedEvents:['manjiro_edo']
+},
+  
 {
 id:'manjiro_edo',
 type:'person',
