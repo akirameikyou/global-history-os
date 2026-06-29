@@ -120,3 +120,62 @@ export const personLinks = [
   ]
 }
 ];
+{
+  id:'yodo',
+  label:'YODO',
+  birthYear:1827,
+  deathYear:1872,
+  fullName:'山内容堂 / Yamauchi Yodo',
+  relationType:'POLITICAL HUB',
+  portrait:'../assets/portraits/yamauchi-yodo-portrait.jpg',
+
+  relation:'土佐藩第15代藩主。帰国した万次郎の海外知識を評価し、土佐藩における世界知識の受容を支えた政治的中心人物。',
+
+  connectionTrace:[
+    {
+      year:1852,
+      text:'帰国した万次郎を保護。',
+      detail:'土佐藩士として遇し、海外知識を藩政へ活用する基盤を整えた。'
+    },
+    {
+      year:1852,
+      text:'吉田東洋らによる聴取を認める。',
+      detail:'万次郎の知識を藩内で共有し、西洋事情を学ぶ機会を作った。'
+    },
+    {
+      year:1867,
+      text:'大政奉還を支持。',
+      detail:'土佐藩を通じて幕末政治の転換に大きな役割を果たした。'
+    }
+  ]
+},
+
+{
+  id:'nariakira',
+  label:'NARIAKIRA',
+  birthYear:1809,
+  deathYear:1858,
+  fullName:'島津斉彬 / Shimazu Nariakira',
+  relationType:'MODERNIZATION HUB',
+  portrait:'../assets/portraits/shimazu-nariakira-portrait.jpg',
+
+  relation:'薩摩藩第11代藩主。万次郎から海外事情を直接聴取し、西洋文明を日本の近代化へ取り込もうとした改革者。',
+
+  connectionTrace:[
+    {
+      year:1851,
+      text:'万次郎を御下問。',
+      detail:'海外事情、航海術、西洋文明について直接質問し、知識を政策へ活かそうとした。'
+    },
+    {
+      year:1851,
+      text:'集成館事業を推進。',
+      detail:'反射炉、蒸気機関、ガラス、写真など、西洋技術導入を積極的に進めた。'
+    },
+    {
+      year:1858,
+      text:'死去。',
+      detail:'日本近代化の礎を築いたまま、50歳でその生涯を終えた。'
+    }
+  ]
+},
