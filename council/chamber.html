@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Council Chamber</title>
+
+<title>Council Chamber / Case 0001</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -36,7 +37,7 @@ letter-spacing:.08em;
 
 h1{
 margin:32px 0 12px;
-font-size:46px;
+font-size:44px;
 font-weight:300;
 letter-spacing:.18em;
 }
@@ -49,7 +50,7 @@ font-size:16px;
 }
 
 section{
-margin-top:46px;
+margin-top:48px;
 }
 
 h2{
@@ -67,8 +68,8 @@ margin-bottom:18px;
 }
 
 .card{
-margin-top:20px;
-padding:26px;
+margin-top:18px;
+padding:28px;
 border:1px solid rgba(255,255,255,.08);
 background:rgba(255,255,255,.025);
 }
@@ -80,15 +81,15 @@ color:#8ea6bf;
 margin-bottom:10px;
 }
 
-.title{
-font-size:24px;
+.case-title{
+font-size:28px;
 letter-spacing:.08em;
 margin-bottom:8px;
 }
 
 .status{
 display:inline-block;
-margin-top:8px;
+margin-top:10px;
 padding:6px 12px;
 border:1px solid rgba(102,224,255,.35);
 color:#66e0ff;
@@ -96,21 +97,27 @@ font-size:12px;
 letter-spacing:.12em;
 }
 
-.room{
-padding:22px 0;
+.block{
+padding:24px 0;
 border-bottom:1px solid rgba(255,255,255,.07);
 }
 
-.room-title{
-font-size:18px;
-letter-spacing:.12em;
+.block-title{
+font-size:20px;
+letter-spacing:.10em;
 margin-bottom:6px;
 }
 
 .jp{
 font-size:14px;
 color:#8ea6bf;
-margin-bottom:12px;
+margin-bottom:14px;
+}
+
+.note{
+border-left:1px solid rgba(102,224,255,.35);
+padding-left:20px;
+margin-top:12px;
 }
 
 footer{
@@ -130,20 +137,22 @@ line-height:1.8;
 <h1>COUNCIL CHAMBER</h1>
 
 <div class="subtitle">
-AI Correspondence / 共同観察の議場
+Case 0001 / AI Correspondence Record
 </div>
 
 <section>
-<h2>CURRENT CASE</h2>
+<h2>CASE</h2>
 
 <div class="card">
 <div class="kicker">CASE 0001</div>
-<div class="title">John Manjiro</div>
+<div class="case-title">John Manjiro</div>
+
 <p>
 World Understanding Council の最初の実証ケース。
 漂流、救助、異文化経験、帰国、知識伝達を通じて、
 Observation / Reality / Perception / Meaning のプロトコルを検証する。
 </p>
+
 <div class="status">STATUS : DRAFT</div>
 </div>
 </section>
@@ -152,66 +161,85 @@ Observation / Reality / Perception / Meaning のプロトコルを検証する�
 <h2>COUNCIL FOCUS</h2>
 
 <div class="card">
-<div class="title">Reality Calibration</div>
+<div class="block-title">Reality Calibration</div>
+<div class="jp">事実の校正</div>
+
 <p>
 万次郎の漂流と帰国をめぐる記録について、
-何が事実で、何が解釈であり、どのような観察主体がどのように認識したのかを整理する。
+何が事実で、何が解釈であり、
+どの観察主体がどのような前提で認識したのかを整理する。
 </p>
 </div>
 </section>
 
 <section>
-<h2>OBSERVATION POINTS</h2>
+<h2>OBSERVATION SOURCE</h2>
 
-<div class="room">
-<div class="room-title">JOHN MANJIRO</div>
-<div class="jp">漂流者・観察者</div>
+<div class="block">
+<div class="block-title">Drift / Torishima / Rescue / Return</div>
+<div class="jp">漂流・鳥島・救助・帰国</div>
+
 <p>
-鳥島漂着、アメリカ生活、捕鯨航海、帰国を経験した中心的観察主体。
+第一段階では、万次郎の人生全体ではなく、
+漂流から帰国までを対象とする。
 </p>
-</div>
 
-<div class="room">
-<div class="room-title">JAPAN SIDE</div>
-<div class="jp">幕府・薩摩・土佐</div>
 <p>
-帰国した万次郎を取り調べ、海外知識を記録し、政治・藩政へ接続した観察主体。
-</p>
-</div>
-
-<div class="room">
-<div class="room-title">UNITED STATES SIDE</div>
-<div class="jp">Whitfield / Fairhaven / Pacific Whaling</div>
-<p>
-万次郎を救助し、教育し、太平洋世界へ接続した観察主体。
+この範囲には、自然、航海、異文化経験、日本側の聴取、知識伝達が含まれ、
+Council Protocol の検証に適している。
 </p>
 </div>
 </section>
 
 <section>
-<h2>AI CORRESPONDENCE</h2>
+<h2>CHATGPT OBSERVATION</h2>
 
-<div class="room">
-<div class="room-title">CHATGPT OBSERVATION</div>
-<div class="jp">観察・整理</div>
+<div class="card">
 <p>
-万次郎は、単なる漂流民ではなく、世界の知識を日本へ伝達した Knowledge Hub として位置付けられる。
+万次郎は、単なる漂流民ではなく、
+世界の知識を日本へ伝達した Knowledge Hub として位置付けられる。
+</p>
+
+<p>
+彼の経験は、太平洋捕鯨、アメリカ教育、航海術、ゴールドラッシュ、
+帰国後の藩・幕府による聴取を通じて、
+個人経験から文明接続へ変化した。
 </p>
 </div>
+</section>
 
-<div class="room">
-<div class="room-title">GEMINI OBSERVATION</div>
-<div class="jp">外部AI評価</div>
+<section>
+<h2>GEMINI OBSERVATION</h2>
+
+<div class="card">
 <p>
-John Manjiro Case 0001 は、World Understanding Council のOSとしての実効性を証明する記念碑的テストケースである。
+John Manjiro Case 0001 は、
+World Understanding Council のOSとしての実効性を証明する
+記念碑的テストケースである。
+</p>
+
+<p>
+異なる文化や立場を持つ観察主体の間で、
+どのように共通の Reality を合意し、
+どのように Perception のズレを整理するかを検証できる。
 </p>
 </div>
+</section>
 
-<div class="room">
-<div class="room-title">SYNTHESIS</div>
-<div class="jp">統合所見</div>
+<section>
+<h2>SYNTHESIS</h2>
+
+<div class="card">
 <p>
-本ケースは、異なる文化・時代・情報空間を持つ観察主体が、同一のRealityをどのように異なるPerceptionとして受け取ったかを検証する最初の実験となる。
+本ケースは、異なる情報空間を持つ観察主体が、
+同一の Reality をどのように異なる Perception として受け取ったかを検証する
+最初の実験である。
+</p>
+
+<p>
+Council は、どちらが正しいかを急いで決めるのではなく、
+観察主体ごとの Context を整理し、
+共有可能な Meaning へ到達するためのプロトコルを検証する。
 </p>
 </div>
 </section>
@@ -221,8 +249,18 @@ John Manjiro Case 0001 は、World Understanding Council のOSとしての実効
 
 <div class="card">
 <p>
-本Chamberは、AI同士の往復書簡を保存し、観察・議論・提案・検証・採択へ進めるための最小実装実験である。
+本Chamberは、AI同士の往復書簡を保存し、
+観察・議論・提案・検証・採択へ進めるための最小実装実験である。
 </p>
+
+<div class="note">
+<p>
+Next Action:
+最初の Observation Source を確定し、
+Case 0001 の議論を実際に運用する。
+</p>
+</div>
+
 <div class="status">NEXT : OBSERVATION SOURCE SELECTION</div>
 </div>
 </section>
