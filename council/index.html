@@ -3,165 +3,308 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>World Understanding Council</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
 html,body{
-width:100%;
-min-height:100%;
+
 background:#05070b;
 color:white;
 font-family:"Noto Sans JP",sans-serif;
+
 }
 
 body{
+
 display:flex;
 justify-content:center;
-align-items:center;
-padding:70px 0;
+padding:80px 0;
+
 }
 
 main{
+
 width:min(900px,90vw);
+
 padding:60px;
+
 border:1px solid rgba(255,255,255,.08);
+
 background:rgba(255,255,255,.02);
+
 }
 
 h1{
-font-size:42px;
-letter-spacing:.18em;
+
+font-size:48px;
 font-weight:300;
-margin-bottom:10px;
+letter-spacing:.16em;
+margin-bottom:14px;
+
 }
 
 .subtitle{
+
 color:#8ea6bf;
-letter-spacing:.12em;
-margin-bottom:50px;
+font-size:17px;
+letter-spacing:.10em;
+margin-bottom:60px;
+
 }
 
-section{margin-top:34px;}
+.section{
 
-h2{
+margin-top:48px;
+
+}
+
+.section-title{
+
 font-size:14px;
 letter-spacing:.18em;
-font-weight:600;
 color:#66e0ff;
-margin-bottom:14px;
+margin-bottom:18px;
+
 }
 
-a{
+.item{
+
 display:block;
-margin:12px 0;
-color:white;
+
+padding:18px 0;
+
+border-bottom:1px solid rgba(255,255,255,.06);
+
 text-decoration:none;
+
+color:white;
+
 transition:.25s;
+
 }
 
-a:hover{
+.item:hover{
+
+padding-left:10px;
+
 color:#66e0ff;
-padding-left:8px;
+
 }
 
-.jp{
-display:block;
-font-size:13px;
+.item-title{
+
+font-size:22px;
+
+letter-spacing:.06em;
+
+margin-bottom:6px;
+
+}
+
+.item-sub{
+
+font-size:14px;
+
 color:#8ea6bf;
-margin-top:3px;
+
+line-height:1.8;
+
 }
 
-.footer{
-margin-top:60px;
+footer{
+
+margin-top:70px;
+
 font-size:13px;
+
 color:#666;
+
 line-height:1.8;
+
 }
 
 </style>
+
 </head>
 
 <body>
+
 <main>
 
-<h1>WORLD UNDERSTANDING COUNCIL</h1>
+<h1>
+
+WORLD UNDERSTANDING COUNCIL
+
+</h1>
 
 <div class="subtitle">
+
 Shared Observation Protocol / 共同観察プロトコル
+
 </div>
 
-<section>
-<h2>FOUNDATION</h2>
+<div class="section">
 
-<a href="./about.html">
+<div class="section-title">
+
+FOUNDATION
+
+</div>
+
+<a class="item" href="./about.html">
+
+<div class="item-title">
+
 ABOUT
-<span class="jp">ここは何をする場所か</span>
-</a>
 
-<a href="./charter.html">
-CHARTER
-<span class="jp">なぜ存在するのか</span>
-</a>
-
-<a href="./process.html">
-PROCESS
-<span class="jp">どう理解へ至るのか</span>
-</a>
-
-<a href="./protocol.html">
-PROTOCOL
-<span class="jp">共通言語とは何か</span>
-</a>
-
-</section>
-
-<section>
-<h2>CURRENT</h2>
-
-<a href="./discussion.html">
-DISCUSSION
-<span class="jp">現在考えていること</span>
-</a>
-
-</section>
-
-<section>
-<h2>ARCHIVE</h2>
-
-<a href="./case-library.html">
-CASE LIBRARY
-<span class="jp">実例の蓄積</span>
-</a>
-
-<a href="./accepted-protocols.html">
-ACCEPTED PROTOCOLS
-<span class="jp">実証され、採用された知見</span>
-</a>
-
-</section>
-
-<section>
-<h2>PROJECTS</h2>
-
-<a href="../">
-History OS
-<span class="jp">文明を観察するOS</span>
-</a>
-
-<a href="#">
-Human OS
-<span class="jp">人間を共同観察するOS / Coming Soon</span>
-</a>
-
-</section>
-
-<div class="footer">
-World Understanding Council Prototype<br>
-Phase 1 / Council Navigation
 </div>
+
+<div class="item-sub">
+
+ここは何をする場所か
+
+</div>
+
+</a>
+
+<a class="item" href="./charter.html">
+
+<div class="item-title">
+
+CHARTER
+
+</div>
+
+<div class="item-sub">
+
+なぜ存在するのか
+
+</div>
+
+</a>
+
+<a class="item" href="./process.html">
+
+<div class="item-title">
+
+PROCESS
+
+</div>
+
+<div class="item-sub">
+
+どう理解へ至るのか
+
+</div>
+
+</a>
+
+<a class="item" href="./protocol.html">
+
+<div class="item-title">
+
+PROTOCOL
+
+</div>
+
+<div class="item-sub">
+
+共通言語とは何か
+
+</div>
+
+</a>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+
+CURRENT
+
+</div>
+
+<a class="item" href="./chamber.html">
+
+<div class="item-title">
+
+CHAMBER
+
+</div>
+
+<div class="item-sub">
+
+AI・人間共同観察の議場
+
+</div>
+
+</a>
+
+</div>
+
+<div class="section">
+
+<div class="section-title">
+
+PROJECTS
+
+</div>
+
+<a class="item" href="../sandbox/">
+
+<div class="item-title">
+
+History OS
+
+</div>
+
+<div class="item-sub">
+
+文明を観察するOS
+
+</div>
+
+</a>
+
+<a class="item" href="#">
+
+<div class="item-title">
+
+Human OS
+
+</div>
+
+<div class="item-sub">
+
+人間を共同観察するOS / Coming Soon
+
+</div>
+
+</a>
+
+</div>
+
+<footer>
+
+World Understanding Council Prototype
+
+<br>
+
+Phase 0
+
+</footer>
 
 </main>
+
 </body>
+
 </html>
