@@ -2143,6 +2143,19 @@ function updateTimelineCursorLine() {
   cursorPointer.style.display = 'block';
 }
 
+function updatePLinkCursorLine(){
+  if(!timelinePLinkCursorLine) return;
+
+  const year = Number(slider.value);
+  const min = Number(slider.min);
+  const max = Number(slider.max);
+
+  const ratio = (year - min) / (max - min);
+  const x = ratio * timeline.offsetWidth;
+
+  timelinePLinkCursorLine.style.left = `${x}px`;
+}
+  
 function showActiveWorldLayerCard(year) {
   if (!worldLinksVisible) return;
 
