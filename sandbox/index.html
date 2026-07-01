@@ -1181,6 +1181,7 @@ function goToConnection(year, focus){
   renderTimelineMeaning(year);
   renderYear(year);
   renderUI(year);
+  updatePLinkCursorLine();
 
   if(focus === 'torishima'){
     const torishimaEvent = events.find(event =>
