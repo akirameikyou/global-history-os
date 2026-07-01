@@ -2125,10 +2125,11 @@ function updateTimelineCursorLine() {
   cursorPointer.style.left = `${x}px`;
 
   const visible =
-    timelineWorldLinks.style.display === 'flex';
+  timelineWorldLinks.style.display === 'flex' ||
+  timelineSubLanes.style.display === 'flex';
 
-    cursorLine.style.display =
-    visible ? 'block' : 'none';
+cursorLine.style.display =
+  visible ? 'block' : 'none';
 
   cursorPointer.style.display = 'block';
 }
