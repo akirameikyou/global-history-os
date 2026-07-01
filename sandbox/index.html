@@ -2109,6 +2109,27 @@ function renderUI(year){
     timeline.appendChild(item);
   });
 }
+
+function renderTimelineGuideLines(){
+  const guideLayer = document.getElementById('timelineGuideLines');
+  if(!guideLayer) return;
+
+  guideLayer.innerHTML = '';
+
+  const guideYears = [1800, 1825, 1850, 1875, 1900];
+
+  guideYears.forEach(year => {
+    const ratio = (year - 1800) / 100;
+    const x = ratio * 520;
+
+    const line = document.createElement('div');
+    line.className = 'timeline-guide-line';
+    line.style.left = `${x}px`;
+
+    guideLayer.appendChild(line);
+  });
+}
+  
 renderWorldLinks();
 renderPersonLinks();
 renderTimelineWorldBars();
