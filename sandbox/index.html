@@ -2147,16 +2147,25 @@ function updateTimelineCursorLine() {
 }
 
 function updatePLinkCursorLine(){
+
   if(!timelinePLinkCursorLine) return;
 
-  const year = Number(slider.value);
-  const min = Number(slider.min);
-  const max = Number(slider.max);
+  const year = parseInt(slider.value);
 
-  const ratio = (year - min) / (max - min);
-  const x = ratio * timeline.offsetWidth;
+  const ratio =
+    (year - 1800) / 100;
+
+  const x =
+    ratio * 520;
 
   timelinePLinkCursorLine.style.left = `${x}px`;
+
+  const visible =
+    timelineSubLanes.style.display === 'flex';
+
+  timelinePLinkCursorLine.style.display =
+    visible ? 'block' : 'none';
+
 }
   
 function showActiveWorldLayerCard(year) {
