@@ -202,3 +202,17 @@ John Manjiro Mode as its first fully realized experience.
 John Manjiro Mode
 
 を最初の完成作品として実装することを最優先としている。
+
+---
+
+# Current Implementation Status / 現在の実装状況
+
+The root-level index.html / main.js is a stable reference implementation.
+
+ルート直下の index.html / main.js は、
+安定したリファレンス実装として維持されている。
+
+The active development of John Manjiro Mode is happening in sandbox/index.html.
+
+John Manjiro Mode の本命実装は、
+sandbox/index.html 側で進行中である。

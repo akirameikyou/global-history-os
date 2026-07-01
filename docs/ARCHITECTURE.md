@@ -47,7 +47,8 @@ global-history-os/
 
 data/
   events.js
-  geoLayers.js
+  persons.js
+  geo/countries.geojson
 
 docs/
   CURRENT_STATE.md
@@ -58,6 +59,8 @@ sandbox/
   index.html
   main.js
   renderGlobe.js
+  geoJsonLayer.js
+  polygonLayerManager.js
 
 README.md
 4. Layer Architecture
