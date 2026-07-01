@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -72,6 +73,24 @@ min-width:0;
   
 #timelineBar{position:absolute;left:50%;bottom:38px;transform:translateX(-50%);z-index:30;width:520px;display:flex;flex-direction:column;align-items:center;gap:12px;}
 
+#timelineGuideLines{
+position:absolute;
+left:0;
+top:112px;
+width:520px;
+height:520px;
+pointer-events:none;
+z-index:30;
+}
+
+.timeline-guide-line{
+position:absolute;
+top:0;
+width:1px;
+height:520px;
+background:rgba(255,255,255,0.08);
+}
+  
 #timelineYear{
 font-size:14px;
 letter-spacing:0.25em;
@@ -237,7 +256,7 @@ position:absolute;
 left:0;
 top:112px;
 width:1px;
-height:210px;
+height:520px;
 background:rgba(255,255,255,0.28);
 box-shadow:0 0 8px rgba(102,224,255,0.55);
 display:none;
@@ -784,6 +803,7 @@ border-radius:999px;
   <div id="linkCardTrace" class="link-card-trace"></div>
 </div>
 <div id="timelineBar">
+  <div id="timelineGuideLines"></div>
   <div id="timelineYear">1850</div>
   <div id="timelineEra"></div>
   <div id="timelineRoute"></div>
@@ -871,8 +891,7 @@ const chapterCycle = [
   'howland',
   'franklin',
   'gold_rush',
-  'return',
-  'edo'
+  'return'
 ];
 
 let chapterIndex = 0;  
@@ -1072,26 +1091,6 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   placeName:'Japan',
   placeShort:'JAPAN',
   regionName:'Opening of Japan'
- },
- {
-  id:'franco_prussian_war',
-  label:'FRANCO-PRUSSIAN WAR',
-  startYear:1870,
-  endYear:1871,
-  color:'#ff8f4d',
-
-  description:'プロイセンとフランスの戦争。ヨーロッパの勢力図を大きく塗り替えた。',
-
-  cardText:'普仏戦争はヨーロッパ内の戦争であったが、明治政府はこれを対岸の火事とせず、視察団を派遣して近代戦争・国家統一・軍制の実態を学ぼうとした。万次郎はこの視察団の一員としてアメリカ経由でヨーロッパへ向かう。個人の海洋接続が、国家の対外情報収集網へ組み込まれていく過程がここに現れている。',
-
-  meaning:'明治国家の対外情報収集の始まり',
-
-  lat:48.8566,
-  lng:2.3522,
-  altitude:1.65,
-  placeName:'Paris / Europe',
-  placeShort:'PARIS',
-  regionName:'Franco-Prussian War'
  }
 ];
   
@@ -1156,7 +1155,10 @@ personLinkToggle.onclick = () => {
   if(!personLinksVisible){
     linkCard.style.display = 'none';
   }
+
+  updateTimelineCursorLine();
 };
+  
 function isActive(event, year){
   if(event.endYear){
     return event.startYear <= year && year <= event.endYear;
@@ -2108,6 +2110,28 @@ function renderUI(year){
     timeline.appendChild(item);
   });
 }
+
+function renderTimelineGuideLines(){
+  const guideLayer = document.getElementById('timelineGuideLines');
+  if(!guideLayer) return;
+
+  guideLayer.innerHTML = '';
+
+  const guideYears = [1800, 1825, 1850, 1875, 1900];
+
+  guideYears.forEach(year => {
+    const ratio = (year - 1800) / 100;
+    const x = ratio * 520;
+
+    const line = document.createElement('div');
+    line.className = 'timeline-guide-line';
+    line.style.left = `${x}px`;
+
+    guideLayer.appendChild(line);
+  });
+}
+
+renderTimelineGuideLines();  
 renderWorldLinks();
 renderPersonLinks();
 renderTimelineWorldBars();
@@ -2143,10 +2167,11 @@ function updateTimelineCursorLine() {
   cursorPointer.style.left = `${x}px`;
 
   const visible =
-    timelineWorldLinks.style.display === 'flex';
+  timelineWorldLinks.style.display === 'flex' ||
+  timelineSubLanes.style.display === 'flex';
 
-    cursorLine.style.display =
-    visible ? 'block' : 'none';
+cursorLine.style.display =
+  visible ? 'block' : 'none';
 
   cursorPointer.style.display = 'block';
 }
