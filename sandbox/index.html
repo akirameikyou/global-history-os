@@ -1135,7 +1135,10 @@ personLinkToggle.onclick = () => {
   if(!personLinksVisible){
     linkCard.style.display = 'none';
   }
+
+  updateTimelineCursorLine();
 };
+  
 function isActive(event, year){
   if(event.endYear){
     return event.startYear <= year && year <= event.endYear;
