@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -244,18 +245,6 @@ pointer-events:none;
 z-index:31;
 }
 
-#timelinePLinkCursorLine{
-  position:absolute;
-  top:58px;
-  width:1px;
-  height:42px;
-  background:rgba(102,224,255,.95);
-  box-shadow:0 0 10px rgba(102,224,255,.85);
-  pointer-events:none;
-  display:none;
-  z-index:8;
-}
-  
 #timelineCursorPointer{
 position:absolute;
 top:92px;
@@ -824,7 +813,6 @@ border-radius:999px;
   <div id="timelineMeaning"></div>
   <div id="timelineCursorPointer"></div>
   <div id="timelineCursorLine"></div>
-  <div id="timelinePLinkCursorLine"></div>
   <div id="timelineWorldLinks"></div>
   <div id="timelineSubLanes"></div>
 </div>
@@ -852,8 +840,7 @@ document.getElementById('chapterToggle');
 const personLinkToggle = document.getElementById('personLinkToggle');
 const worldLinkToggle = document.getElementById('worldLinkToggle');
 const timelineWorldLinks = document.getElementById('timelineWorldLinks');
-const timelineSubLanes = document.getElementById('timelineSubLanes');
-const timelinePLinkCursorLine = document.getElementById('timelinePLinkCursorLine');  
+const timelineSubLanes = document.getElementById('timelineSubLanes'); 
 const linkCard = document.getElementById('linkCard');
 const linkCardClose = document.getElementById('linkCardClose');
 const personCardPinButton = document.getElementById('personCardPinButton');
@@ -1148,9 +1135,6 @@ personLinkToggle.onclick = () => {
   if(!personLinksVisible){
     linkCard.style.display = 'none';
   }
-
-  updatePLinkCursorLine();
-
 };
 function isActive(event, year){
   if(event.endYear){
@@ -1181,7 +1165,6 @@ function goToConnection(year, focus){
   renderTimelineMeaning(year);
   renderYear(year);
   renderUI(year);
-  updatePLinkCursorLine();
 
   if(focus === 'torishima'){
     const torishimaEvent = events.find(event =>
@@ -2147,28 +2130,6 @@ function updateTimelineCursorLine() {
   cursorPointer.style.display = 'block';
 }
 
-function updatePLinkCursorLine(){
-
-  if(!timelinePLinkCursorLine) return;
-
-  const year = parseInt(slider.value);
-
-  const ratio =
-    (year - 1800) / 100;
-
-  const x =
-    ratio * 520;
-
-  timelinePLinkCursorLine.style.left = `${x}px`;
-
-  const visible =
-    timelineSubLanes.style.display === 'flex';
-
-  timelinePLinkCursorLine.style.display =
-    visible ? 'block' : 'none';
-
-}
-  
 function showActiveWorldLayerCard(year) {
   if (!worldLinksVisible) return;
 
@@ -2204,7 +2165,6 @@ slider.addEventListener('input', e => {
 
     renderWorldLinks();
   updateTimelineCursorLine();
-  updatePLinkCursorLine();
   showActiveWorldLayerCard(year);
 });
 </script>
