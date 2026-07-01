@@ -1148,6 +1148,9 @@ personLinkToggle.onclick = () => {
   if(!personLinksVisible){
     linkCard.style.display = 'none';
   }
+
+  updatePLinkCursorLine();
+
 };
 function isActive(event, year){
   if(event.endYear){
