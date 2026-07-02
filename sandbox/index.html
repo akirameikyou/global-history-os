@@ -494,7 +494,50 @@ font-size:11px;
 cursor:pointer;
 backdrop-filter:blur(10px);
 }
-  
+
+/* ── Focus Person Prototype: Aikido / Morihei Ueshiba (experimental, independent layer) ── */
+#aikidoToggle{
+position:absolute;
+right:600px;
+bottom:40px;
+z-index:83;
+background:rgba(168,214,148,0.08);
+border:1px solid rgba(168,214,148,0.26);
+color:#a8d694;
+padding:10px 22px;
+letter-spacing:0.2em;
+font-size:11px;
+cursor:pointer;
+backdrop-filter:blur(10px);
+}
+
+#aikidoFocusPanel{
+display:none;
+}
+
+#aikidoFocusPanel .focus-years{
+color:#a8d694;
+}
+
+#aikidoFocusPanel .aikido-chrono-item{
+margin-bottom:16px;
+cursor:pointer;
+}
+
+#aikidoFocusPanel .aikido-chrono-year{
+font-size:13px;
+font-weight:700;
+letter-spacing:0.16em;
+color:#a8d694;
+margin-bottom:8px;
+}
+
+#aikidoFocusPanel .aikido-chrono-text{
+font-size:14px;
+line-height:1.55;
+color:rgba(255,255,255,0.84);
+}
+
 #linkCard{
 position:absolute;
 left:52px;
@@ -765,7 +808,7 @@ border-radius:999px;
   <div id="worldEvents"></div>
 </div>
 
-<div class="right-panel">
+<div class="right-panel" id="manjiroFocusPanel">
   <div class="focus-kicker">FOCUS / PERSON</div>
   <div class="focus-name">JOHN<br>MANJIRO</div>
   <div class="focus-years">1827 — 1898</div>
@@ -783,11 +826,29 @@ border-radius:999px;
 
   <div id="timeline"></div>
 </div>
-<button id="chapterToggle">CHAPTER</button>  
+
+<!-- Focus Person Prototype (experimental, independent of John Manjiro Mode) -->
+<div class="right-panel" id="aikidoFocusPanel">
+  <div class="focus-kicker">FOCUS / PERSON</div>
+  <div class="focus-name">MORIHEI<br>UESHIBA</div>
+  <div class="focus-years">1883 — 1969</div>
+
+  <img
+    class="focus-image"
+    src="../assets/portraits/morihei-ueshiba-portrait.jpg"
+  />
+
+  <div class="focus-abstract" id="aikidoFocusAbstract"></div>
+
+  <div id="aikidoChronology"></div>
+</div>
+
+<button id="chapterToggle">CHAPTER</button>
 <button id="worldLinkToggle">W-LINK</button>
 <button id="personLinkToggle">P-LINK</button>
 <button id="gridToggle">GRID</button>
 <button id="borderToggle">BORDERS</button>
+<button id="aikidoToggle">AIKIDO</button>
 <div id="linkCard">
   <div id="linkCardClose" class="link-card-close">×</div>
   <button id="personCardPinButton">PIN</button>
@@ -840,7 +901,9 @@ border-radius:999px;
 <script type="module">
 import { events } from '../data/events.js';
 import { personLinks } from '../data/persons.js';
-  
+import { aikidoPersonFocus, aikidoChronology } from '../data/aikido_person.js';
+import { aikidoEvents } from '../data/aikido_events.js';
+
 import {
   world,
   renderYear,
@@ -853,6 +916,10 @@ import {
 const worldEventsEl = document.getElementById('worldEvents');
 const timeline = document.getElementById('timeline');
 const borderToggle = document.getElementById('borderToggle');
+const aikidoToggle = document.getElementById('aikidoToggle');
+const aikidoFocusPanel = document.getElementById('aikidoFocusPanel');
+const aikidoFocusAbstract = document.getElementById('aikidoFocusAbstract');
+const aikidoChronologyEl = document.getElementById('aikidoChronology');
 const gridToggle =
 document.getElementById('gridToggle'); 
 const chapterToggle =
@@ -2213,6 +2280,127 @@ slider.addEventListener('input', e => {
   updateTimelineCursorLine();
   showActiveWorldLayerCard(year);
 });
+
+/* ── Focus Person Prototype: Aikido / Morihei Ueshiba ──
+   独立レイヤー。John Manjiro Mode の年表・W-LINK・航路には依存しない。
+   目的：History OS の Focus Person 表示が特定人物専用ではなく
+   汎用プラットフォームとして成立するかの検証。 */
+
+const manjiroFocusPanel = document.getElementById('manjiroFocusPanel');
+
+aikidoFocusAbstract.textContent = aikidoPersonFocus.relation;
+
+function renderAikidoChronology(){
+  aikidoChronologyEl.innerHTML = '';
+
+  aikidoChronology.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'aikido-chrono-item';
+
+    el.innerHTML = `
+      <div class="aikido-chrono-year">${item.year}</div>
+      <div class="aikido-chrono-text">${item.text}</div>
+    `;
+
+    el.onclick = () => {
+      const place = aikidoEvents.find(event => event.id === item.eventId);
+      if (!place) return;
+
+      world.pointOfView({
+        lat: place.lat,
+        lng: place.lng,
+        altitude: 1.4
+      }, 1200);
+    };
+
+    aikidoChronologyEl.appendChild(el);
+  });
+}
+
+renderAikidoChronology();
+
+let aikidoVisible = false;
+
+/* 地球上の主要地点表示。
+   three-globe の htmlElementsData/CSS2DRenderer は、このページで Three.js が
+   複数回読み込まれる構成（既存の THREE.WARNING）により正しく描画されないため、
+   renderGlobe.js の updateLabels() と同じ手法（getCoords / getScreenCoords による
+   手動スクリーン座標計算）を独立実装する。renderGlobe.js 自体は変更しない。 */
+const aikidoPointsLayer = document.createElement('div');
+aikidoPointsLayer.id = 'aikidoPointsLayer';
+aikidoPointsLayer.style.position = 'absolute';
+aikidoPointsLayer.style.left = '0';
+aikidoPointsLayer.style.top = '0';
+aikidoPointsLayer.style.pointerEvents = 'none';
+document.getElementById('globeViz').appendChild(aikidoPointsLayer);
+
+const aikidoPointEls = aikidoEvents.map(point => {
+  const el = document.createElement('div');
+  el.title = `${point.title} (${point.year})`;
+  el.style.position = 'absolute';
+  el.style.width = '10px';
+  el.style.height = '10px';
+  el.style.marginLeft = '-5px';
+  el.style.marginTop = '-5px';
+  el.style.borderRadius = '999px';
+  el.style.background = '#a8d694';
+  el.style.boxShadow = '0 0 8px rgba(168,214,148,0.85)';
+  el.style.cursor = 'pointer';
+  el.style.pointerEvents = 'auto';
+  el.style.display = 'none';
+
+  el.onclick = () => {
+    world.pointOfView({ lat: point.lat, lng: point.lng, altitude: 1.4 }, 1200);
+  };
+
+  aikidoPointsLayer.appendChild(el);
+  return { point, el };
+});
+
+function updateAikidoPoints() {
+  if (aikidoVisible) {
+    const camera = world.camera();
+    const camLen = Math.hypot(camera.position.x, camera.position.y, camera.position.z);
+
+    aikidoPointEls.forEach(({ point, el }) => {
+      const pos = world.getCoords(point.lat, point.lng, 0.02);
+      const posLen = Math.hypot(pos.x, pos.y, pos.z);
+
+      const facingDot =
+        (camera.position.x * pos.x + camera.position.y * pos.y + camera.position.z * pos.z) /
+        (camLen * posLen);
+
+      if (facingDot < 0.12) {
+        el.style.display = 'none';
+        return;
+      }
+
+      const screen = world.getScreenCoords(point.lat, point.lng, 0.02);
+      if (!screen) {
+        el.style.display = 'none';
+        return;
+      }
+
+      el.style.display = 'block';
+      el.style.left = `${screen.x}px`;
+      el.style.top = `${screen.y}px`;
+    });
+  }
+}
+
+updateAikidoPoints();
+setInterval(updateAikidoPoints, 100);
+
+aikidoToggle.onclick = () => {
+  aikidoVisible = !aikidoVisible;
+
+  aikidoFocusPanel.style.display = aikidoVisible ? 'block' : 'none';
+  manjiroFocusPanel.style.display = aikidoVisible ? 'none' : 'block';
+
+  if (!aikidoVisible) {
+    aikidoPointEls.forEach(({ el }) => { el.style.display = 'none'; });
+  }
+};
 </script>
 
 </body>
