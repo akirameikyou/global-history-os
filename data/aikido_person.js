@@ -5,9 +5,11 @@
 export const aikidoPersonFocus = {
   id: 'ueshiba',
   label: 'UESHIBA',
+  displayName: ['MORIHEI', 'UESHIBA'],
   fullName: '植芝盛平 / Morihei Ueshiba',
   birthYear: 1883,
   deathYear: 1969,
+  years: '1883 — 1969',
   relationType: 'AIKIDO FOUNDER',
   portrait: '../assets/portraits/morihei-ueshiba-portrait.jpg',
   relation:

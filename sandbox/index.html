@@ -810,15 +810,16 @@ border-radius:999px;
 
 <div class="right-panel" id="manjiroFocusPanel">
   <div class="focus-kicker">FOCUS / PERSON</div>
-  <div class="focus-name">JOHN<br>MANJIRO</div>
-  <div class="focus-years">1827 — 1898</div>
+  <div class="focus-name" id="manjiroFocusName">JOHN<br>MANJIRO</div>
+  <div class="focus-years" id="manjiroFocusYears">1827 — 1898</div>
 
   <img
   class="focus-image"
+  id="manjiroFocusImage"
   src="../assets/portraits/john-manjiro-portrait.jpg"
 />
 
-  <div class="focus-abstract">
+  <div class="focus-abstract" id="manjiroFocusAbstract">
     ジョン万次郎は、日本とアメリカを結んだ幕末の航海者。
     漂流、鳥島でのサバイバル、アメリカ渡航、帰国後の開国支援まで、
     19世紀の太平洋世界を横断した人物。
@@ -830,11 +831,12 @@ border-radius:999px;
 <!-- Focus Person Prototype (experimental, independent of John Manjiro Mode) -->
 <div class="right-panel" id="aikidoFocusPanel">
   <div class="focus-kicker">FOCUS / PERSON</div>
-  <div class="focus-name">MORIHEI<br>UESHIBA</div>
-  <div class="focus-years">1883 — 1969</div>
+  <div class="focus-name" id="aikidoFocusName">MORIHEI<br>UESHIBA</div>
+  <div class="focus-years" id="aikidoFocusYears">1883 — 1969</div>
 
   <img
     class="focus-image"
+    id="aikidoFocusImage"
     src="../assets/portraits/morihei-ueshiba-portrait.jpg"
   />
 
@@ -2288,7 +2290,38 @@ slider.addEventListener('input', e => {
 
 const manjiroFocusPanel = document.getElementById('manjiroFocusPanel');
 
-aikidoFocusAbstract.textContent = aikidoPersonFocus.relation;
+/* ── Focus Person Platform prototype ──
+   右欄（名前・生没年・肖像・要約）を人物データから描画する共通関数。
+   Manjiro Modeの見た目・挙動は変更せず、静的HTMLだった内容を
+   同一の描画経路に載せ替えるだけにとどめる（年表/#timelineは対象外）。 */
+
+const manjiroFocusData = {
+  displayName: ['JOHN', 'MANJIRO'],
+  years: '1827 — 1898',
+  portrait: '../assets/portraits/john-manjiro-portrait.jpg',
+  abstract: 'ジョン万次郎は、日本とアメリカを結んだ幕末の航海者。漂流、鳥島でのサバイバル、アメリカ渡航、帰国後の開国支援まで、19世紀の太平洋世界を横断した人物。'
+};
+
+function renderFocusPersonHeader(refs, data){
+  refs.nameEl.innerHTML = data.displayName.join('<br>');
+  refs.yearsEl.textContent = data.years;
+  refs.imageEl.src = data.portrait;
+  refs.abstractEl.textContent = data.abstract;
+}
+
+renderFocusPersonHeader({
+  nameEl: document.getElementById('manjiroFocusName'),
+  yearsEl: document.getElementById('manjiroFocusYears'),
+  imageEl: document.getElementById('manjiroFocusImage'),
+  abstractEl: document.getElementById('manjiroFocusAbstract')
+}, manjiroFocusData);
+
+renderFocusPersonHeader({
+  nameEl: document.getElementById('aikidoFocusName'),
+  yearsEl: document.getElementById('aikidoFocusYears'),
+  imageEl: document.getElementById('aikidoFocusImage'),
+  abstractEl: aikidoFocusAbstract
+}, { ...aikidoPersonFocus, abstract: aikidoPersonFocus.relation });
 
 function renderAikidoChronology(){
   aikidoChronologyEl.innerHTML = '';
