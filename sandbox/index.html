@@ -905,6 +905,7 @@ import { events } from '../data/events.js';
 import { personLinks } from '../data/persons.js';
 import { aikidoPersonFocus, aikidoChronology } from '../data/aikido_person.js';
 import { aikidoEvents } from '../data/aikido_events.js';
+import { aikidoDojos } from '../data/aikido_dojos.js';
 
 import {
   world,
@@ -2424,6 +2425,70 @@ function updateAikidoPoints() {
 updateAikidoPoints();
 setInterval(updateAikidoPoints, 100);
 
+/* 世界の合氣道普及分布（代表地点）。生涯拠点(aikidoPointsLayer)より小さく
+   控えめな光点として表示し、視覚的な主役はあくまでFocus Personの生涯地点に
+   留める。座標の性質については data/aikido_dojos.js のコメントを参照。 */
+const aikidoDojoLayer = document.createElement('div');
+aikidoDojoLayer.id = 'aikidoDojoLayer';
+aikidoDojoLayer.style.position = 'absolute';
+aikidoDojoLayer.style.left = '0';
+aikidoDojoLayer.style.top = '0';
+aikidoDojoLayer.style.pointerEvents = 'none';
+document.getElementById('globeViz').appendChild(aikidoDojoLayer);
+
+const aikidoDojoEls = aikidoDojos.map(dojo => {
+  const el = document.createElement('div');
+  el.title = `${dojo.country} / ${dojo.city}`;
+  el.style.position = 'absolute';
+  el.style.width = '4px';
+  el.style.height = '4px';
+  el.style.marginLeft = '-2px';
+  el.style.marginTop = '-2px';
+  el.style.borderRadius = '999px';
+  el.style.background = 'rgba(168,214,148,0.9)';
+  el.style.boxShadow = '0 0 5px rgba(168,214,148,0.75)';
+  el.style.display = 'none';
+
+  aikidoDojoLayer.appendChild(el);
+  return { dojo, el };
+});
+
+function updateAikidoDojos() {
+  if (aikidoVisible) {
+    const camera = world.camera();
+    const camLen = Math.hypot(camera.position.x, camera.position.y, camera.position.z);
+
+    aikidoDojoEls.forEach(({ dojo, el }) => {
+      const pos = world.getCoords(dojo.lat, dojo.lng, 0.01);
+      const posLen = Math.hypot(pos.x, pos.y, pos.z);
+
+      const facingDot =
+        (camera.position.x * pos.x + camera.position.y * pos.y + camera.position.z * pos.z) /
+        (camLen * posLen);
+
+      if (facingDot < 0.12) {
+        el.style.display = 'none';
+        return;
+      }
+
+      const screen = world.getScreenCoords(dojo.lat, dojo.lng, 0.01);
+      if (!screen) {
+        el.style.display = 'none';
+        return;
+      }
+
+      el.style.display = 'block';
+      el.style.left = `${screen.x}px`;
+      el.style.top = `${screen.y}px`;
+    });
+  } else {
+    aikidoDojoEls.forEach(({ el }) => { el.style.display = 'none'; });
+  }
+}
+
+updateAikidoDojos();
+setInterval(updateAikidoDojos, 100);
+
 aikidoToggle.onclick = () => {
   aikidoVisible = !aikidoVisible;
 
@@ -2432,6 +2497,7 @@ aikidoToggle.onclick = () => {
 
   if (!aikidoVisible) {
     aikidoPointEls.forEach(({ el }) => { el.style.display = 'none'; });
+    aikidoDojoEls.forEach(({ el }) => { el.style.display = 'none'; });
   }
 };
 </script>
