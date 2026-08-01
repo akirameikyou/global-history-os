@@ -6,13 +6,20 @@
 <title>AIKIDO FOCUS — History OS</title>
 <style>
 :root{
-  --accent:#a8d694;
-  --bg:#07110b;
-  --panel:rgba(7,17,11,0.46);
-  --rule:rgba(255,255,255,0.08);
-  --text:#eef6f0;
-  --dim:rgba(238,246,240,0.45);
+  --blue:#658cff;        /* 植芝盛平（人物） */
+  --blue-soft:#8aa9ff;
+  --amber:#e5a93c;       /* ワールドイベント */
+  --amber-soft:#f0c266;
+  --teal:#57c9c0;        /* 道場設立(A) */
+  --term:#b79cff;        /* 用語リンク（知識レイヤー） */
+  --accent:var(--blue);
+  --bg:#060912;
+  --panel:rgba(12,18,32,0.52);
+  --rule:rgba(255,255,255,0.09);
+  --text:#eef1f8;
+  --dim:rgba(238,241,248,0.40);
 }
+*{box-sizing:border-box;}
 html,body{
   margin:0;padding:0;width:100%;height:100%;overflow:hidden;
   background:var(--bg);color:var(--text);
@@ -25,67 +32,116 @@ html,body{
   z-index:10;text-align:center;pointer-events:none;
 }
 .title h1{margin:0;font-size:24px;font-weight:700;letter-spacing:9px;}
-.title p{margin-top:8px;font-size:11px;letter-spacing:5px;color:var(--accent);}
+.title p{margin-top:8px;font-size:11px;letter-spacing:5px;color:var(--blue-soft);}
 
 .panel{
   position:absolute;z-index:20;box-sizing:border-box;
   border:1px solid var(--rule);background:var(--panel);
-  backdrop-filter:blur(9px);overflow:auto;
+  backdrop-filter:blur(9px);overflow:auto;border-radius:4px;
 }
 .panel::-webkit-scrollbar{width:6px;}
-.panel::-webkit-scrollbar-thumb{background:rgba(168,214,148,0.22);}
-.panel h2{margin:0 0 20px 0;font-size:13px;font-weight:700;letter-spacing:5px;color:var(--accent);}
+.panel::-webkit-scrollbar-thumb{background:rgba(138,169,255,0.25);border-radius:3px;}
+.panel h2{margin:0 0 18px 0;font-size:13px;font-weight:700;letter-spacing:5px;}
 
-/* LEFT: WORLD EVENTS */
-.left-panel{left:22px;top:110px;width:260px;height:calc(100% - 240px);padding:22px;}
-.we-item{padding:12px 12px;margin-bottom:6px;cursor:pointer;border-left:2px solid transparent;transition:.2s;}
-.we-item:hover{background:rgba(168,214,148,0.06);}
-.we-item.active{border-left-color:var(--accent);background:rgba(168,214,148,0.08);}
-.we-item.dim{opacity:0.32;}
-.we-year{font-size:14px;color:var(--accent);letter-spacing:1px;}
+/* LEFT: WORLD EVENTS（アンバー系） */
+.left-panel{left:22px;top:110px;width:262px;height:calc(100% - 240px);padding:22px;}
+.left-panel h2{color:var(--amber-soft);}
+.we-item{padding:11px 12px;margin-bottom:6px;cursor:pointer;border-left:2px solid transparent;transition:.2s;border-radius:3px;}
+.we-item:hover{background:rgba(229,169,60,0.08);}
+.we-item.active{border-left-color:var(--amber);background:rgba(229,169,60,0.10);}
+.we-item.dim{opacity:0.34;}
+.we-year{font-size:14px;color:var(--amber-soft);letter-spacing:1px;}
 .we-title{font-size:14px;margin-top:4px;}
-.we-desc{font-size:11px;color:var(--dim);margin-top:4px;line-height:1.6;}
+.we-desc{font-size:12.5px;color:rgba(238,241,248,0.72);margin-top:5px;line-height:1.7;}
 
-/* RIGHT: FOCUS PANEL */
-.focus-panel{right:22px;top:110px;width:330px;height:calc(100% - 240px);padding:24px;}
-.focus-kicker{font-size:10px;letter-spacing:5px;color:var(--accent);}
-
+/* RIGHT: FOCUS PANEL（ブルー系） */
+.focus-panel{right:22px;top:110px;width:332px;height:calc(100% - 240px);padding:24px;}
+.focus-kicker{font-size:10px;letter-spacing:5px;color:var(--blue-soft);}
 .focus-portrait-wrap{
   width:112px;height:112px;border-radius:999px;overflow:hidden;
-  margin-top:16px;border:1px solid rgba(168,214,148,0.35);
+  margin-top:16px;border:1px solid rgba(101,140,255,0.4);
   background:rgba(255,255,255,0.05);
 }
-.focus-portrait{
-  width:100%;height:100%;object-fit:cover;
-  object-position:50% 20%; /* 顔（目・鼻）が円の中心に来るよう調整 */
-}
-
+.focus-portrait{width:100%;height:100%;object-fit:cover;object-position:50% 20%;}
 .focus-title{font-size:21px;font-weight:700;margin-top:16px;line-height:1.4;letter-spacing:0.06em;}
-.focus-sub{font-size:12px;color:var(--accent);margin-top:6px;letter-spacing:2px;}
-.focus-body{margin-top:18px;font-size:12.5px;line-height:1.95;color:rgba(238,246,240,0.82);}
-
+.focus-sub{font-size:12px;color:var(--blue-soft);margin-top:6px;letter-spacing:2px;}
+.focus-body{margin-top:18px;font-size:12.5px;line-height:1.95;color:rgba(238,241,248,0.84);}
 .focus-chrono-title{margin-top:24px;padding-top:16px;border-top:1px solid var(--rule);font-size:10px;letter-spacing:3px;color:var(--dim);}
 .focus-chrono{margin-top:12px;}
-.chrono-item{margin-bottom:14px;cursor:pointer;}
-.chrono-item.inert{cursor:default;opacity:0.7;}
-.chrono-year{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:1px;}
-.chrono-text{font-size:12.5px;line-height:1.6;color:rgba(238,246,240,0.85);margin-top:3px;}
+.chrono-item{margin-bottom:13px;cursor:pointer;transition:opacity .25s, color .25s;}
+.chrono-item.inert{cursor:default;}
+.chrono-item.dim{opacity:0.34;}                 /* 中央バー未到達＝薄グレー */
+.chrono-item.active .chrono-text{color:#fff;}
+.chrono-year{font-size:13px;font-weight:700;color:var(--blue-soft);letter-spacing:1px;}
+.chrono-item .chrono-age{font-size:10.5px;color:var(--blue-soft);opacity:.92;margin-left:6px;letter-spacing:1px;}
+.chrono-text{font-size:12.5px;line-height:1.65;color:rgba(238,241,248,0.78);margin-top:3px;}
 
-.focus-back{margin-top:22px;font-size:11px;color:var(--accent);cursor:pointer;letter-spacing:1px;}
-.focus-back:hover{text-decoration:underline;}
+/* 用語リンク（クリックで語釈カード） */
+.term{color:var(--term);cursor:pointer;border-bottom:1px dotted rgba(183,156,255,0.7);}
+.term:hover{color:#d3c4ff;border-bottom-color:#d3c4ff;}
+
+/* 浮遊 詳細カード（クリックした項目の横に出る） */
+#cardLayer{position:fixed;inset:0;z-index:60;pointer-events:none;}
+.detail-card{
+  position:absolute;pointer-events:auto;width:330px;max-width:min(330px,86vw);
+  background:rgba(14,20,34,0.94);backdrop-filter:blur(12px);
+  border:1px solid var(--rule);border-left:3px solid var(--blue);
+  border-radius:8px;box-shadow:0 18px 46px rgba(0,0,0,0.5);
+  overflow:hidden;animation:cardIn .18s ease-out;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(6px) scale(.98);}to{opacity:1;transform:none;}}
+.detail-card[data-kind="world"]{border-left-color:var(--amber);}
+.detail-card[data-kind="dojoFound"]{border-left-color:var(--teal);}
+.detail-card[data-kind="firstContact"]{border-left-color:var(--amber);}
+.detail-card[data-kind="term"]{border-left-color:var(--term);}
+.detail-card[data-kind="dojo"]{border-left-color:var(--blue-soft);}
+.dc-head{
+  display:flex;align-items:center;gap:8px;padding:11px 11px 11px 14px;
+  cursor:move;user-select:none;border-bottom:1px solid var(--rule);
+}
+/* 折りたたみ時も種別＋名称が分かるタグ＆見出し */
+.dc-tag{
+  flex:0 0 auto;font-size:9.5px;letter-spacing:1.5px;font-weight:700;
+  padding:2px 7px;border-radius:9px;border:1px solid currentColor;color:var(--blue-soft);
+}
+.detail-card[data-kind="world"] .dc-tag,.detail-card[data-kind="firstContact"] .dc-tag{color:var(--amber-soft);}
+.detail-card[data-kind="dojoFound"] .dc-tag{color:var(--teal);}
+.detail-card[data-kind="term"] .dc-tag{color:var(--term);}
+.dc-headtitle{flex:1 1 auto;font-size:13.5px;font-weight:700;line-height:1.35;letter-spacing:.02em;min-width:0;}
+.dc-head .dc-spacer{flex:0 0 auto;}
+.dc-btn{
+  flex:0 0 auto;width:22px;height:22px;border-radius:5px;border:1px solid var(--rule);
+  background:transparent;color:var(--text);cursor:pointer;font-size:12px;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:.15s;
+}
+.dc-btn:hover{background:rgba(255,255,255,0.1);}
+.dc-body{padding:14px 16px 18px;max-height:60vh;overflow:auto;}
+.detail-card.collapsed .dc-body{display:none;}
+.dc-title{font-size:17px;font-weight:700;line-height:1.4;letter-spacing:0.03em;}
+.dc-sub{font-size:11px;color:var(--blue-soft);margin-top:6px;letter-spacing:1.5px;}
+.detail-card[data-kind="world"] .dc-sub,.detail-card[data-kind="firstContact"] .dc-sub{color:var(--amber-soft);}
+.detail-card[data-kind="dojoFound"] .dc-sub{color:var(--teal);}
+.detail-card[data-kind="term"] .dc-sub{color:var(--term);}
+.dc-text{margin-top:12px;font-size:13px;line-height:1.9;color:rgba(238,241,248,0.9);}
+.dc-body::-webkit-scrollbar{width:6px;}
+.dc-body::-webkit-scrollbar-thumb{background:rgba(138,169,255,0.25);border-radius:3px;}
 
 /* BOTTOM: TIMELINE */
 .timeline{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:52%;max-width:720px;z-index:30;}
 .timeline-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px;}
-#yearLabel{font-size:44px;color:var(--accent);letter-spacing:4px;line-height:1;}
+#yearLabel{font-size:44px;color:var(--blue-soft);letter-spacing:4px;line-height:1;}
 .range-note{font-size:11px;color:var(--dim);letter-spacing:1px;}
-
 .slider-wrap{position:relative;}
 #yearMarkers{position:absolute;left:0;right:0;top:-4px;height:0;pointer-events:none;}
 .marker{position:absolute;top:0;width:1px;height:12px;background:rgba(255,255,255,0.22);transform:translateX(-50%);pointer-events:auto;cursor:pointer;}
-.marker.reached{background:var(--accent);box-shadow:0 0 6px var(--accent);}
+.marker.reached{background:var(--blue);box-shadow:0 0 6px var(--blue);}
 .marker:hover{height:16px;}
-#eraSlider{width:100%;margin-top:14px;accent-color:var(--accent);}
+#eraSlider{width:100%;margin-top:14px;accent-color:var(--blue);}
+
+/* 凡例 */
+.legend{position:absolute;left:22px;bottom:34px;z-index:30;font-size:10.5px;color:var(--dim);letter-spacing:.5px;line-height:1.9;}
+.legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:0;}
+.lg-blue{background:var(--blue);} .lg-teal{background:var(--teal);} .lg-amber{background:var(--amber);} .lg-net{background:var(--dim);}
 </style>
 </head>
 <body>
@@ -104,6 +160,13 @@ html,body{
 
 <div class="panel focus-panel" id="focusPanel"></div>
 
+<div class="legend">
+  <div><b class="lg-blue"></b>植芝盛平（生涯拠点）</div>
+  <div><b class="lg-teal"></b>各国 道場設立</div>
+  <div><b class="lg-amber"></b>初到達 / ワールドイベント</div>
+  <div><b class="lg-net"></b>現在の加盟分布</div>
+</div>
+
 <div class="timeline">
   <div class="timeline-head">
     <div id="yearLabel">1880</div>
@@ -114,6 +177,8 @@ html,body{
     <input type="range" id="eraSlider" min="1880" max="2026" value="1880" />
   </div>
 </div>
+
+<div id="cardLayer"></div>
 
 <script type="module" src="./aikidoMain.js"></script>
 </body>

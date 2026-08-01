@@ -105,3 +105,42 @@ export const aikidoDojos = [
   { id: 'dojo_uz', country: 'ウズベキスタン', city: 'Tashkent', lat: 41.2995, lng: 69.2401 },
   { id: 'dojo_ve', country: 'ベネズエラ', city: 'Caracas', lat: 10.4806, lng: -66.9036 },
 ];
+
+// ─────────────────────────────────────────────────────────────
+// 年代バー連動の2レイヤー（2026-07 追加）
+// デスクトップ「年表写真」の『合気道のあゆみ』周年記述から逆算し、
+// 各国合気会公式・Aikido Journal 等でネット照合した代表点。
+//
+//  A) aikidoDojoFoundings … 各国の道場/協会の「設立年」（濃いポイント）
+//  B) aikidoFirstContacts … 指導者派遣・初訪問など「初到達」（淡いポイント）
+//
+// confidence: '◎' 直接記載 / '○' 逆算 / '△' 要確認
+// year は「その年に達したらポイントが出現」する基準。
+// ─────────────────────────────────────────────────────────────
+
+export const aikidoDojoFoundings = [
+  { id: 'found_hawaii', country: '米・ハワイ', org: 'ハワイ合気会', city: 'Honolulu', lat: 21.3069, lng: -157.8583, year: 1961, confidence: '◎', note: '開祖渡布・第1回演武大会(1961)。' },
+  { id: 'found_la',     country: '米・西海岸', org: 'ロサンゼルス合気会', city: 'Los Angeles', lat: 34.0522, lng: -118.2437, year: 1962, confidence: '○', note: '25周年=1987 より逆算。' },
+  { id: 'found_ny',     country: '米・東部', org: 'ニューヨーク合気会', city: 'New York', lat: 40.7128, lng: -74.006, year: 1964, confidence: '◎', note: '創立10周年=1974／山田嘉光1964年着(NY万博)。' },
+  { id: 'found_fr',     country: 'フランス', org: '(田村信喜 渡仏)', city: 'Marseille', lat: 43.2965, lng: 5.3698, year: 1964, confidence: '◎', note: '田村信喜1964年マルセイユ着。渡仏25周年=1989。' },
+  { id: 'found_it',     country: 'イタリア', org: '(多田宏 到着)/Aikikai d’Italia', city: 'Rome', lat: 41.9028, lng: 12.4964, year: 1964, confidence: '○', note: '多田宏1964年10月ローマ着→道場1966→協会1970。' },
+  { id: 'found_au',     country: 'オーストラリア', org: 'Aiki Kai Australia', city: 'Melbourne', lat: -37.8136, lng: 144.9631, year: 1965, confidence: '○', note: '菅野誠一1965年渡豪・創設（本の30周年逆算1966をネット照合で1965に修正）。' },
+  { id: 'found_bo',     country: '米・東部', org: 'ボストン合気会', city: 'Boston', lat: 42.3601, lng: -71.0589, year: 1967, confidence: '○', note: '20周年=1987 より逆算。' },
+  { id: 'found_tw',     country: '台湾', org: '台湾初の道場（李清楠）', city: 'Taipei', lat: 25.033, lng: 121.5654, year: 1967, confidence: '○', note: '李清楠が1967年に台湾初の道場。中華民国合気道協会は1973年。' },
+  { id: 'found_es',     country: 'スペイン', org: 'スペイン合気会(ACAE)', city: 'Madrid', lat: 40.4168, lng: -3.7038, year: 1969, confidence: '◎', note: '20周年=1989／25周年=1994 が一致。北浦康成1967年導入。' },
+  { id: 'found_hk',     country: '香港', org: '香港合気道協会', city: 'Hong Kong', lat: 22.3193, lng: 114.1694, year: 1971, confidence: '◎', note: 'K.コティア1971年1月着・7月道場開設。20周年=1991 と完全一致。' },
+  { id: 'found_at',     country: 'オーストリア', org: 'ウィーン合気道センター', city: 'Vienna', lat: 48.2082, lng: 16.3738, year: 1975, confidence: '○', note: '創立20周年=1995 より逆算。' },
+];
+
+export const aikidoFirstContacts = [
+  { id: 'first_hawaii', region: '米・ハワイ', city: 'Honolulu', lat: 21.3069, lng: -157.8583, year: 1953, note: '初の海外指導員派遣（本＝村重有利師範／通説＝藤平光一）。' },
+  { id: 'first_burma',  region: 'ビルマ（ミャンマー）', city: 'Yangon', lat: 16.8409, lng: 96.1735, year: 1958, note: '山口清吾師範が招かれ指導。' },
+  { id: 'first_sea',    region: '東南アジア各国', city: 'Singapore', lat: 1.3521, lng: 103.8198, year: 1972, note: '道主 親善訪問（代表点としてシンガポール）。' },
+  { id: 'first_png',    region: 'パプアニューギニア', city: 'Port Moresby', lat: -9.4438, lng: 147.1803, year: 1980, note: '青年海外協力隊(合気道)を初派遣。' },
+  { id: 'first_ph',     region: 'フィリピン', city: 'Manila', lat: 14.5995, lng: 120.9842, year: 1981, note: '東南アジア巡回指導地区に追加。' },
+  { id: 'first_id',     region: 'インドネシア', city: 'Jakarta', lat: -6.2088, lng: 106.8456, year: 1981, note: '東南アジア巡回指導地区に追加。' },
+  { id: 'first_il',     region: 'イスラエル', city: 'Tel Aviv', lat: 32.0853, lng: 34.7818, year: 1992, note: 'イスラエル初講習会。' },
+  { id: 'first_ru',     region: 'ロシア', city: 'Moscow', lat: 55.7558, lng: 37.6173, year: 1992, note: 'ロシア初派遣。' },
+  { id: 'first_cn',     region: '中国', city: 'Shanghai', lat: 31.2304, lng: 121.4737, year: 1996, note: '中国（上海）を初訪問。' },
+  { id: 'first_vn',     region: 'ベトナム', city: 'Hanoi', lat: 21.0278, lng: 105.8342, year: 1996, note: 'ベトナム巡回指導。' },
+];

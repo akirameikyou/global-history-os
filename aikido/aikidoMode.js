@@ -1,15 +1,17 @@
 // History OS — Aikido History OS (independent instance)
-// soccer/soccerMode.js と同じ「モードアダプタ」形式で書く。
-// 目的：のちに統合シェル（modeRegistry）へ this のまま差し込めるようにする。
-// 現時点では aikido/index.html が単独でこのモードだけを読み込む。
+// 「モードアダプタ」形式。データ/ロジックはこのファイル経由でのみ触る。
+// 2026-07 更新：
+//  - 道場を「設立(A)」「初到達(B)」「現在の分布(network)」の3系統で扱う。
+//  - 詳細は右パネル差し替えではなく、浮遊カード（main 側）で表示する。
+//    本モードは各クリック対象の「カードデータ」を返すことに専念する。
 
 import { aikidoPersonFocus, aikidoChronology } from '../data/aikido_person.js';
 import { aikidoEvents } from '../data/aikido_events.js';
-import { aikidoDojos } from '../data/aikido_dojos.js';
+import { aikidoDojos, aikidoDojoFoundings, aikidoFirstContacts } from '../data/aikido_dojos.js';
 import { aikidoWorldEvents } from '../data/aikido_world_events.js';
 
-const START_YEAR = 1880; // 植芝盛平生誕(1883)の少し手前。切りの良い年として採用。
-const CURRENT_YEAR = new Date().getFullYear(); // 「現在まで」を都度評価する。
+const START_YEAR = 1880;
+const CURRENT_YEAR = new Date().getFullYear();
 
 const aikidoTimeline = { min: START_YEAR, max: CURRENT_YEAR, start: START_YEAR };
 
@@ -36,42 +38,55 @@ export const aikidoMode = {
       }));
   },
 
-  // 地球儀上の点：生涯拠点は年に到達したら累積表示。
-  // 道場分布は創立年データが揃わないため、最終年（現在）に到達して初めて
-  // 象徴的に一括表示する。
+  // 地球儀上の点：
+  //  - life        … 植芝盛平の生涯拠点（到達年で累積、青）
+  //  - dojoFound   … 各国の道場設立(A)（到達年で累積、ティール）
+  //  - firstContact… 初到達(B)（到達年で累積、アンバー）
+  //  - dojo        … 現在の加盟分布(network)（最終年に達したら一括、淡色）
   pointsUpTo(year) {
     const lifePoints = aikidoEvents
       .filter(e => eventYear(e) <= year)
       .map(e => ({
-        id: e.id,
-        kind: 'life',
-        lat: e.lat,
-        lng: e.lng,
-        label: `${e.year}  ${e.title}`,
-        raw: e,
+        id: e.id, kind: 'life', lat: e.lat, lng: e.lng,
+        label: `${e.year}  ${e.title}`, raw: e,
       }));
 
-    const dojoPoints =
+    const foundPoints = aikidoDojoFoundings
+      .filter(d => d.year <= year)
+      .map(d => ({
+        id: d.id, kind: 'dojoFound', lat: d.lat, lng: d.lng,
+        label: `${d.year}  ${d.country} — ${d.org}`, raw: d,
+      }));
+
+    const firstPoints = aikidoFirstContacts
+      .filter(d => d.year <= year)
+      .map(d => ({
+        id: d.id, kind: 'firstContact', lat: d.lat, lng: d.lng,
+        label: `${d.year}  ${d.region}（初到達）`, raw: d,
+      }));
+
+    const networkPoints =
       year >= aikidoTimeline.max
         ? aikidoDojos.map(d => ({
-            id: d.id,
-            kind: 'dojo',
-            lat: d.lat,
-            lng: d.lng,
-            label: `${d.country} / ${d.city}`,
-            raw: d,
+            id: d.id, kind: 'dojo', lat: d.lat, lng: d.lng,
+            label: `${d.country} / ${d.city}`, raw: d,
           }))
         : [];
 
-    return [...lifePoints, ...dojoPoints];
+    return [...networkPoints, ...firstPoints, ...foundPoints, ...lifePoints];
   },
 
-  // 年代バーの目盛り：生涯年表の年
+  // 年代バーの目盛り：生涯年表 ＋ 道場設立 ＋ 初到達 ＋ 世界史イベント
   markerYears() {
-    return aikidoChronology.map(c => c.year);
+    return [
+      ...aikidoChronology.map(c => c.year),
+      ...aikidoDojoFoundings.map(d => d.year),
+      ...aikidoFirstContacts.map(d => d.year),
+      ...aikidoWorldEvents.map(w => w.year),
+    ];
   },
 
-  // FOCUS: overview（Focus Person 本体）
+  // 右パネル本体（常時 overview）
   overviewFocus() {
     return {
       state: 'overview',
@@ -84,40 +99,57 @@ export const aikidoMode = {
     };
   },
 
-  // FOCUS: life（生涯拠点をクリックしたとき）
-  lifeFocus(point) {
-    const related = aikidoChronology.filter(c => c.eventId === point.id);
+  // ── 以下、クリック対象ごとの「カードデータ」──────────────
+  lifeCard(point) {
     return {
-      state: 'life',
-      kicker: 'FOCUS / LIFE EVENT',
+      kind: 'life',
+      kicker: 'LIFE EVENT',
       title: point.title,
       subtitle: `${point.year}  /  ${point.placeName}`,
       body: point.description,
-      related,
     };
   },
 
-  // FOCUS: dojo（道場分布の光点をクリックしたとき）
-  dojoFocus(point) {
+  worldCard(item) {
     return {
-      state: 'dojo',
-      kicker: 'FOCUS / DOJO NETWORK',
-      title: point.country,
-      subtitle: point.city,
-      body:
-        '公益財団法人合気会 公式サイト「海外組織」に掲載された加盟組織が存在する国。' +
-        '座標は代表都市であり、個別団体の所在地を示すものではない（要出典：個別団体の詳細）。',
-    };
-  },
-
-  // FOCUS: world（左欄の世界史的出来事をクリックしたとき）
-  worldFocus(item) {
-    return {
-      state: 'world',
-      kicker: 'FOCUS / WORLD EVENT',
+      kind: 'world',
+      kicker: 'WORLD EVENT',
       title: item.title,
       subtitle: item.endYear ? `${item.year} – ${item.endYear}` : `${item.year}`,
       body: item.description,
+      regions: item.regions || [],
+    };
+  },
+
+  dojoFoundCard(d) {
+    return {
+      kind: 'dojoFound',
+      kicker: 'DOJO — 設立',
+      title: `${d.country}`,
+      subtitle: `${d.year}  /  ${d.org}（${d.city}）  ${d.confidence || ''}`,
+      body: d.note || '',
+    };
+  },
+
+  firstContactCard(d) {
+    return {
+      kind: 'firstContact',
+      kicker: 'FIRST CONTACT — 初到達',
+      title: `${d.region}`,
+      subtitle: `${d.year}  /  ${d.city}`,
+      body: d.note || '',
+    };
+  },
+
+  dojoCard(d) {
+    return {
+      kind: 'dojo',
+      kicker: 'DOJO NETWORK',
+      title: d.country,
+      subtitle: d.city,
+      body:
+        '公益財団法人合気会の海外加盟組織が存在する国。座標は代表都市であり、' +
+        '個別団体の所在地を示すものではない。',
     };
   },
 };
