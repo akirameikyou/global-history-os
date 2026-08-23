@@ -1,3 +1,7 @@
+> ⚠️ SUPERSEDED / HISTORICAL REFERENCE
+> このファイルの正本の役割は `../PROJECT.md` へ移りました。以下は履歴として保持しています（一部は現状と異なります）。
+> Source of Truth is now `/PROJECT.md`. Kept as historical reference; some content is stale.
+
 # CURRENT STATE
 
 ## Completed

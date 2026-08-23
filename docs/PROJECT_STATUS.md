@@ -1,3 +1,7 @@
+> ⚠️ SUPERSEDED / HISTORICAL REFERENCE（一部 stale）
+> 正本は `../PROJECT.md`。以下は履歴。注意: 下記の `future/` フォルダおよび `data/geoLayers.js` は現在のリポジトリに存在しません（stale）。
+> Source of Truth is now `/PROJECT.md`. Kept as historical reference. Note: the `future/` folder and `data/geoLayers.js` referenced below no longer exist in the repository.
+
 # History OS / PROJECT STATUS
 Updated: 2026-05-24
 
