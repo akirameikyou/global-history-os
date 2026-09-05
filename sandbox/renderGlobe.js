@@ -256,6 +256,10 @@ function buildRoutePoints(routeHistory) {
   const uniquePoints = [];
 
   routeHistory.forEach(event => {
+    // Chapter選択時は、その章で使う地点ポイントのみ表示（ALLでは全地点表示）。
+    // これにより地点クリック時のカードも、その章のイベント（例：KANRIN選択中の
+    // San Francisco＝1860年咸臨丸）が優先される。
+    if (!isForeground(event)) return;
     if (!event.placeName) return;
     if (uniquePoints.find(p => p.name === event.placeName)) return;
 
@@ -295,6 +299,31 @@ function buildRoutePoints(routeHistory) {
     });
 }
 
+// ── 史料航路の描き分けスタイル（区間の来歴＝segment status 別）──────────
+// documented    … 本文・日誌で確認できる区間 ＝ 明瞭な実線
+// source_traced … 掲載史料の航海図から航跡を復元した区間 ＝ 通常明度の細い短破線
+// estimated     … 資料の空白を一般的航路等から推定した区間 ＝ 低明度の細い破線
+// default       … 状態未指定（既存航路の見た目を維持）
+// link          … relatedEvents の意味リンク（既存の見た目を維持）
+// control       … 描画制御のみ ＝ その区間は描かない（下の buildArcs で除外）
+const ARC_STYLE = {
+  documented:    { alpha: 0.98, stroke: 0.12,  dash: 0.95, gap: 0.03 },
+  source_traced: { alpha: 0.82, stroke: 0.055, dash: 0.30, gap: 0.10 },
+  estimated:     { alpha: 0.60, stroke: 0.06,  dash: 0.18, gap: 0.20 },
+  default:       { alpha: 0.90, stroke: 0.08,  dash: 0.55, gap: 0.18 },
+  link:          { alpha: 0.85, stroke: 0.08,  dash: 0.55, gap: 0.18 },
+};
+function arcStyleFor(status) { return ARC_STYLE[status] || ARC_STYLE.default; }
+function hexToRgba(hex, alpha) {
+  const h = (hex || '#66e0ff').replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+}
+// 区間の状態：point.segmentStatusToNext ＞ event.defaultSegmentStatus ＞ 'default'
+function segmentStatus(startPoint, event) {
+  return startPoint.segmentStatusToNext || event.defaultSegmentStatus || 'default';
+}
+
 function buildArcs(filtered) {
   const arcs = [];
 
@@ -317,40 +346,47 @@ function buildArcs(filtered) {
           startLng: event.lng,
           endLat: target.lat,
           endLng: target.lng,
-          color: event.lineColor || '#66e0ff',
-          altitude
+          baseColor: event.lineColor || '#66e0ff',
+          altitude,
+          status: 'link',
+          fg: isForeground(event)
         });
       });
     }
 
     if (event.routeType === 'voyage' && event.routePoints) {
-  for (let i = 0; i < event.routePoints.length - 1; i++) {
-    const start = event.routePoints[i];
-    const end = event.routePoints[i + 1];
+      for (let i = 0; i < event.routePoints.length - 1; i++) {
+        const start = event.routePoints[i];
+        const end = event.routePoints[i + 1];
 
-arcs.push({
-  startLat: start.lat,
-  startLng: start.lng,
-  endLat: end.lat,
-  endLng: end.lng,
-  color: event.lineColor || '#66e0ff',
-  altitude: 0.03,
-  transport: start.transport || event.transport || 'sailing',
-  routeRole: start.nodeType || 'routePoint'
-});
-  }
+        const status = segmentStatus(start, event);
+        if (status === 'control') continue; // control は非表示
 
-  return;
-}
+        arcs.push({
+          startLat: start.lat,
+          startLng: start.lng,
+          endLat: end.lat,
+          endLng: end.lng,
+          baseColor: event.lineColor || '#66e0ff',
+          altitude: 0.03,
+          transport: start.transport || event.transport || 'sailing',
+          status,
+          fg: isForeground(event)
+        });
+      }
+      return;
+    }
   });
 
+  // 背景（他章）の航路は低明度・細線化して前景を読みやすくする
+  const BG_ALPHA = 0.12, BG_STROKE = 0.5;
   world
     .arcsData(arcs)
-    .arcColor('color')
+    .arcColor(d => hexToRgba(d.baseColor, arcStyleFor(d.status).alpha * (d.fg === false ? BG_ALPHA : 1)))
     .arcAltitude('altitude')
-    .arcStroke(0.08)
-    .arcDashLength(0.55)
-    .arcDashGap(0.18)
+    .arcStroke(d => arcStyleFor(d.status).stroke * (d.fg === false ? BG_STROKE : 1))
+    .arcDashLength(d => arcStyleFor(d.status).dash)
+    .arcDashGap(d => arcStyleFor(d.status).gap)
     .arcDashAnimateTime(4200);
 }
 
@@ -468,10 +504,10 @@ export function setRouteChapter(chapterId) {
   renderYear(currentYear);
 }
 
-function isChapterVisible(event) {
+// CHAPTER選択時の前景/背景判定。
+// 'all'は全て前景。特定章選択時は、その章のイベントのみ前景、他は背景(低明度)。
+function isForeground(event) {
   if (currentChapter === 'all') return true;
-  if (!event.chapterId) return true;
-
   return event.chapterId === currentChapter;
 }
 
@@ -480,10 +516,11 @@ export function renderYear(year) {
 
   const filtered = events.filter(e => isActive(e, year));
 
+  // 航路は全て累積表示（人生全体の蓄積を残す）。章選択時の前景/背景は
+  // buildArcs / buildRoutePoints 側で isForeground により低明度化する。
   const routeHistory = events.filter(e =>
   e.type === 'person' &&
-  e.startYear <= year &&
-  isChapterVisible(e)
+  e.startYear <= year
 );
   
   clearLabels();
