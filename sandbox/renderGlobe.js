@@ -261,9 +261,15 @@ function buildRoutePoints(routeHistory) {
     // San Francisco＝1860年咸臨丸）が優先される。
     if (!isForeground(event)) return;
     if (!event.placeName) return;
-    if (uniquePoints.find(p => p.name === event.placeName)) return;
+    // 識別単位は placeName 単独ではなく chapterId + placeName。
+    // 同じ地名でも章が異なれば別の地点カードとして扱う（例：San Francisco が
+    // 1850 gold_rush / 1860 kanrin / 1870 europe_1870 でそれぞれ正しいカードを示す）。
+    // ALL表示時も章別に区別され、先頭イベント（1850）へ固定されない。
+    const pointKey = (event.chapterId || '') + '|' + event.placeName;
+    if (uniquePoints.find(p => p.key === pointKey)) return;
 
     uniquePoints.push({
+  key: pointKey,
   name: event.placeName,
   title: event.title,
   description: event.description,
