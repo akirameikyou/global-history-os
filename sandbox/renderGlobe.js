@@ -312,12 +312,15 @@ function buildRoutePoints(routeHistory) {
 // default       … 状態未指定（既存航路の見た目を維持）
 // link          … relatedEvents の意味リンク（既存の見た目を維持）
 // control       … 描画制御のみ ＝ その区間は描かない（下の buildArcs で除外）
+// 展示版の視認性方針：確認区間＝実線、再構成区間＝破線。
+// 「推定だから薄い」ではなく、明度はどちらも読める範囲に保ち、判別は主に線種（実線/破線）で行う。
+// dash は来歴(status)の表現専用で、移動手段(transport)には使っていない（意味の衝突なし）。
 const ARC_STYLE = {
-  documented:    { alpha: 0.98, stroke: 0.12,  dash: 0.95, gap: 0.03 },
-  source_traced: { alpha: 0.82, stroke: 0.055, dash: 0.30, gap: 0.10 },
-  estimated:     { alpha: 0.60, stroke: 0.06,  dash: 0.18, gap: 0.20 },
-  default:       { alpha: 0.90, stroke: 0.08,  dash: 0.55, gap: 0.18 },
-  link:          { alpha: 0.85, stroke: 0.08,  dash: 0.55, gap: 0.18 },
+  documented:    { alpha: 0.96, stroke: 0.13, dash: 0.90, gap: 0.04 }, // 史料で確認：実線
+  source_traced: { alpha: 0.90, stroke: 0.10, dash: 0.55, gap: 0.10 }, // 航海図から復元：破線（やや長）
+  estimated:     { alpha: 0.86, stroke: 0.10, dash: 0.42, gap: 0.16 }, // 航行条件から再構成：破線（読める明度）
+  default:       { alpha: 0.90, stroke: 0.10, dash: 0.60, gap: 0.15 },
+  link:          { alpha: 0.85, stroke: 0.08, dash: 0.55, gap: 0.18 },
 };
 function arcStyleFor(status) { return ARC_STYLE[status] || ARC_STYLE.default; }
 function hexToRgba(hex, alpha) {
