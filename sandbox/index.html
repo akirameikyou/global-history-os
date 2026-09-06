@@ -895,6 +895,7 @@ const chapterCycle = [
   'opening',
   'kanrin',
   'ogasawara',
+  'europe_1870',
   'later_years'
 ];
 
@@ -1119,7 +1120,7 @@ chapterToggle.onclick = () => {
 
   chapterToggle.textContent =
     'CHAPTER : ' +
-    chapterId.toUpperCase();
+    chapterId.toUpperCase().replace(/_/g, ' ');
 
 };
   
