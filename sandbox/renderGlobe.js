@@ -322,6 +322,9 @@ const ARC_STYLE = {
   default:       { alpha: 0.90, stroke: 0.10, dash: 0.60, gap: 0.15 },
   link:          { alpha: 0.85, stroke: 0.08, dash: 0.55, gap: 0.18 },
 };
+// 陸路（鉄道）の色。海路（イベント色＝多くは cyan）と区別するための陸路色。
+// 既存パレットの黄（gold_rush で使用済み）に合わせ、新規の強い色は導入しない。
+const RAIL_COLOR = '#ffd95e';
 function arcStyleFor(status) { return ARC_STYLE[status] || ARC_STYLE.default; }
 function hexToRgba(hex, alpha) {
   const h = (hex || '#66e0ff').replace('#', '');
@@ -371,14 +374,20 @@ function buildArcs(filtered) {
         const status = segmentStatus(start, event);
         if (status === 'control') continue; // control は非表示
 
+        // 移動手段で色を分ける：陸路（鉄道）は陸路色、それ以外（海路）はイベント色。
+        // これで鉄道区間（リバプール→ロンドン、SF→シカゴ→NY、NY⇄フェアヘーブン等）が
+        // 海路と一目で区別できる。線種（実線/破線）は従来どおり来歴を表す。
+        const segTransport = start.transport || event.transport || 'sailing';
+        const isRail = segTransport === 'rail';
+
         arcs.push({
           startLat: start.lat,
           startLng: start.lng,
           endLat: end.lat,
           endLng: end.lng,
-          baseColor: event.lineColor || '#66e0ff',
-          altitude: 0.03,
-          transport: start.transport || event.transport || 'sailing',
+          baseColor: isRail ? RAIL_COLOR : (event.lineColor || '#66e0ff'),
+          altitude: isRail ? 0.012 : 0.03,
+          transport: segTransport,
           status,
           fg: isForeground(event)
         });
