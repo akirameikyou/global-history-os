@@ -39,7 +39,10 @@ text-transform:uppercase;
 .focus-image{width:92px;height:92px;border-radius:999px;object-fit:cover;margin-bottom:30px;border:1px solid rgba(255,255,255,0.16);}
 .focus-abstract{font-size:14px;line-height:2.15;color:rgba(255,255,255,0.78);font-weight:300;margin-bottom:46px;max-width:320px;}
 
-.timeline-item{margin-bottom:34px;cursor:pointer;}
+.timeline-item{margin-bottom:34px;cursor:pointer;transition:border-color .3s, background .3s;}
+.timeline-item-active{padding-left:8px;border-left:2px solid rgba(102,224,255,0.7);}
+.timeline-item-active .timeline-text{color:rgba(255,255,255,0.98);}
+.timeline-item-active .timeline-inline-year{color:#9af0ff;}
 .timeline-year{font-size:13px;font-weight:700;letter-spacing:0.16em;color:#66e0ff;margin-bottom:10px;}
 .timeline-text{
 font-size:14px;
@@ -2045,8 +2048,11 @@ document.addEventListener('mouseup', () => {
 });
 }
   
+let __lastActiveEventId = null;
 function renderUI(year){
   worldEventsEl.innerHTML = '';
+  const rightPanel = timeline.closest('.right-panel');
+  const __prevScroll = rightPanel ? rightPanel.scrollTop : 0;
   timeline.innerHTML = '';
 
   const worldEvents = events.filter(
@@ -2086,9 +2092,14 @@ function renderUI(year){
     worldEventsEl.appendChild(item);
   });
 
+  const __newest = personEvents.length ? personEvents[personEvents.length - 1] : null;
+  const __newestId = __newest ? __newest.id : null;
+
   personEvents.forEach(event => {
     const item = document.createElement('div');
     item.className = 'timeline-item';
+    if (event === __newest) item.classList.add('timeline-item-active');
+    item.dataset.eid = event.id;
 
     item.innerHTML = `
   <div class="timeline-text">
@@ -2103,7 +2114,7 @@ function renderUI(year){
     </span>
   </div>
 `;
-    
+
     item.onclick = () => {
       world.pointOfView({
         lat: event.lat,
@@ -2114,6 +2125,23 @@ function renderUI(year){
 
     timeline.appendChild(item);
   });
+
+  // 中央年代バーと右人物年表の同期：
+  // アクティブ（現在年以前で最新）イベントが変わった時だけ、右パネル内でそこへ寄せる。
+  // 同一イベントの年は位置を保持し、rebuildによる先頭ジャンプや手動スクロールの巻き戻しを防ぐ。
+  // スクロールするのは右パネル内のみで、ページ全体はスクロールしない。
+  if (rightPanel) {
+    if (__newestId && __newestId !== __lastActiveEventId) {
+      const activeEl = timeline.querySelector('.timeline-item-active');
+      if (activeEl) {
+        const target = activeEl.offsetTop - rightPanel.clientHeight * 0.55;
+        rightPanel.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+      }
+      __lastActiveEventId = __newestId;
+    } else {
+      rightPanel.scrollTop = __prevScroll;
+    }
+  }
 }
 
 function renderTimelineGuideLines(){
