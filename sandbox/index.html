@@ -1044,19 +1044,6 @@ const worldLinks = [
   regionName:'Japanese coastal defense policy'
  },
  {
-  id:'opium_war',
-  label:'OPIUM WAR',
-  startYear:1839,
-  endYear:1842,
-  color:'#FF5E5E',
-  lat:22.3,
-  lng:114.1,
-  altitude:1.65,
-  placeName:'Pearl River Delta / Hong Kong',
-  placeShort:'PEARL RIVER DELTA',
-  regionName:'Qing China vs British Empire'
- },
- {
   id:'pacific_whaling',
   label:'PACIFIC WHALING',
   startYear:1840,
@@ -1091,19 +1078,6 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   meaning:'Pacific Maritime Network'
 },
  {
-  id:'gold_rush',
-  label:'GOLD RUSH',
-  startYear:1848,
-  endYear:1855,
-  color:'#ffd95e',
-  lat:37.77,
-  lng:-122.42,
-  altitude:1.6,
-  placeName:'San Francisco / California',
-  placeShort:'SAN FRANCISCO',
-  regionName:'Pacific Gateway'
- },
- {
   id:'perry_expedition',
   label:'PERRY EXPEDITION',
   startYear:1852,
@@ -1115,32 +1089,6 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   placeName:'Ryukyu / East Asia',
   placeShort:'RYUKYU',
   regionName:'US naval expedition route'
- },
- {
-  id:'black_ships',
-  label:'BLACK SHIPS',
-  startYear:1853,
-  endYear:1853,
-  color:'#b58cff',
-  lat:35.24,
-  lng:139.72,
-  altitude:1.45,
-  placeName:'Uraga / Japan',
-  placeShort:'URAGA',
-  regionName:'Connection Hub'
- },
- {
-  id:'treaty_kanagawa',
-  label:'TREATY',
-  startYear:1854,
-  endYear:1854,
-  color:'#66e0ff',
-  lat:35.44,
-  lng:139.64,
-  altitude:1.45,
-  placeName:'Kanagawa / Yokohama',
-  placeShort:'KANAGAWA',
-  regionName:'Treaty of Peace and Amity'
  },
  {
   id:'opening_of_japan',
@@ -1285,10 +1233,16 @@ worldLinkToggle.onclick = () => {
       locationNotice.style.display = 'none';
     }
 
-    // W-LINK を OFF にしたら、開いている世界史カードも閉じる（固定カードは別管理で残る）。
+    // W-LINK OFF：W-LINK由来（自動/バー）のカードだけ閉じる。左上WORLD EVENTS由来は維持。
     const wec = document.getElementById('world-event-card');
-    if(wec){ wec.style.display = 'none'; }
-    selectedWorldEventId = null;
+    if(wec && wec.style.display !== 'none' && (wec.dataset.cardSource || '').startsWith('w-link')){
+      wec.style.display = 'none';
+      selectedWorldEventId = null;
+    }
+    // W-LINK由来のPIN（固定）カードも解除・非表示にする（左上由来のPINは残す）。
+    document.querySelectorAll('.pinned-world-card').forEach(p => {
+      if((p.dataset.cardSource || '').startsWith('w-link')) p.remove();
+    });
 
   }
 
@@ -1601,7 +1555,7 @@ const active =
 
       // 左欄と同じ正本データから共通カードを開く（英語簡易版は使わない）。
       if (getWorldCanon(link.id)) {
-        showWorldEventCard(link.id);
+        showWorldEventCard(link.id, 'w-link-click');
       }
     };
 
@@ -1745,8 +1699,9 @@ function renderTimelineMeaning(year){
     : '';
 }
   
-function showWorldEventCard(idOrCanon) {
+function showWorldEventCard(idOrCanon, source) {
   // 左欄WORLD EVENTS と W-LINK の両入口から、同じ正本データで共通カードを開く。
+  // source: 'world-list'(左上) / 'w-link-click'(W-LINKバー) / 'w-link-auto'(年代到達)
   const canon = (typeof idOrCanon === 'string') ? getWorldCanon(idOrCanon) : idOrCanon;
   if (!canon) return;
   selectedWorldEventId = canon.id || null;
@@ -1784,6 +1739,7 @@ function showWorldEventCard(idOrCanon) {
     document.body.appendChild(card);
   }
   card.style.display = 'flex';
+  card.dataset.cardSource = source || 'w-link-click';
 
   const summaryText = canon.summary || canon.description || '';
   const detailText = canon.cardText || '';
@@ -1832,7 +1788,7 @@ function showWorldEventCard(idOrCanon) {
       selectedWorldEventId = null;
     });
     card.querySelector('#world-event-card-pin').addEventListener('click', () => {
-      createPinnedWorldEventCard(canon);
+      createPinnedWorldEventCard(canon, card.dataset.cardSource);
     });
     const tg = card.querySelector('#world-event-card-toggle');
     if (tg) tg.addEventListener('click', () => {
@@ -2072,8 +2028,9 @@ function createPinnedPersonCard(person) {
   });
 }
   
-function createPinnedWorldEventCard(event) {
+function createPinnedWorldEventCard(event, source) {
   const card = document.createElement('div');
+  card.dataset.cardSource = source || 'w-link-click';
 
   card.style.position = 'fixed';
 
@@ -2213,7 +2170,7 @@ function renderUI(year){
     altitude: 1.6
   }, 1200);
 
-  showWorldEventCard(event.id);
+  showWorldEventCard(event.id, 'world-list');
 };
 
     worldEventsEl.appendChild(item);
@@ -2336,14 +2293,14 @@ cursorLine.style.display =
   cursorPointer.style.display = 'block';
 }
 
-// 年代変更では詳細カードを自動で開かない。
-// 開いている「選択中カード」がその期間から外れた場合のみ閉じる（再び期間内でも自動再表示しない）。
 // 年代カーソルがイベント期間へ「外から進入」した瞬間だけ、そのコンパクトカードを自動表示する。
 // 期間内の移動では再表示しない（×で閉じたものも、期間を離れて再進入するまで再表示しない）。
 // 大きく移動して複数の期間へ同時進入した場合は、優先度・到達年の近さで1件だけ表示する。
 let __worldAutoList = null;
 function buildWorldAutoList(){
-  const ids = [...new Set(worldLinks.map(l => l.id).concat(Object.keys(worldEventById)))];
+  // 自動表示の対象は W-LINK 期間バーに登録されたイベント（W-LINK固有層）だけ。
+  // 左上WORLD EVENTS（events type:world）は年代連動と手動クリック専用で、自動表示しない。
+  const ids = [...new Set(worldLinks.map(l => l.id))];
   const list = [];
   ids.forEach(id => {
     const c = getWorldCanon(id);
@@ -2357,6 +2314,7 @@ function buildWorldAutoList(){
 }
 let __autoPrevYear = parseInt(slider.value) || 1800;
 function autoCardOnYearEntry(prev, cur){
+  if (!worldLinksVisible) return;          // W-LINK OFF のときは自動表示しない
   if (prev === cur) return;
   if (document.querySelector('.pinned-world-card')) return; // PIN中は自動表示で置き換えない
   if (!__worldAutoList) __worldAutoList = buildWorldAutoList();
@@ -2372,7 +2330,7 @@ function autoCardOnYearEntry(prev, cur){
     (Math.abs(a.sy - cur) - Math.abs(b.sy - cur)) ||
     ((a.ey - a.sy) - (b.ey - b.sy))
   );
-  showWorldEventCard(entered[0].id); // コンパクト要約で自動表示（詳細展開はしない）
+  showWorldEventCard(entered[0].id, 'w-link-auto'); // コンパクト要約で自動表示（詳細展開はしない）
 }
 
 slider.addEventListener('input', e => {
