@@ -1147,7 +1147,77 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   regionName:'Opening of Japan'
  }
 ];
-  
+
+// ── 世界史イベントの正本参照（左欄WORLD EVENTS と W-LINK で共通） ──
+// events(type:'world') を正本とし、W-LINK専用イベントは WORLD_EXTRA に日本語で一本化する。
+// 左欄・W-LINK・詳細カードはすべて getWorldCanon(id) から内容を生成し、日英を二重に保存しない。
+const worldEventById = {};
+events.forEach(e => { if (e.type === 'world') worldEventById[e.id] = e; });
+
+const WORLD_EXTRA = {
+  rezanov_arrival: {
+    id:'rezanov_arrival', title:'レザノフ来航', subtitleEn:'REZANOV ARRIVAL',
+    startYear:1804, endYear:1804, year:'1804',
+    description:'ロシア使節レザノフが通商を求めて長崎に来航した。',
+    cardText:'1804年、ロシアの使節レザノフが通商を求めて長崎に来航した。幕府は通商を拒み、以後の日露関係は緊張を含んだものとなる。ロシアの南下と日本の海防意識の高まりを示す、開国前夜の一場面である。',
+    manjiroRelation:'万次郎が生まれる前の出来事だが、外圧と海防意識が強まっていく時代背景をかたちづくる。',
+    meaning:'ロシアの日本接近', placeJa:'長崎', placeName:'Nagasaki / Japan', color:'#ffb36b'
+  },
+  steam_revolution: {
+    id:'steam_revolution', title:'蒸気船革命', subtitleEn:'STEAM REVOLUTION',
+    startYear:1807, endYear:1807, year:'1807',
+    description:'蒸気船の実用化が始まり、風に頼らない海上輸送の時代が始まる。',
+    cardText:'1807年、フルトンのクラーモント号が蒸気機関による定期航行に成功した。それまで海上交通は風と海流に支配されていたが、蒸気船は航海の自由度を大きく高め、人・情報・軍事力の移動速度を変えた。黒船もまた蒸気船であり、幕末日本が直面した世界海洋ネットワークの背後には蒸気革命があった。',
+    manjiroRelation:'万次郎が渡米し帰国する時代の、海上交通を一変させた技術的背景。',
+    meaning:'海上移動の革命', placeJa:'ハドソン川（ニューヨーク）', placeName:'Hudson River / New York', color:'#aaaaaa'
+  },
+  napoleonic_end: {
+    id:'napoleonic_end', title:'ナポレオン戦争の終結', subtitleEn:'NAPOLEONIC END',
+    startYear:1815, endYear:1815, year:'1815',
+    description:'ワーテルローの戦いでナポレオンが敗れ、ヨーロッパの大戦争が終わる。',
+    cardText:'1815年、ワーテルローの戦いでナポレオンが敗れ、長く続いたヨーロッパの戦争が終結した。以後イギリスは海上覇権をいっそう強め、世界の海洋秩序が再編されていく。',
+    manjiroRelation:'直接の関わりはないが、英国の海上覇権はのちの太平洋・東アジア進出の前提となる。',
+    meaning:'イギリス海上覇権の確立', placeJa:'ワーテルロー（ヨーロッパ）', placeName:'Waterloo / Europe', color:'#d0d0ff'
+  },
+  ikokusen_order: {
+    id:'ikokusen_order', title:'異国船打払令', subtitleEn:'IKOKUSEN ORDER',
+    startYear:1825, endYear:1825, year:'1825',
+    description:'幕府が、接近する外国船の撃退を命じた。',
+    cardText:'1825年、幕府は異国船打払令を発し、接近する外国船の撃退を命じた。外圧の高まりに対する日本の海防政策を示すもので、のちの漂流民の帰国や開国をめぐる幕府の姿勢の前提となった。',
+    manjiroRelation:'万次郎が漂流し帰国する時代の、日本の対外姿勢の背景。',
+    meaning:'日本の海防政策', placeJa:'江戸', placeName:'Edo / Japan', color:'#ffcc66'
+  },
+  pacific_whaling: {
+    id:'pacific_whaling', title:'太平洋捕鯨', subtitleEn:'PACIFIC WHALING',
+    startYear:1840, endYear:1855, year:'1840 — 1855',
+    description:'港・島・船を結んだ広域的な海上ネットワーク。',
+    summary:'19世紀の太平洋捕鯨は、港・島・船を結ぶ広域的な海上ネットワークを形成した。万次郎はその中で救助され、航海技術と英語を学び、世界を経験した。',
+    cardText:'太平洋捕鯨は、単なる捕鯨産業ではない。\n\n十九世紀前半から中頃にかけて、捕鯨船団はホノルル、ニューベッドフォード、フェアヘーブン、日本近海、サンフランシスコを継続的に結び付けた。船は鯨を追っていたが、同時に人・知識・技術・航海術・情報も運んでいた。\n\n中浜万次郎はこのネットワークによって救助され、教育を受け、世界を経験した。さらに捕鯨船の保護や補給港の確保という必要は、のちのペリー遠征や日本開国とも接続していく。\n\nHistory OS では太平洋捕鯨を、産業イベントではなく十九世紀太平洋文明圏を支えた接続網として観測する。',
+    manjiroRelation:'万次郎はこの海上ネットワークの中で救助され、航海術と英語を学び、世界を経験した。',
+    meaning:'太平洋海域の交流網', placeJa:'北太平洋', placeName:'North Pacific Ocean', color:'#66e0ff'
+  },
+  perry_expedition: {
+    id:'perry_expedition', title:'ペリー遠征', subtitleEn:'PERRY EXPEDITION',
+    startYear:1852, endYear:1853, year:'1852 — 1853',
+    description:'アメリカのペリー艦隊が東アジアへ派遣され、琉球を経て日本へ向かった。',
+    cardText:'1852年から1853年、アメリカのペリー艦隊が日本の開国を求めて派遣され、琉球を経て日本へ向かった。中国貿易・太平洋捕鯨・蒸気船革命を背景に、世界海洋ネットワークが日本へ迫る遠征であった。',
+    manjiroRelation:'万次郎は帰国後、幕府に対外知識や語学を提供し、この開国期に関わった。',
+    meaning:'アメリカの東アジア遠征', placeJa:'琉球（東アジア）', placeName:'Ryukyu / East Asia', color:'#b58cff'
+  },
+  opening_of_japan: {
+    id:'opening_of_japan', title:'日本の開国', subtitleEn:'OPENING OF JAPAN',
+    startYear:1854, endYear:1868, year:'1854 — 1868',
+    description:'和親条約以後、日本は鎖国から開国へと移行していった。',
+    cardText:'1854年の日米和親条約以後、日本は諸外国と条約を結び、長く続いた鎖国体制から開国へと移行していった。1868年の明治維新へと至る、国際関係の大きな転換期である。',
+    manjiroRelation:'万次郎の海外知識と語学は、この開国期の日本で活かされた。',
+    meaning:'鎖国から開国へ', placeJa:'日本', placeName:'Japan', color:'#7dff7a'
+  }
+};
+
+function getWorldCanon(id){ return worldEventById[id] || WORLD_EXTRA[id] || null; }
+
+// ユーザーが明示的に選択（クリック）した世界史イベント。年代変更では設定しない。
+let selectedWorldEventId = null;
 
 borderToggle.onclick = () => {
   toggleBorders();
@@ -1206,10 +1276,15 @@ worldLinkToggle.onclick = () => {
       locationNotice.style.display = 'none';
     }
 
+    // W-LINK を OFF にしたら、開いている世界史カードも閉じる（固定カードは別管理で残る）。
+    const wec = document.getElementById('world-event-card');
+    if(wec){ wec.style.display = 'none'; }
+    selectedWorldEventId = null;
+
   }
 
    updateTimelineCursorLine();
-  showActiveWorldLayerCard(parseInt(slider.value));
+  // W-LINK を ON にしても詳細カードは自動で開かない（クリックで開く）。
 };
 personLinkToggle.onclick = () => {
   personLinksVisible = !personLinksVisible;
@@ -1473,7 +1548,7 @@ const active =
     
         lane.innerHTML = `
       <div class="timeline-world-link-label" style="opacity:${linkOpacity};">
-        ${link.label}
+        ${(getWorldCanon(link.id) && getWorldCanon(link.id).title) || link.label}
       </div>
       <div class="timeline-world-link-line"></div>
       <div
@@ -1515,17 +1590,10 @@ const active =
       
       showWorldLinkMapLabel(link);
 
-      showWorldEventCard({
-        title: link.label,
-        year: link.startYear === link.endYear
-          ? String(link.startYear)
-          : `${link.startYear} — ${link.endYear}`,
-        color: link.color || '#E69445',
-        description: link.description || link.regionName || '',
-        cardText: link.cardText || link.description || link.regionName || '',
-        meaning: link.meaning || '',
-        placeName: link.placeName || ''
-      });
+      // 左欄と同じ正本データから共通カードを開く（英語簡易版は使わない）。
+      if (getWorldCanon(link.id)) {
+        showWorldEventCard(link.id);
+      }
     };
 
     timelineWorldLinks.appendChild(lane);
@@ -1668,113 +1736,79 @@ function renderTimelineMeaning(year){
     : '';
 }
   
-function showWorldEventCard(event) {
-  let card = document.getElementById('world-event-card');
+function showWorldEventCard(idOrCanon) {
+  // 左欄WORLD EVENTS と W-LINK の両入口から、同じ正本データで共通カードを開く。
+  const canon = (typeof idOrCanon === 'string') ? getWorldCanon(idOrCanon) : idOrCanon;
+  if (!canon) return;
+  selectedWorldEventId = canon.id || null;
 
+  let card = document.getElementById('world-event-card');
   if (!card) {
     card = document.createElement('div');
     card.id = 'world-event-card';
-
     card.style.position = 'fixed';
     card.style.left = '52px';
     card.style.bottom = '92px';
     card.style.width = '330px';
+    card.style.maxHeight = '56vh';
+    card.style.display = 'flex';
+    card.style.flexDirection = 'column';
     card.style.padding = '16px 18px';
-    card.style.background = 'rgba(12, 8, 5, 0.88)';
+    card.style.background = 'rgba(12, 8, 5, 0.9)';
     card.style.border = '1px solid rgba(230,148,69,0.55)';
     card.style.borderRadius = '6px';
     card.style.color = '#ffffff';
     card.style.fontFamily = 'sans-serif';
     card.style.zIndex = '75';
     card.style.boxShadow = '0 0 18px rgba(230,148,69,0.30)';
-
     document.body.appendChild(card);
   }
+  card.style.display = 'flex';
 
-  card.style.display = 'block';
+  const summaryText = canon.summary || canon.description || '';
+  const detailText = canon.cardText || '';
+  const norm = s => (s || '').replace(/\s/g, '');
+  const hasDetail = detailText && norm(detailText) !== norm(summaryText);
+  let expanded = false;
 
-  card.innerHTML = `
-  <button
-    id="world-event-card-close"
-    style="
-      position:absolute;
-      top:8px;
-      right:10px;
-      background:transparent;
-      border:none;
-      color:#ffffff;
-      font-size:18px;
-      cursor:pointer;
-      line-height:1;
-    "
-  >
-    ×
-  </button>
-
-    <button
-      id="world-event-card-pin"
-      style="
-        position:absolute;
-        top:9px;
-        right:38px;
-        background:transparent;
-        border:1px solid rgba(255,255,255,0.22);
-        color:#ffffff;
-        font-size:10px;
-        cursor:pointer;
-        letter-spacing:0.08em;
-        padding:2px 5px;
-      "
-    >
-      PIN
-    </button>
-    
-  <div style="font-size:12px; color:#ffffff; letter-spacing:0.12em; padding-right:24px; opacity:0.82;">
-    WORLD EVENT
-  </div>
-
- <div style="font-size:20px; margin-top:6px; padding-right:12px; letter-spacing:-0.03em;">
-  ${event.title}
-</div>
-
-  <div style="font-size:13px; color:${event.color || '#E69445'}; margin-top:6px;">
-    ${event.year}
-  </div>
-
-  <div style="font-size:13px; line-height:1.75; margin-top:12px; color:#f0f0f0;">
-    ${event.cardText || event.description || ''}
-  </div>
-
-  ${
-    event.meaning
-      ? `
-        <div style="margin-top:14px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px; letter-spacing:0.16em; color:#ffffff; opacity:0.62;">
-            MEANING
-          </div>
-          <div style="font-size:12px; line-height:1.6; margin-top:5px; color:#ffffff; opacity:0.86;">
-            ${event.meaning}
-          </div>
-        </div>
-      `
-      : ''
+  function render() {
+    const bodyText = (expanded && hasDetail) ? detailText : (summaryText || detailText || '');
+    const toggle = hasDetail
+      ? `<button id="world-event-card-toggle" style="margin-top:10px;background:transparent;border:1px solid rgba(255,255,255,0.28);color:#ffd9a8;font-size:11px;letter-spacing:0.06em;padding:3px 9px;cursor:pointer;">${expanded ? '要約に戻る' : '詳しく見る'}</button>`
+      : '';
+    const place = canon.placeJa || canon.placeName || '';
+    card.innerHTML = `
+      <button id="world-event-card-close" style="position:absolute;top:8px;right:10px;background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;">×</button>
+      <button id="world-event-card-pin" style="position:absolute;top:9px;right:38px;background:transparent;border:1px solid rgba(255,255,255,0.22);color:#fff;font-size:10px;cursor:pointer;letter-spacing:0.08em;padding:2px 5px;">PIN</button>
+      <div style="flex:0 0 auto;">
+        <div style="font-size:12px;color:#fff;letter-spacing:0.12em;padding-right:48px;opacity:0.82;">WORLD EVENT</div>
+        <div style="font-size:20px;margin-top:6px;padding-right:12px;letter-spacing:-0.02em;">${canon.title || ''}${canon.subtitleEn ? ` <span style="font-size:11px;opacity:0.5;letter-spacing:0.06em;">${canon.subtitleEn}</span>` : ''}</div>
+        <div style="font-size:13px;color:${canon.color || '#E69445'};margin-top:6px;">${canon.year || ''}</div>
+      </div>
+      <div id="world-event-card-body" style="flex:1 1 auto;overflow-y:auto;margin-top:12px;padding-right:4px;">
+        <div style="font-size:13px;line-height:1.75;color:#f0f0f0;white-space:pre-line;">${bodyText}</div>
+        ${toggle}
+        ${canon.manjiroRelation ? `<div style="margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px;letter-spacing:0.12em;color:#fff;opacity:0.62;">万次郎との関係</div><div style="font-size:12px;line-height:1.6;margin-top:5px;opacity:0.86;">${canon.manjiroRelation}</div></div>` : ''}
+        ${canon.meaning ? `<div style="margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px;letter-spacing:0.16em;color:#fff;opacity:0.62;">MEANING</div><div style="font-size:12px;line-height:1.6;margin-top:5px;opacity:0.86;">${canon.meaning}</div></div>` : ''}
+        ${place ? `<div style="font-size:11px;letter-spacing:0.12em;color:#fff;opacity:0.68;margin-top:12px;">${place}</div>` : ''}
+      </div>
+    `;
+    card.querySelector('#world-event-card-close').addEventListener('click', () => {
+      card.style.display = 'none';
+      selectedWorldEventId = null;
+    });
+    card.querySelector('#world-event-card-pin').addEventListener('click', () => {
+      createPinnedWorldEventCard(canon);
+    });
+    const tg = card.querySelector('#world-event-card-toggle');
+    if (tg) tg.addEventListener('click', () => {
+      expanded = !expanded;
+      render();
+      const body = card.querySelector('#world-event-card-body');
+      if (body) body.scrollTop = 0;
+    });
   }
-
-  <div style="font-size:11px; letter-spacing:0.12em; color:#ffffff; opacity:0.68; margin-top:12px;">
-    ${event.placeName || ''}
-  </div>
-`;
-
-  const closeButton = document.getElementById('world-event-card-close');
-
-  closeButton.addEventListener('click', () => {
-    card.style.display = 'none';
-  });
-  const pinButton = document.getElementById('world-event-card-pin');
-
-pinButton.addEventListener('click', () => {
-  createPinnedWorldEventCard(event);
-});
+  render();
 }
 
 function createFocusPersonCard(person) {
@@ -2145,7 +2179,7 @@ function renderUI(year){
     altitude: 1.6
   }, 1200);
 
-  showWorldEventCard(event);
+  showWorldEventCard(event.id);
 };
 
     worldEventsEl.appendChild(item);
@@ -2268,27 +2302,19 @@ cursorLine.style.display =
   cursorPointer.style.display = 'block';
 }
 
-function showActiveWorldLayerCard(year) {
-  if (!worldLinksVisible) return;
-
-  const activeLink = worldLinks.find(link =>
-    year >= link.startYear &&
-    year <= link.endYear
-  );
-
-  if (!activeLink) return;
-
-  showWorldEventCard({
-    title: activeLink.label,
-    year: activeLink.startYear === activeLink.endYear
-      ? String(activeLink.startYear)
-      : `${activeLink.startYear} — ${activeLink.endYear}`,
-    color: activeLink.color || '#E69445',
-    description: activeLink.description || activeLink.regionName || '',
-    cardText: activeLink.cardText || activeLink.description || activeLink.regionName || '',
-    meaning: activeLink.meaning || '',
-    placeName: activeLink.placeName || ''
-  });
+// 年代変更では詳細カードを自動で開かない。
+// 開いている「選択中カード」がその期間から外れた場合のみ閉じる（再び期間内でも自動再表示しない）。
+function syncWorldCardToYear(year) {
+  const card = document.getElementById('world-event-card');
+  if (!card || card.style.display === 'none') return;
+  if (!selectedWorldEventId) return;
+  const canon = getWorldCanon(selectedWorldEventId);
+  if (!canon || canon.startYear == null) return;
+  const ey = (canon.endYear != null) ? canon.endYear : canon.startYear;
+  if (year < canon.startYear || year > ey) {
+    card.style.display = 'none';
+    selectedWorldEventId = null;
+  }
 }
   
 slider.addEventListener('input', e => {
@@ -2303,7 +2329,7 @@ slider.addEventListener('input', e => {
 
     renderWorldLinks();
   updateTimelineCursorLine();
-  showActiveWorldLayerCard(year);
+  syncWorldCardToYear(year);
 });
 </script>
 
