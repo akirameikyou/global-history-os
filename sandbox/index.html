@@ -439,6 +439,43 @@ cursor:pointer;
 backdrop-filter:blur(10px);
 }
 
+#routeInfoToggle{
+position:absolute;
+left:52px;
+bottom:24px;
+z-index:80;
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.18);
+color:rgba(255,255,255,0.82);
+padding:8px 16px;
+letter-spacing:0.15em;
+font-size:11px;
+cursor:pointer;
+backdrop-filter:blur(10px);
+}
+#routeInfoPanel{
+position:absolute;
+left:52px;
+bottom:64px;
+width:340px;
+max-width:70vw;
+z-index:90;
+display:none;
+background:rgba(5,12,22,0.92);
+border:1px solid rgba(102,224,255,0.35);
+border-radius:6px;
+padding:16px 18px 16px 18px;
+color:rgba(255,255,255,0.9);
+font-size:12.5px;
+line-height:1.7;
+backdrop-filter:blur(10px);
+box-shadow:0 0 18px rgba(0,0,0,0.5);
+}
+#routeInfoPanel h4{margin:0 0 8px 0;font-size:12px;letter-spacing:0.16em;color:#66e0ff;font-weight:700;}
+#routeInfoPanel .ri-legend{display:flex;align-items:center;gap:10px;margin-top:9px;}
+#routeInfoPanel .ri-line{width:42px;height:0;border-top:2px solid #cfe9ff;flex:none;}
+#routeInfoPanel .ri-line.dashed{border-top-style:dashed;border-top-color:rgba(207,233,255,0.9);}
+#routeInfoPanel .ri-close{position:absolute;top:8px;right:10px;cursor:pointer;color:#d8e8ff;font-size:16px;line-height:1;background:none;border:none;}
 #chapterToggle{
 position:absolute;
 right:480px;
@@ -791,6 +828,15 @@ border-radius:999px;
 <button id="personLinkToggle">P-LINK</button>
 <button id="gridToggle">GRID</button>
 <button id="borderToggle">BORDERS</button>
+<button id="routeInfoToggle">航路について</button>
+<div id="routeInfoPanel">
+  <button class="ri-close" id="routeInfoClose">×</button>
+  <h4>航路について</h4>
+  <div>航路は、史料に確認できる地点と、当時の航行条件をもとに再構成しています。地点間の経路には推定を含みます。</div>
+  <div class="ri-legend"><span class="ri-line"></span><span>実線：史料で確認できる区間</span></div>
+  <div class="ri-legend"><span class="ri-line dashed"></span><span>破線：史料と航行条件から再構成した区間</span></div>
+  <div style="margin-top:10px;color:rgba(255,255,255,0.72);font-size:12px;">・地点間の経路には推定を含む場合があります。<br>・海路・鉄道など移動手段をデータで区別しています。</div>
+</div>
 <div id="linkCard">
   <div id="linkCardClose" class="link-card-close">×</div>
   <button id="personCardPinButton">PIN</button>
@@ -1109,6 +1155,19 @@ borderToggle.onclick = () => {
 gridToggle.onclick = () => {
   toggleGrid();
 };
+
+const routeInfoToggle = document.getElementById('routeInfoToggle');
+const routeInfoPanel = document.getElementById('routeInfoPanel');
+const routeInfoClose = document.getElementById('routeInfoClose');
+if (routeInfoToggle && routeInfoPanel) {
+  routeInfoToggle.onclick = () => {
+    routeInfoPanel.style.display =
+      routeInfoPanel.style.display === 'block' ? 'none' : 'block';
+  };
+  if (routeInfoClose) routeInfoClose.onclick = () => {
+    routeInfoPanel.style.display = 'none';
+  };
+}
 
 chapterToggle.onclick = () => {
 
