@@ -1404,13 +1404,14 @@ relatedEvents:['manjiro_kanrin']
 
 {
 id:'manjiro_kanrin',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'213–214頁および続頁'},
 type:'person',
 startYear:1860,
 routeLabel:'KANRIN',
 title:'咸臨丸で再渡米',
 year:'1860',
 description:'幕府の通訳・教授方として咸臨丸で太平洋を横断し、サンフランシスコに到着する。遣米使節の本隊はポーハタン号で渡米し、咸臨丸はその随伴艦であった。',
-cardText:'咸臨丸で太平洋を横断し、サンフランシスコに到着する。万次郎にとっては約10年ぶりの再訪だった。\n\n到着当日、万次郎を含む4名がまず上陸し、到着届と歓迎会の打ち合わせを行い、インターナショナル・ホテルに泊まった。翌日は市長・市議会議長が来艦し、木村摂津守らが上陸してカリフォルニア州知事と会見、万次郎が通訳を務め修繕も依頼した。到着5日目には市庁で公式歓迎会が開かれ、ここでも万次郎が通訳した。\n\n到着6日目、傷んだ咸臨丸はサンフランシスコ湾北のメア・アイランド海軍造船所へ回航され全面修理に入る。乗組員は造船所構内の宿舎で休養しながら、当直・造船の学習・修理の手伝いを続けた。\n\n〔暦の注記〕原文の「三月二日（公式歓迎会）」「三月三日（メア・アイランド回航）」は到着5日目・6日目にあたる。グレゴリオ暦への換算は未確認のため確定日付としては扱わない。三月三日は桜田門外の変と同日と伝わる。出典＝掲載書の記述（書名未特定・要照合）。',
+cardText:'咸臨丸で太平洋を横断し、サンフランシスコに到着する。万次郎にとっては約10年ぶりの再訪だった。\n\n到着当日、万次郎を含む4名がまず上陸し、到着届と歓迎会の打ち合わせを行い、インターナショナル・ホテルに泊まった。翌日は市長・市議会議長が来艦し、木村摂津守らが上陸してカリフォルニア州知事と会見、万次郎が通訳を務め修繕も依頼した。到着5日目には市庁で公式歓迎会が開かれ、ここでも万次郎が通訳した。\n\n到着6日目、傷んだ咸臨丸はサンフランシスコ湾北のメア・アイランド海軍造船所へ回航され全面修理に入る。乗組員は造船所構内の宿舎で休養しながら、当直・造船の学習・修理の手伝いを続けた。\n\n〔暦の注記〕原文の「三月二日（公式歓迎会）」「三月三日（メア・アイランド回航）」は到着5日目・6日目にあたる。グレゴリオ暦への換算は未確認のため確定日付としては扱わない。三月三日は桜田門外の変と同日と伝わる。出典＝掲載書の記述（要照合）。',
 dateOriginal:'原文：三月二日（公式歓迎会）／三月三日（メア・アイランド回航）＝到着5・6日目',
 dateGregorianVerified:null,
 verificationStatus:'source-image-confirmed / calendar-pending',
@@ -1527,6 +1528,7 @@ relatedEvents:['manjiro_whitfield_letter_1862','manjiro_satsuma_kaiseijo']
 
 {
 id:'manjiro_whitfield_letter_1862',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'263–264頁'},
 type:'person',
 startYear:1862,
 routeLabel:'LETTER',
@@ -1548,13 +1550,14 @@ relatedEvents:['manjiro_satsuma_kaiseijo']
 
 {
 id:'manjiro_satsuma_kaiseijo',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'265頁以降'},
 type:'person',
 startYear:1864,
 routeLabel:'SATSUMA',
 title:'薩摩藩開成所で教授',
 year:'1864',
 description:'元治元年（1864年）5月、薩摩藩に招かれ、鹿児島の開成所で航海・測量・英語などを教える。',
-cardText:'元治元年（1864年）5月、薩摩藩は万次郎を鹿児島の開成所教授として招いた。\n\nその背景には、前年の生麦事件と薩英戦争がある。文久3年（1863年）に英国艦隊が鹿児島に来航して市街を砲撃し、薩摩は西洋の技術・英語・航海・造船の必要を痛感していた。万次郎は戦争の当事者としてではなく、戦後に必要とされた知識の担い手として招かれた。\n\n出典＝掲載書の記述（書名未特定・要照合）。',
+cardText:'元治元年（1864年）5月、薩摩藩は万次郎を鹿児島の開成所教授として招いた。\n\nその背景には、前年の生麦事件と薩英戦争がある。文久3年（1863年）に英国艦隊が鹿児島に来航して市街を砲撃し、薩摩は西洋の技術・英語・航海・造船の必要を痛感していた。万次郎は戦争の当事者としてではなく、戦後に必要とされた知識の担い手として招かれた。\n\n出典＝掲載書の記述（要照合）。',
 chapterId:'later_years',
 lat:31.60,
 lng:130.56,
@@ -1566,6 +1569,7 @@ relatedEvents:['satsuma_england_war','manjiro_tosa_kaiseikan']
 
 {
 id:'manjiro_tosa_kaiseikan',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'268頁'},
 type:'person',
 startYear:1865,
 timelineVisible:false,
@@ -1588,6 +1592,7 @@ relatedEvents:['meiji']
 
 {
 id:'manjiro_tosa_recalled_1868',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'274–275頁'},
 type:'person',
 startYear:1868,
 routeLabel:'TOSA',
@@ -1608,6 +1613,7 @@ relatedEvents:['meiji','manjiro_sunamura_residence']
 
 {
 id:'manjiro_sunamura_residence',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'274–275頁'},
 type:'person',
 startYear:1869,
 timelineVisible:false,
@@ -1629,6 +1635,7 @@ relatedEvents:['manjiro_kaisei_professor_1869']
 
 {
 id:'manjiro_kaisei_professor_1869',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'275頁以降'},
 type:'person',
 startYear:1869,
 routeLabel:'KAISEI SCHOOL',
@@ -1649,6 +1656,7 @@ relatedEvents:['manjiro_europe_outbound_1870']
 
 {
 id:'manjiro_europe_outbound_1870',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'277–278頁'},
 type:'person',
 startYear:1870,
 routeLabel:'GREAT REPUBLIC',
@@ -1690,6 +1698,7 @@ relatedEvents:['manjiro_second_america']
 
 {
 id:'manjiro_second_america',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'277–279頁（航海図④を含む）'},
 type:'person',
 startYear:1870,
 routeLabel:'EUROPE',
@@ -1738,6 +1747,7 @@ relatedEvents:['manjiro_fairhaven_revisit']
 
 {
 id:'manjiro_fairhaven_revisit',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'279頁'},
 type:'person',
 startYear:1870,
 routeLabel:'FAIRHAVEN',
@@ -1767,6 +1777,7 @@ relatedEvents:['manjiro_suez']
 
 {
 id:'manjiro_suez',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'278–279頁'},
 type:'person',
 startYear:1870,
 routeLabel:'SUEZ',
@@ -1786,6 +1797,7 @@ relatedEvents:['manjiro_return_japan_1871']
 
 {
 id:'manjiro_return_japan_1871',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'278–279頁'},
 type:'person',
 startYear:1871,
 routeLabel:'KOBE / YOKOHAMA',
@@ -1806,6 +1818,7 @@ relatedEvents:['manjiro_stroke_1871']
 
 {
 id:'manjiro_stroke_1871',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'290頁付近'},
 type:'person',
 startYear:1871,
 routeLabel:'ILLNESS',
@@ -1826,6 +1839,7 @@ relatedEvents:['manjiro_mother_visit_1873']
 
 {
 id:'manjiro_mother_visit_1873',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'281頁付近'},
 type:'person',
 startYear:1873,
 routeLabel:'MOTHER',
@@ -1846,6 +1860,7 @@ relatedEvents:['manjiro_mother_visit_1875']
 
 {
 id:'manjiro_mother_visit_1875',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'281頁付近'},
 type:'person',
 startYear:1875,
 routeLabel:'MOTHER',
@@ -1867,6 +1882,7 @@ relatedEvents:['manjiro_death']
 
 {
 id:'manjiro_death',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'290頁'},
 type:'person',
 startYear:1898,
 routeLabel:'TOKYO',
@@ -1887,6 +1903,7 @@ relatedEvents:['manjiro_burial_zoshigaya']
 
 {
 id:'manjiro_burial_zoshigaya',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'290頁'},
 type:'person',
 startYear:1898,
 timelineVisible:false,
@@ -2028,6 +2045,7 @@ relatedEvents:[]
 
 {
 id:'satsuma_england_war',
+source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'265頁付近'},
 type:'world',
 startYear:1863,
 title:'薩英戦争',
