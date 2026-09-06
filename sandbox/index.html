@@ -729,7 +729,16 @@ background:transparent;
 #linkCard::-webkit-scrollbar-thumb{
 background:rgba(255,255,255,0.28);
 border-radius:999px;
-} 
+}
+/* UIデザイン原則：特別な指示があるまで、上下左右のスクロールバー/カーソルの背景は付けない。
+   全要素のスクロールバーを暗色・透明にし、白い矢印ボタン（上下カーソルの白背景）を出さない。 */
+*::-webkit-scrollbar{width:8px;height:8px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:999px;}
+*::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.42);}
+*::-webkit-scrollbar-button{display:none;width:0;height:0;}
+*::-webkit-scrollbar-corner{background:transparent;}
+html{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.28) transparent;}
 @media (max-width: 768px){
 
   #leftPanel,
