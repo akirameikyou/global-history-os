@@ -2338,19 +2338,43 @@ cursorLine.style.display =
 
 // 年代変更では詳細カードを自動で開かない。
 // 開いている「選択中カード」がその期間から外れた場合のみ閉じる（再び期間内でも自動再表示しない）。
-function syncWorldCardToYear(year) {
-  const card = document.getElementById('world-event-card');
-  if (!card || card.style.display === 'none') return;
-  if (!selectedWorldEventId) return;
-  const canon = getWorldCanon(selectedWorldEventId);
-  if (!canon || canon.startYear == null) return;
-  const ey = (canon.endYear != null) ? canon.endYear : canon.startYear;
-  if (year < canon.startYear || year > ey) {
-    card.style.display = 'none';
-    selectedWorldEventId = null;
-  }
+// 年代カーソルがイベント期間へ「外から進入」した瞬間だけ、そのコンパクトカードを自動表示する。
+// 期間内の移動では再表示しない（×で閉じたものも、期間を離れて再進入するまで再表示しない）。
+// 大きく移動して複数の期間へ同時進入した場合は、優先度・到達年の近さで1件だけ表示する。
+let __worldAutoList = null;
+function buildWorldAutoList(){
+  const ids = [...new Set(worldLinks.map(l => l.id).concat(Object.keys(worldEventById)))];
+  const list = [];
+  ids.forEach(id => {
+    const c = getWorldCanon(id);
+    if (!c || c.startYear == null) return;
+    const sy = +c.startYear, ey = (c.endYear != null) ? +c.endYear : sy;
+    // 優先度：明示 autoFocusPriority > 単年イベント(具体的事件) > 期間イベント(背景プロセス)
+    const pri = (c.autoFocusPriority != null) ? c.autoFocusPriority : (ey === sy ? 1 : 0);
+    list.push({ id, sy, ey, pri });
+  });
+  return list;
 }
-  
+let __autoPrevYear = parseInt(slider.value) || 1800;
+function autoCardOnYearEntry(prev, cur){
+  if (prev === cur) return;
+  if (document.querySelector('.pinned-world-card')) return; // PIN中は自動表示で置き換えない
+  if (!__worldAutoList) __worldAutoList = buildWorldAutoList();
+  const entered = __worldAutoList.filter(e => {
+    const wasIn = prev >= e.sy && prev <= e.ey;
+    const isIn  = cur  >= e.sy && cur  <= e.ey;
+    return !wasIn && isIn; // 期間へ外から進入したイベントだけ
+  });
+  if (!entered.length) return;
+  // 複数進入時は1件だけ：優先度高 → 発生年が到達年に近い → 期間が短い
+  entered.sort((a, b) =>
+    (b.pri - a.pri) ||
+    (Math.abs(a.sy - cur) - Math.abs(b.sy - cur)) ||
+    ((a.ey - a.sy) - (b.ey - b.sy))
+  );
+  showWorldEventCard(entered[0].id); // コンパクト要約で自動表示（詳細展開はしない）
+}
+
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
@@ -2363,7 +2387,8 @@ slider.addEventListener('input', e => {
 
     renderWorldLinks();
   updateTimelineCursorLine();
-  syncWorldCardToYear(year);
+  autoCardOnYearEntry(__autoPrevYear, year);
+  __autoPrevYear = year;
 });
 </script>
 
