@@ -1509,24 +1509,6 @@ relatedEvents:['manjiro_horton_incident']
 },
 
 {
-id:'manjiro_horton_incident',
-type:'person',
-startYear:1863,
-routeLabel:'HORTON',
-title:'ホーツン事件',
-year:'1863',
-description:'父島で、強盗未遂の外国人2名を壱番丸の乗員が逮捕・処理する。日本人が初めて外国人を逮捕した事件とされる。',
-note:'前年1862年の壱番丸による捕鯨とは別の出来事。事件・逮捕の年次は史料により1862/1863の差がある。',
-lat:27.096,
-lng:142.191,
-placeName:'Futami, Chichijima',
-lineColor:'#66e0ff',
-chapterId:'ogasawara',
-historicalStatus:'estimated',
-relatedEvents:['manjiro_whitfield_letter_1862','manjiro_satsuma_kaiseijo']
-},
-
-{
 id:'manjiro_whitfield_letter_1862',
 source:{author:'中浜明',title:'中浜万次郎の生涯',publisher:'富山房',published:'1970-12-10',pages:'263–264頁'},
 type:'person',
@@ -1545,6 +1527,24 @@ lineColor:'#66e0ff',
 nodeType:'document',
 historicalStatus:'documented',
 arcVisible:false,
+relatedEvents:['manjiro_horton_incident']
+},
+
+{
+id:'manjiro_horton_incident',
+type:'person',
+startYear:1863,
+routeLabel:'HORTON',
+title:'ホーツン事件',
+year:'1863',
+description:'父島で、強盗未遂の外国人2名を壱番丸の乗員が逮捕・処理する。日本人が初めて外国人を逮捕した事件とされる。',
+note:'前年1862年の壱番丸による捕鯨とは別の出来事。事件・逮捕の年次は史料により1862/1863の差がある。',
+lat:27.096,
+lng:142.191,
+placeName:'Futami, Chichijima',
+lineColor:'#66e0ff',
+chapterId:'ogasawara',
+historicalStatus:'estimated',
 relatedEvents:['manjiro_satsuma_kaiseijo']
 },
 
