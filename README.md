@@ -202,3 +202,43 @@ John Manjiro Mode as its first fully realized experience.
 John Manjiro Mode
 
 を最初の完成作品として実装することを最優先としている。
+
+---
+
+# Run / 実行
+
+**John Manjiro Mode の実動入口は `sandbox/index.html` です。**
+
+The live entry point of John Manjiro Mode is `sandbox/index.html`.
+
+`sandbox/index.html` は ES モジュールと相対パス（`../data/`, `../assets/`）で
+`data/events.js` / `data/persons.js` / `sandbox/renderGlobe.js` /
+`data/geo/countries.geojson` を読み込みます。
+ファイルを直接開くのではなく、リポジトリのルートから静的サーバを立てて
+`/sandbox/index.html` を開いてください。
+
+```
+# 例（リポジトリのルートで）
+python -m http.server 8000
+# → http://localhost:8000/sandbox/index.html
+```
+
+## 旧プロトタイプについて / Legacy files
+
+次はいずれも旧プロトタイプで、John Manjiro Mode の実動入口ではありません。
+
+- ルート直下の `index.html` / `main.js`（旧「GLOBAL HISTORY MAP」系）
+- `render/renderGlobe.js`（旧描画）
+- `engine/historyEngine.js`（旧エンジン）
+- `data/data.json`（旧データ）
+- ルート直下の空ファイル `geo`（未参照。実データは `data/geo/countries.geojson`）
+
+The files above are earlier prototypes and are **not** the live entry point.
+
+## データの正本 / Source of truth
+
+- 人物史・世界史イベント：`data/events.js`（`type:'person'` / `type:'world'`）
+- W-LINK 専用イベントの本文：`sandbox/index.html` 内の `WORLD_EXTRA`
+- 左欄 WORLD EVENTS と W-LINK は `getWorldCanon(id)` を通じて同じ正本を参照します。
+  `sandbox/index.html` 内の `worldLinks` は W-LINK 期間バーの配置情報のみで、
+  本文は保持しません。

@@ -39,7 +39,10 @@ text-transform:uppercase;
 .focus-image{width:92px;height:92px;border-radius:999px;object-fit:cover;margin-bottom:30px;border:1px solid rgba(255,255,255,0.16);}
 .focus-abstract{font-size:14px;line-height:2.15;color:rgba(255,255,255,0.78);font-weight:300;margin-bottom:46px;max-width:320px;}
 
-.timeline-item{margin-bottom:34px;cursor:pointer;}
+.timeline-item{margin-bottom:34px;cursor:pointer;transition:border-color .3s, background .3s;}
+.timeline-item-active{padding-left:8px;border-left:2px solid rgba(102,224,255,0.7);}
+.timeline-item-active .timeline-text{color:rgba(255,255,255,0.98);}
+.timeline-item-active .timeline-inline-year{color:#9af0ff;}
 .timeline-year{font-size:13px;font-weight:700;letter-spacing:0.16em;color:#66e0ff;margin-bottom:10px;}
 .timeline-text{
 font-size:14px;
@@ -436,6 +439,43 @@ cursor:pointer;
 backdrop-filter:blur(10px);
 }
 
+#routeInfoToggle{
+position:absolute;
+left:52px;
+bottom:24px;
+z-index:80;
+background:rgba(255,255,255,0.06);
+border:1px solid rgba(255,255,255,0.18);
+color:rgba(255,255,255,0.82);
+padding:8px 16px;
+letter-spacing:0.15em;
+font-size:11px;
+cursor:pointer;
+backdrop-filter:blur(10px);
+}
+#routeInfoPanel{
+position:absolute;
+left:52px;
+bottom:64px;
+width:340px;
+max-width:70vw;
+z-index:90;
+display:none;
+background:rgba(5,12,22,0.92);
+border:1px solid rgba(102,224,255,0.35);
+border-radius:6px;
+padding:16px 18px 16px 18px;
+color:rgba(255,255,255,0.9);
+font-size:12.5px;
+line-height:1.7;
+backdrop-filter:blur(10px);
+box-shadow:0 0 18px rgba(0,0,0,0.5);
+}
+#routeInfoPanel h4{margin:0 0 8px 0;font-size:12px;letter-spacing:0.16em;color:#66e0ff;font-weight:700;}
+#routeInfoPanel .ri-legend{display:flex;align-items:center;gap:10px;margin-top:9px;}
+#routeInfoPanel .ri-line{width:42px;height:0;border-top:2px solid #cfe9ff;flex:none;}
+#routeInfoPanel .ri-line.dashed{border-top-style:dashed;border-top-color:rgba(207,233,255,0.9);}
+#routeInfoPanel .ri-close{position:absolute;top:8px;right:10px;cursor:pointer;color:#d8e8ff;font-size:16px;line-height:1;background:none;border:none;}
 #chapterToggle{
 position:absolute;
 right:480px;
@@ -689,7 +729,16 @@ background:transparent;
 #linkCard::-webkit-scrollbar-thumb{
 background:rgba(255,255,255,0.28);
 border-radius:999px;
-} 
+}
+/* UIデザイン原則：特別な指示があるまで、上下左右のスクロールバー/カーソルの背景は付けない。
+   全要素のスクロールバーを暗色・透明にし、白い矢印ボタン（上下カーソルの白背景）を出さない。 */
+*::-webkit-scrollbar{width:8px;height:8px;}
+*::-webkit-scrollbar-track{background:transparent;}
+*::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.28);border-radius:999px;}
+*::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.42);}
+*::-webkit-scrollbar-button{display:none;width:0;height:0;}
+*::-webkit-scrollbar-corner{background:transparent;}
+html{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.28) transparent;}
 @media (max-width: 768px){
 
   #leftPanel,
@@ -788,6 +837,15 @@ border-radius:999px;
 <button id="personLinkToggle">P-LINK</button>
 <button id="gridToggle">GRID</button>
 <button id="borderToggle">BORDERS</button>
+<button id="routeInfoToggle">航路について</button>
+<div id="routeInfoPanel">
+  <button class="ri-close" id="routeInfoClose">×</button>
+  <h4>航路について</h4>
+  <div>航路は、史料に確認できる地点と、当時の航行条件をもとに再構成しています。地点間の経路には推定を含みます。</div>
+  <div class="ri-legend"><span class="ri-line"></span><span>実線：史料で確認できる区間</span></div>
+  <div class="ri-legend"><span class="ri-line dashed"></span><span>破線：史料と航行条件から再構成した区間</span></div>
+  <div style="margin-top:10px;color:rgba(255,255,255,0.72);font-size:12px;">・地点間の経路には推定を含む場合があります。<br>・海路・鉄道など移動手段をデータで区別しています。</div>
+</div>
 <div id="linkCard">
   <div id="linkCardClose" class="link-card-close">×</div>
   <button id="personCardPinButton">PIN</button>
@@ -891,7 +949,12 @@ const chapterCycle = [
   'howland',
   'franklin',
   'gold_rush',
-  'return'
+  'return',
+  'opening',
+  'kanrin',
+  'ogasawara',
+  'europe_1870',
+  'later_years'
 ];
 
 let chapterIndex = 0;  
@@ -931,8 +994,7 @@ const worldLinks = [
   lng:129.88,
   altitude:1.55,
   placeName:'Nagasaki / Japan',
-  placeShort:'NAGASAKI',
-  regionName:'Russian approach to Japan'
+  placeShort:'NAGASAKI'
  },
  {
   id:'steam_revolution',
@@ -940,19 +1002,11 @@ const worldLinks = [
   startYear:1807,
   endYear:1807,
   color:'#aaaaaa',
-   
-　description:'蒸気船実用化の始まり。風に頼らない海上輸送の時代が始まる。',
-
-　cardText:'1807年、フルトンのクラーモント号は蒸気機関による定期航行に成功した。これは単なる技術革新ではない。それまで海上交通は風と海流に支配されていた。蒸気船は航海の自由度を大きく高め、人・情報・軍事力の移動速度を変えた。黒船もまた蒸気船であり、幕末日本が直面した世界海洋ネットワークの背後には蒸気革命が存在していた。',
-
-　meaning:'Ocean Mobility Revolution', 
-   
   lat:40.71,
   lng:-74.0,
   altitude:1.65,
   placeName:'Hudson River / New York',
-  placeShort:'HUDSON RIVER',
-  regionName:'Steamship technology'
+  placeShort:'HUDSON RIVER'
  },
  {
   id:'napoleonic_end',
@@ -964,8 +1018,7 @@ const worldLinks = [
   lng:4.41,
   altitude:1.65,
   placeName:'Waterloo / Europe',
-  placeShort:'WATERLOO',
-  regionName:'British maritime supremacy'
+  placeShort:'WATERLOO'
  },
  {
   id:'ikokusen_order',
@@ -977,68 +1030,20 @@ const worldLinks = [
   lng:139.76,
   altitude:1.5,
   placeName:'Edo / Japan',
-  placeShort:'EDO',
-  regionName:'Japanese coastal defense policy'
- },
- {
-  id:'opium_war',
-  label:'OPIUM WAR',
-  startYear:1839,
-  endYear:1842,
-  color:'#FF5E5E',
-  lat:22.3,
-  lng:114.1,
-  altitude:1.65,
-  placeName:'Pearl River Delta / Hong Kong',
-  placeShort:'PEARL RIVER DELTA',
-  regionName:'Qing China vs British Empire'
+  placeShort:'EDO'
  },
  {
   id:'pacific_whaling',
   label:'PACIFIC WHALING',
   startYear:1840,
   endYear:1855,
-
   color:'#66e0ff',
-  barType:'process', 
-
+  barType:'process',
   lat:30.0,
   lng:160.0,
   altitude:1.75,
-
   placeName:'North Pacific Ocean',
-  placeShort:'NORTH PACIFIC',
-  regionName:'Pacific whaling network',
-
-  description:'十九世紀太平洋世界を結んだ海洋ネットワーク。',
-
-  cardText:
-`PACIFIC WHALING は単なる捕鯨産業ではない。
-
-十九世紀前半から中頃にかけて、捕鯨船団はホノルル、ニューベッドフォード、フェアヘーブン、日本近海、サンフランシスコを継続的に結び付けた。
-
-船は鯨を追っていた。しかし同時に、人、知識、技術、航海術、情報も運んでいた。
-
-中浜万次郎はこのネットワークによって救助され、教育を受け、世界を経験した。
-
-さらに捕鯨船保護や補給港確保の必要性は、後のペリー遠征や日本開国とも接続していく。
-
-History OS では PACIFIC WHALING を産業イベントではなく、十九世紀太平洋文明圏を支えた接続網として観測する。`,
-
-  meaning:'Pacific Maritime Network'
-},
- {
-  id:'gold_rush',
-  label:'GOLD RUSH',
-  startYear:1848,
-  endYear:1855,
-  color:'#ffd95e',
-  lat:37.77,
-  lng:-122.42,
-  altitude:1.6,
-  placeName:'San Francisco / California',
-  placeShort:'SAN FRANCISCO',
-  regionName:'Pacific Gateway'
+  placeShort:'NORTH PACIFIC'
  },
  {
   id:'perry_expedition',
@@ -1050,34 +1055,7 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   lng:127.68,
   altitude:1.55,
   placeName:'Ryukyu / East Asia',
-  placeShort:'RYUKYU',
-  regionName:'US naval expedition route'
- },
- {
-  id:'black_ships',
-  label:'BLACK SHIPS',
-  startYear:1853,
-  endYear:1853,
-  color:'#b58cff',
-  lat:35.24,
-  lng:139.72,
-  altitude:1.45,
-  placeName:'Uraga / Japan',
-  placeShort:'URAGA',
-  regionName:'Connection Hub'
- },
- {
-  id:'treaty_kanagawa',
-  label:'TREATY',
-  startYear:1854,
-  endYear:1854,
-  color:'#66e0ff',
-  lat:35.44,
-  lng:139.64,
-  altitude:1.45,
-  placeName:'Kanagawa / Yokohama',
-  placeShort:'KANAGAWA',
-  regionName:'Treaty of Peace and Amity'
+  placeShort:'RYUKYU'
  },
  {
   id:'opening_of_japan',
@@ -1089,11 +1067,86 @@ History OS では PACIFIC WHALING を産業イベントではなく、十九世�
   lng:139.76,
   altitude:1.55,
   placeName:'Japan',
-  placeShort:'JAPAN',
-  regionName:'Opening of Japan'
+  placeShort:'JAPAN'
  }
 ];
-  
+
+// ── 世界史イベントの正本参照（左欄WORLD EVENTS と W-LINK で共通） ──
+// events(type:'world') を正本とし、W-LINK専用イベントは WORLD_EXTRA に日本語で一本化する。
+// 左欄・W-LINK・詳細カードはすべて getWorldCanon(id) から内容を生成し、日英を二重に保存しない。
+const worldEventById = {};
+events.forEach(e => { if (e.type === 'world') worldEventById[e.id] = e; });
+
+const WORLD_EXTRA = {
+  rezanov_arrival: {
+    id:'rezanov_arrival', title:'レザノフ来航', subtitleEn:'REZANOV ARRIVAL',
+    startYear:1804, endYear:1804, year:'1804',
+    description:'ロシア使節レザノフが長崎に来航し、江戸幕府に通商を求めた。幕府は長期にわたって回答を保留した後、要求を拒否した。',
+    cardText:'1804年、ロシア皇帝の使節ニコライ・レザノフが長崎に来航し、日本との通商を求めた。幕府はレザノフ一行を長崎に留め、翌年、通商を認めない方針を伝えた。北方から接近するロシアへの警戒は、その後の幕府の海防政策にも影響を与えていく。',
+    manjiroRelation:'万次郎誕生以前の出来事。万次郎が帰国する頃まで続く、幕府の対外警戒と海防政策の前史として位置づける。',
+    meaning:'鎖国下の日本にも、周辺諸国から通商と外交を求める動きが繰り返し届いていた。日本が外の世界と無関係だったのではなく、接触を制限しながら国際関係に対応していたことを示す出来事である。',
+    placeJa:'長崎', placeName:'Nagasaki / Japan', color:'#ffb36b'
+  },
+  steam_revolution: {
+    id:'steam_revolution', title:'蒸気船革命', subtitleEn:'STEAM REVOLUTION',
+    startYear:1807, endYear:1807, year:'1807',
+    description:'蒸気機関を動力とする船が商業運航に入り、風に左右されていた海上移動に新しい時代が始まった。',
+    cardText:'1807年、ロバート・フルトンの蒸気船がハドソン川で商業運航を成功させた。蒸気船は帆船と異なり、風向きだけに頼らず航行できる。19世紀を通して船体と機関が改良され、河川・沿岸・大洋を結ぶ定期航路が発達していった。',
+    manjiroRelation:'万次郎は帆船による捕鯨航海を経験した一方、帰国や咸臨丸渡米後の移動、1870年の再渡米などでは蒸気船が結ぶ新しい交通網の中を移動した。',
+    meaning:'蒸気船は、人・物資・郵便・情報が移動する速度と安定性を大きく変えた。万次郎が生きた時代は、帆船中心の海から蒸気船中心の海へ移り変わる時期でもあった。',
+    placeJa:'ハドソン川・ニューヨーク', placeName:'Hudson River / New York', color:'#aaaaaa'
+  },
+  napoleonic_end: {
+    id:'napoleonic_end', title:'ナポレオン戦争の終結', subtitleEn:'NAPOLEONIC END',
+    startYear:1815, endYear:1815, year:'1815',
+    description:'ヨーロッパを揺るがしたナポレオン戦争が終結し、イギリスの海上での優位がいっそう強まった。',
+    cardText:'1815年、ワーテルローの戦いでナポレオンが敗れ、長く続いた戦争が終結した。戦後の国際秩序が再編されるなか、強力な海軍と商船隊を持つイギリスは、世界各地を結ぶ海上交通と貿易に大きな影響力を持つようになった。',
+    manjiroRelation:'万次郎との直接の関与はない。万次郎を救助した捕鯨船や、その後の国際航路が活動した世界的背景として表示する。',
+    meaning:'19世紀の世界は、ヨーロッパ諸国の海軍力、通商、植民地活動によって急速に結び直された。万次郎が漂流後に入った太平洋も、この世界規模の海上ネットワークの一部だった。',
+    placeJa:'ワーテルロー・ヨーロッパ', placeName:'Waterloo / Europe', color:'#d0d0ff'
+  },
+  ikokusen_order: {
+    id:'ikokusen_order', title:'異国船打払令', subtitleEn:'IKOKUSEN ORDER',
+    startYear:1825, endYear:1825, year:'1825',
+    description:'江戸幕府は、日本沿岸へ接近する外国船を追い払うよう命じ、海防政策を強化した。',
+    cardText:'1825年、幕府は異国船打払令を出し、日本沿岸に接近した外国船を、理由を問わず退去させる方針を示した。ロシア船や欧米船の接近が増えるなか、幕府が海岸防備への警戒を強めたことを示している。この命令はアヘン戦争後の1842年に緩和された。',
+    manjiroRelation:'万次郎が1841年に漂流した時点でも、外国との接触は強く制限されていた。帰国を決断する際の危険と困難を理解するための背景となる。',
+    meaning:'漂流民が外国船に救助されても、帰国すれば厳しい取り調べを受けた時代背景を示す。海は人を世界へ運ぶ道である一方、幕府にとっては外からの脅威が到来する境界でもあった。',
+    placeJa:'江戸・日本沿岸', placeName:'Edo / Japan', color:'#ffcc66'
+  },
+  pacific_whaling: {
+    id:'pacific_whaling', title:'太平洋捕鯨', subtitleEn:'PACIFIC WHALING',
+    startYear:1840, endYear:1855, year:'1840 — 1855',
+    description:'19世紀の太平洋捕鯨は、港・島・船を結ぶ広域的な海上ネットワークを形成した。万次郎はその中で救助され、航海技術と英語を学び、世界を経験した。',
+    cardText:'19世紀前半、アメリカの捕鯨船は大西洋からケープホーンを回り、太平洋各地へ進出した。捕鯨船は鯨を追うだけでなく、食料や水の補給、船の修理、乗組員の交代を通して、北米・南米・ハワイ・太平洋諸島を結んでいた。\n\n1841年、鳥島に漂着していた万次郎たちは、アメリカ捕鯨船ジョン・ハウランド号に救助された。万次郎はこの海上ネットワークを通じてアメリカへ渡り、教育を受け、さらに捕鯨航海へ参加した。',
+    manjiroRelation:'万次郎の人生と直接結びつく世界史イベント。救助、渡米、教育、捕鯨航海、帰国資金の獲得へと続く出発点になった。',
+    meaning:'太平洋捕鯨を単なる産業史としてではなく、人・知識・技術・言語が海を越えて移動した交流網として捉える。万次郎の生涯は、この網との偶然の接触から大きく展開した。',
+    placeJa:'北太平洋', placeName:'North Pacific Ocean', color:'#66e0ff'
+  },
+  perry_expedition: {
+    id:'perry_expedition', title:'ペリー遠征', subtitleEn:'PERRY EXPEDITION',
+    startYear:1852, endYear:1853, year:'1852 — 1853',
+    description:'アメリカ東インド艦隊司令長官ペリーは、日本との交渉を目的とする艦隊を率いて東アジアへ向かった。',
+    cardText:'1852年、マシュー・ペリーはアメリカ大統領の国書を携え、艦隊を率いてアメリカを出発した。大西洋からインド洋を経て東アジアへ進み、1853年には琉球を訪れた後、日本へ向かった。この航海は、日本来航に至るまでの遠征全体を示している。',
+    manjiroRelation:'帰国後の万次郎は、アメリカ事情と英語を知る人物として幕府に召し出された。ペリー来航への対応を考えるうえで、その知識が求められた。',
+    meaning:'ペリー来航は浦賀だけで突然起きた出来事ではない。アメリカの捕鯨活動、中国貿易、蒸気船の燃料補給地確保などを背景に計画された、世界規模の海上遠征だった。',
+    placeJa:'大西洋・インド洋・琉球', placeName:'Ryukyu / East Asia', color:'#b58cff'
+  },
+  opening_of_japan: {
+    id:'opening_of_japan', title:'開国への移行', subtitleEn:'OPENING OF JAPAN',
+    startYear:1854, endYear:1868, year:'1854 — 1868',
+    description:'条約締結と港の開放を起点として、日本の政治・経済・社会が国際関係の中へ組み込まれていった。',
+    cardText:'1854年の日米和親条約以後、日本は欧米諸国と相次いで条約を結び、1858年の通商条約を経て外国との貿易を本格化させた。外国人の居留、海外渡航、海軍や造船技術の導入が進む一方、条約や開港をめぐる国内対立も激しくなった。\n\n開国は一日の出来事ではなく、幕末の社会全体を変えていった長い過程だった。',
+    manjiroRelation:'万次郎は幕府の直参となり、翻訳、航海教育、造船・捕鯨、小笠原調査、咸臨丸渡米などに関わった。開国期の実務を支えた人物の一人として位置づける。',
+    meaning:'海の外を知ることが例外だった時代から、外国との交渉、交易、留学、航海が国家の課題となる時代への移行を示す。万次郎の経験は、この変化の中で個人的な漂流体験から社会的な知識へ変わった。',
+    placeJa:'日本', placeName:'Japan', color:'#7dff7a'
+  }
+};
+
+function getWorldCanon(id){ return worldEventById[id] || WORLD_EXTRA[id] || null; }
+
+// ユーザーが明示的に選択（クリック）した世界史イベント。年代変更では設定しない。
+let selectedWorldEventId = null;
 
 borderToggle.onclick = () => {
   toggleBorders();
@@ -1101,6 +1154,19 @@ borderToggle.onclick = () => {
 gridToggle.onclick = () => {
   toggleGrid();
 };
+
+const routeInfoToggle = document.getElementById('routeInfoToggle');
+const routeInfoPanel = document.getElementById('routeInfoPanel');
+const routeInfoClose = document.getElementById('routeInfoClose');
+if (routeInfoToggle && routeInfoPanel) {
+  routeInfoToggle.onclick = () => {
+    routeInfoPanel.style.display =
+      routeInfoPanel.style.display === 'block' ? 'none' : 'block';
+  };
+  if (routeInfoClose) routeInfoClose.onclick = () => {
+    routeInfoPanel.style.display = 'none';
+  };
+}
 
 chapterToggle.onclick = () => {
 
@@ -1115,7 +1181,7 @@ chapterToggle.onclick = () => {
 
   chapterToggle.textContent =
     'CHAPTER : ' +
-    chapterId.toUpperCase();
+    chapterId.toUpperCase().replace(/_/g, ' ');
 
 };
   
@@ -1139,10 +1205,21 @@ worldLinkToggle.onclick = () => {
       locationNotice.style.display = 'none';
     }
 
+    // W-LINK OFF：W-LINK由来（自動/バー）のカードだけ閉じる。左上WORLD EVENTS由来は維持。
+    const wec = document.getElementById('world-event-card');
+    if(wec && wec.style.display !== 'none' && (wec.dataset.cardSource || '').startsWith('w-link')){
+      wec.style.display = 'none';
+      selectedWorldEventId = null;
+    }
+    // W-LINK由来のPIN（固定）カードも解除・非表示にする（左上由来のPINは残す）。
+    document.querySelectorAll('.pinned-world-card').forEach(p => {
+      if((p.dataset.cardSource || '').startsWith('w-link')) p.remove();
+    });
+
   }
 
    updateTimelineCursorLine();
-  showActiveWorldLayerCard(parseInt(slider.value));
+  // W-LINK を ON にしても詳細カードは自動で開かない（クリックで開く）。
 };
 personLinkToggle.onclick = () => {
   personLinksVisible = !personLinksVisible;
@@ -1406,7 +1483,7 @@ const active =
     
         lane.innerHTML = `
       <div class="timeline-world-link-label" style="opacity:${linkOpacity};">
-        ${link.label}
+        ${(getWorldCanon(link.id) && getWorldCanon(link.id).title) || link.label}
       </div>
       <div class="timeline-world-link-line"></div>
       <div
@@ -1448,17 +1525,10 @@ const active =
       
       showWorldLinkMapLabel(link);
 
-      showWorldEventCard({
-        title: link.label,
-        year: link.startYear === link.endYear
-          ? String(link.startYear)
-          : `${link.startYear} — ${link.endYear}`,
-        color: link.color || '#E69445',
-        description: link.description || link.regionName || '',
-        cardText: link.cardText || link.description || link.regionName || '',
-        meaning: link.meaning || '',
-        placeName: link.placeName || ''
-      });
+      // 左欄と同じ正本データから共通カードを開く（英語簡易版は使わない）。
+      if (getWorldCanon(link.id)) {
+        showWorldEventCard(link.id, 'w-link-click');
+      }
     };
 
     timelineWorldLinks.appendChild(lane);
@@ -1601,113 +1671,104 @@ function renderTimelineMeaning(year){
     : '';
 }
   
-function showWorldEventCard(event) {
-  let card = document.getElementById('world-event-card');
+function showWorldEventCard(idOrCanon, source) {
+  // 左欄WORLD EVENTS と W-LINK の両入口から、同じ正本データで共通カードを開く。
+  // source: 'world-list'(左上) / 'w-link-click'(W-LINKバー) / 'w-link-auto'(年代到達)
+  const canon = (typeof idOrCanon === 'string') ? getWorldCanon(idOrCanon) : idOrCanon;
+  if (!canon) return;
+  selectedWorldEventId = canon.id || null;
 
+  // 展開/折りたたみカーソル用スタイル（白い背景面を使わない山形カーソル）を一度だけ注入。
+  if (!document.getElementById('wec-toggle-style')) {
+    const st = document.createElement('style');
+    st.id = 'wec-toggle-style';
+    st.textContent =
+      '#world-event-card-toggle{display:inline-flex;align-items:center;gap:6px;background:transparent;border:none;padding:2px 0;margin-top:12px;color:#9cd7e6;font-size:12px;letter-spacing:0.06em;cursor:pointer;transition:color .15s,text-shadow .15s;}' +
+      '#world-event-card-toggle .wec-chevron{font-size:11px;line-height:1;opacity:0.9;}' +
+      '#world-event-card-toggle:hover,#world-event-card-toggle:focus{color:#d8f3ff;text-shadow:0 0 8px rgba(102,224,255,0.75);outline:none;}' +
+      '#world-event-card-toggle:focus-visible{text-shadow:0 0 11px rgba(102,224,255,0.95);}';
+    document.head.appendChild(st);
+  }
+
+  let card = document.getElementById('world-event-card');
   if (!card) {
     card = document.createElement('div');
     card.id = 'world-event-card';
-
     card.style.position = 'fixed';
     card.style.left = '52px';
     card.style.bottom = '92px';
     card.style.width = '330px';
+    card.style.display = 'block';
     card.style.padding = '16px 18px';
-    card.style.background = 'rgba(12, 8, 5, 0.88)';
+    card.style.background = 'rgba(12, 8, 5, 0.9)';
     card.style.border = '1px solid rgba(230,148,69,0.55)';
     card.style.borderRadius = '6px';
     card.style.color = '#ffffff';
     card.style.fontFamily = 'sans-serif';
     card.style.zIndex = '75';
     card.style.boxShadow = '0 0 18px rgba(230,148,69,0.30)';
-
     document.body.appendChild(card);
   }
-
   card.style.display = 'block';
+  card.dataset.cardSource = source || 'w-link-click';
 
-  card.innerHTML = `
-  <button
-    id="world-event-card-close"
-    style="
-      position:absolute;
-      top:8px;
-      right:10px;
-      background:transparent;
-      border:none;
-      color:#ffffff;
-      font-size:18px;
-      cursor:pointer;
-      line-height:1;
-    "
-  >
-    ×
-  </button>
+  const summaryText = canon.summary || canon.description || '';
+  const detailText = canon.cardText || '';
+  const norm = s => (s || '').replace(/\s/g, '');
+  const hasDetail = detailText && norm(detailText) !== norm(summaryText);
+  const place = canon.placeJa || canon.placeName || '';
+  // 「詳しく見る」で展開する追加情報があるか（詳細本文・関係・意味）。
+  const hasExtra = !!(hasDetail || canon.manjiroRelation || canon.meaning);
+  let expanded = false; // イベントを開くたびに要約状態から始める
 
-    <button
-      id="world-event-card-pin"
-      style="
-        position:absolute;
-        top:9px;
-        right:38px;
-        background:transparent;
-        border:1px solid rgba(255,255,255,0.22);
-        color:#ffffff;
-        font-size:10px;
-        cursor:pointer;
-        letter-spacing:0.08em;
-        padding:2px 5px;
-      "
-    >
-      PIN
-    </button>
-    
-  <div style="font-size:12px; color:#ffffff; letter-spacing:0.12em; padding-right:24px; opacity:0.82;">
-    WORLD EVENT
-  </div>
-
- <div style="font-size:20px; margin-top:6px; padding-right:12px; letter-spacing:-0.03em;">
-  ${event.title}
-</div>
-
-  <div style="font-size:13px; color:${event.color || '#E69445'}; margin-top:6px;">
-    ${event.year}
-  </div>
-
-  <div style="font-size:13px; line-height:1.75; margin-top:12px; color:#f0f0f0;">
-    ${event.cardText || event.description || ''}
-  </div>
-
-  ${
-    event.meaning
-      ? `
-        <div style="margin-top:14px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.12);">
-          <div style="font-size:10px; letter-spacing:0.16em; color:#ffffff; opacity:0.62;">
-            MEANING
-          </div>
-          <div style="font-size:12px; line-height:1.6; margin-top:5px; color:#ffffff; opacity:0.86;">
-            ${event.meaning}
-          </div>
-        </div>
-      `
-      : ''
+  function render() {
+    // 要約：カードは内容なりに小さく（スクロールなし）。
+    // 詳細：カード自体が縦に拡張し、画面高を超える場合のみカード自体をスクロール（バーは枠端に揃う）。
+    card.style.maxHeight = expanded ? '80vh' : '';
+    card.style.overflowY = expanded ? 'auto' : 'visible';
+    const bodyText = (expanded && hasDetail) ? detailText : (summaryText || detailText || '');
+    const chevron = expanded ? '▴' : '▾';
+    const toggle = hasExtra
+      ? `<button id="world-event-card-toggle">${expanded ? '要約に戻る' : '詳しく見る'}<span class="wec-chevron">${chevron}</span></button>`
+      : '';
+    const relBlock = (expanded && canon.manjiroRelation)
+      ? `<div style="margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px;letter-spacing:0.12em;color:#fff;opacity:0.62;">万次郎との関係</div><div style="font-size:12px;line-height:1.6;margin-top:5px;opacity:0.86;">${canon.manjiroRelation}</div></div>` : '';
+    const meanBlock = (expanded && canon.meaning)
+      ? `<div style="margin-top:14px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.12);"><div style="font-size:10px;letter-spacing:0.16em;color:#fff;opacity:0.62;">MEANING</div><div style="font-size:12px;line-height:1.6;margin-top:5px;opacity:0.86;">${canon.meaning}</div></div>` : '';
+    // 場所：展開時に表示。展開できないイベント（追加情報なし）は要約に場所を出して情報を失わない。
+    const placeBlock = (place && (expanded || !hasExtra))
+      ? `<div style="font-size:11px;letter-spacing:0.12em;color:#fff;opacity:0.68;margin-top:12px;">${place}</div>` : '';
+    card.innerHTML = `
+      <button id="world-event-card-close" style="position:absolute;top:8px;right:10px;background:transparent;border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;">×</button>
+      <button id="world-event-card-pin" style="position:absolute;top:9px;right:38px;background:transparent;border:1px solid rgba(255,255,255,0.22);color:#fff;font-size:10px;cursor:pointer;letter-spacing:0.08em;padding:2px 5px;">PIN</button>
+      <div>
+        <div style="font-size:12px;color:#fff;letter-spacing:0.12em;padding-right:48px;opacity:0.82;">WORLD EVENT</div>
+        <div style="font-size:20px;margin-top:6px;padding-right:12px;letter-spacing:-0.02em;">${canon.title || ''}${canon.subtitleEn ? ` <span style="font-size:11px;opacity:0.5;letter-spacing:0.06em;">${canon.subtitleEn}</span>` : ''}</div>
+        <div style="font-size:13px;color:${canon.color || '#E69445'};margin-top:6px;">${canon.year || ''}</div>
+      </div>
+      <div style="margin-top:12px;">
+        <div style="font-size:13px;line-height:1.75;color:#f0f0f0;white-space:pre-line;">${bodyText}</div>
+        ${toggle}
+        ${relBlock}
+        ${meanBlock}
+        ${placeBlock}
+      </div>
+    `;
+    card.querySelector('#world-event-card-close').addEventListener('click', () => {
+      card.style.display = 'none';
+      selectedWorldEventId = null;
+    });
+    card.querySelector('#world-event-card-pin').addEventListener('click', () => {
+      createPinnedWorldEventCard(canon, card.dataset.cardSource);
+    });
+    const tg = card.querySelector('#world-event-card-toggle');
+    if (tg) tg.addEventListener('click', () => {
+      expanded = !expanded;
+      render();
+      card.scrollTop = 0;
+    });
   }
-
-  <div style="font-size:11px; letter-spacing:0.12em; color:#ffffff; opacity:0.68; margin-top:12px;">
-    ${event.placeName || ''}
-  </div>
-`;
-
-  const closeButton = document.getElementById('world-event-card-close');
-
-  closeButton.addEventListener('click', () => {
-    card.style.display = 'none';
-  });
-  const pinButton = document.getElementById('world-event-card-pin');
-
-pinButton.addEventListener('click', () => {
-  createPinnedWorldEventCard(event);
-});
+  render();
 }
 
 function createFocusPersonCard(person) {
@@ -1937,8 +1998,9 @@ function createPinnedPersonCard(person) {
   });
 }
   
-function createPinnedWorldEventCard(event) {
+function createPinnedWorldEventCard(event, source) {
   const card = document.createElement('div');
+  card.dataset.cardSource = source || 'w-link-click';
 
   card.style.position = 'fixed';
 
@@ -2040,8 +2102,11 @@ document.addEventListener('mouseup', () => {
 });
 }
   
+let __lastActiveEventId = null;
 function renderUI(year){
   worldEventsEl.innerHTML = '';
+  const rightPanel = timeline.closest('.right-panel');
+  const __prevScroll = rightPanel ? rightPanel.scrollTop : 0;
   timeline.innerHTML = '';
 
   const worldEvents = events.filter(
@@ -2075,15 +2140,20 @@ function renderUI(year){
     altitude: 1.6
   }, 1200);
 
-  showWorldEventCard(event);
+  showWorldEventCard(event.id, 'world-list');
 };
 
     worldEventsEl.appendChild(item);
   });
 
+  const __newest = personEvents.length ? personEvents[personEvents.length - 1] : null;
+  const __newestId = __newest ? __newest.id : null;
+
   personEvents.forEach(event => {
     const item = document.createElement('div');
     item.className = 'timeline-item';
+    if (event === __newest) item.classList.add('timeline-item-active');
+    item.dataset.eid = event.id;
 
     item.innerHTML = `
   <div class="timeline-text">
@@ -2098,7 +2168,7 @@ function renderUI(year){
     </span>
   </div>
 `;
-    
+
     item.onclick = () => {
       world.pointOfView({
         lat: event.lat,
@@ -2109,6 +2179,23 @@ function renderUI(year){
 
     timeline.appendChild(item);
   });
+
+  // 中央年代バーと右人物年表の同期：
+  // アクティブ（現在年以前で最新）イベントが変わった時だけ、右パネル内でそこへ寄せる。
+  // 同一イベントの年は位置を保持し、rebuildによる先頭ジャンプや手動スクロールの巻き戻しを防ぐ。
+  // スクロールするのは右パネル内のみで、ページ全体はスクロールしない。
+  if (rightPanel) {
+    if (__newestId && __newestId !== __lastActiveEventId) {
+      const activeEl = timeline.querySelector('.timeline-item-active');
+      if (activeEl) {
+        const target = activeEl.offsetTop - rightPanel.clientHeight * 0.55;
+        rightPanel.scrollTo({ top: Math.max(0, target), behavior: 'smooth' });
+      }
+      __lastActiveEventId = __newestId;
+    } else {
+      rightPanel.scrollTop = __prevScroll;
+    }
+  }
 }
 
 function renderTimelineGuideLines(){
@@ -2176,29 +2263,46 @@ cursorLine.style.display =
   cursorPointer.style.display = 'block';
 }
 
-function showActiveWorldLayerCard(year) {
-  if (!worldLinksVisible) return;
-
-  const activeLink = worldLinks.find(link =>
-    year >= link.startYear &&
-    year <= link.endYear
-  );
-
-  if (!activeLink) return;
-
-  showWorldEventCard({
-    title: activeLink.label,
-    year: activeLink.startYear === activeLink.endYear
-      ? String(activeLink.startYear)
-      : `${activeLink.startYear} — ${activeLink.endYear}`,
-    color: activeLink.color || '#E69445',
-    description: activeLink.description || activeLink.regionName || '',
-    cardText: activeLink.cardText || activeLink.description || activeLink.regionName || '',
-    meaning: activeLink.meaning || '',
-    placeName: activeLink.placeName || ''
+// 年代カーソルがイベント期間へ「外から進入」した瞬間だけ、そのコンパクトカードを自動表示する。
+// 期間内の移動では再表示しない（×で閉じたものも、期間を離れて再進入するまで再表示しない）。
+// 大きく移動して複数の期間へ同時進入した場合は、優先度・到達年の近さで1件だけ表示する。
+let __worldAutoList = null;
+function buildWorldAutoList(){
+  // 自動表示の対象は W-LINK 期間バーに登録されたイベント（W-LINK固有層）だけ。
+  // 左上WORLD EVENTS（events type:world）は年代連動と手動クリック専用で、自動表示しない。
+  const ids = [...new Set(worldLinks.map(l => l.id))];
+  const list = [];
+  ids.forEach(id => {
+    const c = getWorldCanon(id);
+    if (!c || c.startYear == null) return;
+    const sy = +c.startYear, ey = (c.endYear != null) ? +c.endYear : sy;
+    // 優先度：明示 autoFocusPriority > 単年イベント(具体的事件) > 期間イベント(背景プロセス)
+    const pri = (c.autoFocusPriority != null) ? c.autoFocusPriority : (ey === sy ? 1 : 0);
+    list.push({ id, sy, ey, pri });
   });
+  return list;
 }
-  
+let __autoPrevYear = parseInt(slider.value) || 1800;
+function autoCardOnYearEntry(prev, cur){
+  if (!worldLinksVisible) return;          // W-LINK OFF のときは自動表示しない
+  if (prev === cur) return;
+  if (document.querySelector('.pinned-world-card')) return; // PIN中は自動表示で置き換えない
+  if (!__worldAutoList) __worldAutoList = buildWorldAutoList();
+  const entered = __worldAutoList.filter(e => {
+    const wasIn = prev >= e.sy && prev <= e.ey;
+    const isIn  = cur  >= e.sy && cur  <= e.ey;
+    return !wasIn && isIn; // 期間へ外から進入したイベントだけ
+  });
+  if (!entered.length) return;
+  // 複数進入時は1件だけ：優先度高 → 発生年が到達年に近い → 期間が短い
+  entered.sort((a, b) =>
+    (b.pri - a.pri) ||
+    (Math.abs(a.sy - cur) - Math.abs(b.sy - cur)) ||
+    ((a.ey - a.sy) - (b.ey - b.sy))
+  );
+  showWorldEventCard(entered[0].id, 'w-link-auto'); // コンパクト要約で自動表示（詳細展開はしない）
+}
+
 slider.addEventListener('input', e => {
   const year = parseInt(e.target.value);
   timelineYear.innerText = year;
@@ -2211,7 +2315,8 @@ slider.addEventListener('input', e => {
 
     renderWorldLinks();
   updateTimelineCursorLine();
-  showActiveWorldLayerCard(year);
+  autoCardOnYearEntry(__autoPrevYear, year);
+  __autoPrevYear = year;
 });
 </script>
 
