@@ -2076,7 +2076,7 @@ placeName:'Texas / Mexico Border',
 geoCountry:'United States of America',
 areaColor:'rgba(255,94,94,0.18)',
 strokeColor:'rgba(255,94,94,0.65)',
-relatedEvents:['gold_rush','manjiro_franklin','manjiro_gold_rush']
+relatedEvents:['gold_rush','manjiro_franklin','manjiro_goldrush_departure']
 },
   
 {
@@ -2098,7 +2098,7 @@ placeName:'San Francisco / California',
 geoCountry:'United States of America',
 areaColor:'rgba(255,217,94,0.18)',
 strokeColor:'rgba(255,217,94,0.65)',
-relatedEvents:['manjiro_gold_rush','manjiro_goldfield']
+relatedEvents:['manjiro_goldrush_departure','manjiro_goldfield']
 },
 
 {
