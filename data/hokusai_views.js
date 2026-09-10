@@ -13,7 +13,7 @@
 //  viewpointCoordinate : documented|reconstructed|offshore(緯度経度一点の確定度)
 //  compositionGeometry : literal|composite|imaginative(構図が実景か/合成か/写実不能か)
 // 旧 confidence(documented/estimated/artistic)は後方互換のため各レコードに維持(非破壊)。
-// derived は hokusai-geo-v1 の snapshot。computeGeometry()/verifyGeometry() で再生成・検証可能。
+// derived は hokusai-geo-v1 の検証・キャッシュ用 snapshot（唯一の正本ではない）。canonical(interpretation) + hokusai-geo-v1 → computeGeometry() が正。verifyGeometry() で照合可能。
 // #6,#38 の画像は正しいMET版へ差替済(verify:ok)。
 
 export const FUJI = {"lat": 35.3606, "lng": 138.7274, "alt_m": 3776};
@@ -730,7 +730,7 @@ export const hokusaiViews = [
       },
       "viewpointName": "名古屋市中区富士見町（旧尾張藩不二見原）",
       "alt_m": 15,
-      "viewpointCoordinate": "documented",
+      "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 3.5,
       "source": "gemini",
