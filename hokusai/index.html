@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>葛飾北斎版 3D試作</title>
+<style>
+  :root{
+    --bg:#0a0e14; --panel:rgba(14,19,27,.86); --line:rgba(255,255,255,.12);
+    --ink:#eef3f8; --sub:#9db0c4; --indigo:#7cb3ff; --gold:#ffd36a; --vermilion:#ff6b5c;
+    --doc:#4fd0b8; --est:#e0b45f; --art:#c79bff;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+    --mono:"SFMono-Regular",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+  #globeViz{position:fixed;inset:0}
+  .titlecard{position:fixed;left:18px;top:16px;z-index:10;max-width:340px}
+  .titlecard h1{font-size:16px;margin:0 0 4px;letter-spacing:.02em;font-weight:650}
+  .titlecard p{font-size:11.5px;color:var(--sub);margin:0;line-height:1.6}
+  .controls{position:fixed;right:18px;top:16px;z-index:10;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+  .seg{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden;backdrop-filter:blur(8px)}
+  .seg button{background:transparent;color:var(--sub);border:0;padding:7px 12px;font-size:12px;cursor:pointer;font-family:inherit}
+  .seg button.on{background:rgba(124,179,255,.18);color:var(--ink);font-weight:650}
+  .seg .lab{padding:7px 10px;font-size:10.5px;color:var(--sub);border-right:1px solid var(--line);align-self:center}
+  .hint{position:fixed;left:18px;bottom:14px;z-index:10;font-size:11.5px;color:var(--sub);background:var(--panel);
+    border:1px solid var(--line);border-radius:9px;padding:8px 12px;backdrop-filter:blur(8px);max-width:60vw;line-height:1.6}
+  /* panel */
+  #panel{position:fixed;right:18px;top:112px;z-index:10;width:320px;max-height:calc(100vh - 132px);overflow:auto;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(10px);
+    padding:14px 16px;box-shadow:0 10px 40px -12px rgba(0,0,0,.6)}
+  #panel[hidden]{display:none}
+  #panel .no{font-family:var(--mono);font-size:11px;color:var(--gold);letter-spacing:.05em}
+  #panel h2{font-size:18px;margin:2px 0 2px;font-weight:700}
+  #panel .en{font-size:12px;color:var(--sub);margin-bottom:8px}
+  #panel img.thumb{width:100%;border-radius:8px;border:1px solid var(--line);cursor:zoom-in;display:block}
+  #panel .zoomhint{font-size:10.5px;color:var(--sub);text-align:right;margin:3px 0 8px}
+  .chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+  .chip{font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)}
+  .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
+  .k-確度{background:rgba(255,255,255,.08);color:var(--sub)}
+  .metrics{font-family:var(--mono);font-size:11.5px;color:var(--sub);line-height:1.9;margin:6px 0}
+  .metrics b{color:var(--ink)}
+  #panel .vpn{font-size:12px;color:var(--sub);margin:2px 0 6px}
+  #panel .note{font-size:12px;line-height:1.7;color:#cdd9e6;margin:8px 0}
+  #panel .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+  #panel .links a{font-size:11.5px;color:var(--indigo);border:1px solid rgba(124,179,255,.4);border-radius:7px;
+    padding:3px 9px;text-decoration:none;background:rgba(124,179,255,.08)}
+  #panel .close{position:absolute;right:10px;top:8px;background:none;border:0;color:var(--sub);font-size:18px;cursor:pointer}
+  /* lightbox */
+  #lb{position:fixed;inset:0;z-index:50;background:rgba(5,8,12,.92);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+  #lb.open{display:flex}
+  #lb figure{margin:0;max-width:min(1100px,92vw);max-height:92vh;display:flex;flex-direction:column;gap:8px}
+  #lb img{max-width:100%;max-height:82vh;object-fit:contain;border-radius:6px;box-shadow:0 12px 50px rgba(0,0,0,.7)}
+  #lb figcaption{color:var(--sub);font-size:12.5px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  #lb figcaption a{color:var(--indigo)}
+  #lb .x{position:fixed;right:20px;top:14px;color:#fff;font-size:26px;background:none;border:0;cursor:pointer}
+  [hidden]{display:none!important}
+</style></head>
+<body>
+<div id="globeViz"></div>
+
+<div class="titlecard">
+  <h1>葛飾北斎版 · 富嶽三十六景（3D試作・6図）</h1>
+  <p>点＝北斎が富士を描いた視点／金＝富士。点を選ぶと「どこから・どの向きに富士を捉えたか」を展開します。<b>これは作者の観測(Representation)であり、実際の物理的視野ではありません。</b></p>
+</div>
+
+<div class="controls">
+  <div class="seg" id="modeSeg"><span class="lab">画角</span>
+    <button data-mode="A" class="on">A 線のみ</button><button data-mode="B">B 面付き</button></div>
+  <div class="seg" id="allSeg"><span class="lab">表示</span>
+    <button data-all="0" class="on">選択時展開</button><button data-all="1">常時展開</button></div>
+  <div class="seg"><button id="reset">選択解除 / 俯瞰へ</button></div>
+</div>
+
+<aside id="panel" hidden></aside>
+
+<div class="hint" id="hint">点をクリック＝視点を選択。ドラッグで回転・ホイールで拡大。絵をクリックで拡大表示。</div>
+
+<div id="lb"><button class="x" aria-label="閉じる">×</button><figure><img alt=""><figcaption></figcaption></figure></div>
+
+<script type="module">
+import Globe from 'https://esm.sh/globe.gl';
+
+const FIGS = [{"no": 1, "ja": "神奈川沖浪裏", "en": "The Great Wave off Kanagawa", "vp": {"lat": 35.435, "lng": 139.68}, "vpName": "横浜本牧沖〜神奈川宿沖の東京湾海上", "alt": 0, "brg": 264.8, "dist": 86.7, "elev": 2.5, "half": 7.0, "farL": {"lat": 35.2666, "lng": 138.7466}, "farR": {"lat": 35.4557, "lng": 138.7232}, "file": "Great Wave off Kanagawa2.jpg", "confLegacy": "artistic", "axH": "documented", "axV": "offshore", "axC": "imaginative", "ge": "https://earth.google.com/web/@35.435,139.68,0a,867d,35y,264.8h,82t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.435,139.68&heading=264.8&pitch=2", "note": "押送船の航路である本牧沖合。大波のフラクタル曲線と富士山頂の対比。"}, {"no": 2, "ja": "凱風快晴", "en": "Fine Wind, Clear Morning", "vp": {"lat": 35.39, "lng": 138.58}, "vpName": "朝霧高原〜富士宮山麓（南西山麓遠望）", "alt": 850, "brg": 103.7, "dist": 13.8, "elev": 12.0, "half": 18.0, "farL": {"lat": 35.3992, "lng": 138.7318}, "farR": {"lat": 35.3247, "lng": 138.7094}, "file": "Red Fuji southern wind clear morning.jpg", "confLegacy": "artistic", "axH": "documented", "axV": "reconstructed", "axC": "imaginative", "ge": "https://earth.google.com/web/@35.39,138.58,850a,500d,35y,103.7h,72t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.39,138.58&heading=103.7&pitch=12", "note": "赤富士。夏の早朝に山肌が赤く染まる気象現象の心象的クローズアップ。"}, {"no": 4, "ja": "深川万年橋下", "en": "Under Mannen Bridge at Fukagawa", "vp": {"lat": 35.6826, "lng": 139.7963}, "vpName": "江東区常盤・小名木川合流点万年橋北詰", "alt": 2, "brg": 250.0, "dist": 103.1, "elev": 2.1, "half": 5.5, "farL": {"lat": 35.2791, "lng": 138.7711}, "farR": {"lat": 35.4454, "lng": 138.6944}, "file": "冨嶽三十六景 深川万年橋下-Under the Mannen Bridge at Fukagawa (Fukagawa Mannenbashi shita), from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei) MET DP141017.jpg", "confLegacy": "documented", "axH": "documented", "axV": "documented", "axC": "literal", "ge": "https://earth.google.com/web/@35.6826,139.7963,2a,1031d,35y,250.0h,82t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.6826,139.7963&heading=250.0&pitch=2", "note": "小名木川のアーチ橋越しに隅田川対岸と富士を覗く透視図法的構図。"}, {"no": 10, "ja": "尾州不二見原", "en": "Fujimigahara Field in Owari Province", "vp": {"lat": 35.1542, "lng": 136.9083}, "vpName": "名古屋市中区富士見町（旧尾張藩不二見原）", "alt": 15, "brg": 81.6, "dist": 166.8, "elev": 1.3, "half": 3.5, "farL": {"lat": 35.4502, "lng": 138.7103}, "farR": {"lat": 35.2686, "lng": 138.739}, "file": "冨嶽三十六景 尾州不二見原-Fujimigahara in Owari Province (Bishū Fujimigahara), from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei) MET DP141033.jpg", "confLegacy": "estimated", "axH": "documented", "axV": "reconstructed", "axC": "imaginative", "ge": "https://earth.google.com/web/@35.1542,136.9083,15a,1668d,35y,81.6h,83t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.1542,136.9083&heading=81.6&pitch=1", "note": "本来見える近郊・木曽の山々を省略し、遠景に富士のみを立てる。描かれた山容は南アルプス聖岳の誤認説もあり、地形上の遮蔽もある（すみだ北斎美術館等）。大樽の円枠越しに覗く幾何学的構成。"}, {"no": 35, "ja": "甲州三坂水面", "en": "Reflection from Misaka Pass in Kai Province", "vp": {"lat": 35.5348, "lng": 138.7705}, "vpName": "富士河口湖町・御坂峠旧道（天下茶屋付近）", "alt": 1300, "brg": 191.4, "dist": 19.8, "elev": 7.1, "half": 12.0, "farL": {"lat": 35.3567, "lng": 138.7728}, "farR": {"lat": 35.3713, "lng": 138.6838}, "file": "冨嶽三十六景 甲州三坂水面-Reflection in Lake at Misaka in Kai Province (Kōshū Misaka suimen), from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei MET DP141064.jpg", "confLegacy": "documented", "axH": "documented", "axV": "documented", "axC": "composite", "ge": "https://earth.google.com/web/@35.5348,138.7705,1300a,500d,35y,191.4h,77t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.5348,138.7705&heading=191.4&pitch=7", "note": "河口湖を見下ろす。実景は夏山、湖面の逆さ富士は雪山の構図合成。"}, {"no": 46, "ja": "諸人登山", "en": "Climbing on Fuji", "vp": {"lat": 35.365, "lng": 138.733}, "vpName": "富士山頂付近・八合目〜九合目登山道岩場", "alt": 3400, "brg": 226.1, "dist": 0.7, "elev": 28.2, "half": 25.0, "farL": {"lat": 35.3591, "lng": 138.7302}, "farR": {"lat": 35.363, "lng": 138.7257}, "file": "Climbing on Mt. Fuji.jpg", "confLegacy": "documented", "axH": "documented", "axV": "reconstructed", "axC": "literal", "ge": "https://earth.google.com/web/@35.365,138.733,3400a,500d,35y,226.1h,59t,0r", "gm": "https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=35.365,138.733&heading=226.1&pitch=25", "note": "富士講の白装束の道者たちが金剛杖をつき山頂を目指す現場ルポ。"}];
+const FUJI = { lat:35.3606, lng:138.7274 };
+const D = Math.PI/180;
+
+let mode='A', showAll=false, sel=null;
+
+// --- 大圏補間(面ポリゴンの辺を球面に沿わせる) ---
+const toXYZ=p=>{const la=p.lat*D,lo=p.lng*D;return [Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)];};
+const toLL=v=>({lat:Math.asin(v[2])/D, lng:Math.atan2(v[1],v[0])/D});
+function gc(a,b,n){const va=toXYZ(a),vb=toXYZ(b);let dot=va[0]*vb[0]+va[1]*vb[1]+va[2]*vb[2];dot=Math.max(-1,Math.min(1,dot));
+  const om=Math.acos(dot),out=[];for(let i=0;i<=n;i++){const t=i/n;let s0,s1;
+    if(om<1e-7){s0=1-t;s1=t;}else{s0=Math.sin((1-t)*om)/Math.sin(om);s1=Math.sin(t*om)/Math.sin(om);}
+    const v=[va[0]*s0+vb[0]*s1,va[1]*s0+vb[1]*s1,va[2]*s0+vb[2]*s1];const L=Math.hypot(v[0],v[1],v[2]);
+    out.push(toLL([v[0]/L,v[1]/L,v[2]/L]));}return out;}
+function coneFeature(f){
+  const apex=f.vp, L=f.farL, R=f.farR;
+  const ring=gc(apex,L,14).concat(gc(L,R,8).slice(1)).concat(gc(R,apex,14).slice(1));
+  const coords=ring.map(p=>[p.lng,p.lat]); coords.push(coords[0]);
+  return {no:f.no, geometry:{type:'Polygon',coordinates:[coords]}};
+}
+function thumb(f,w){return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(f.file)+'?width='+w;}
+function commonsPage(f){return 'https://commons.wikimedia.org/wiki/File:'+encodeURIComponent(f.file.replace(/ /g,'_'));}
+
+// --- globe ---
+const world = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+  .backgroundColor('#0a0e14')
+  .pointsData(pointData())
+  .pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012).pointResolution(24)
+  .onPointClick(d=>{ if(d.kind==='vp'){ select(d.no); } else { deselect(); } })
+  .onGlobeClick(()=>deselect())
+  .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng')
+    .arcColor('color').arcStroke('stroke').arcAltitude('alt')
+  .polygonsData([]).polygonGeoJsonGeometry('geometry')
+    .polygonCapColor(d=> d.no===sel? 'rgba(124,179,255,0.34)':'rgba(124,179,255,0.14)')
+    .polygonSideColor(()=> 'rgba(0,0,0,0)').polygonStrokeColor(()=> 'rgba(0,0,0,0)').polygonAltitude(0.006);
+
+world.controls().autoRotate = true;
+world.controls().autoRotateSpeed = 0.28;
+world.pointOfView({lat:35.6, lng:138.9, altitude:1.9}, 0);
+
+function pointData(){
+  const pts = FIGS.map(f=>({kind:'vp', no:f.no, lat:f.vp.lat, lng:f.vp.lng,
+    color: f.no===sel? '#ffd36a':'#ff6b5c', r: f.no===sel?0.55:0.38 }));
+  pts.push({kind:'fuji', lat:FUJI.lat, lng:FUJI.lng, color:'#ffe08a', r:0.62});
+  return pts;
+}
+function activeFigs(){ return showAll? FIGS : (sel!=null? FIGS.filter(f=>f.no===sel) : []); }
+function arcsFor(figs){
+  const out=[];
+  figs.forEach(f=>{
+    const strong=(f.no===sel);
+    out.push({sLat:f.vp.lat,sLng:f.vp.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:strong?0.6:0.35,alt:0.02}); // 中心線→富士
+    out.push({sLat:f.vp.lat,sLng:f.vp.lng,eLat:f.farL.lat,eLng:f.farL.lng,color:'#7cb3ff',stroke:strong?0.7:0.4,alt:0.015}); // 左境界
+    out.push({sLat:f.vp.lat,sLng:f.vp.lng,eLat:f.farR.lat,eLng:f.farR.lng,color:'#7cb3ff',stroke:strong?0.7:0.4,alt:0.015}); // 右境界
+  });
+  return out;
+}
+function render(){
+  const figs=activeFigs();
+  world.pointsData(pointData());
+  world.arcsData(arcsFor(figs));
+  world.polygonsData(mode==='B'? figs.map(coneFeature): []);
+}
+
+// --- panel ---
+const panel=document.getElementById('panel');
+function chip(k,v){return '<span class="chip k-'+k+'">'+k+' '+v+'</span>';}
+function showPanel(f){
+  panel.hidden=false;
+  panel.innerHTML =
+    '<button class="close" aria-label="閉じる">×</button>'+
+    '<div class="no">#'+f.no+'</div><h2>'+f.ja+'</h2><div class="en">'+f.en+'</div>'+
+    '<img class="thumb" src="'+thumb(f,360)+'" alt="'+f.ja+'">'+
+    '<div class="zoomhint">絵をクリックで拡大 ⤢</div>'+
+    '<div class="vpn">'+ (f.vpName||'') +'</div>'+
+    '<div class="chips">'+chip('座標',f.axV)+chip('構図',f.axC)+chip('確度',f.confLegacy)+'</div>'+
+    '<div class="metrics">方位 <b>'+f.brg+'°</b> ／ 距離 <b>'+f.dist+'km</b><br>画角半角 <b>'+f.half+'°</b>（Interpretation）／ 見上げ <b>'+f.elev+'°</b></div>'+
+    '<div class="note">'+ (f.note||'') +'</div>'+
+    '<div class="links"><a href="'+f.ge+'" target="_blank" rel="noopener">Google Earth 3D</a>'+
+      '<a href="'+f.gm+'" target="_blank" rel="noopener">ストリートビュー</a>'+
+      '<a href="'+commonsPage(f)+'" target="_blank" rel="noopener">原寸(Commons)</a></div>';
+  panel.querySelector('.close').addEventListener('click',deselect);
+  panel.querySelector('img.thumb').addEventListener('click',()=>openLB(f));
+}
+function select(no){
+  sel=no; const f=FIGS.find(x=>x.no===no); render(); showPanel(f);
+  world.controls().autoRotate=false;
+  const mid={lat:(f.vp.lat+FUJI.lat)/2, lng:(f.vp.lng+FUJI.lng)/2};
+  const alt=Math.max(0.9, Math.min(2.2, 0.8+f.dist/220));
+  world.pointOfView({lat:mid.lat,lng:mid.lng,altitude:alt}, 900);
+}
+function deselect(){ sel=null; panel.hidden=true; render(); world.controls().autoRotate=true; }
+
+// --- lightbox ---
+const lb=document.getElementById('lb'), lbImg=lb.querySelector('img'), lbCap=lb.querySelector('figcaption');
+function openLB(f){ lbImg.src=thumb(f,1400); lbImg.alt=f.ja;
+  lbCap.innerHTML='<span>#'+f.no+' '+f.ja+' ／ '+f.en+'</span><a href="'+commonsPage(f)+'" target="_blank" rel="noopener">Wikimedia Commons（原寸・PD）</a>';
+  lb.classList.add('open'); }
+function closeLB(){ lb.classList.remove('open'); lbImg.src=''; }
+lb.addEventListener('click',e=>{ if(e.target===lb||e.target.classList.contains('x')||e.target.tagName==='IMG') closeLB(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(lb.classList.contains('open'))closeLB(); else deselect(); }});
+
+// --- controls ---
+document.getElementById('modeSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  mode=b.dataset.mode; [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x===b)); render();});
+document.getElementById('allSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  showAll=b.dataset.all==='1'; [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x===b));
+  if(showAll) world.controls().autoRotate=false; render();});
+document.getElementById('reset').addEventListener('click',()=>{ deselect(); world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},900); });
+window.addEventListener('resize',()=>{ world.width(window.innerWidth).height(window.innerHeight); });
+
+render();
+</script>
+</body></html>
