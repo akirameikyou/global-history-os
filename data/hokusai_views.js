@@ -12,6 +12,7 @@
 //  historicalLocation  : documented|estimated(描かれた地域・地名の史料的確かさ)
 //  viewpointCoordinate : documented|reconstructed|offshore(緯度経度一点の確定度)
 //  compositionGeometry : literal|composite|imaginative(構図が実景か/合成か/写実不能か)
+// データ規律: 距離だけをもって富士の可視/不可視を判定しない（可視性は資料・地形・実見例で判定）。
 // 旧 confidence(documented/estimated/artistic)は後方互換のため各レコードに維持(非破壊)。
 // derived は hokusai-geo-v1 の検証・キャッシュ用 snapshot（唯一の正本ではない）。canonical(interpretation) + hokusai-geo-v1 → computeGeometry() が正。verifyGeometry() で照合可能。
 // #6,#38 の画像は正しいMET版へ差替済(verify:ok)。
@@ -734,7 +735,7 @@ export const hokusaiViews = [
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 3.5,
       "source": "gemini",
-      "note": "全図中最も遠い西限。大樽の円枠越しに覗く幾何学的構成。"
+      "note": "本来見える近郊・木曽の山々を省略し、遠景に富士のみを立てる。描かれた山容は南アルプス聖岳の誤認説もあり、地形上の遮蔽もある（すみだ北斎美術館等）。大樽の円枠越しに覗く幾何学的構成。"
     },
     "derived": {
       "geometryAlgorithm": "hokusai-geo-v1",
@@ -1451,10 +1452,10 @@ export const hokusaiViews = [
       "viewpointName": "茨城県潮来市牛堀・北浦〜利根川合流点",
       "alt_m": 5,
       "viewpointCoordinate": "documented",
-      "compositionGeometry": "imaginative",
+      "compositionGeometry": "literal",
       "coneHalfDeg": 3.5,
       "source": "gemini",
-      "note": "東の最遠方。北浦の苫舟の生活と雪景の彼方の微小な富士。"
+      "note": "牛堀（権現山公園付近）からは冬晴に富士が実見できる（国交省「関東の富士見百景」・潮来市）。北浦の苫舟の生活と対岸遠景の富士。"
     },
     "derived": {
       "geometryAlgorithm": "hokusai-geo-v1",
@@ -2096,13 +2097,13 @@ export const hokusaiViews = [
         "lat": 34.7644,
         "lng": 137.3917
       },
-      "viewpointName": "豊橋市札木町・吉田宿本陣跡・豊川沿い",
+      "viewpointName": "豊橋市・吉田宿「不二見茶屋」（推定地）",
       "alt_m": 12,
-      "viewpointCoordinate": "documented",
-      "compositionGeometry": "imaginative",
+      "viewpointCoordinate": "reconstructed",
+      "compositionGeometry": "literal",
       "coneHalfDeg": 5.0,
       "source": "gemini",
-      "note": "吉田宿茶屋からの遠望。豊川越しに極めて遠方の富士。"
+      "note": "吉田宿の「不二見茶屋」から富士を望む図（文化遺産オンライン・東京富士美術館）。豊橋周辺からの富士遠望の実見例あり。茶屋の正確な位置は推定。"
     },
     "derived": {
       "geometryAlgorithm": "hokusai-geo-v1",
