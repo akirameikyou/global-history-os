@@ -491,10 +491,11 @@ function drawTL(){
   add('text',{x:2,y:ARTTECH_Y+3,fill:'#54657a','font-size':8,'font-family':'sans-serif'},'技材');
   artTechEvents.forEach(a=>{const x=xOf(a.year);if(x<-4||x>W+4)return;
     const d=document.createElementNS(SVGNS,'rect');
-    d.setAttribute('x',x-3.2);d.setAttribute('y',ARTTECH_Y-3.2);d.setAttribute('width',6.4);d.setAttribute('height',6.4);
+    d.setAttribute('x',x-4);d.setAttribute('y',ARTTECH_Y-4);d.setAttribute('width',8);d.setAttribute('height',8);
     d.setAttribute('transform','rotate(45 '+x+' '+ARTTECH_Y+')');
     d.setAttribute('fill',ARTTECH_COL);d.setAttribute('stroke','#050c16');d.setAttribute('stroke-width',1);d.setAttribute('style','cursor:pointer');
-    d.addEventListener('click',ev=>{ev.stopPropagation();setCursor(a.year);showCard({tag:a.category,title:a.title,sub:String(a.year),body:a.desc,rel:a.related});});
+    // pointerdown＋stopPropagationで、背景のcursor/pan処理(=SVG再描画で◆が消える)を止めてから発火
+    d.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();showCard({tag:a.category,title:a.title,sub:String(a.year),body:a.desc,rel:a.related});setCursor(a.year);});
     tl.appendChild(d);});
   // P-LINK 比較人物バー（同一time軸。自動fitしない）＋関係期間サブバー
   if(person){ const py=100;
@@ -512,7 +513,9 @@ function drawTL(){
   add('line',{x1:cx,y1:2,x2:cx,y2:gridBottom,stroke:'#ffffff','stroke-width':1.4,'stroke-opacity':.8});
   add('polygon',{points:(cx-4)+',2 '+(cx+4)+',2 '+cx+',9',fill:'#fff'});
   function add(tag,attrs,text,marker){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);
-    if(text!=null)el.textContent=text; if(marker){el.addEventListener('click',ev=>{ev.stopPropagation();setCursor(marker.year);setSel(marker.type,marker.id);});} tl.appendChild(el);}
+    if(text!=null)el.textContent=text;
+    // pointerdown＋stopPropagationで背景のcursor/pan処理（=再描画でマーカーが消える）を止めてから発火
+    if(marker){el.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();setSel(marker.type,marker.id);setCursor(marker.year);});} tl.appendChild(el);}
 }
 let drag=null;
 tl.addEventListener('pointerdown',e=>{const y=yearAt(e.offsetX);
