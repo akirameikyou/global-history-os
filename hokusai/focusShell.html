@@ -50,10 +50,16 @@
   .left-works{left:24px;top:calc(104px + 32vh + 14px);width:270px;max-height:36vh}
   .left-works .sec{color:var(--gold)}
   .left-works .sec .series{color:var(--gold);opacity:.8;font-family:var(--serif);text-transform:none;letter-spacing:.05em;margin-left:6px}
-  .ev{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;display:flex;gap:9px;transition:.18s}
+  .ev{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
   .ev:hover{background:rgba(230,148,69,.08)} .ev.sel{background:rgba(230,148,69,.12);border-left:2px solid var(--amber)}
+  .ev-row{display:flex;gap:9px}
   .ev .y{font-family:var(--mono);color:var(--amber-soft);flex:0 0 40px;font-size:12px}
   .ev .t{font-size:12.5px;line-height:1.5}
+  .ev-detail{display:none;margin-top:7px;font-size:11.5px;line-height:1.7;color:rgba(238,243,248,.78)}
+  .ev.sel .ev-detail{display:block}
+  .seebtn{margin-top:8px;background:rgba(102,224,255,.12);border:1px solid rgba(102,224,255,.5);color:var(--cyan);
+    border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit}
+  .seebtn:hover{background:rgba(102,224,255,.22)}
   .wlink summary{padding:9px 16px;font-size:11px;color:var(--cyan);cursor:pointer;list-style:none;letter-spacing:.04em}
   .wlink summary::-webkit-details-marker{display:none}
   .wlink .ev .y{color:var(--cyan)} .wlink .ev:hover{background:rgba(102,224,255,.07)}
@@ -187,7 +193,7 @@
   <div class="seg" id="spaceSeg">
     <button data-v="WORLD" class="on">WORLD 地球</button><button data-v="JAPAN">JAPAN 日本詳細</button>
   </div>
-  <button class="tgl" id="axisToggle">中心線(debug)</button>
+  <button class="tgl" id="axisToggle" title="描画視点から実際の富士山頂方位へ引く幾何学的基準線。作品構図の扇の中心とは限らない。">富士山頂軸</button>
 </div>
 
 <!-- 凡例 -->
@@ -272,6 +278,11 @@ function focusSelection(){
     const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
     map.fitBounds(b,{padding:fitPadding(),maxZoom:9,duration:700}); }
 }
+// 「地点を見る」専用カメラ移動。イベント選択(setSel)では呼ばれず、明示ボタン押下時のみ。
+function focusPlace(lat,lng){
+  if(State.spaceView==='JAPAN'&&mapReady){ map.flyTo({center:[lng,lat],zoom:10,duration:800}); }
+  else { world.controls().autoRotate=false; world.pointOfView({lat,lng,altitude:1.15},800); }
+}
 // 左右の浮遊パネル(左270/右340)・タイトル・タイムライン分を差し引き、見えている中央帯に収める。
 function fitPadding(){ const W=window.innerWidth,H=window.innerHeight;
   let left=310,right=380,top=120,bottom=160;
@@ -349,10 +360,18 @@ document.getElementById('axisToggle').onclick=(e)=>{showAxis=!showAxis;e.current
 // ---------- left / right lists ----------
 const worldList=document.getElementById('worldList'), wlinkList=document.getElementById('wlinkList'),
   worksList=document.getElementById('worksList'), lifeList=document.getElementById('lifeList');
-worldEventsJP.forEach(ev=>{const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;
-  d.innerHTML='<span class="y">'+ev.year+'</span><span class="t">'+ev.title+'</span>';d.onclick=()=>{setCursor(ev.year);setSel('event',ev.id);};worldList.appendChild(d);});
-wlinkEvents.forEach(ev=>{const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;
-  d.innerHTML='<span class="y">'+ev.year+'</span><span class="t">'+ev.title+'</span>';d.onclick=()=>{setCursor(ev.year);setSel('event',ev.id);};wlinkList.appendChild(d);});
+// イベント二段階操作: クリック=年代移動＋選択＋説明表示（地図は静止）。
+// 地理的意味のあるイベント(spatial.type==='point')だけ「地点を見る」を明示的第二操作として出す。
+function renderEvent(ev){const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;
+  const sp=ev.spatial&&ev.spatial.type==='point'?ev.spatial:null;
+  d.innerHTML='<div class="ev-row"><span class="y">'+ev.year+'</span><span class="t">'+ev.title+'</span></div>'+
+    '<div class="ev-detail">'+(ev.desc||'')+
+      (sp?'<div><button class="seebtn">地点を見る（'+sp.placeName+'）</button></div>':'')+'</div>';
+  d.querySelector('.ev-row').onclick=()=>{setCursor(ev.year);setSel('event',ev.id);}; // 年代＋選択のみ。カメラは動かさない
+  if(sp){d.querySelector('.seebtn').onclick=(e)=>{e.stopPropagation();focusPlace(sp.lat,sp.lng);};} // 明示操作でのみカメラ移動
+  return d;}
+worldEventsJP.forEach(ev=>worldList.appendChild(renderEvent(ev)));
+wlinkEvents.forEach(ev=>wlinkList.appendChild(renderEvent(ev)));
 WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d.dataset.no=w.no;
   d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
     '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+

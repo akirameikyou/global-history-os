@@ -51,19 +51,25 @@ export const travels = [
 ];
 
 // 日本側の代表イベント（lane: WORLD, 通常表示・北斎/日本史との関連が比較的高いもの）
+// spatial: 地理的意味のあるイベントだけ point を持つ。「地点を見る」第二操作の対象。
+// type:'none' は一地点へ還元しにくいイベント（地図カメラの自動移動はしない）。
 export const worldEventsJP = [
-  { id:'w_kansei', year:1787, title:'寛政の改革' },
-  { id:'w_oshio',  year:1837, title:'大塩平八郎の乱' },
-  { id:'w_tenpo',  year:1841, title:'天保の改革' },
-  { id:'w_black',  year:1853, title:'黒船来航（没後・時代の転換）' },
+  { id:'w_kansei', year:1787, title:'寛政の改革',
+    desc:'松平定信による幕政改革。倹約令・出版統制など化政文化前夜の環境。', spatial:{type:'none'} },
+  { id:'w_oshio',  year:1837, title:'大塩平八郎の乱',
+    desc:'天保の飢饉下、大坂で元与力・大塩平八郎が蜂起。', spatial:{type:'point',lat:34.6863,lng:135.5219,placeName:'大坂'} },
+  { id:'w_tenpo',  year:1841, title:'天保の改革',
+    desc:'水野忠邦による改革。奢侈禁令・出版統制は錦絵にも及んだ。', spatial:{type:'none'} },
+  { id:'w_black',  year:1853, title:'黒船来航（没後・時代の転換）',
+    desc:'ペリー艦隊来航。北斎没後4年、開国へ向かう時代の転換点。', spatial:{type:'point',lat:35.2493,lng:139.7206,placeName:'浦賀'} },
 ];
 
 // 海外の同時代イベント（lane: W-LINK, 二次表示。※「影響」ではなく同時代の並置。押した時だけ展開）
 export const wlinkEvents = [
-  { id:'x_us1776',  year:1776, title:'アメリカ独立宣言' },
-  { id:'x_fr1789',  year:1789, title:'フランス革命' },
-  { id:'x_np1804',  year:1804, title:'ナポレオン皇帝即位' },
-  { id:'x_paris67', year:1867, title:'パリ万国博（ジャポニスムの舞台・没後）' },
+  { id:'x_us1776',  year:1776, title:'アメリカ独立宣言', desc:'同時代の海外（並置）。北斎16歳頃。', spatial:{type:'none'} },
+  { id:'x_fr1789',  year:1789, title:'フランス革命', desc:'同時代の海外（並置）。寛政期。', spatial:{type:'none'} },
+  { id:'x_np1804',  year:1804, title:'ナポレオン皇帝即位', desc:'同時代の海外（並置）。', spatial:{type:'none'} },
+  { id:'x_paris67', year:1867, title:'パリ万国博（ジャポニスムの舞台・没後）', desc:'没後。欧州で日本美術が注目される舞台（因果を断定しない）。', spatial:{type:'none'} },
 ];
 
 // Timeline 設定（Hokusai Focus。Coreに固定しない）
