@@ -4,21 +4,25 @@
 
 export const HOKUSAI = { born:1760, died:1849, name:'葛飾北斎' };
 
-// 画号（representative）: 現在のtimeCursorに応じて右LIFE上部に主要画号を出すためのphase。
-export const gagoPhases = [
-  { name:'春朗',        from:1779, to:1794, note:'勝川派入門後の号' },
-  { name:'宗理',        from:1795, to:1804, note:'俵屋宗理を襲名' },
-  { name:'葛飾北斎',    from:1805, to:1810, note:'「北斎」を名乗る' },
-  { name:'戴斗',        from:1811, to:1819, note:'北斎漫画期の号' },
-  { name:'為一',        from:1820, to:1833, note:'富嶽三十六景期の号' },
-  { name:'画狂老人卍',  from:1834, to:1849, note:'富嶽百景以降・晩年の号' },
+// 名前史（phase・すみだ北斎美術館準拠）。全期間を「1年＝1名」で埋めない＝時期不詳を保持。
+// kind: 幼名・個人名 / 画号   certainty: documented=史料上確か / traditional=伝承・後世資料
+export const namePhases = [
+  { from:1760, to:1777, name:'時太郎／のち鉄蔵', kind:'幼名・個人名', certainty:'traditional', note:'鉄蔵へ変わった正確な時期は不詳' },
+  { from:1778, to:1793, name:'勝川春朗',        kind:'画号', certainty:'documented', note:'勝川春章に入門し絵師活動を開始' },
+  { from:1794, to:1797, name:'宗理',            kind:'画号', certainty:'documented', note:'俵屋宗理を襲名' },
+  { from:1798, to:1803, name:'北斎辰政',        kind:'画号', certainty:'documented', note:'「北斎」を用い始める頃' },
+  { from:1804, to:1819, name:'葛飾北斎／戴斗',  kind:'画号', certainty:'documented', note:'両号の使用が重複する時期' },
+  { from:1820, to:1833, name:'為一',            kind:'画号', certainty:'documented', note:'富嶽三十六景期' },
+  { from:1834, to:1849, name:'卍（画狂老人卍）',kind:'画号', certainty:'documented', note:'晩年' },
 ];
+// 画号phase（timeline band用）= 画号のみ
+export const gagoPhases = namePhases.filter(p => p.kind === '画号');
 
 // 生涯イベント（lane: LIFE）
 export const lifeEvents = [
   { id:'l_born',   year:1760, title:'誕生（本所割下水）', gago:null },
   { id:'l_katsu',  year:1778, title:'勝川春章に入門',     gago:'春朗' },
-  { id:'l_sori',   year:1795, title:'「宗理」を号する',   gago:'宗理' },
+  { id:'l_sori',   year:1794, title:'「宗理」を号する',   gago:'宗理' },
   { id:'l_manga',  year:1814, title:'北斎漫画 初編',       gago:'戴斗' },
   { id:'l_iitsu',  year:1820, title:'「為一」を号する',   gago:'為一' },
   { id:'l_36',     year:1831, title:'富嶽三十六景 刊行',   gago:'為一' },
@@ -68,23 +72,13 @@ export const timelineConfig = {
 // 現在の画号を timeCursor から求める
 export function gagoAt(year){
   const p = gagoPhases.find(g => year>=g.from && year<=g.to);
-  return p ? p.name : (year<1779 ? '（入門前）' : '画狂老人卍');
+  return p ? p.name : (year<1778 ? '（入門前）' : '卍（画狂老人卍）');
 }
 
-// ── 名前史（本名・幼名・画号を「同一の改名」として一括りにしない） ──────────
-// certainty: documented=史料上確か / traditional=伝承・後世資料 / uncertain=資料間で表記差
-// kind: 幼名 / 個人名 / 画号
-export const nameHistory = [
-  { from:1760, name:'時太郎',       kind:'幼名',   certainty:'traditional', note:'幼名。資料により異同あり' },
-  { from:1773, name:'鉄蔵',         kind:'個人名', certainty:'uncertain',   note:'姓は川村／中島で資料差' },
-  { from:1779, name:'春朗',         kind:'画号',   certainty:'documented',  note:'勝川派入門後' },
-  { from:1795, name:'宗理',         kind:'画号',   certainty:'documented',  note:'俵屋宗理を襲名' },
-  { from:1798, name:'北斎辰政',     kind:'画号',   certainty:'documented',  note:'「北斎」を用い始める頃' },
-  { from:1805, name:'葛飾北斎',     kind:'画号',   certainty:'documented',  note:null },
-  { from:1811, name:'戴斗',         kind:'画号',   certainty:'documented',  note:'北斎漫画期' },
-  { from:1820, name:'為一',         kind:'画号',   certainty:'documented',  note:'富嶽三十六景期' },
-  { from:1834, name:'画狂老人卍',   kind:'画号',   certainty:'documented',  note:'晩年' },
-];
+// ── 名前史 ──────────────────────────────────────────────────────
+// nameHistory は namePhases のエイリアス（本名・幼名・画号を「同一の改名」として一括りにしない）。
+// 単一の確定本名・確定改名年を作らない＝Evidence規律を人物名にも適用。
+export const nameHistory = namePhases;
 
 // 本姓・家系・養子関係（単一の確定本名にしない＝Evidence規律を人物名にも適用）
 export const nameMeta = {
@@ -95,9 +89,8 @@ export const nameMeta = {
   sources:['すみだ北斎美術館','国立劇場 文化デジタルライブラリー','国立国会図書館レファレンス協同DB','British Museum'],
 };
 
-// timeCursor で「その時期に使われていた名前」を返す
+// timeCursor で「その時期に使われていた名前」を返す（phase の from..to に収める＝架空の改名年を作らない）
 export function nameAt(year){
-  let cur = null;
-  for(const n of nameHistory){ if(year >= n.from) cur = n; }
-  return cur; // year<1760 は null
+  const p = namePhases.find(n => year >= n.from && year <= n.to);
+  return p || null; // 範囲外（誕生前など）は null
 }
