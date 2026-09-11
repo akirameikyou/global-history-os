@@ -251,14 +251,16 @@ world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
 world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
 // WORLD: 北斎の活動地域が主役。作品視点＋富士＋居住地（Residence）を点で示す。
 // Representationの扇形は縮尺に対して巨大化し意味が読めないため WORLD では出さない（画角はJAPANで展開）。
-function worldPoints(){const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:State.selection.id===w.no?'#ffd36a':'#ff6b5c',r:State.selection.id===w.no?0.5:0.34}));
-  p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.6});
-  residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.3}));return p;}
-// WORLD arcs = Travel（推定Connection）のみ。Representation境界(farL/farR)はWORLDでは描かない。
-function worldArcs(){const a=travels.map(t=>({sLat:t.from.lat,sLng:t.from.lng,eLat:t.to.lat,eLng:t.to.lng,color:'#c79bff',stroke:0.5,alt:0.14}));
-  const s=State.selection; if(showAxis&&s.type==='work'&&s.id!=null){const w=workByNo(s.id);
-    if(w)a.push({sLat:w.lat,sLng:w.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:0.5,alt:0.02});} // debug時のみ中心線
-  return a;}
+// WORLD: ごく小さな光点のみ（球面上の角度サイズ＝カメラを引くと自然に縮む＝ズーム連動）。
+function worldPoints(){const sel=State.selection.id;
+  const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:sel===w.no?'#ffd36a':'#ff6b5c',r:sel===w.no?0.16:0.1}));
+  p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.13});
+  residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
+// WORLD arcs = なし（航路/Representation境界は出さない）。debug時のみ中心線。
+function worldArcs(){const s=State.selection;
+  if(showAxis&&s.type==='work'&&s.id!=null){const w=workByNo(s.id);
+    if(w)return[{sLat:w.lat,sLng:w.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:0.4,alt:0.02}];}
+  return [];}
 function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs()); } // 描画のみ（カメラは触らない）
 
 // カメラ移動専用。現在のspaceViewに応じて、選択中のwork⇄富士へ寄る。年送りでは呼ばれない。
@@ -298,7 +300,11 @@ function initMap(){
     map.addLayer({id:'travelLine',type:'line',source:'travels',paint:{'line-color':'#c79bff','line-width':1.4,'line-dasharray':[2,2],'line-opacity':0.7}});
     map.addSource('pts',{type:'geojson',data:ptsFC()});
     map.addLayer({id:'ptsC',type:'circle',source:'pts',paint:{
-      'circle-radius':['match',['get','kind'],'fuji',13,'work',7,'res',5,4],
+      // ズーム連動：引き(z4)では小さく、寄る(z13)と大きく。点が増えても引き画面で地図を丸で覆わない。
+      'circle-radius':['interpolate',['linear'],['zoom'],
+        4, ['match',['get','kind'],'fuji',3.5,'work',2,'res',1.5,1.2],
+        8, ['match',['get','kind'],'fuji',8,'work',5,'res',3.5,2.5],
+        13,['match',['get','kind'],'fuji',13,'work',8,'res',6,4]],
       'circle-color':['match',['get','kind'],'fuji','rgba(0,0,0,0)','work','#ff6b5c','res','#8fd6c4','#c79bff'],
       'circle-opacity':['match',['get','kind'],'fuji',0,1],                         // 富士は塗りを透過＝山頂が透ける
       'circle-stroke-color':['match',['get','kind'],'fuji','#ffffff','#050c16'],    // 富士は白い中抜きリング
