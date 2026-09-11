@@ -260,14 +260,26 @@ import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, residences, travels, 
 
 const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
 const PICK=[1,2,4,10,35,46];
-const WORKS = hokusaiViews.filter(e=>PICK.includes(e.no)).map(e=>({
-  no:e.no, ja:e.identity.title_ja, en:e.identity.title_en,
-  lat:e.interpretation.viewpoint.lat, lng:e.interpretation.viewpoint.lng,
-  farL:e.derived.cone.farLeft, farR:e.derived.cone.farRight, half:e.interpretation.coneHalfDeg,
-  brg:e.derived.bearingToFuji, dist:e.derived.distanceKm,
-  file:e.evidence.image.file, axV:e.interpretation.viewpointCoordinate, axC:e.interpretation.compositionGeometry,
-  vpName:e.interpretation.viewpointName, year:1831,
-}));
+// 前方測地（起点＋方位＋距離→到達点）。Composition Mappingで扇を coneCenterBearing 周りに再構成する用。
+function destPoint(lat,lng,brgDeg,distKm){const R=6371,d=distKm/R,br=brgDeg*D,la1=lat*D,lo1=lng*D;
+  const la2=Math.asin(Math.sin(la1)*Math.cos(d)+Math.cos(la1)*Math.sin(d)*Math.cos(br));
+  const lo2=lo1+Math.atan2(Math.sin(br)*Math.sin(d)*Math.cos(la1),Math.cos(d)-Math.sin(la1)*Math.sin(la2));
+  return {lat:la2/D,lng:lo2/D};}
+// Composition Mapping (hokusai-composition-v1): 作品内の富士水平位置 x で扇中心方位を補正。
+// bearingToFuji(地理Derived)は不変。coneCenterBearing = bearingToFuji − offsetDeg。offsetDeg=(x−0.5)*2*half。
+// x>0.5(富士が右)→中心を左へ / x<0.5(左)→右へ。farL/farR を coneCenterBearing±half で再構成。
+const WORKS = hokusaiViews.filter(e=>PICK.includes(e.no)).map(e=>{
+  const vp=e.interpretation.viewpoint, half=e.interpretation.coneHalfDeg, brg=e.derived.bearingToFuji, dist=e.derived.distanceKm;
+  const anchor=e.interpretation.fujiAnchor||null;
+  let ccb=brg, offsetDeg=0, farL=e.derived.cone.farLeft, farR=e.derived.cone.farRight;
+  if(anchor){ offsetDeg=+(( anchor.x-0.5)*2*half).toFixed(2); ccb=+(brg-offsetDeg).toFixed(2);
+    farL=destPoint(vp.lat,vp.lng,ccb-half,dist); farR=destPoint(vp.lat,vp.lng,ccb+half,dist); }
+  return { no:e.no, ja:e.identity.title_ja, en:e.identity.title_en, lat:vp.lat, lng:vp.lng,
+    farL, farR, half, brg, dist,
+    anchorX:anchor?anchor.x:null, offsetDeg, ccb, // Composition Mapping (v1)
+    file:e.evidence.image.file, axV:e.interpretation.viewpointCoordinate, axC:e.interpretation.compositionGeometry,
+    vpName:e.interpretation.viewpointName, year:1831 };
+});
 const workByNo=n=>WORKS.find(w=>w.no===n);
 function thumb(file,w){return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+w;}
 
@@ -422,6 +434,7 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
   d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
     '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+
     '<span class="chip k-座標">座標 '+w.axV+'</span><span class="chip k-構図">構図 '+w.axC+'</span><br>'+(w.vpName||'')+
+    (w.anchorX!=null?'<br><span style="color:var(--art)">構図補正(v1): 富士x='+w.anchorX+' → 扇中心 '+w.ccb+'°（実富士方位 '+w.brg+'°, Δ'+((w.ccb-w.brg)>=0?'+':'')+(w.ccb-w.brg).toFixed(1)+'°）／富士山頂軸ONで実方位線と比較</span>':'')+
     '<br><span style="color:var(--dim)">薄い扇＝作者が作品上「この範囲」として富士を捉えた画角(View Field)。移動(ROUTE)や物理的視野そのものではない。JAPAN表示で展開。</span>'+
     '</div></div>';
   d.querySelector('.t').onclick=()=>{ setSel('work',w.no); setCursor(w.year); };

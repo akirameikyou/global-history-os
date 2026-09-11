@@ -158,6 +158,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 18.0,
+      "fujiAnchor": { "x": 0.72, "y": 0.13, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂apex位置を実測(±0.03)。富士は右寄り。" },
       "source": "gemini",
       "note": "赤富士。夏の早朝に山肌が赤く染まる気象現象の心象的クローズアップ。"
     },
@@ -302,6 +303,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "documented",
       "compositionGeometry": "literal",
       "coneHalfDeg": 5.5,
+      "fujiAnchor": { "x": 0.42, "y": 0.42, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂位置を実測(±0.03)。橋アーチ内、やや左。" },
       "source": "gemini",
       "note": "小名木川のアーチ橋越しに隅田川対岸と富士を覗く透視図法的構図。"
     },
@@ -734,6 +736,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 3.5,
+      "fujiAnchor": { "x": 0.73, "y": 0.50, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で遠景富士位置を実測(±0.03)。大樽の右横・水平線上、右寄り。" },
       "source": "gemini",
       "note": "本来見える近郊・木曽の山々を省略し、遠景に富士のみを立てる。描かれた山容は南アルプス聖岳の誤認説もあり、地形上の遮蔽もある（すみだ北斎美術館等）。大樽の円枠越しに覗く幾何学的構成。"
     },
@@ -2534,6 +2537,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "documented",
       "compositionGeometry": "composite",
       "coneHalfDeg": 12.0,
+      "fujiAnchor": { "x": 0.57, "y": 0.30, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂apex位置を実測(±0.03)。やや右。逆さ富士は対象外。" },
       "source": "gemini",
       "note": "河口湖を見下ろす。実景は夏山、湖面の逆さ富士は雪山の構図合成。"
     },
