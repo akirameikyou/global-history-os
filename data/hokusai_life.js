@@ -72,6 +72,43 @@ export const wlinkEvents = [
   { id:'x_paris67', year:1867, title:'パリ万国博（ジャポニスムの舞台・没後）', desc:'没後。欧州で日本美術が注目される舞台（因果を断定しない）。', spatial:{type:'none'} },
 ];
 
+// ── P-LINK 人物関係 ───────────────────────────────────────────────
+// 人物関係は「存在（生没年）」だけでなく「関係した期間」を時間上に表現する（原則I）。
+// 生没年・関係年が不確実なものは approx / relationCertainty:'inferred' で明示（Evidence規律）。
+// relationType は関係の種別。直接の師弟以外を「影響」と断定しない。
+export const personLinks = [
+  { id:'p_shunsho',  name:'勝川春章',  birth:1726, death:1793, relationType:'師',
+    relationFrom:1778, relationTo:1793, relationCertainty:'documented',
+    note:'北斎の師。1778頃に門下へ入り「勝川春朗」を名乗って絵師活動を開始。' },
+  { id:'p_bakin',    name:'曲亭馬琴',  birth:1767, death:1848, relationType:'制作関係',
+    relationFrom:1804, relationTo:1815, relationCertainty:'inferred',
+    note:'読本の挿絵で協働（椿説弓張月ほか）。のち不和とも伝わる。協働期間は概略。' },
+  { id:'p_bokusen',  name:'牧墨僊',    birth:1775, death:1824, relationType:'交流',
+    relationFrom:1812, relationTo:1814, relationCertainty:'inferred',
+    note:'名古屋の門人・交流。北斎漫画成立の周辺。滞在時期は概略。' },
+  { id:'p_oi',       name:'葛飾応為',  birth:1800, death:1866, birthApprox:true, deathApprox:true,
+    relationType:'娘・画家', relationFrom:1820, relationTo:1849, relationCertainty:'inferred',
+    note:'北斎の娘で画家。晩年の制作を支えたとされる。生没年は諸説（概略）。' },
+  { id:'p_kozan',    name:'高井鴻山',  birth:1806, death:1883, relationType:'小布施',
+    relationFrom:1842, relationTo:1848, relationCertainty:'inferred',
+    note:'信州小布施の豪商・文人。晩年の北斎を招き滞在制作を支える。' },
+  { id:'p_hiroshige',name:'歌川広重',  birth:1797, death:1858, relationType:'同時代比較',
+    relationCertainty:'none', keyWork:{ year:1833, label:'東海道五拾三次' },
+    note:'風景版画で並び称される。冨嶽三十六景と東海道五拾三次がほぼ同時期。直接の師弟ではない＝同時代の並置。' },
+];
+// 主役（北斎本人）の人生バー基準
+export const focusPersonBar = { name:'葛飾北斎', birth:HOKUSAI.born, death:HOKUSAI.died };
+
+// timeCursor に関連する人物を優先して並べる（関係期間 or 生没年が cursor を含むものを前に）
+export function personLinksByRelevance(year){
+  const rank = p => {
+    if(p.relationFrom!=null && year>=p.relationFrom && year<=p.relationTo) return 0; // 関係期間内
+    if(year>=p.birth && year<=p.death) return 1;                                     // 存命
+    return 2;
+  };
+  return [...personLinks].sort((a,b)=>rank(a)-rank(b));
+}
+
 // Timeline 設定（Hokusai Focus。Coreに固定しない）
 export const timelineConfig = {
   rangeMin:1700, rangeMax:1940,      // 探索可能範囲
