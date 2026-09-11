@@ -208,8 +208,11 @@ let showAxis=false; // Representation中心線は既定で描かない（debug�
 const State={ spaceView:'WORLD', selection:{type:null,id:null},
   timeCursor:timelineConfig.initCursor, timeViewport:{from:timelineConfig.initFrom,to:timelineConfig.initTo} };
 const subs=[]; const on=f=>subs.push(f); const emit=()=>subs.forEach(f=>f(State));
-function setSel(type,id){ State.selection={type,id}; emit(); }
-function setCursor(y){ State.timeCursor=Math.round(clamp(y,timelineConfig.rangeMin,timelineConfig.rangeMax)); emit(); }
+// 原則: timeCursor / selection / mapCamera は独立状態。
+// render系はstateを画面へ反映するだけでカメラを動かさない。カメラ移動は focusSelection() に一本化し、
+// 明示的に空間Focusが変化した時（work/place選択・必要なspaceView切替）だけ呼ぶ。
+function setSel(type,id){ State.selection={type,id}; emit(); focusSelection(); }
+function setCursor(y){ State.timeCursor=Math.round(clamp(y,timelineConfig.rangeMin,timelineConfig.rangeMax)); emit(); } // 年送りはカメラを動かさない
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 
 // ---------- great-circle (cone polygon) ----------
@@ -236,9 +239,17 @@ function worldArcs(){const s=State.selection; if(s.type!=='work'||s.id==null)ret
   const a=[{sLat:w.lat,sLng:w.lng,eLat:w.farL.lat,eLng:w.farL.lng,color:'#7cb3ff',stroke:0.7,alt:0.015},
     {sLat:w.lat,sLng:w.lng,eLat:w.farR.lat,eLng:w.farR.lng,color:'#7cb3ff',stroke:0.7,alt:0.015}];
   if(showAxis)a.unshift({sLat:w.lat,sLng:w.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:0.5,alt:0.02});return a;}
-function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs());
-  const s=State.selection; if(s.type==='work'&&s.id!=null){const w=workByNo(s.id);world.controls().autoRotate=false;
-    world.pointOfView({lat:(w.lat+FUJI.lat)/2,lng:(w.lng+FUJI.lng)/2,altitude:clamp(0.8+w.dist/220,0.9,2.0)},800);} }
+function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs()); } // 描画のみ（カメラは触らない）
+
+// カメラ移動専用。現在のspaceViewに応じて、選択中のwork⇄富士へ寄る。年送りでは呼ばれない。
+function focusSelection(){
+  const s=State.selection; if(s.type!=='work'||s.id==null)return; const w=workByNo(s.id); if(!w)return;
+  if(State.spaceView==='WORLD'){ world.controls().autoRotate=false;
+    world.pointOfView({lat:(w.lat+FUJI.lat)/2,lng:(w.lng+FUJI.lng)/2,altitude:clamp(0.8+w.dist/220,0.9,2.0)},800); }
+  else if(State.spaceView==='JAPAN'&&mapReady){
+    const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
+    map.fitBounds(b,{padding:110,maxZoom:9,duration:700}); }
+}
 
 // ---------- JAPAN: MapLibre + 国土地理院 ----------
 let map=null, mapReady=false;
@@ -268,7 +279,7 @@ function initMap(){
     map.on('click','ptsC',e=>{const f=e.features[0];if(f.properties.kind==='work')setSel('work',+f.properties.no);});
     map.on('mouseenter','ptsC',()=>map.getCanvas().style.cursor='pointer');
     map.on('mouseleave','ptsC',()=>map.getCanvas().style.cursor='');
-    renderJapan();
+    renderJapan(); focusSelection(); // 初回JAPAN表示時のみ、選択中workへ一度寄せる
   });
 }
 const emptyFC=()=>({type:'FeatureCollection',features:[]});
@@ -284,20 +295,18 @@ function coneFC(){const s=State.selection;if(s.type!=='work'||s.id==null)return 
     {type:'Feature',properties:{col:'#7cb3ff'},geometry:{type:'LineString',coordinates:gc(w,w.farR,14).map(p=>[p.lng,p.lat])}}];
   if(showAxis)fs.push({type:'Feature',properties:{col:'#ffd36a'},geometry:{type:'LineString',coordinates:gc(w,FUJI,20).map(p=>[p.lng,p.lat])}});
   return {type:'FeatureCollection',features:fs};}
-function renderJapan(){ if(!mapReady)return; map.getSource('cone').setData(coneFC());
-  const s=State.selection; if(s.type==='work'&&s.id!=null){const w=workByNo(s.id);
-    const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
-    map.fitBounds(b,{padding:110,maxZoom:9,duration:700});} }
+function renderJapan(){ if(!mapReady)return; map.getSource('cone').setData(coneFC()); } // Representation(コーン)描画のみ。カメラは触らない
 
 // ---------- WORLD⇄JAPAN scale toggle ----------
 function sz(){return {w:window.innerWidth,h:window.innerHeight};}
 document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
   State.spaceView=b.dataset.v; [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x===b));
   const gW=document.getElementById('globeViz'),jM=document.getElementById('japanMap');
+  // spaceView切替は明示的な空間Focus変化とみなし、切替先で選択中workへ一度だけ寄せる。
   if(State.spaceView==='JAPAN'){ gW.hidden=true;jM.hidden=false; document.getElementById('attrib').textContent='地理院タイル（https://maps.gsi.go.jp）';
-    if(!map)initMap(); else setTimeout(()=>{map.resize();renderJapan();},30); }
+    if(!map)initMap(); else setTimeout(()=>{map.resize();renderJapan();focusSelection();},30); }
   else { jM.hidden=true;gW.hidden=false; document.getElementById('attrib').textContent='地球: NASA Blue Marble';
-    setTimeout(()=>{const s=sz();world.width(s.w).height(s.h);},20); }
+    setTimeout(()=>{const s=sz();world.width(s.w).height(s.h);focusSelection();},20); }
 });
 document.getElementById('axisToggle').onclick=(e)=>{showAxis=!showAxis;e.currentTarget.classList.toggle('on',showAxis);
   renderWorld(); if(mapReady)renderJapan();};
