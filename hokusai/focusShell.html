@@ -248,8 +248,14 @@ function focusSelection(){
     world.pointOfView({lat:(w.lat+FUJI.lat)/2,lng:(w.lng+FUJI.lng)/2,altitude:clamp(0.8+w.dist/220,0.9,2.0)},800); }
   else if(State.spaceView==='JAPAN'&&mapReady){
     const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
-    map.fitBounds(b,{padding:110,maxZoom:9,duration:700}); }
+    map.fitBounds(b,{padding:fitPadding(),maxZoom:9,duration:700}); }
 }
+// 左右の浮遊パネル(左270/右340)・タイトル・タイムライン分を差し引き、見えている中央帯に収める。
+function fitPadding(){ const W=window.innerWidth,H=window.innerHeight;
+  let left=310,right=380,top=120,bottom=160;
+  if(left+right>W*0.8){ left=W*0.28; right=W*0.32; }   // 狭い画面での安全クランプ
+  if(top+bottom>H*0.7){ top=H*0.16; bottom=H*0.22; }
+  return {top,bottom,left,right}; }
 
 // ---------- JAPAN: MapLibre + 国土地理院 ----------
 let map=null, mapReady=false;
@@ -272,9 +278,12 @@ function initMap(){
     map.addLayer({id:'travelLine',type:'line',source:'travels',paint:{'line-color':'#c79bff','line-width':1.4,'line-dasharray':[2,2],'line-opacity':0.7}});
     map.addSource('pts',{type:'geojson',data:ptsFC()});
     map.addLayer({id:'ptsC',type:'circle',source:'pts',paint:{
-      'circle-radius':['match',['get','kind'],'fuji',9,'work',7,'res',5,4],
-      'circle-color':['match',['get','kind'],'fuji','#ffe08a','work','#ff6b5c','res','#8fd6c4','#c79bff'],
-      'circle-stroke-color':'#050c16','circle-stroke-width':1.4}});
+      'circle-radius':['match',['get','kind'],'fuji',13,'work',7,'res',5,4],
+      'circle-color':['match',['get','kind'],'fuji','rgba(0,0,0,0)','work','#ff6b5c','res','#8fd6c4','#c79bff'],
+      'circle-opacity':['match',['get','kind'],'fuji',0,1],                         // 富士は塗りを透過＝山頂が透ける
+      'circle-stroke-color':['match',['get','kind'],'fuji','#ffffff','#050c16'],    // 富士は白い中抜きリング
+      'circle-stroke-width':['match',['get','kind'],'fuji',1.6,1.4],
+      'circle-stroke-opacity':['match',['get','kind'],'fuji',0.75,1]}});            // 薄く囲む
     map.addLayer({id:'ptsL',type:'symbol',source:'pts',minzoom:6,layout:{'text-field':['get','label'],'text-size':11,'text-offset':[0,1.2],'text-anchor':'top'},paint:{'text-color':'#dfeaf5','text-halo-color':'#050c16','text-halo-width':1.4}});
     map.on('click','ptsC',e=>{const f=e.features[0];if(f.properties.kind==='work')setSel('work',+f.properties.no);});
     map.on('mouseenter','ptsC',()=>map.getCanvas().style.cursor='pointer');
