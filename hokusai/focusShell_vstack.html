@@ -1,5 +1,6 @@
 <!doctype html>
 <!-- focusShell.html: 万次郎版(sandbox)と同じ History OS 共通 Focus Shell の視覚文法へ北斎機能を戻した版。
+<!-- SNAPSHOT: 縦積みFOCUS PERSONヘッダー版（横組み試作 v0.1 の比較用・凍結）。編集しない。 -->
      Shell = フルスクリーン地球儀＋浮遊パネル（左WORLD EVENTS/右FOCUS PERSON）＋中央下タイムライン＋右下トグル＋浮遊カード。
      北斎固有機能（WORKS / NAME・画号phase / Residence / Travel / Representation / WORLD⇄JAPAN Scale / Timeline Zoom）は
      そのShell上の「追加レイヤ」として載せる。共通ShellのCore抽出リファクタリングはまだ行わない。
@@ -66,22 +67,16 @@
 
   /* ── 右：FOCUS PERSON（人物専用）── */
   .right-panel{right:24px;top:104px;width:340px;max-height:calc(100% - 320px)}
-  .fp-head{padding:14px 16px 12px}
+  .fp-head{padding:18px 18px 14px}
   .fp-kicker{font-size:10px;letter-spacing:.34em;color:var(--cyan-soft)}
-  /* 横組みヘッダー: 左=肖像(約40%) / 右=名前・生没年・現在名 */
-  .fp-top{display:flex;gap:13px;margin-top:11px;align-items:flex-start}
-  .fp-portrait{flex:0 0 40%;max-width:140px;width:40%;height:auto;border:1px solid var(--rule);border-radius:6px;background:rgba(255,255,255,.03)} /* 破壊的cropしない */
-  .fp-ident{flex:1 1 auto;min-width:0}
-  .fp-name{font-family:var(--serif);font-size:25px;font-weight:700;line-height:1.15;margin:0 0 2px;letter-spacing:.03em}
-  .fp-years{font-size:12px;color:var(--cyan);letter-spacing:.12em}
-  .fp-cur{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule)}
-  .fp-cur .lab{font-size:9px;letter-spacing:.18em;color:var(--dim)}
-  .fp-cur .val{font-family:var(--serif);font-size:21px;font-weight:700;margin-top:2px;line-height:1.2}
-  .fp-cur .note{font-size:10.5px;color:var(--sub);margin-top:3px;line-height:1.55}
-  .fp-nameinfo{cursor:pointer;color:var(--cyan);font-size:9px;margin-left:6px;border-bottom:1px dotted rgba(102,224,255,.5)}
-  .fp-lifehead{display:flex;align-items:baseline;gap:8px}
-  /* 狭幅フォールバック: ヘッダーを縦組みへ戻す（responsive第一案） */
-  @media (max-width:520px){ .fp-top{flex-direction:column} .fp-portrait{width:118px;flex-basis:auto;max-width:118px} }
+  .fp-portrait{display:block;width:118px;height:auto;margin:12px 0 4px;border:1px solid var(--rule);border-radius:6px;background:rgba(255,255,255,.03)} /* 既存肖像に倣い破壊的cropしない */
+  .fp-name{font-family:var(--serif);font-size:30px;font-weight:700;line-height:1.15;margin:6px 0 2px;letter-spacing:.04em}
+  .fp-years{font-size:12px;color:var(--cyan);letter-spacing:.14em}
+  .fp-nameNow{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
+  .fp-nameNow .lab{font-size:9.5px;letter-spacing:.2em;color:var(--dim)}
+  .fp-nameNow .val{font-family:var(--serif);font-size:22px;font-weight:700;margin-top:2px}
+  .fp-nameNow .note{font-size:11px;color:var(--sub);margin-top:3px;line-height:1.6}
+  .fp-meta{font-size:10.5px;color:var(--dim);margin-top:8px;line-height:1.6}
   /* 辞世（1849付近で静かに表示） */
   .fp-poem{margin-top:14px;padding-top:12px;border-top:1px solid var(--rule)}
   .fp-poem .yr{font-family:var(--mono);font-size:11px;color:var(--cyan)}
@@ -116,7 +111,6 @@
   /* chronology（生涯） */
   .chrono-item{padding:8px 16px;cursor:pointer;transition:.2s;border-bottom:1px solid var(--rule)}
   .chrono-item:hover{background:rgba(102,224,255,.06)} .chrono-item.sel{background:rgba(102,224,255,.10)}
-  .chrono-item.near{box-shadow:inset 2px 0 0 var(--cyan-soft)} /* timeCursor最寄り（scrollはしない） */
   .chrono-year{font-family:var(--mono);font-size:12px;color:var(--cyan);font-weight:700}
   .chrono-text{font-size:12px;line-height:1.55;color:rgba(238,243,248,.8);margin-top:2px}
 
@@ -191,21 +185,18 @@
 <div class="panel right-panel" id="focusPanel">
   <div class="fp-head">
     <div class="fp-kicker">HISTORY OS / FOCUS PERSON</div>
-    <div class="fp-top">
-      <img class="fp-portrait" src="../assets/portraits/hokusai-portrait.png" alt="葛飾北斎 肖像">
-      <div class="fp-ident">
-        <div class="fp-name">葛飾北斎</div>
-        <div class="fp-years">1760 — 1849</div>
-        <div class="fp-cur">
-          <div class="lab">CURRENT NAME<span class="fp-nameinfo" id="nameInfo">ⓘ 名前について</span></div>
-          <div class="val" id="nameNowVal">為一</div>
-          <div class="note" id="nameNowNote"></div>
-        </div>
-      </div>
+    <img class="fp-portrait" src="../assets/portraits/hokusai-portrait.png" alt="葛飾北斎 肖像">
+    <div class="fp-name">葛飾北斎</div>
+    <div class="fp-years">1760 — 1849</div>
+    <div class="fp-nameNow">
+      <div class="lab">この時期の名（幼名・個人名・画号を区別）</div>
+      <div class="val" id="nameNowVal">為一</div>
+      <div class="note" id="nameNowNote"></div>
     </div>
+    <div class="fp-meta" id="nameMetaLine"></div>
     <div class="fp-poem" id="deathPoem" hidden></div>
   </div>
-  <div class="sec fp-lifehead">LIFE<span style="font-size:9px;letter-spacing:.1em;color:var(--dim)">人物年譜</span></div>
+  <div class="sec">生涯</div>
   <div id="lifeList"></div>
 </div>
 
@@ -548,8 +539,7 @@ tl.addEventListener('pointermove',e=>{if(!drag)return;
   if(drag.mode==='cursor'){setCursor(yearAt(e.offsetX));}
   else{const dyr=(e.offsetX-drag.x)/tlW()*(drag.vp.to-drag.vp.from);let from=drag.vp.from-dyr,to=drag.vp.to-dyr;
     const span=to-from; from=clamp(from,timelineConfig.rangeMin,timelineConfig.rangeMax-span); to=from+span; State.timeViewport={from,to}; syncTimeLabels(); drawTL();}});
-tl.addEventListener('pointerup',()=>{ // ドラッグ終了時のみ、最寄りLIFEが範囲外なら一度だけ静かにscroll
-  if(drag&&drag.mode==='cursor'){const nb=nearestLife(State.timeCursor);if(nb)scrollLifeIntoView(nb.id);} drag=null;});
+tl.addEventListener('pointerup',()=>drag=null);
 function zoom(f){const v=State.timeViewport,c=State.timeCursor,span=(v.to-v.from)*f;
   let from=c-(c-v.from)*f, to=from+span; from=clamp(from,timelineConfig.rangeMin,timelineConfig.rangeMax);
   to=clamp(to,from+8,timelineConfig.rangeMax); State.timeViewport={from:Math.round(from),to:Math.round(to)}; syncTimeLabels(); drawTL();}
@@ -577,16 +567,6 @@ function showCard({tag,title,sub,body,rel}){
   detailCard.hidden=false;
 }
 document.getElementById('dcClose').onclick=()=>{detailCard.hidden=true;};
-// 「名前について」= 本姓/養家/確定しない旨を詳細カードへ（人物ヘッダーには常設しない）
-document.getElementById('nameInfo').onclick=()=>showCard({tag:'NAME / 名前について',title:'葛飾北斎 の名',
-  sub:'本姓・養家・幼名・画号', body:nameMeta.line+'\n\n'+nameMeta.note, rel:nameMeta.sources.join(' / ')});
-
-// ---------- LIFE年譜: timeCursorと独立scroll（最寄りhighlightのみ・自動連続scrollしない）----------
-const focusPanelEl=document.getElementById('focusPanel');
-function nearestLife(year){let best=null,bd=1e9;lifeEvents.forEach(e=>{const d=Math.abs(e.year-year);if(d<bd){bd=d;best=e;}});return best;}
-function lifeItem(id){return document.querySelector('#lifeList .chrono-item[data-id="'+id+'"]');}
-function inPanelView(el){const c=focusPanelEl.getBoundingClientRect(),r=el.getBoundingClientRect();return r.top>=c.top+40 && r.bottom<=c.bottom;}
-function scrollLifeIntoView(id){const el=lifeItem(id);if(el && !inPanelView(el))el.scrollIntoView({block:'center',behavior:'smooth'});}
 
 // ---------- render on state change ----------
 on(()=>{ // 右パネル：この時期の名（名前史：幼名/個人名/画号を区別、架空の改名年を作らない）
@@ -594,9 +574,6 @@ on(()=>{ // 右パネル：この時期の名（名前史：幼名/個人名/画
   document.getElementById('nameNowVal').textContent=nm?nm.name:'—';
   const cert=nm&&nm.certainty!=='documented'?'（'+(nm.certainty==='traditional'?'伝承・後世資料':'資料差')+'）':'';
   document.getElementById('nameNowNote').textContent=nm?('種別: '+nm.kind+cert+(nm.note?' ／ '+nm.note:'')):'（誕生前）';
-  // LIFE年譜: timeCursor最寄りeventをhighlightのみ（scrollはしない＝chronologyScroll独立）
-  const nb=nearestLife(y);
-  document.querySelectorAll('#lifeList .chrono-item').forEach(t=>t.classList.toggle('near', !!nb && t.dataset.id===nb.id));
   syncTimeLabels();
 });
 on(()=>{ // 辞世（1849付近、または1849 LIFE選択時に静かに表示）
@@ -622,12 +599,10 @@ on(()=>{ // selection highlight
   document.getElementById('axisToggle').disabled = !(State.selection.type==='work'&&State.selection.id!=null);
 });
 on(()=>renderPLink()); // P-LINK: 現在年代で再ランク＋選択ハイライト
-let lastLifeScrolled=null; // LIFE eventを明示選択した時だけ一度scroll（cursor連続移動では戻さない）
-on(()=>{ if(State.selection.type==='life'){ if(State.selection.id!==lastLifeScrolled){lastLifeScrolled=State.selection.id;scrollLifeIntoView(State.selection.id);} }
-  else lastLifeScrolled=null; });
 on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); });
 
 // init
+document.getElementById('nameMetaLine').textContent=nameMeta.line;
 syncTimeLabels(); drawTL(); emit();
 window.addEventListener('resize',()=>{drawTL(); if(State.spaceView==='WORLD'){const s=sz();world.width(s.w).height(s.h);} if(map)map.resize();});
 </script>
