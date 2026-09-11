@@ -109,6 +109,23 @@ export function personLinksByRelevance(year){
   return [...personLinks].sort((a,b)=>rank(a)-rank(b));
 }
 
+// ── ART / TECH Context（美術史・技術史・画材）: 代表markerのみ。常設パネルにしない ──
+// クリックで詳細カード表示。timeCursor同期・mapCamera静止。因果を過剰に断定しない。
+export const artTechEvents = [
+  { id:'at_1720', year:1720, title:'洋書輸入規制の緩和', category:'ART / TECH CONTEXT',
+    desc:'享保期に漢訳洋書等の輸入条件が緩む。西洋の透視図法などが日本へ流入する遠い背景となり、のちの浮絵や北斎の空間表現の前提のひとつとなる（直接の因果ではなく環境）。',
+    related:'浮絵 / 一点透視' },
+  { id:'at_1765', year:1765, title:'錦絵の成立・発展', category:'PRINT TECHNOLOGY',
+    desc:'明和期、多色摺の錦絵が成立・高度化（鈴木春信ら）。北斎が画業に入る前に、浮世絵のカラー印刷技術そのものが大きく成熟していた。',
+    related:'多版多色摺 / 見当' },
+  { id:'at_1829', year:1829, title:'ベロ藍の普及', category:'MATERIAL',
+    desc:'プルシアンブルー（ベロ藍）は18世紀末から輸入例があり、1820年代後半に輸入量が増加、1829年以降は価格低下も進んで浮世絵で広く使われた。『冨嶽三十六景』の青の表現を支えた材料条件。',
+    related:'冨嶽三十六景' },
+  { id:'at_1830s', year:1833, title:'風景版画の隆盛', category:'ART CONTEXT',
+    desc:'1830年代、北斎『冨嶽三十六景』・広重『東海道五拾三次』等により風景版画が一大分野として隆盛した。',
+    related:'冨嶽三十六景 / 東海道五拾三次' },
+];
+
 // Timeline 設定（Hokusai Focus。Coreに固定しない）
 export const timelineConfig = {
   rangeMin:1700, rangeMax:1940,      // 探索可能範囲
