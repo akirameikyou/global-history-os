@@ -28,7 +28,12 @@ export const lifeEvents = [
   { id:'l_36',     year:1831, title:'富嶽三十六景 刊行',   gago:'為一' },
   { id:'l_100',    year:1834, title:'富嶽百景・「画狂老人卍」', gago:'画狂老人卍' },
   { id:'l_obuse',  year:1842, title:'小布施へ（高井鴻山）', gago:'画狂老人卍' },
-  { id:'l_die',    year:1849, title:'没（享年90）',         gago:'画狂老人卍' },
+  { id:'l_die',    year:1849, title:'没（数え90）',         gago:'卍（画狂老人卍）',
+    detail:'葛飾北斎、没。', age:'90歳（数え年）',
+    deathPoem:'ひと魂でゆく気散じや夏の原', deathPoemType:'辞世',
+    // 別表記「人魂でゆくきさんじや夏の原」。UIは読みやすい上記を基本表示とする。
+    deathPoemAlt:'人魂でゆくきさんじや夏の原',
+    source:'すみだ北斎美術館' },
 ];
 
 // 居住地（representative PIN のみ。93回とされる転居は網羅しない）
