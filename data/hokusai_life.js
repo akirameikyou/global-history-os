@@ -70,3 +70,34 @@ export function gagoAt(year){
   const p = gagoPhases.find(g => year>=g.from && year<=g.to);
   return p ? p.name : (year<1779 ? '（入門前）' : '画狂老人卍');
 }
+
+// ── 名前史（本名・幼名・画号を「同一の改名」として一括りにしない） ──────────
+// certainty: documented=史料上確か / traditional=伝承・後世資料 / uncertain=資料間で表記差
+// kind: 幼名 / 個人名 / 画号
+export const nameHistory = [
+  { from:1760, name:'時太郎',       kind:'幼名',   certainty:'traditional', note:'幼名。資料により異同あり' },
+  { from:1773, name:'鉄蔵',         kind:'個人名', certainty:'uncertain',   note:'姓は川村／中島で資料差' },
+  { from:1779, name:'春朗',         kind:'画号',   certainty:'documented',  note:'勝川派入門後' },
+  { from:1795, name:'宗理',         kind:'画号',   certainty:'documented',  note:'俵屋宗理を襲名' },
+  { from:1798, name:'北斎辰政',     kind:'画号',   certainty:'documented',  note:'「北斎」を用い始める頃' },
+  { from:1805, name:'葛飾北斎',     kind:'画号',   certainty:'documented',  note:null },
+  { from:1811, name:'戴斗',         kind:'画号',   certainty:'documented',  note:'北斎漫画期' },
+  { from:1820, name:'為一',         kind:'画号',   certainty:'documented',  note:'富嶽三十六景期' },
+  { from:1834, name:'画狂老人卍',   kind:'画号',   certainty:'documented',  note:'晩年' },
+];
+
+// 本姓・家系・養子関係（単一の確定本名にしない＝Evidence規律を人物名にも適用）
+export const nameMeta = {
+  birthFamily:'川村氏',
+  adoptiveFamily:'中島家（中島伊勢）',
+  line:'本姓 川村氏 →（幼少期）中島家の養子とされる。本名を単一に確定しない',
+  note:'幼少期に幕府御用鏡師・中島伊勢の養子となったとされる。資料により川村鉄蔵／中島鉄蔵等の表記があり、「4歳で養子」等の年齢も資料差がある。',
+  sources:['すみだ北斎美術館','国立劇場 文化デジタルライブラリー','国立国会図書館レファレンス協同DB','British Museum'],
+};
+
+// timeCursor で「その時期に使われていた名前」を返す
+export function nameAt(year){
+  let cur = null;
+  for(const n of nameHistory){ if(year >= n.from) cur = n; }
+  return cur; // year<1760 は null
+}

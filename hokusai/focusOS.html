@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- focusOS.html: 共通Focus Shell寄せ・修正版（中心線削除/名前史）。現行 focus.html は比較用に残置 -->
+<title>葛飾北斎 Focus (OS)</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css">
+<style>
+  :root{
+    --bg:#0a0e14; --panel:rgba(16,21,29,.9); --line:rgba(255,255,255,.12); --line2:rgba(255,255,255,.07);
+    --ink:#eef3f8; --sub:#9db0c4; --dim:#6b7c90; --indigo:#7cb3ff; --gold:#ffd36a; --vermilion:#ff6b5c;
+    --doc:#4fd0b8; --est:#e0b45f; --art:#c79bff;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;
+    --serif:"Hiragino Mincho ProN","Yu Mincho",serif; --mono:"SFMono-Regular",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box} html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+  #app{display:grid;height:100vh;grid-template-columns:260px 1fr 300px;
+    grid-template-rows:44px 1fr 1fr 128px;
+    grid-template-areas:"top top top" "world space life" "works space life" "time time time";gap:1px;background:var(--line2)}
+  .zone{background:var(--bg);overflow:auto;min-height:0}
+  #top{grid-area:top;display:flex;align-items:center;gap:14px;padding:0 14px;background:#0c1119;border-bottom:1px solid var(--line)}
+  #top h1{font-size:14px;margin:0;font-weight:650;letter-spacing:.02em;white-space:nowrap}
+  #top .yr{font-family:var(--mono);font-size:12px;color:var(--gold)}
+  #top .gago{font-family:var(--serif);font-size:13px;color:var(--ink)}
+  .seg{display:flex;margin-left:auto;background:#141b25;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+  .seg button{background:transparent;color:var(--sub);border:0;padding:6px 13px;font-size:12px;cursor:pointer;font-family:inherit}
+  .seg button.on{background:rgba(124,179,255,.2);color:var(--ink);font-weight:650}
+  .zhead{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);padding:9px 12px 4px;position:sticky;top:0;background:var(--bg)}
+  /* space */
+  #space{grid-area:space;position:relative;overflow:hidden;background:#070b11}
+  #globeViz,#japanMap{position:absolute;inset:0}
+  #japanMap[hidden]{display:none} #globeViz[hidden]{display:none}
+  .attrib{position:absolute;left:8px;bottom:6px;z-index:5;font-size:10px;color:var(--sub);background:rgba(6,10,16,.7);padding:2px 7px;border-radius:5px}
+  .repnote{position:absolute;right:8px;top:8px;z-index:5;font-size:10.5px;color:var(--sub);background:rgba(6,10,16,.7);padding:3px 8px;border-radius:6px;max-width:260px;line-height:1.5}
+  /* left */
+  #world{grid-area:world} #works{grid-area:works;border-top:1px solid var(--line)}
+  .ev{padding:6px 12px;border-bottom:1px solid var(--line2);cursor:pointer;font-size:12.5px;display:flex;gap:8px}
+  .ev:hover{background:rgba(255,255,255,.04)} .ev .y{font-family:var(--mono);color:var(--sub);flex:0 0 38px}
+  .ev.sel{background:rgba(124,179,255,.14)}
+  .wlink summary{padding:7px 12px;font-size:11.5px;color:var(--indigo);cursor:pointer;list-style:none}
+  .wlink summary::-webkit-details-marker{display:none}
+  .wlink .ev .y{color:var(--indigo)}
+  .worktile{padding:8px 12px;border-bottom:1px solid var(--line2);cursor:pointer}
+  .worktile:hover{background:rgba(255,255,255,.04)} .worktile.sel{background:rgba(255,211,106,.12)}
+  .worktile .t{font-size:12.5px;font-weight:600} .worktile .m{font-family:var(--mono);font-size:10.5px;color:var(--sub)}
+  .worktile .card{margin-top:8px;display:none} .worktile.sel .card{display:block}
+  .worktile .card img{width:100%;border-radius:6px;border:1px solid var(--line);cursor:zoom-in}
+  .worktile .card .cap{font-size:11px;color:var(--sub);margin-top:5px;line-height:1.6}
+  .chip{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:999px;margin-right:4px}
+  .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)} .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
+  /* right */
+  #life{grid-area:life;border-left:1px solid var(--line)}
+  .lifehead{padding:12px}
+  .lifehead .lab{font-size:10px;letter-spacing:.14em;color:var(--dim)}
+  .lifehead .gago{font-family:var(--serif);font-size:28px;font-weight:700;line-height:1.1;margin:2px 0}
+  .lifehead .sub{font-size:11.5px;color:var(--sub)}
+  /* timeline */
+  #time{grid-area:time;background:#0c1119;border-top:1px solid var(--line);position:relative;user-select:none}
+  #time .tbar{display:flex;align-items:center;gap:10px;padding:6px 12px 0;font-size:11px;color:var(--sub)}
+  #time .tbar b{color:var(--ink);font-family:var(--mono)}
+  #time .zoombtn{background:#141b25;border:1px solid var(--line);color:var(--ink);border-radius:6px;width:24px;height:22px;cursor:pointer;font-size:14px;line-height:1}
+  #time .now{margin-left:6px;background:#241b12;border:1px solid var(--est);color:var(--est);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer}
+  #tl{width:100%;height:82px;display:block;cursor:ew-resize}
+  #lb{position:fixed;inset:0;z-index:50;background:rgba(5,8,12,.93);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
+  #lb.open{display:flex} #lb img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:6px}
+  [hidden]{display:none!important}
+</style></head>
+<body>
+<div id="app">
+  <div id="top">
+    <h1>葛飾北斎 Focus <span style="font-size:9.5px;color:var(--dim);letter-spacing:.12em;font-weight:400">HISTORY OS / FOCUS PERSON</span></h1>
+    <span class="yr" id="topYear">1831</span><span class="gago" id="topGago">為一</span>
+    <div class="seg" id="spaceSeg"><button data-v="WORLD" class="on">WORLD 地球</button><button data-v="JAPAN">JAPAN 日本詳細</button></div>
+  </div>
+
+  <div id="world" class="zone">
+    <div class="zhead">World / Context Events</div>
+    <div id="worldList"></div>
+    <details class="wlink"><summary>＋ W-LINK（同時代の海外・二次表示）</summary><div id="wlinkList"></div></details>
+  </div>
+
+  <div id="works" class="zone">
+    <div class="zhead">Works（代表6図）</div>
+    <div id="worksList"></div>
+  </div>
+
+  <div id="space">
+    <div id="globeViz"></div>
+    <div id="japanMap" hidden></div>
+    <div class="attrib" id="attrib">地球: NASA Blue Marble</div>
+    <div class="repnote">点＝北斎が富士を描いた視点／金＝富士。薄い扇＝作者が作品上「この範囲として」富士を捉えた画角(Representation)。移動・接続(ROUTE)ではありません。<label style="display:block;margin-top:5px;font-size:10px;cursor:pointer"><input type="checkbox" id="dbgAxis"> 中心線を表示(debug)</label></div>
+  </div>
+
+  <div id="life" class="zone">
+    <div class="lifehead">
+      <div class="lab">HISTORY OS / FOCUS PERSON — 葛飾北斎</div>
+      <div class="gago" id="lifeGago">為一</div>
+      <div class="sub" id="lifeGagoNote"></div>
+      <div class="sub" id="nameMetaLine" style="margin-top:6px;color:var(--dim)"></div>
+    </div>
+    <div class="zhead">生涯（画号phase）</div>
+    <div id="lifeList"></div>
+  </div>
+
+  <div id="time">
+    <div class="tbar">
+      <button class="zoombtn" id="zoomIn">＋</button><button class="zoombtn" id="zoomOut">－</button>
+      <span>表示 <b id="vpLabel">1750–1860</b>　位置 <b id="curLabel">1831</b></span>
+      <button class="now" id="nowBtn">NOW → 現在所蔵地(将来)</button>
+      <span style="margin-left:auto;color:var(--dim)">ドラッグ=カーソル移動 / 背景ドラッグ=パン / ＋−=年代ズーム</span>
+    </div>
+    <svg id="tl"></svg>
+  </div>
+</div>
+<div id="lb"><img alt=""></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js"></script>
+<script type="module">
+import Globe from 'https://esm.sh/globe.gl';
+import { hokusaiViews } from '../data/hokusai_views.js';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, residences, travels, worldEventsJP, wlinkEvents, timelineConfig } from '../data/hokusai_life.js';
+
+const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
+const PICK=[1,2,4,10,35,46];
+const WORKS = hokusaiViews.filter(e=>PICK.includes(e.no)).map(e=>({
+  no:e.no, ja:e.identity.title_ja, en:e.identity.title_en,
+  lat:e.interpretation.viewpoint.lat, lng:e.interpretation.viewpoint.lng,
+  farL:e.derived.cone.farLeft, farR:e.derived.cone.farRight, half:e.interpretation.coneHalfDeg,
+  brg:e.derived.bearingToFuji, dist:e.derived.distanceKm,
+  file:e.evidence.image.file, axV:e.interpretation.viewpointCoordinate, axC:e.interpretation.compositionGeometry,
+  vpName:e.interpretation.viewpointName, year:1831,
+}));
+const workByNo=n=>WORKS.find(w=>w.no===n);
+function thumb(file,w){return 'https://commons.wikimedia.org/wiki/Special:FilePath/'+encodeURIComponent(file)+'?width='+w;}
+
+// ---------- shared state ----------
+const State={ spaceView:'WORLD', selection:{type:null,id:null},
+  timeCursor:timelineConfig.initCursor, timeViewport:{from:timelineConfig.initFrom,to:timelineConfig.initTo} };
+let showAxis=false;
+const subs=[]; const on=f=>subs.push(f); const emit=()=>subs.forEach(f=>f(State));
+function setSel(type,id){ State.selection={type,id}; emit(); }
+function setCursor(y){ State.timeCursor=Math.round(clamp(y,timelineConfig.rangeMin,timelineConfig.rangeMax)); emit(); }
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+// ---------- great-circle (for cone polygon) ----------
+const toXYZ=p=>{const la=p.lat*D,lo=p.lng*D;return[Math.cos(la)*Math.cos(lo),Math.cos(la)*Math.sin(lo),Math.sin(la)];};
+const toLL=v=>({lat:Math.asin(v[2])/D,lng:Math.atan2(v[1],v[0])/D});
+function gc(a,b,n){const va=toXYZ(a),vb=toXYZ(b);let d=Math.max(-1,Math.min(1,va[0]*vb[0]+va[1]*vb[1]+va[2]*vb[2]));const om=Math.acos(d),o=[];
+  for(let i=0;i<=n;i++){const t=i/n;let s0,s1;if(om<1e-7){s0=1-t;s1=t;}else{s0=Math.sin((1-t)*om)/Math.sin(om);s1=Math.sin(t*om)/Math.sin(om);}
+    const v=[va[0]*s0+vb[0]*s1,va[1]*s0+vb[1]*s1,va[2]*s0+vb[2]*s1];const L=Math.hypot(v[0],v[1],v[2]);o.push(toLL([v[0]/L,v[1]/L,v[2]/L]));}return o;}
+function coneRing(w){const r=gc(w,w.farL,14).concat(gc(w.farL,w.farR,8).slice(1)).concat(gc(w.farR,w,14).slice(1));
+  const c=r.map(p=>[p.lng,p.lat]);c.push(c[0]);return c;}
+
+// ---------- WORLD: globe.gl ----------
+const world = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .backgroundColor('#070b11')
+  .pointsData(worldPoints()).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012)
+  .onPointClick(d=>{ if(d.no) setSel('work',d.no); })
+  .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke('stroke').arcAltitude('alt');
+world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
+world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
+function worldPoints(){const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:State.selection.id===w.no?'#ffd36a':'#ff6b5c',r:State.selection.id===w.no?0.5:0.34}));
+  p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.6});return p;}
+function worldArcs(){const s=State.selection; if(s.type!=='work'||s.id==null)return [];const w=workByNo(s.id);if(!w)return[];
+  const a=[{sLat:w.lat,sLng:w.lng,eLat:w.farL.lat,eLng:w.farL.lng,color:'#7cb3ff',stroke:0.7,alt:0.015},
+    {sLat:w.lat,sLng:w.lng,eLat:w.farR.lat,eLng:w.farR.lng,color:'#7cb3ff',stroke:0.7,alt:0.015}];
+  if(showAxis)a.unshift({sLat:w.lat,sLng:w.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:0.5,alt:0.02});return a;}
+function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs());
+  const s=State.selection; if(s.type==='work'&&s.id!=null){const w=workByNo(s.id);world.controls().autoRotate=false;
+    world.pointOfView({lat:(w.lat+FUJI.lat)/2,lng:(w.lng+FUJI.lng)/2,altitude:clamp(0.8+w.dist/220,0.9,2.0)},800);} }
+
+// ---------- JAPAN: MapLibre + 国土地理院 ----------
+let map=null, mapReady=false;
+function initMap(){
+  map=new maplibregl.Map({container:'japanMap',attributionControl:false,
+    style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
+      sources:{
+        landsat:{type:'raster',tiles:['https://cyberjapandata.gsi.go.jp/xyz/lndst/{z}/{x}/{y}.png'],tileSize:256,minzoom:2,maxzoom:13,attribution:'地理院タイル'},
+        photo:{type:'raster',tiles:['https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg'],tileSize:256,minzoom:14,maxzoom:18,attribution:'地理院タイル(全国最新写真)'}
+      },
+      layers:[{id:'bg',type:'background',paint:{'background-color':'#070b11'}},
+        {id:'landsat',type:'raster',source:'landsat',maxzoom:15,paint:{'raster-brightness-max':0.82,'raster-saturation':-0.12}},
+        {id:'photo',type:'raster',source:'photo',minzoom:13,paint:{'raster-brightness-max':0.9,'raster-saturation':-0.08}}]},
+    center:[138.9,36.0],zoom:4.6,maxZoom:17,minzoom:3});
+  map.on('load',()=>{ mapReady=true;
+    map.addSource('cone',{type:'geojson',data:emptyFC()});
+    map.addLayer({id:'coneFill',type:'fill',source:'cone',filter:['==','$type','Polygon'],paint:{'fill-color':'#7cb3ff','fill-opacity':0.16}});
+    map.addLayer({id:'coneLine',type:'line',source:'cone',filter:['==','$type','LineString'],paint:{'line-color':['get','col'],'line-width':1.4,'line-opacity':0.85}});
+    map.addSource('travels',{type:'geojson',data:travelFC()});
+    map.addLayer({id:'travelLine',type:'line',source:'travels',paint:{'line-color':'#c79bff','line-width':1.4,'line-dasharray':[2,2],'line-opacity':0.7}});
+    map.addSource('pts',{type:'geojson',data:ptsFC()});
+    map.addLayer({id:'ptsC',type:'circle',source:'pts',paint:{
+      'circle-radius':['match',['get','kind'],'fuji',9,'work',7,'res',5,4],
+      'circle-color':['match',['get','kind'],'fuji','#ffe08a','work','#ff6b5c','res','#8fd6c4','#c79bff'],
+      'circle-stroke-color':'#0a0e14','circle-stroke-width':1.4}});
+    map.addLayer({id:'ptsL',type:'symbol',source:'pts',minzoom:6,layout:{'text-field':['get','label'],'text-size':11,'text-offset':[0,1.2],'text-anchor':'top'},paint:{'text-color':'#dfeaf5','text-halo-color':'#0a0e14','text-halo-width':1.4}});
+    map.on('click','ptsC',e=>{const f=e.features[0];if(f.properties.kind==='work')setSel('work',+f.properties.no);});
+    map.on('mouseenter','ptsC',()=>map.getCanvas().style.cursor='pointer');
+    map.on('mouseleave','ptsC',()=>map.getCanvas().style.cursor='');
+    renderJapan();
+  });
+}
+const emptyFC=()=>({type:'FeatureCollection',features:[]});
+function ptsFC(){const f=WORKS.map(w=>({type:'Feature',properties:{kind:'work',no:w.no,label:'#'+w.no+' '+w.ja},geometry:{type:'Point',coordinates:[w.lng,w.lat]}}));
+  f.push({type:'Feature',properties:{kind:'fuji',label:'富士山'},geometry:{type:'Point',coordinates:[FUJI.lng,FUJI.lat]}});
+  residences.forEach(r=>f.push({type:'Feature',properties:{kind:'res',label:r.title},geometry:{type:'Point',coordinates:[r.lng,r.lat]}}));
+  return {type:'FeatureCollection',features:f};}
+function travelFC(){return {type:'FeatureCollection',features:travels.map(t=>({type:'Feature',properties:{title:t.title,certainty:t.routeCertainty},
+  geometry:{type:'LineString',coordinates:[[t.from.lng,t.from.lat],[t.to.lng,t.to.lat]]}}))};}
+function coneFC(){const s=State.selection;if(s.type!=='work'||s.id==null)return emptyFC();const w=workByNo(s.id);if(!w)return emptyFC();
+  const fs=[{type:'Feature',properties:{},geometry:{type:'Polygon',coordinates:[coneRing(w)]}},
+    {type:'Feature',properties:{col:'#7cb3ff'},geometry:{type:'LineString',coordinates:gc(w,w.farL,14).map(p=>[p.lng,p.lat])}},
+    {type:'Feature',properties:{col:'#7cb3ff'},geometry:{type:'LineString',coordinates:gc(w,w.farR,14).map(p=>[p.lng,p.lat])}}];
+  if(showAxis)fs.push({type:'Feature',properties:{col:'#ffd36a'},geometry:{type:'LineString',coordinates:gc(w,FUJI,20).map(p=>[p.lng,p.lat])}});
+  return {type:'FeatureCollection',features:fs};}
+function renderJapan(){ if(!mapReady)return; map.getSource('cone').setData(coneFC());
+  const s=State.selection; if(s.type==='work'&&s.id!=null){const w=workByNo(s.id);
+    const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
+    map.fitBounds(b,{padding:90,maxZoom:9,duration:700});} }
+
+// ---------- space toggle ----------
+document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  State.spaceView=b.dataset.v; [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x===b));
+  const gW=document.getElementById('globeViz'),jM=document.getElementById('japanMap');
+  if(State.spaceView==='JAPAN'){ gW.hidden=true;jM.hidden=false; document.getElementById('attrib').textContent='地理院タイル（https://maps.gsi.go.jp）';
+    if(!map)initMap(); else setTimeout(()=>{map.resize();renderJapan();},30); }
+  else { jM.hidden=true;gW.hidden=false; document.getElementById('attrib').textContent='地球: NASA Blue Marble'; setTimeout(()=>world.width(document.getElementById('space').clientWidth).height(document.getElementById('space').clientHeight),20); }
+});
+
+// ---------- left / right panels ----------
+const worldList=document.getElementById('worldList'), wlinkList=document.getElementById('wlinkList'),
+  worksList=document.getElementById('worksList'), lifeList=document.getElementById('lifeList');
+worldEventsJP.forEach(ev=>{const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;d.dataset.year=ev.year;
+  d.innerHTML='<span class="y">'+ev.year+'</span><span>'+ev.title+'</span>';d.onclick=()=>{setCursor(ev.year);setSel('event',ev.id);};worldList.appendChild(d);});
+wlinkEvents.forEach(ev=>{const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;
+  d.innerHTML='<span class="y">'+ev.year+'</span><span>'+ev.title+'</span>';d.onclick=()=>{setCursor(ev.year);setSel('event',ev.id);};wlinkList.appendChild(d);});
+lifeEvents.forEach(ev=>{const d=document.createElement('div');d.className='ev';d.dataset.id=ev.id;
+  d.innerHTML='<span class="y">'+ev.year+'</span><span>'+ev.title+'</span>';d.onclick=()=>{setCursor(ev.year);setSel('life',ev.id);};lifeList.appendChild(d);});
+WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d.dataset.no=w.no;
+  d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
+    '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+
+    '<span class="chip k-座標">座標 '+w.axV+'</span><span class="chip k-構図">構図 '+w.axC+'</span><br>'+(w.vpName||'')+'</div></div>';
+  d.querySelector('.t').onclick=()=>{ setSel('work',w.no); setCursor(w.year); };
+  d.querySelector('img').onclick=(e)=>{e.stopPropagation();openLB(w);};
+  worksList.appendChild(d);});
+
+// ---------- timeline ----------
+const tl=document.getElementById('tl'); const SVGNS='http://www.w3.org/2000/svg';
+const LANES=[{key:'life',y:20,color:'#ffd36a',data:()=>lifeEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'life'}))},
+  {key:'works',y:38,color:'#ff6b5c',data:()=>WORKS.map(w=>({year:w.year,label:w.ja,id:w.no,type:'work'}))},
+  {key:'world',y:56,color:'#8fd6c4',data:()=>worldEventsJP.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))},
+  {key:'wlink',y:70,color:'#c79bff',data:()=>wlinkEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))}];
+function tlW(){return tl.clientWidth||900;}
+function xOf(y){const v=State.timeViewport;return (y-v.from)/(v.to-v.from)*tlW();}
+function yearAt(px){const v=State.timeViewport;return v.from+px/tlW()*(v.to-v.from);}
+function drawTL(){
+  const W=tlW(),v=State.timeViewport; tl.setAttribute('viewBox','0 0 '+W+' 82'); tl.innerHTML='';
+  // grid decades
+  const step = (v.to-v.from)>140?50:(v.to-v.from)>60?20:10;
+  for(let yr=Math.ceil(v.from/step)*step; yr<=v.to; yr+=step){const x=xOf(yr);
+    add('line',{x1:x,y1:8,x2:x,y2:78,stroke:'rgba(255,255,255,.08)'});
+    add('text',{x:x+2,y:80,fill:'#6b7c90','font-size':9,'font-family':'monospace'},yr);}
+  // 画号 phases band
+  gagoPhases.forEach(g=>{const x1=xOf(Math.max(g.from,v.from)),x2=xOf(Math.min(g.to,v.to));if(x2<0||x1>W)return;
+    add('rect',{x:x1,y:4,width:Math.max(0,x2-x1),height:9,fill:'rgba(255,211,106,.10)',stroke:'rgba(255,211,106,.25)'});
+    if(x2-x1>34)add('text',{x:(x1+x2)/2,y:11,fill:'#caa85e','font-size':8.5,'text-anchor':'middle','font-family':'serif'},g.name);});
+  // lanes
+  LANES.forEach(L=>{ L.data().forEach(m=>{const x=xOf(m.year);if(x<-4||x>W+4)return;
+    const selHit=(State.selection.type===m.type&&String(State.selection.id)===String(m.id));
+    add('circle',{cx:x,cy:L.y,r:selHit?4.4:3,fill:L.color,stroke:'#0c1119','stroke-width':1,'data-year':m.year,'data-id':m.id,'data-type':m.type,style:'cursor:pointer'},null,m);
+  });});
+  // cursor
+  const cx=xOf(State.timeCursor);
+  add('line',{x1:cx,y1:2,x2:cx,y2:78,stroke:'#ffffff','stroke-width':1.4,'stroke-opacity':.8});
+  add('polygon',{points:(cx-4)+',2 '+(cx+4)+',2 '+cx+',8',fill:'#fff'});
+  function add(tag,attrs,text,marker){const el=document.createElementNS(SVGNS,tag);for(const k in attrs)el.setAttribute(k,attrs[k]);
+    if(text!=null)el.textContent=text; if(marker){el.addEventListener('click',ev=>{ev.stopPropagation();setCursor(marker.year);setSel(marker.type,marker.id);});} tl.appendChild(el);}
+}
+// timeline interactions
+let drag=null;
+tl.addEventListener('pointerdown',e=>{const y=yearAt(e.offsetX);
+  drag={mode:Math.abs(xOf(State.timeCursor)-e.offsetX)<10?'cursor':'pan',x:e.offsetX,vp:{...State.timeViewport}};
+  if(drag.mode==='cursor')setCursor(y); tl.setPointerCapture(e.pointerId);});
+tl.addEventListener('pointermove',e=>{if(!drag)return;
+  if(drag.mode==='cursor'){setCursor(yearAt(e.offsetX));}
+  else{const dyr=(e.offsetX-drag.x)/tlW()*(drag.vp.to-drag.vp.from);let from=drag.vp.from-dyr,to=drag.vp.to-dyr;
+    const span=to-from; from=clamp(from,timelineConfig.rangeMin,timelineConfig.rangeMax-span); to=from+span; State.timeViewport={from,to}; syncTimeLabels(); drawTL();}});
+tl.addEventListener('pointerup',()=>drag=null);
+function zoom(f){const v=State.timeViewport,c=State.timeCursor,span=(v.to-v.from)*f;
+  let from=c-(c-v.from)*f, to=from+span; from=clamp(from,timelineConfig.rangeMin,timelineConfig.rangeMax);
+  to=clamp(to,from+8,timelineConfig.rangeMax); State.timeViewport={from:Math.round(from),to:Math.round(to)}; syncTimeLabels(); drawTL();}
+document.getElementById('zoomIn').onclick=()=>zoom(0.6);
+document.getElementById('zoomOut').onclick=()=>zoom(1/0.6);
+document.getElementById('nowBtn').onclick=()=>{ alert('NOW（現在所蔵地へのジャンプ）は将来枠です。今回は timeCursor/timeViewport 分離の観察のみ。'); };
+function syncTimeLabels(){document.getElementById('vpLabel').textContent=Math.round(State.timeViewport.from)+'–'+Math.round(State.timeViewport.to);
+  document.getElementById('curLabel').textContent=State.timeCursor;}
+
+// ---------- lightbox ----------
+const lb=document.getElementById('lb'),lbImg=lb.querySelector('img');
+function openLB(w){lbImg.src=thumb(w.file,1400);lb.classList.add('open');}
+lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open');});
+
+// ---------- render on state change ----------
+on(()=>{ // top + life NAME（名前史：幼名/個人名/画号を区別）
+  const y=State.timeCursor, nm=nameAt(y);
+  document.getElementById('topYear').textContent=y;
+  document.getElementById('topGago').textContent=nm?nm.name:'—';
+  document.getElementById('lifeGago').textContent=nm?nm.name:'—';
+  const cert=nm&&nm.certainty!=='documented'?'（'+(nm.certainty==='traditional'?'伝承':'資料差')+'）':'';
+  document.getElementById('lifeGagoNote').textContent=nm?('種別: '+nm.kind+cert+(nm.note?' ／ '+nm.note:'')):'（誕生前）';
+  syncTimeLabels();
+});
+on(()=>{ // selection highlight in lists
+  document.querySelectorAll('.worktile').forEach(t=>t.classList.toggle('sel',State.selection.type==='work'&&+t.dataset.no===State.selection.id));
+  document.querySelectorAll('#worldList .ev,#wlinkList .ev,#lifeList .ev').forEach(t=>t.classList.toggle('sel',t.dataset.id===State.selection.id));
+});
+on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); });
+
+// init
+document.getElementById('nameMetaLine').textContent=nameMeta.line;
+document.getElementById('dbgAxis').addEventListener('change',e=>{showAxis=e.target.checked;renderWorld();if(mapReady)renderJapan();});
+syncTimeLabels(); drawTL(); emit();
+window.addEventListener('resize',()=>{drawTL(); if(State.spaceView==='WORLD')world.width(document.getElementById('space').clientWidth).height(document.getElementById('space').clientHeight); if(map)map.resize();});
+</script>
+</body></html>
