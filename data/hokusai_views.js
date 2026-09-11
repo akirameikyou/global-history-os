@@ -16,6 +16,12 @@
 // 旧 confidence(documented/estimated/artistic)は後方互換のため各レコードに維持(非破壊)。
 // derived は hokusai-geo-v1 の検証・キャッシュ用 snapshot（唯一の正本ではない）。canonical(interpretation) + hokusai-geo-v1 → computeGeometry() が正。verifyGeometry() で照合可能。
 // #6,#38 の画像は正しいMET版へ差替済(verify:ok)。
+// ── Composition Mapping 概念分離(C-2) ────────────────────────────────
+//  coneHalfDeg（現行値）= targetConeHalfDeg 相当 ＝「富士を捉える History OS 上の Representation 幅」。geometry(farL/farR)の生成に使う既存の意味。変更しない。
+//  compositionHalfDeg  = 別概念（未導入・値は量産しない）＝「作品全体を仮想的に地理空間へ投影した場合の水平構図幅」。Composition Mappingが本来必要とするのはこちら。
+//  この2つを同一視しない。fujiAnchor(x) と組み合わせて coneCenterBearing を導く際、現段階は暫定的に coneHalfDeg を流用しているだけ（C-1 trial）。
+//  fujiAnchor.applicability: applicable | weak_effect | uncertain | not_applicable（全図一律適用しない。#2=applicable, #46=not_applicable）。
+//  compositionAlgorithm は "…(trial)" 表記＝正式版(v1)未確定。線形式 vs 透視投影(atan)式は compositionHalfDeg 確定後に選定。
 
 export const FUJI = {"lat": 35.3606, "lng": 138.7274, "alt_m": 3776};
 
@@ -158,7 +164,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 18.0,
-      "fujiAnchor": { "x": 0.72, "y": 0.13, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂apex位置を実測(±0.03)。富士は右寄り。" },
+      "fujiAnchor": { "x": 0.72, "y": 0.13, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1(trial)", "applicability": "applicable", "note": "実画像で山頂apex位置を実測(±0.03)。富士は右寄り。広画角クローズアップで構図補正が明確に効く。" },
       "source": "gemini",
       "note": "赤富士。夏の早朝に山肌が赤く染まる気象現象の心象的クローズアップ。"
     },
@@ -303,7 +309,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "documented",
       "compositionGeometry": "literal",
       "coneHalfDeg": 5.5,
-      "fujiAnchor": { "x": 0.42, "y": 0.42, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂位置を実測(±0.03)。橋アーチ内、やや左。" },
+      "fujiAnchor": { "x": 0.42, "y": 0.42, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1(trial)", "applicability": "weak_effect", "note": "実画像で山頂位置を実測(±0.03)。橋アーチ内、やや左。狭画角のため補正は小。" },
       "source": "gemini",
       "note": "小名木川のアーチ橋越しに隅田川対岸と富士を覗く透視図法的構図。"
     },
@@ -736,7 +742,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 3.5,
-      "fujiAnchor": { "x": 0.73, "y": 0.50, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で遠景富士位置を実測(±0.03)。大樽の右横・水平線上、右寄り。" },
+      "fujiAnchor": { "x": 0.73, "y": 0.50, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1(trial)", "applicability": "uncertain", "note": "実画像で遠景富士位置を実測(±0.03)。大樽の右横・水平線上、右寄り。coneHalfDeg(=富士見込み角)と作品の水平構図幅が大きく異なるため、compositionHalfDeg確定まで判定保留。" },
       "source": "gemini",
       "note": "本来見える近郊・木曽の山々を省略し、遠景に富士のみを立てる。描かれた山容は南アルプス聖岳の誤認説もあり、地形上の遮蔽もある（すみだ北斎美術館等）。大樽の円枠越しに覗く幾何学的構成。"
     },
@@ -2537,7 +2543,7 @@ export const hokusaiViews = [
       "viewpointCoordinate": "documented",
       "compositionGeometry": "composite",
       "coneHalfDeg": 12.0,
-      "fujiAnchor": { "x": 0.57, "y": 0.30, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1", "note": "実画像で山頂apex位置を実測(±0.03)。やや右。逆さ富士は対象外。" },
+      "fujiAnchor": { "x": 0.57, "y": 0.30, "type": "summit", "confidence": "reviewed", "compositionAlgorithm": "hokusai-composition-v1(trial)", "applicability": "weak_effect", "note": "実画像で山頂apex位置を実測(±0.03)。やや右。逆さ富士は対象外。補正は小。" },
       "source": "gemini",
       "note": "河口湖を見下ろす。実景は夏山、湖面の逆さ富士は雪山の構図合成。"
     },
@@ -3330,6 +3336,8 @@ export const hokusaiViews = [
       "viewpointCoordinate": "reconstructed",
       "compositionGeometry": "literal",
       "coneHalfDeg": 25.0,
+      "compositionApplicability": "not_applicable",
+      "compositionNote": "富士を外から見る作品ではなく、富士山内部（登山地点）が作品空間。Viewpoint→Fujiコーンモデルを適用しない。将来 representationType: mountain_on_site 候補。",
       "source": "gemini",
       "note": "富士講の白装束の道者たちが金剛杖をつき山頂を目指す現場ルポ。"
     },
