@@ -66,20 +66,22 @@
 
   /* ── 右：FOCUS PERSON（人物専用）── */
   .right-panel{right:24px;top:104px;width:340px;max-height:calc(100% - 320px)}
-  .fp-head{padding:14px 16px 12px}
+  .fp-head{padding:13px 16px 8px}
   .fp-kicker{font-size:10px;letter-spacing:.34em;color:var(--cyan-soft)}
-  /* 横組みヘッダー: 左=肖像(約40%) / 右=名前・生没年・現在名 */
-  .fp-top{display:flex;gap:13px;margin-top:11px;align-items:flex-start}
-  .fp-portrait{flex:0 0 40%;max-width:140px;width:40%;height:auto;border:1px solid var(--rule);border-radius:6px;background:rgba(255,255,255,.03)} /* 破壊的cropしない */
+  /* 横組みヘッダー(Illustrator見本 v0.2): 左=肖像(約35%) / 右=名前・生没年・現在名。コンパクト。 */
+  .fp-top{display:flex;gap:13px;margin-top:9px;align-items:flex-start}
+  .fp-portrait{flex:0 0 35%;max-width:116px;width:35%;height:auto;border:1px solid var(--rule);border-radius:6px;background:rgba(255,255,255,.03)} /* 破壊的cropしない・CSS表示のみ縮小 */
   .fp-ident{flex:1 1 auto;min-width:0}
-  .fp-name{font-family:var(--serif);font-size:25px;font-weight:700;line-height:1.15;margin:0 0 2px;letter-spacing:.03em}
-  .fp-years{font-size:12px;color:var(--cyan);letter-spacing:.12em}
-  .fp-cur{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule)}
-  .fp-cur .lab{font-size:9px;letter-spacing:.18em;color:var(--dim)}
-  .fp-cur .val{font-family:var(--serif);font-size:21px;font-weight:700;margin-top:2px;line-height:1.2}
-  .fp-cur .note{font-size:10.5px;color:var(--sub);margin-top:3px;line-height:1.55}
-  .fp-nameinfo{cursor:pointer;color:var(--cyan);font-size:9px;margin-left:6px;border-bottom:1px dotted rgba(102,224,255,.5)}
-  .fp-lifehead{display:flex;align-items:baseline;gap:8px}
+  .fp-name{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1.15;margin:0 0 2px;letter-spacing:.03em}
+  .fp-years{font-size:11.5px;color:var(--cyan);letter-spacing:.12em}
+  .fp-cur{margin-top:9px;padding-top:8px;border-top:1px solid var(--rule)}
+  .fp-cur .lab{font-size:9px;letter-spacing:.16em;color:var(--dim)}
+  .fp-cur .val{font-family:var(--serif);font-size:19px;font-weight:700;margin-top:2px;line-height:1.25}
+  .fp-cur .val .sub{font-family:var(--sans);font-size:11px;font-weight:400;color:var(--sub);margin-left:3px} /* （幼名）等の小ラベル */
+  .fp-cur .kind{font-size:10.5px;color:var(--sub);margin-top:4px;line-height:1.5}
+  .fp-cur .note{font-size:9.5px;color:var(--dim);margin-top:2px;line-height:1.5}
+  .fp-nameinfo{cursor:pointer;color:var(--cyan);font-size:9px;margin-left:6px;border-bottom:1px dotted rgba(102,224,255,.5);white-space:nowrap}
+  .fp-lifehead{display:flex;align-items:baseline;gap:8px;padding-top:8px} /* LIFEへの余白を詰める */
   /* 狭幅フォールバック: ヘッダーを縦組みへ戻す（responsive第一案） */
   @media (max-width:520px){ .fp-top{flex-direction:column} .fp-portrait{width:118px;flex-basis:auto;max-width:118px} }
   /* 辞世（1849付近で静かに表示） */
@@ -199,6 +201,7 @@
         <div class="fp-cur">
           <div class="lab">CURRENT NAME<span class="fp-nameinfo" id="nameInfo">ⓘ 名前について</span></div>
           <div class="val" id="nameNowVal">為一</div>
+          <div class="kind" id="nameNowKind"></div>
           <div class="note" id="nameNowNote"></div>
         </div>
       </div>
@@ -591,9 +594,17 @@ function scrollLifeIntoView(id){const el=lifeItem(id);if(el && !inPanelView(el))
 // ---------- render on state change ----------
 on(()=>{ // 右パネル：この時期の名（名前史：幼名/個人名/画号を区別、架空の改名年を作らない）
   const y=State.timeCursor, nm=nameAt(y);
-  document.getElementById('nameNowVal').textContent=nm?nm.name:'—';
-  const cert=nm&&nm.certainty!=='documented'?'（'+(nm.certainty==='traditional'?'伝承・後世資料':'資料差')+'）':'';
-  document.getElementById('nameNowNote').textContent=nm?('種別: '+nm.kind+cert+(nm.note?' ／ '+nm.note:'')):'（誕生前）';
+  const valEl=document.getElementById('nameNowVal'), kindEl=document.getElementById('nameNowKind'), noteEl=document.getElementById('nameNowNote');
+  if(!nm){ valEl.textContent='—'; kindEl.textContent='（誕生前）'; noteEl.textContent=''; }
+  else {
+    // 現在名の表示：巨大な一行にせず意味で分割（例 時太郎/のち鉄蔵 → 時太郎（幼名）/ 鉄蔵）。データは書き換えない。
+    if(nm.name.includes('／のち')){ const p=nm.name.split('／のち');
+      valEl.innerHTML=p[0]+'<span class="sub">（幼名）</span><br>'+p[1]; }
+    else valEl.textContent=nm.name;
+    const cert=nm.certainty!=='documented'?'（'+(nm.certainty==='traditional'?'伝承・後世資料':'資料差')+'）':'';
+    kindEl.textContent='種別：'+nm.kind+cert;          // 種別（簡潔）
+    noteEl.textContent=nm.note||'';                     // 不確実性注記（小さく）
+  }
   // LIFE年譜: timeCursor最寄りeventをhighlightのみ（scrollはしない＝chronologyScroll独立）
   const nb=nearestLife(y);
   document.querySelectorAll('#lifeList .chrono-item').forEach(t=>t.classList.toggle('near', !!nb && t.dataset.id===nb.id));
