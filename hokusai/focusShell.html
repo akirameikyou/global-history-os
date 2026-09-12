@@ -127,8 +127,12 @@
   .chrono-item{padding:8px 16px;cursor:pointer;transition:.2s;border-bottom:1px solid var(--rule)}
   .chrono-item:hover{background:rgba(102,224,255,.06)} .chrono-item.sel{background:rgba(102,224,255,.10)}
   .chrono-item.near{box-shadow:inset 2px 0 0 var(--cyan-soft)} /* timeCursor最寄り（scrollはしない） */
+  .chrono-item.secondary{opacity:.72} /* SECONDARY=淡色（PRIMARY中心） */
   .chrono-year{font-family:var(--mono);font-size:12px;color:var(--cyan);font-weight:700}
-  .chrono-text{font-size:12px;line-height:1.55;color:rgba(238,243,248,.8);margin-top:2px}
+  .chrono-text{font-size:12px;line-height:1.55;color:rgba(238,243,248,.85);margin-top:2px}
+  .chrono-cert{font-size:9px;color:var(--est,#e0b45f);margin-left:5px} /* 留保表現(頃/推定/伝承) */
+  .chrono-desc{display:none;font-size:11px;line-height:1.6;color:var(--sub);margin-top:5px} /* 選択で展開 */
+  .chrono-item.sel .chrono-desc{display:block}
 
   /* ── 中央下：タイムライン ── */
   #timelineBar{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:min(56%,760px);z-index:30;user-select:none}
@@ -281,7 +285,12 @@
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js';
-import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, residences, travels, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, worldPersonById } from '../data/hokusai_life.js';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, worldPersonById } from '../data/hokusai_life.js';
+// 人物年譜（大北斎展図録1993）: 連続LIFEは scope==='life'。表示は primary+secondary、Timeline lane は primary、没後(1867/1893)は連続LIFEに混ぜない。
+const LIFE = chronology.filter(r=>r.scope==='life');
+const LIFE_SHOWN = LIFE.filter(r=>r.importance==='primary'||r.importance==='secondary');
+const LIFE_PRIMARY = LIFE.filter(r=>r.importance==='primary');
+const DEATH_REC = chronology.find(r=>r.deathPoem) || null;
 
 const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
 const PICK=[1,2,4,10,35,46];
@@ -503,8 +512,12 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
   d.querySelector('.m').onclick=()=>{ setSel('work',w.no); setCursor(w.year); };
   d.querySelector('img').onclick=(e)=>{e.stopPropagation();openLB(w);};
   worksList.appendChild(d);});
-lifeEvents.forEach(ev=>{const d=document.createElement('div');d.className='chrono-item';d.dataset.id=ev.id;
-  d.innerHTML='<div class="chrono-year">'+ev.year+'</div><div class="chrono-text">'+ev.title+'</div>';
+// LIFE年譜: PRIMARY(通常)＋SECONDARY(淡色)。選択で summary を展開（原文sourceTextは保持しつつ表示はsummary）。
+LIFE_SHOWN.forEach(ev=>{const d=document.createElement('div');d.className='chrono-item'+(ev.importance==='secondary'?' secondary':'');d.dataset.id=ev.id;
+  const yl=(ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year;
+  const cert=ev.certainty!=='stated'?' <span class="chrono-cert">'+(ev.certaintyRaw||'')+'</span>':'';
+  d.innerHTML='<div class="chrono-year">'+yl+'</div><div class="chrono-text">'+ev.title+cert+'</div>'+
+    '<div class="chrono-desc">'+(ev.summary||'')+'</div>';
   d.onclick=()=>{setCursor(ev.year);setSel('life',ev.id);};lifeList.appendChild(d);});
 
 // ---------- 左下パネルの意味切替（JAPAN=WORKS / WORLD=時間・NOWで CONTEMPORARIES→RECEPTION→HOLDINGS）----------
@@ -568,7 +581,7 @@ renderPLink();
 // ---------- timeline ----------
 const tl=document.getElementById('tl'); const SVGNS='http://www.w3.org/2000/svg';
 // 主役=北斎の人生を一本の主バーに。画号はidentity phaseとして薄く重ねる（分断しない＝原則H）。
-const LANES=[{key:'life', y:22,color:'#66e0ff',data:()=>lifeEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'life'}))},
+const LANES=[{key:'life', y:22,color:'#66e0ff',data:()=>LIFE_PRIMARY.map(e=>({year:e.year,label:e.title,id:e.id,type:'life'}))},
   {key:'works',y:50,color:'#ff6b5c',data:()=>WORKS.map(w=>({year:w.year,label:w.ja,id:w.no,type:'work'}))},
   {key:'world',y:63,color:'#E69445',data:()=>worldEventsJP.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))},
   {key:'wlink',y:74,color:'#c79bff',data:()=>wlinkEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))}];
@@ -700,7 +713,7 @@ document.getElementById('nameInfo').onclick=()=>showCard({tag:'NAME / 名前に�
 
 // ---------- LIFE年譜: timeCursorと独立scroll（最寄りhighlightのみ・自動連続scrollしない）----------
 const focusPanelEl=document.getElementById('focusPanel');
-function nearestLife(year){let best=null,bd=1e9;lifeEvents.forEach(e=>{const d=Math.abs(e.year-year);if(d<bd){bd=d;best=e;}});return best;}
+function nearestLife(year){let best=null,bd=1e9;LIFE_SHOWN.forEach(e=>{const d=Math.abs(e.year-year);if(d<bd){bd=d;best=e;}});return best;}
 function lifeItem(id){return document.querySelector('#lifeList .chrono-item[data-id="'+id+'"]');}
 function inPanelView(el){const c=focusPanelEl.getBoundingClientRect(),r=el.getBoundingClientRect();return r.top>=c.top+40 && r.bottom<=c.bottom;}
 function scrollLifeIntoView(id){const el=lifeItem(id);if(el && !inPanelView(el))el.scrollIntoView({block:'center',behavior:'smooth'});}
@@ -724,13 +737,13 @@ on(()=>{ // 右パネル：この時期の名（名前史：幼名/個人名/画
   syncTimeLabels();
 });
 on(()=>{ // 辞世（1849付近、または1849 LIFE選択時に静かに表示）
-  const el=document.getElementById('deathPoem'); const die=lifeEvents.find(e=>e.deathPoem);
-  const near=State.timeCursor>=1848 || (State.selection.type==='life'&&State.selection.id==='l_die');
+  const el=document.getElementById('deathPoem'); const die=DEATH_REC;
+  const near=State.timeCursor>=1848 || (die && State.selection.type==='life'&&State.selection.id===die.id);
   if(die&&near){ el.hidden=false;
     const poem='「'+die.deathPoem.replace('ゆく','\nゆく').replace('夏の原','\n夏の原')+'」';
-    el.innerHTML='<div class="yr">'+die.year+'　没'+(die.age?'（'+die.age+'）':'')+'</div>'+
+    el.innerHTML='<div class="yr">'+die.year+'　没'+(die.age?'（数え'+die.age+'）':'')+'</div>'+
       '<div class="body">'+poem+'</div>'+
-      '<div class="src">— '+(die.deathPoemType||'辞世')+'（出典: '+(die.source||'')+'）</div>'; }
+      '<div class="src">— '+(die.deathPoemType||'辞世')+'（出典: '+(die.poemSource||'')+'）</div>'; }
   else el.hidden=true;
 });
 on(()=>{ // タイトル副題：富嶽の作品を選択した時のみシリーズ名を出す（北斎Focus全体とは同一視しない）
