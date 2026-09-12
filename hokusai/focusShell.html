@@ -50,6 +50,14 @@
   .left-works{left:24px;top:calc(104px + 32vh + 14px);width:270px;max-height:36vh}
   .left-works .sec{color:var(--gold)}
   .left-works .sec .series{color:var(--gold);opacity:.8;font-family:var(--serif);text-transform:none;letter-spacing:.05em;margin-left:6px}
+  /* WORLD左下（CONTEMPORARIES/RECEPTION/HOLDINGS）行 */
+  .wi-item{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
+  .wi-item:hover{background:rgba(102,224,255,.06)} .wi-item.sel{background:rgba(102,224,255,.12);border-left:2px solid var(--cyan)}
+  .wi-item .nm{font-size:12.5px;font-weight:600}
+  .wi-item .meta{font-family:var(--mono);font-size:10px;color:var(--sub);margin-top:2px}
+  .wi-item .cls{font-size:9.5px;color:var(--dim);margin-top:2px}
+  .wi-see{margin-top:6px;background:rgba(102,224,255,.12);border:1px solid rgba(102,224,255,.5);color:var(--cyan);border-radius:6px;padding:3px 9px;font-size:10.5px;cursor:pointer;font-family:inherit}
+  .wi-see:hover{background:rgba(102,224,255,.22)}
   .ev{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
   .ev:hover{background:rgba(230,148,69,.08)} .ev.sel{background:rgba(230,148,69,.12);border-left:2px solid var(--amber)}
   .ev-row{display:flex;gap:9px}
@@ -183,10 +191,11 @@
   <details class="wlink"><summary>＋ W-LINK（同時代の海外・二次表示）</summary><div id="wlinkList"></div></details>
 </div>
 
-<!-- 左下：WORKS（人物が制作したもの） -->
+<!-- 左下：JAPAN=WORKS(制作物) / WORLD=時間により CONTEMPORARIES→RECEPTION→HOLDINGS へ意味が変わる同一領域 -->
 <div class="panel left-works">
-  <div class="sec">Works<span class="series">冨嶽三十六景（代表6図）</span></div>
+  <div class="sec" id="leftSecTitle">Works<span class="series">冨嶽三十六景（代表6図）</span></div>
   <div id="worksList"></div>
+  <div id="worldInfoList" hidden></div>
 </div>
 
 <!-- 右：FOCUS PERSON（人物専用） -->
@@ -268,7 +277,7 @@
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js';
-import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, residences, travels, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents } from '../data/hokusai_life.js';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, residences, travels, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, worldPersonById } from '../data/hokusai_life.js';
 
 const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
 const PICK=[1,2,4,10,35,46];
@@ -297,7 +306,7 @@ function thumb(file,w){return 'https://commons.wikimedia.org/wiki/Special:FilePa
 
 // ---------- shared state ----------
 let showAxis=false; // Representation中心線は既定で描かない（debug時のみ）
-const State={ spaceView:'WORLD', selection:{type:null,id:null},
+const State={ spaceView:'WORLD', selection:{type:null,id:null}, nowMode:false, // nowMode: NOW=現在所蔵(HOLDINGS)状態
   timeCursor:timelineConfig.initCursor, timeViewport:{from:timelineConfig.initFrom,to:timelineConfig.initTo} };
 const subs=[]; const on=f=>subs.push(f); const emit=()=>subs.forEach(f=>f(State));
 // 原則: timeCursor / selection / mapCamera は独立状態。
@@ -321,7 +330,7 @@ const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .pointsData(worldPoints()).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012)
-  .onPointClick(d=>{ if(d.no) setSel('work',d.no); })
+  .onPointClick(d=>{ if(d.holdingId){const h=holdings.find(x=>x.id===d.holdingId); if(h){setSel('holding',h.id);showHoldingCard(h);} } else if(d.no) setSel('work',d.no); })
   .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke('stroke').arcAltitude('alt');
 world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
 world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
@@ -329,6 +338,9 @@ world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
 // Representationの扇形は縮尺に対して巨大化し意味が読めないため WORLD では出さない（画角はJAPANで展開）。
 // WORLD: ごく小さな光点のみ（球面上の角度サイズ＝カメラを引くと自然に縮む＝ズーム連動）。
 function worldPoints(){const sel=State.selection.id;
+  if(State.nowMode){ // NOW=HOLDINGS: 現在の海外所蔵の世界分布を点で（極小・選択で強調）。人物点は出さない。
+    const hp=holdings.map(h=>({holdingId:h.id,lat:h.lat,lng:h.lng,color:sel===h.id?'#ffd36a':'#66e0ff',r:sel===h.id?0.16:0.1}));
+    hp.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.1}); return hp; }
   const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:sel===w.no?'#ffd36a':'#ff6b5c',r:sel===w.no?0.16:0.1}));
   p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.13});
   residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
@@ -435,9 +447,11 @@ document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.targe
   const gW=document.getElementById('globeViz'),jM=document.getElementById('japanMap');
   // spaceView切替は明示的な空間Focus変化とみなし、切替先で選択中workへ一度だけ寄せる。
   if(State.spaceView==='JAPAN'){ gW.hidden=true;jM.hidden=false; document.getElementById('attrib').textContent='地理院タイル（https://maps.gsi.go.jp）';
+    State.nowMode=false; document.getElementById('nowBtn').classList.remove('on'); // JAPAN詳細はNOW(HOLDINGS)対象外
     if(!map)initMap(); else setTimeout(()=>{map.resize();renderJapan();focusSelection();},30); }
   else { jM.hidden=true;gW.hidden=false; document.getElementById('attrib').textContent='地球: NASA Blue Marble';
     setTimeout(()=>{const s=sz();world.width(s.w).height(s.h);focusSelection();},20); }
+  renderWorld(); renderLeftBottom(true); // 左下パネルの意味を切替（JAPAN=WORKS / WORLD=時間・NOW）
 });
 document.getElementById('axisToggle').onclick=(e)=>{showAxis=!showAxis;e.currentTarget.classList.toggle('on',showAxis);
   renderWorld(); if(mapReady)renderJapan();};
@@ -471,6 +485,42 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
 lifeEvents.forEach(ev=>{const d=document.createElement('div');d.className='chrono-item';d.dataset.id=ev.id;
   d.innerHTML='<div class="chrono-year">'+ev.year+'</div><div class="chrono-text">'+ev.title+'</div>';
   d.onclick=()=>{setCursor(ev.year);setSel('life',ev.id);};lifeList.appendChild(d);});
+
+// ---------- 左下パネルの意味切替（JAPAN=WORKS / WORLD=時間・NOWで CONTEMPORARIES→RECEPTION→HOLDINGS）----------
+const leftSecTitle=document.getElementById('leftSecTitle'), worksListEl=document.getElementById('worksList'), worldInfoList=document.getElementById('worldInfoList');
+const DIED=focusPersonBar.death; let lastLeftMode=null;
+function leftMode(){ if(State.spaceView==='JAPAN')return 'WORKS'; if(State.nowMode)return 'HOLDINGS';
+  return State.timeCursor<=DIED ? 'CONTEMPORARIES' : 'RECEPTION'; }
+function showWorldCard(p,type){ showCard({ tag:type==='worldart'?'WORLD ART ／ 同時代':'RECEPTION ／ 受容',
+  title:p.name, sub:p.birth+'–'+p.death+' ／ '+p.country+(p.place?' ・ '+p.place.name:''),
+  body:(p.summary||'')+(p.note?'\n\n'+p.note:'')+(p.workLink?'\n\n作品対応: '+p.workLink.from+' → '+p.workLink.to:''),
+  rel:'区分: '+p.classification }); }
+function showHoldingCard(h){ const ev=(h.events||[]).map(e=>(e.year!=null?e.year+' ':'')+e.text).join(' ／ ');
+  showCard({ tag:'HOLDINGS ／ 現在所蔵', title:h.institution, sub:h.city+' ／ '+h.country+' ・ 重要度 '+h.importance,
+    body:(h.summary||'')+(h.formerOwner?'\n\n旧蔵: '+h.formerOwner:'')+(ev?'\n\n取得: '+ev:''),
+    rel:'※人物関係ではない（P-LINKと別系統）' }); }
+function renderWorldPersons(list,type){ worldInfoList.innerHTML='';
+  list.forEach(p=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=p.id;
+    d.innerHTML='<div class="nm">'+p.name+'</div><div class="meta">'+p.birth+'–'+p.death+' / '+p.country+'</div><div class="cls">'+p.classification+'</div>'+
+      (p.place?'<div><button class="wi-see">地点を見る（'+p.place.name+'）</button></div>':'');
+    d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type); };  // クリック=選択+カード（地図は動かさない）
+    const b=d.querySelector('.wi-see'); if(b)b.onclick=(e)=>{e.stopPropagation();focusPlace(p.place.lat,p.place.lng);}; // 明示のみカメラ移動
+    worldInfoList.appendChild(d);}); }
+function renderHoldings(){ worldInfoList.innerHTML='';
+  holdings.forEach(h=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=h.id;
+    const yrs=(h.events||[]).map(e=>e.year).filter(Boolean);
+    d.innerHTML='<div class="nm">'+h.institution+'</div><div class="meta">'+h.city+' / '+h.country+'</div>'+
+      '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 取得 '+yrs.join('/'):'')+'</div>'+
+      '<div><button class="wi-see">地点を見る（'+h.city+'）</button></div>';
+    d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h); };
+    d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation();focusPlace(h.lat,h.lng);};
+    worldInfoList.appendChild(d);}); }
+function renderLeftBottom(force){ const m=leftMode(); if(m===lastLeftMode&&!force)return; lastLeftMode=m;
+  if(m==='WORKS'){ worksListEl.hidden=false; worldInfoList.hidden=true; leftSecTitle.innerHTML='Works<span class="series">冨嶽三十六景（代表6図）</span>'; return; }
+  worksListEl.hidden=true; worldInfoList.hidden=false;
+  if(m==='CONTEMPORARIES'){ leftSecTitle.innerHTML='World Art<span class="series">同時代の画家</span>'; renderWorldPersons(worldArt,'worldart'); }
+  else if(m==='RECEPTION'){ leftSecTitle.innerHTML='Reception<span class="series">北斎を受け取った世界（没後）</span>'; renderWorldPersons(reception,'reception'); }
+  else { leftSecTitle.innerHTML='Holdings<span class="series">現在の主な海外所蔵</span>'; renderHoldings(); } }
 
 // ---------- P-LINK（人物関係）: 折りたたみ・現在年代に関連する人物を優先 ----------
 const plinkList=document.getElementById('plinkList');
@@ -506,7 +556,11 @@ function xOf(y){const v=State.timeViewport;return (y-v.from)/(v.to-v.from)*tlW()
 function yearAt(px){const v=State.timeViewport;return v.from+px/tlW()*(v.to-v.from);}
 function drawTL(){
   const W=tlW(),v=State.timeViewport, cl=x=>Math.max(0,Math.min(W,x));
-  const person=State.selection.type==='person'?personLinks.find(p=>p.id===State.selection.id):null;
+  // 比較人物バー: P-LINK(関係) / WORLD ART(同時代) / RECEPTION(受容) を同一time軸で。系統は色・タグで区別。
+  const sType=State.selection.type; let person=null,pColor='#c79bff',pTag='';
+  if(sType==='person'){ person=personLinks.find(p=>p.id===State.selection.id); pColor='#c79bff'; }
+  else if(sType==='worldart'){ person=worldPersonById(State.selection.id); pColor='#57c9c0'; pTag='WORLD ART（同時代比較）'; }
+  else if(sType==='reception'){ person=worldPersonById(State.selection.id); pColor='#e5a93c'; pTag='RECEPTION（受容・没後）'; }
   const H=person?124:106, gridBottom=person?112:94;
   tl.style.height=H+'px'; tl.setAttribute('viewBox','0 0 '+W+' '+H); tl.innerHTML='';
   const step = (v.to-v.from)>140?50:(v.to-v.from)>60?20:10;
@@ -537,15 +591,15 @@ function drawTL(){
     // pointerdown＋stopPropagationで、背景のcursor/pan処理(=SVG再描画で◆が消える)を止めてから発火
     d.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();showCard({tag:a.category,title:a.title,sub:String(a.year),body:a.desc,rel:a.related});setCursor(a.year);});
     tl.appendChild(d);});
-  // P-LINK 比較人物バー（同一time軸。自動fitしない）＋関係期間サブバー
+  // 比較人物バー（同一time軸・自動fitしない）。P-LINKは関係期間サブバー、WORLD ART/RECEPTIONは系統タグ。
   if(person){ const py=100;
-    add('line',{x1:cl(xOf(person.birth)),y1:py,x2:cl(xOf(person.death)),y2:py,stroke:'#c79bff','stroke-width':4,'stroke-linecap':'round','stroke-opacity':.5});
-    add('text',{x:2,y:py-6,fill:'#c79bff','font-size':9,'font-family':'sans-serif'},
-      person.name+' '+(person.birthApprox?'c.':'')+person.birth+'–'+(person.deathApprox?'c.':'')+person.death);
-    if(person.relationFrom!=null){ add('line',{x1:cl(xOf(person.relationFrom)),y1:py+5,x2:cl(xOf(person.relationTo)),y2:py+5,
+    add('line',{x1:cl(xOf(person.birth)),y1:py,x2:cl(xOf(person.death)),y2:py,stroke:pColor,'stroke-width':4,'stroke-linecap':'round','stroke-opacity':.55});
+    add('text',{x:2,y:py-6,fill:pColor,'font-size':9,'font-family':'sans-serif'},
+      person.name+' '+(person.birthApprox?'c.':'')+person.birth+'–'+(person.deathApprox?'c.':'')+person.death+(pTag?'　'+pTag:''));
+    if(sType==='person'&&person.relationFrom!=null){ add('line',{x1:cl(xOf(person.relationFrom)),y1:py+5,x2:cl(xOf(person.relationTo)),y2:py+5,
         stroke:'#ffd36a','stroke-width':2.4,'stroke-linecap':'round','stroke-opacity':.85});
       add('text',{x:cl(xOf(person.relationTo))+4,y:py+8,fill:'#caa85e','font-size':7.5,'font-family':'sans-serif'},'関係('+person.relationType+')'); }
-    if(person.keyWork){const kx=xOf(person.keyWork.year);if(kx>=-4&&kx<=W+4){
+    if(sType==='person'&&person.keyWork){const kx=xOf(person.keyWork.year);if(kx>=-4&&kx<=W+4){
       add('circle',{cx:kx,cy:py,r:3.2,fill:'#ff6b5c',stroke:'#050c16','stroke-width':1});
       add('text',{x:kx+5,y:py-4,fill:'#f0b578','font-size':7.5,'font-family':'sans-serif'},person.keyWork.year+' '+person.keyWork.label);}}
   }
@@ -572,7 +626,13 @@ function zoom(f){const v=State.timeViewport,c=State.timeCursor,span=(v.to-v.from
   to=clamp(to,from+8,timelineConfig.rangeMax); State.timeViewport={from:Math.round(from),to:Math.round(to)}; syncTimeLabels(); drawTL();}
 document.getElementById('zoomIn').onclick=()=>zoom(0.6);
 document.getElementById('zoomOut').onclick=()=>zoom(1/0.6);
-document.getElementById('nowBtn').onclick=()=>{ alert('NOW（現在所蔵地へのジャンプ）は将来枠です。今回は timeCursor/timeViewport 分離の観察のみ。'); };
+// NOW: 現在所蔵(HOLDINGS)状態のトグル。WORLD表示に切替え、左下=HOLDINGS・地球儀に所蔵分布を出す。
+document.getElementById('nowBtn').onclick=(e)=>{ State.nowMode=!State.nowMode; e.currentTarget.classList.toggle('on',State.nowMode);
+  if(State.nowMode && State.spaceView!=='WORLD'){ [...document.querySelectorAll('#spaceSeg button')].forEach(x=>x.classList.toggle('on',x.dataset.v==='WORLD'));
+    State.spaceView='WORLD'; document.getElementById('globeViz').hidden=false; document.getElementById('japanMap').hidden=true;
+    document.getElementById('attrib').textContent='地球: NASA Blue Marble'; const s=sz(); world.width(s.w).height(s.h); }
+  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:30,lng:40,altitude:2.6},900); } // 世界分布を俯瞰
+  renderLeftBottom(true); emit(); };
 function eraLabel(y){ if(y>=1831&&y<=1833)return '富嶽三十六景 刊行期'; const g=gagoAt(y); return g+' 期'; }
 function syncTimeLabels(){document.getElementById('tlYear').textContent=State.timeCursor;
   document.getElementById('tlEra').textContent=eraLabel(State.timeCursor);}
@@ -642,6 +702,7 @@ on(()=>{ // selection highlight
   document.querySelectorAll('.worktile').forEach(t=>t.classList.toggle('sel',State.selection.type==='work'&&+t.dataset.no===State.selection.id));
   document.querySelectorAll('#worldList .ev,#wlinkList .ev').forEach(t=>t.classList.toggle('sel',t.dataset.id===State.selection.id));
   document.querySelectorAll('#lifeList .chrono-item').forEach(t=>t.classList.toggle('sel',t.dataset.id===State.selection.id));
+  document.querySelectorAll('#worldInfoList .wi-item').forEach(t=>t.classList.toggle('sel',['worldart','reception','holding'].includes(State.selection.type)&&t.dataset.wid===State.selection.id));
   // 富士山頂軸は作品(Representation対象)選択時のみ有効
   document.getElementById('axisToggle').disabled = !(State.selection.type==='work'&&State.selection.id!=null);
 });
@@ -655,10 +716,10 @@ on(()=>{ if(State.selection.type==='work'){ if(State.selection.id!==lastWorkScro
     // rAFで展開/折りたたみのreflow後に直接scrollTopを設定（scrollIntoViewはreflow同時進行でずれるため）
     if(el&&panel)requestAnimationFrame(()=>{ panel.scrollTop=Math.max(0,el.offsetTop-8); });} }
   else lastWorkScrolled=null; });
-on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); });
+on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); renderLeftBottom(); }); // 左下は年代がDIED境界を跨ぐと自動でCONTEMPORARIES↔RECEPTION
 
 // init
-syncTimeLabels(); drawTL(); emit();
+renderLeftBottom(true); syncTimeLabels(); drawTL(); emit();
 window.addEventListener('resize',()=>{drawTL(); if(State.spaceView==='WORLD'){const s=sz();world.width(s.w).height(s.h);} if(map)map.resize();});
 </script>
 </body></html>

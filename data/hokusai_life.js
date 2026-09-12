@@ -126,6 +126,56 @@ export const artTechEvents = [
     related:'冨嶽三十六景 / 東海道五拾三次' },
 ];
 
+// ── WORLD 海外情報（3系統・意味を混同しない。WORLD表示の左下を時間/NOWで切替）──
+// A: CONTEMPORARIES（北斎と同時代の世界美術。直接交流・影響は主張しない＝同時代の並置）
+export const worldArt = [
+  { id:'wa_turner',    name:'J.M.W. Turner',       birth:1775, death:1851, country:'Britain', place:{name:'London',lat:51.5074,lng:-0.1278},
+    summary:'英国を代表する風景画家。光・大気・海・自然・近代技術を主題とし、北斎と生涯が大きく重なる。', classification:'contemporary_world_art', priority:'high',
+    note:'直接交流・直接影響は主張しない。異文化圏でほぼ同時代の風景表現比較。' },
+  { id:'wa_goya',      name:'Francisco de Goya',   birth:1746, death:1828, country:'Spain', place:{name:'Madrid',lat:40.4168,lng:-3.7038},
+    summary:'18C末〜19C初のスペインを代表する画家・版画家。宮廷画家の一方、版画でも重要作を残した。', classification:'contemporary_world_art', priority:'mid',
+    note:'北斎との直接的な関係は確認しない。' },
+  { id:'wa_david',     name:'Jacques-Louis David', birth:1748, death:1825, country:'France', place:{name:'Paris',lat:48.8566,lng:2.3522},
+    summary:'新古典主義の中心人物。革命〜ナポレオン期に政治・歴史と強く結びついた絵画を制作。', classification:'contemporary_world_art', priority:'mid',
+    note:'同時代比較のみ。' },
+  { id:'wa_delacroix', name:'Eugène Delacroix',    birth:1798, death:1863, country:'France', place:{name:'Paris',lat:48.8566,lng:2.3522},
+    summary:'仏ロマン主義を代表。1830《民衆を導く自由の女神》は『冨嶽三十六景』とほぼ同時期。', classification:'contemporary_world_art', priority:'mid',
+    note:'同時代比較のみ。' },
+];
+// B: RECEPTION / JAPONISME（北斎没後の受容。Evidence区分を人物ごとに保持し、直接矢印を安易に作らない）
+export const reception = [
+  { id:'rc_riviere',  name:'Henri Rivière',    birth:1864, death:1951, country:'France', place:{name:'Paris',lat:48.8566,lng:2.3522},
+    classification:'documented_response', priority:'high',
+    summary:'『冨嶽三十六景』を踏まえ《エッフェル塔三十六景》を制作。作品→作品の対応が明確。',
+    workLink:{ from:'冨嶽三十六景', to:'エッフェル塔三十六景' } },
+  { id:'rc_monet',    name:'Claude Monet',     birth:1840, death:1926, country:'France', place:{name:'Giverny',lat:49.0758,lng:1.5333},
+    classification:'documented_collection', summary:'日本版画を多数収集。Givernyに現存コレクション。北斎作品も複数所有していた。' },
+  { id:'rc_degas',    name:'Edgar Degas',      birth:1834, death:1917, country:'France', place:{name:'Paris',lat:48.8566,lng:2.3522},
+    classification:'documented_reference', summary:'日本版画（人物表現・構図）との関係が研究される。『北斎漫画』との比較例も。' },
+  { id:'rc_vangogh',  name:'Vincent van Gogh', birth:1853, death:1890, country:'Netherlands/France', place:{name:'Paris',lat:48.8566,lng:2.3522},
+    classification:'broader_japonisme', summary:'日本版画を高く評価し作品へ強く取り入れた。北斎個人からの直接影響とは単純化しない（Japonisme一般）。' },
+];
+// C: HOLDINGS（現在の海外所蔵。人物関係ではない＝P-LINKに入れない）。取得年不明は null 保持＝推定年を作らない。
+export const holdings = [
+  { id:'h_bm',     institution:'British Museum',                city:'London',    country:'UK',          lat:51.5194, lng:-0.1270, importance:'very_high',
+    summary:'北斎関連資料を大量に所蔵。2020年に《万物絵本大全図》版下絵103点を取得。', events:[{year:2020,text:'《万物絵本大全図》版下絵103点 取得'}] },
+  { id:'h_bnf',    institution:'Bibliothèque nationale de France', city:'Paris', country:'France',      lat:48.8339, lng:2.3760, importance:'very_high',
+    summary:'日本版画・絵本の重要コレクション。北斎資料も充実。', events:[{year:1899,text:'Théodore Duret Collection 約500点 収蔵'}] },
+  { id:'h_guimet', institution:'Musée Guimet',                  city:'Paris',     country:'France',      lat:48.8654, lng:2.2939, importance:'high',
+    summary:'日本美術の重要コレクション。《神奈川沖浪裏》の現存摺りを所蔵。', formerOwner:'Raymond Koechlin', events:[] },
+  { id:'h_mfa',    institution:'Museum of Fine Arts, Boston',   city:'Boston',    country:'USA',         lat:42.3394, lng:-71.0940, importance:'very_high',
+    summary:'日本国外最大級の日本美術コレクション。北斎作品が充実。', events:[{year:1911,text:'William Sturgis Bigelow Collection 寄贈（神奈川沖浪裏の一摺も1911収蔵）'}] },
+  { id:'h_met',    institution:'Metropolitan Museum of Art',    city:'New York',  country:'USA',         lat:40.7794, lng:-73.9632, importance:'very_high',
+    summary:'北斎・工房作を多数所蔵。神奈川沖浪裏も複数摺り。同一デザインの別々の物理摺りとして扱う。',
+    events:[{year:1914,text:'Rogers Fund'},{year:1929,text:'Havemeyer Collection'},{year:1936,text:'Howard Mansfield Collection'}] },
+  { id:'h_ngv',    institution:'National Gallery of Victoria',  city:'Melbourne', country:'Australia',   lat:-37.8226, lng:144.9689, importance:'high',
+    summary:'1909年に《神奈川沖浪裏》を含む北斎作品を取得。', events:[{year:1909,text:'北斎作品 取得'}] },
+  { id:'h_rijks',  institution:'Rijksmuseum',                   city:'Amsterdam', country:'Netherlands', lat:52.3600, lng:4.8852, importance:'mid',
+    summary:'北斎作品を所蔵。2023年《Poppies》取得。海外収集が現在も続く例。', events:[{year:2023,text:'《Poppies》取得'}] },
+];
+// worldArt/reception を id で引く（Timeline比較バー用）。P-LINK(personLinks)とは別系統。
+export function worldPersonById(id){ return worldArt.find(p=>p.id===id) || reception.find(p=>p.id===id) || null; }
+
 // Timeline 設定（Hokusai Focus。Coreに固定しない）
 export const timelineConfig = {
   rangeMin:1700, rangeMax:1940,      // 探索可能範囲
