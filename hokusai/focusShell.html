@@ -383,15 +383,21 @@ function initMap(){
     map.addLayer({id:'ptsC',type:'circle',source:'pts',paint:{
       // ズーム連動：引き(z4)では小さく、寄る(z13)と大きく。点が増えても引き画面で地図を丸で覆わない。
       'circle-radius':['interpolate',['linear'],['zoom'],
-        4, ['match',['get','kind'],'fuji',7,'work',2,'res',1.5,1.2],     // 富士は低ズームでも見える大きさに
-        8, ['match',['get','kind'],'fuji',11,'work',5,'res',3.5,2.5],
-        13,['match',['get','kind'],'fuji',15,'work',8,'res',6,4]],
+        4, ['match',['get','kind'],'fuji',5,'work',2,'res',1.5,1.2],
+        8, ['match',['get','kind'],'fuji',8,'work',5,'res',3.5,2.5],
+        13,['match',['get','kind'],'fuji',12,'work',8,'res',6,4]],
       'circle-color':['match',['get','kind'],'fuji','rgba(0,0,0,0)','work','#ff6b5c','res','#8fd6c4','#c79bff'],
       'circle-opacity':['match',['get','kind'],'fuji',0,1],                         // 富士は塗りを透過＝山頂が透ける
       'circle-stroke-color':['match',['get','kind'],'fuji','#ffffff','#050c16'],    // 富士は白い中抜きリング
-      'circle-stroke-width':['match',['get','kind'],'fuji',2.2,1.4],                // リングを太く
-      'circle-stroke-opacity':['match',['get','kind'],'fuji',0.92,1]}});            // はっきり囲む
-    map.addLayer({id:'ptsL',type:'symbol',source:'pts',minzoom:4,layout:{'text-field':['get','label'],'text-size':11,'text-offset':[0.7,-0.7],'text-anchor':'bottom-left'},paint:{'text-color':'#dfeaf5','text-halo-color':'#050c16','text-halo-width':1.4}});
+      'circle-stroke-width':['match',['get','kind'],'fuji',1,1.4],                  // 富士リングは細く
+      'circle-stroke-opacity':['match',['get','kind'],'fuji',0.5,1]}});             // 富士リングは薄く（主役は文字）
+    // ラベル: 富士は「丸の下・中央」/ 作品は「右上」。富士は衝突時に優先(sort-key=0)し縮小倍率でも消えにくく。
+    map.addLayer({id:'ptsL',type:'symbol',source:'pts',minzoom:4,layout:{
+      'text-field':['get','label'],'text-size':11,
+      'text-offset':['match',['get','kind'],'fuji',['literal',[0,1.3]],['literal',[0.7,-0.7]]],
+      'text-anchor':['match',['get','kind'],'fuji','top','bottom-left'],
+      'symbol-sort-key':['match',['get','kind'],'fuji',0,1]},
+      paint:{'text-color':['match',['get','kind'],'fuji','#ffe8b8','#dfeaf5'],'text-halo-color':'#050c16','text-halo-width':1.4}});
     map.on('click','ptsC',e=>{const f=e.features[0];if(f.properties.kind==='work')setSel('work',+f.properties.no);});
     map.on('mouseenter','ptsC',()=>map.getCanvas().style.cursor='pointer');
     map.on('mouseleave','ptsC',()=>map.getCanvas().style.cursor='');
