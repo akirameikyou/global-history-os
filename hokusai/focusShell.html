@@ -601,9 +601,8 @@ on(()=>{ // 右パネル：この時期の名（名前史：幼名/個人名/画
     if(nm.name.includes('／のち')){ const p=nm.name.split('／のち');
       valEl.innerHTML=p[0]+'<span class="sub">（幼名）</span><br>'+p[1]; }
     else valEl.textContent=nm.name;
-    const cert=nm.certainty!=='documented'?'（'+(nm.certainty==='traditional'?'伝承・後世資料':'資料差')+'）':'';
-    kindEl.textContent='種別：'+nm.kind+cert;          // 種別（簡潔）
-    noteEl.textContent=nm.note||'';                     // 不確実性注記（小さく）
+    kindEl.textContent='種別：'+nm.kind;                // 種別（簡潔・確実性表記は付けない＝改行で下を押さない）
+    noteEl.textContent=nm.note||'';                     // 不確実性注記（小さく）。詳細は「名前について」カードへ
   }
   // LIFE年譜: timeCursor最寄りeventをhighlightのみ（scrollはしない＝chronologyScroll独立）
   const nb=nearestLife(y);
