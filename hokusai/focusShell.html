@@ -351,15 +351,16 @@ function worldPoints(){const sel=State.selection.id;
   residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
 // 地球儀ラベル（WORLD scaleでは小さく・都市名優先）。NOW=所蔵の世界分布(都市名, 同都市は「·N」で束ねる=Paris·2)、
 // 選択された機関はその館名を強調。CONTEMPORARIES/RECEPTIONは「地点を見る」でセットした activePlace の都市のみ表示（人物名クリックでは出さない）。
-const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Musée Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
+// 地球儀ラベルはASCIIに限定（globe.glのSpriteテキストがアクセント字(é等)を「?」に化けさせるため）。正式名は左一覧/カード(DOM)で表示。
+const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
 function worldLabels(){ const sel=State.selection;
   if(State.nowMode){ const byCity={}; holdings.forEach(h=>{(byCity[h.city]=byCity[h.city]||[]).push(h);});
     return Object.values(byCity).map(group=>{ const selH=group.find(h=>sel.type==='holding'&&h.id===sel.id); const n=group.length; const rep=selH||group[0];
       const text=selH?HOLD_SHORT[selH.id]:(group[0].city+(n>1?' · '+n:'')); // 通常=都市名(·N) / 選択時=館名
-      return {lat:rep.lat,lng:rep.lng,text,color:selH?'#ffd36a':'#66e0ff',size:selH?0.78:0.56,dot:selH?0.36:0.26,
+      return {lat:rep.lat,lng:rep.lng,text,color:selH?'#ffd36a':'#66e0ff',size:0.56,dot:0.26, // 拡大しない＝都市名と同大。選択は色のみ変更
         onClick:(at)=>{ const h=selH||group[0]; setSel('holding',h.id); showHoldingCard(h,at); }}; }); } // 地図クリック=選択+カード（camera静止）
   const ap=State.activePlace; // 「地点を見る」でのみ出る都市ラベル
-  if(ap)return [{lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||'#57c9c0',size:0.72,dot:0.34,
+  if(ap)return [{lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||'#57c9c0',size:0.56,dot:0.26,
     onClick:(at)=>{ if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }}];
   return []; }
 // 「地点を見る」= activePlace更新＋前地点解除＋marker/label＋cameraを一括更新（人物カードは維持）。selection!=camera原則を保つ明示操作。
