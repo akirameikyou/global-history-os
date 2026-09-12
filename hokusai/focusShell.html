@@ -310,7 +310,7 @@ function thumb(file,w){return 'https://commons.wikimedia.org/wiki/Special:FilePa
 
 // ---------- shared state ----------
 let showAxis=false; // Representation中心線は既定で描かない（debug時のみ）
-const State={ spaceView:'WORLD', selection:{type:null,id:null}, nowMode:false, // nowMode: NOW=現在所蔵(HOLDINGS)状態
+const State={ spaceView:'WORLD', selection:{type:null,id:null}, nowMode:false, activePlace:null, // selection=人物を知る / activePlace=場所を見る（分離）
   timeCursor:timelineConfig.initCursor, timeViewport:{from:timelineConfig.initFrom,to:timelineConfig.initTo} };
 const subs=[]; const on=f=>subs.push(f); const emit=()=>subs.forEach(f=>f(State));
 // 原則: timeCursor / selection / mapCamera は独立状態。
@@ -336,7 +336,7 @@ const world = Globe()(document.getElementById('globeViz'))
   .pointsData(worldPoints()).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012)
   .onPointClick((d,ev)=>{ const at=ev?{x:ev.clientX,y:ev.clientY}:null;
     if(d.holdingId){const h=holdings.find(x=>x.id===d.holdingId); if(h){setSel('holding',h.id);showHoldingCard(h,at);} } else if(d.no) setSel('work',d.no); })
-  .labelsData(worldLabels()).labelLat('lat').labelLng('lng').labelText('text').labelSize(l=>l.size||0.8).labelDotRadius(l=>l.dot||0.28).labelColor('color').labelResolution(2)
+  .labelsData(worldLabels()).labelLat('lat').labelLng('lng').labelText('text').labelSize(l=>l.size||0.46).labelDotRadius(l=>l.dot||0.24).labelColor('color').labelResolution(2)
   .onLabelClick((l,ev)=>{ if(l.onClick)l.onClick(ev?{x:ev.clientX,y:ev.clientY}:null); })
   .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke('stroke').arcAltitude('alt');
 world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
@@ -349,15 +349,21 @@ function worldPoints(){const sel=State.selection.id;
   const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:sel===w.no?'#ffd36a':'#ff6b5c',r:sel===w.no?0.16:0.1}));
   p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.13});
   residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
-// 地球儀ラベル: NOW=所蔵機関(city/館名+dot)、CONTEMPORARIES/RECEPTIONは選択人物の代表都市のみ（選択で出現＝P2）。
-const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
-function worldLabels(){ const sel=State.selection.id;
-  if(State.nowMode){ return holdings.map(h=>({lat:h.lat,lng:h.lng,text:HOLD_SHORT[h.id]||h.city,color:sel===h.id?'#ffd36a':'#66e0ff',
-    size:sel===h.id?1.05:0.8,dot:sel===h.id?0.45:0.3,onClick:(at)=>{setSel('holding',h.id);showHoldingCard(h,at);}})); }
-  const s=State.selection; if((s.type==='worldart'||s.type==='reception')&&s.id){ const p=worldPersonById(s.id);
-    if(p&&p.place){ const col=s.type==='worldart'?'#57c9c0':'#e5a93c';
-      return [{lat:p.place.lat,lng:p.place.lng,text:p.place.name,color:col,size:1.0,dot:0.42,onClick:(at)=>showWorldCard(p,s.type,at)}]; } }
+// 地球儀ラベル（WORLD scaleでは小さく・都市名優先）。NOW=所蔵の世界分布(都市名, 同都市は「·N」で束ねる=Paris·2)、
+// 選択された機関はその館名を強調。CONTEMPORARIES/RECEPTIONは「地点を見る」でセットした activePlace の都市のみ表示（人物名クリックでは出さない）。
+const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Musée Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
+function worldLabels(){ const sel=State.selection;
+  if(State.nowMode){ const byCity={}; holdings.forEach(h=>{(byCity[h.city]=byCity[h.city]||[]).push(h);});
+    return Object.values(byCity).map(group=>{ const selH=group.find(h=>sel.type==='holding'&&h.id===sel.id); const n=group.length; const rep=selH||group[0];
+      const text=selH?HOLD_SHORT[selH.id]:(group[0].city+(n>1?' · '+n:'')); // 通常=都市名(·N) / 選択時=館名
+      return {lat:rep.lat,lng:rep.lng,text,color:selH?'#ffd36a':'#66e0ff',size:selH?0.78:0.56,dot:selH?0.36:0.26,
+        onClick:(at)=>{ const h=selH||group[0]; setSel('holding',h.id); showHoldingCard(h,at); }}; }); } // 地図クリック=選択+カード（camera静止）
+  const ap=State.activePlace; // 「地点を見る」でのみ出る都市ラベル
+  if(ap)return [{lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||'#57c9c0',size:0.72,dot:0.34,
+    onClick:(at)=>{ if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }}];
   return []; }
+// 「地点を見る」= activePlace更新＋前地点解除＋marker/label＋cameraを一括更新（人物カードは維持）。selection!=camera原則を保つ明示操作。
+function goToPlace(ap){ State.activePlace=ap; renderWorld(); world.controls().autoRotate=false; world.pointOfView({lat:ap.lat,lng:ap.lng,altitude:1.15},800); }
 // WORLD arcs = なし（航路/Representation境界は出さない）。debug時のみ中心線。
 function worldArcs(){const s=State.selection;
   if(showAxis&&s.type==='work'&&s.id!=null){const w=workByNo(s.id);
@@ -517,8 +523,9 @@ function renderWorldPersons(list,type){ worldInfoList.innerHTML='';
   list.forEach(p=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=p.id;
     d.innerHTML='<div class="nm">'+p.name+'</div><div class="meta">'+p.birth+'–'+p.death+' / '+p.country+'</div><div class="cls">'+p.classification+'</div>'+
       (p.place?'<div><button class="wi-see">地点を見る（'+p.place.name+'）</button></div>':'');
-    d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type,d); };  // クリック=選択+カード（地図は動かさない・カードは行の近くに）
-    const b=d.querySelector('.wi-see'); if(b)b.onclick=(e)=>{e.stopPropagation();focusPlace(p.place.lat,p.place.lng);}; // 明示のみカメラ移動
+    d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type,d); };  // 人物名クリック=知る（選択+カードのみ。camera/marker/labelは変えない）
+    const b=d.querySelector('.wi-see'); if(b)b.onclick=(e)=>{e.stopPropagation(); // 地点を見る=場所を見る（activePlace+marker+label+camera一括更新、カード維持）
+      goToPlace({lat:p.place.lat,lng:p.place.lng,name:p.place.name,color:type==='worldart'?'#57c9c0':'#e5a93c',refType:type,refId:p.id}); };
     worldInfoList.appendChild(d);}); }
 function renderHoldings(){ worldInfoList.innerHTML='';
   holdings.forEach(h=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=h.id;
@@ -527,9 +534,10 @@ function renderHoldings(){ worldInfoList.innerHTML='';
       '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 代表取得 '+yrs.join('/'):'')+'</div>'+
       '<div><button class="wi-see">地点を見る（'+h.city+'）</button></div>';
     d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h,d); };
-    d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation();focusPlace(h.lat,h.lng);};
+    d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation();goToPlace({lat:h.lat,lng:h.lng,name:h.city,color:'#66e0ff',refType:'holding',refId:h.id});};
     worldInfoList.appendChild(d);}); }
 function renderLeftBottom(force){ const m=leftMode(); if(m===lastLeftMode&&!force)return; lastLeftMode=m;
+  State.activePlace=null; // モードが変わったら「地点を見る」の地点ラベルは解除
   if(m==='WORKS'){ worksListEl.hidden=false; worldInfoList.hidden=true; leftSecTitle.innerHTML='Works<span class="series">冨嶽三十六景（代表6図）</span>'; return; }
   worksListEl.hidden=true; worldInfoList.hidden=false;
   if(m==='CONTEMPORARIES'){ leftSecTitle.innerHTML='World Art<span class="series">同時代の画家</span>'; renderWorldPersons(worldArt,'worldart'); }
@@ -645,7 +653,7 @@ document.getElementById('nowBtn').onclick=(e)=>{ State.nowMode=!State.nowMode; e
   if(State.nowMode && State.spaceView!=='WORLD'){ [...document.querySelectorAll('#spaceSeg button')].forEach(x=>x.classList.toggle('on',x.dataset.v==='WORLD'));
     State.spaceView='WORLD'; document.getElementById('globeViz').hidden=false; document.getElementById('japanMap').hidden=true;
     document.getElementById('attrib').textContent='地球: NASA Blue Marble'; const s=sz(); world.width(s.w).height(s.h); }
-  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:40,lng:-30,altitude:2.6},900); } // 大西洋中心＝欧州+米州の所蔵を俯瞰
+  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:42,lng:-25,altitude:2.15},900); } // 大西洋中心＝欧州+米州の所蔵を俯瞰
   renderLeftBottom(true); emit(); };
 function eraLabel(y){ if(y>=1831&&y<=1833)return '富嶽三十六景 刊行期'; const g=gagoAt(y); return g+' 期'; }
 function syncTimeLabels(){
