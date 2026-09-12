@@ -91,7 +91,7 @@
   .fp-poem .src{font-size:10px;color:var(--dim);margin-top:6px;letter-spacing:.04em}
 
   /* WORKS（追加レイヤ） */
-  .worktile{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer}
+  .worktile{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;scroll-margin-top:8px}
   .worktile:hover{background:rgba(255,255,255,.04)} .worktile.sel{background:rgba(255,224,138,.10)}
   .worktile .t{font-size:12.5px;font-weight:600}
   .worktile .m{font-family:var(--mono);font-size:10px;color:var(--sub);margin-top:2px}
@@ -635,6 +635,12 @@ on(()=>renderPLink()); // P-LINK: 現在年代で再ランク＋選択ハイラ�
 let lastLifeScrolled=null; // LIFE eventを明示選択した時だけ一度scroll（cursor連続移動では戻さない）
 on(()=>{ if(State.selection.type==='life'){ if(State.selection.id!==lastLifeScrolled){lastLifeScrolled=State.selection.id;scrollLifeIntoView(State.selection.id);} }
   else lastLifeScrolled=null; });
+let lastWorkScrolled=null; // 作品選択時、その作品タイルの見出しを左下WORKSパネル上端へ寄せる（タイトル→絵が素直に展開）
+on(()=>{ if(State.selection.type==='work'){ if(State.selection.id!==lastWorkScrolled){lastWorkScrolled=State.selection.id;
+    const el=document.querySelector('.worktile[data-no="'+State.selection.id+'"]'); const panel=el&&el.closest('.left-works');
+    // rAFで展開/折りたたみのreflow後に直接scrollTopを設定（scrollIntoViewはreflow同時進行でずれるため）
+    if(el&&panel)requestAnimationFrame(()=>{ panel.scrollTop=Math.max(0,el.offsetTop-8); });} }
+  else lastWorkScrolled=null; });
 on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); });
 
 // init
