@@ -293,7 +293,7 @@ const LIFE_PRIMARY = LIFE.filter(r=>r.importance==='primary');
 const DEATH_REC = chronology.find(r=>r.deathPoem) || null;
 
 const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
-const PICK=[1,2,4,10,35,46];
+const PICK=hokusaiViews.map(e=>e.no); // 46図を全配置（従来は代表6図[1,2,4,10,35,46]に絞っていた）
 // 前方測地（起点＋方位＋距離→到達点）。Composition Mappingで扇を coneCenterBearing 周りに再構成する用。
 function destPoint(lat,lng,brgDeg,distKm){const R=6371,d=distKm/R,br=brgDeg*D,la1=lat*D,lo1=lng*D;
   const la2=Math.asin(Math.sin(la1)*Math.cos(d)+Math.cos(la1)*Math.sin(d)*Math.cos(br));
