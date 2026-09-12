@@ -158,11 +158,13 @@
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
 
   /* ── 詳細カード（ART/TECH・画材・人物）── */
-  #detailCard{position:fixed;left:50%;top:44%;transform:translate(-50%,-50%);width:min(340px,86vw);z-index:75;
+  /* 呼び出し元近くに出す（source-aware）。left/topはJSで設定。中央SPACEを塞がない。 */
+  #detailCard{position:fixed;left:24px;top:120px;width:min(340px,86vw);z-index:75;
     background:rgba(10,16,26,.96);border:1px solid var(--rule);border-left:3px solid var(--doc,#4fd0b8);
     border-radius:9px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 18px;animation:cardIn .16s ease-out}
-  @keyframes cardIn{from{opacity:0;transform:translate(-50%,-46%)}to{opacity:1;transform:translate(-50%,-50%)}}
-  #detailCard .dc-x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer}
+  @keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  #detailCard .dc-head{cursor:move;user-select:none} /* ヘッダーをドラッグハンドルに */
+  #detailCard .dc-x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer;z-index:2}
   #detailCard .dc-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--doc,#4fd0b8);font-weight:700}
   #detailCard .dc-title{font-family:var(--serif);font-size:20px;font-weight:700;margin-top:6px;line-height:1.3}
   #detailCard .dc-sub{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:.06em}
@@ -246,7 +248,7 @@
     <div class="tl-ctrl">
       <button class="zoombtn" id="zoomIn">＋</button>
       <button class="zoombtn" id="zoomOut">－</button>
-      <button class="now" id="nowBtn">NOW →(将来)</button>
+      <button class="now" id="nowBtn" title="現在の海外所蔵(HOLDINGS)を見るモード。historical年は内部保持し解除で戻る。">NOW / 現在</button>
     </div>
   </div>
   <svg id="tl"></svg>
@@ -264,9 +266,11 @@
 <!-- 詳細カード（ART/TECH・画材・人物等。固定パネルにせず、必要時のみ浮遊表示） -->
 <div id="detailCard" hidden>
   <button class="dc-x" id="dcClose" aria-label="閉じる">✕</button>
-  <div class="dc-tag" id="dcTag"></div>
-  <div class="dc-title" id="dcTitle"></div>
-  <div class="dc-sub" id="dcSub"></div>
+  <div class="dc-head" id="dcHead">
+    <div class="dc-tag" id="dcTag"></div>
+    <div class="dc-title" id="dcTitle"></div>
+    <div class="dc-sub" id="dcSub"></div>
+  </div>
   <div class="dc-body" id="dcBody"></div>
   <div class="dc-rel" id="dcRel" hidden></div>
 </div>
@@ -330,7 +334,10 @@ const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .pointsData(worldPoints()).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012)
-  .onPointClick(d=>{ if(d.holdingId){const h=holdings.find(x=>x.id===d.holdingId); if(h){setSel('holding',h.id);showHoldingCard(h);} } else if(d.no) setSel('work',d.no); })
+  .onPointClick((d,ev)=>{ const at=ev?{x:ev.clientX,y:ev.clientY}:null;
+    if(d.holdingId){const h=holdings.find(x=>x.id===d.holdingId); if(h){setSel('holding',h.id);showHoldingCard(h,at);} } else if(d.no) setSel('work',d.no); })
+  .labelsData(worldLabels()).labelLat('lat').labelLng('lng').labelText('text').labelSize(l=>l.size||0.8).labelDotRadius(l=>l.dot||0.28).labelColor('color').labelResolution(2)
+  .onLabelClick((l,ev)=>{ if(l.onClick)l.onClick(ev?{x:ev.clientX,y:ev.clientY}:null); })
   .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke('stroke').arcAltitude('alt');
 world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
 world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
@@ -338,18 +345,25 @@ world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
 // Representationの扇形は縮尺に対して巨大化し意味が読めないため WORLD では出さない（画角はJAPANで展開）。
 // WORLD: ごく小さな光点のみ（球面上の角度サイズ＝カメラを引くと自然に縮む＝ズーム連動）。
 function worldPoints(){const sel=State.selection.id;
-  if(State.nowMode){ // NOW=HOLDINGS: 現在の海外所蔵の世界分布を点で（極小・選択で強調）。人物点は出さない。
-    const hp=holdings.map(h=>({holdingId:h.id,lat:h.lat,lng:h.lng,color:sel===h.id?'#ffd36a':'#66e0ff',r:sel===h.id?0.16:0.1}));
-    hp.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.1}); return hp; }
+  if(State.nowMode){ return [{lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.1}]; } // HOLDINGS点はlabelsData側で描く（dot付き）＝二重描画回避
   const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:sel===w.no?'#ffd36a':'#ff6b5c',r:sel===w.no?0.16:0.1}));
   p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.13});
   residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
+// 地球儀ラベル: NOW=所蔵機関(city/館名+dot)、CONTEMPORARIES/RECEPTIONは選択人物の代表都市のみ（選択で出現＝P2）。
+const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
+function worldLabels(){ const sel=State.selection.id;
+  if(State.nowMode){ return holdings.map(h=>({lat:h.lat,lng:h.lng,text:HOLD_SHORT[h.id]||h.city,color:sel===h.id?'#ffd36a':'#66e0ff',
+    size:sel===h.id?1.05:0.8,dot:sel===h.id?0.45:0.3,onClick:(at)=>{setSel('holding',h.id);showHoldingCard(h,at);}})); }
+  const s=State.selection; if((s.type==='worldart'||s.type==='reception')&&s.id){ const p=worldPersonById(s.id);
+    if(p&&p.place){ const col=s.type==='worldart'?'#57c9c0':'#e5a93c';
+      return [{lat:p.place.lat,lng:p.place.lng,text:p.place.name,color:col,size:1.0,dot:0.42,onClick:(at)=>showWorldCard(p,s.type,at)}]; } }
+  return []; }
 // WORLD arcs = なし（航路/Representation境界は出さない）。debug時のみ中心線。
 function worldArcs(){const s=State.selection;
   if(showAxis&&s.type==='work'&&s.id!=null){const w=workByNo(s.id);
     if(w)return[{sLat:w.lat,sLng:w.lng,eLat:FUJI.lat,eLng:FUJI.lng,color:'#ffd36a',stroke:0.4,alt:0.02}];}
   return [];}
-function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs()); } // 描画のみ（カメラは触らない）
+function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArcs()); world.labelsData(worldLabels()); } // 描画のみ（カメラは触らない）
 
 // カメラ移動専用。現在のspaceViewに応じて、選択中のwork⇄富士へ寄る。年送りでは呼ばれない。
 function focusSelection(){
@@ -491,28 +505,28 @@ const leftSecTitle=document.getElementById('leftSecTitle'), worksListEl=document
 const DIED=focusPersonBar.death; let lastLeftMode=null;
 function leftMode(){ if(State.spaceView==='JAPAN')return 'WORKS'; if(State.nowMode)return 'HOLDINGS';
   return State.timeCursor<=DIED ? 'CONTEMPORARIES' : 'RECEPTION'; }
-function showWorldCard(p,type){ showCard({ tag:type==='worldart'?'WORLD ART ／ 同時代':'RECEPTION ／ 受容',
-  title:p.name, sub:p.birth+'–'+p.death+' ／ '+p.country+(p.place?' ・ '+p.place.name:''),
+function showWorldCard(p,type,src){ showCard({ tag:type==='worldart'?'WORLD ART ／ 同時代':'RECEPTION ／ 受容',
+  title:p.name, sub:p.birth+'–'+p.death+' ／ '+p.country+(p.place?' ・ 主な活動地 '+p.place.name:''),
   body:(p.summary||'')+(p.note?'\n\n'+p.note:'')+(p.workLink?'\n\n作品対応: '+p.workLink.from+' → '+p.workLink.to:''),
-  rel:'区分: '+p.classification }); }
-function showHoldingCard(h){ const ev=(h.events||[]).map(e=>(e.year!=null?e.year+' ':'')+e.text).join(' ／ ');
+  rel:'区分: '+p.classification }, src); }
+function showHoldingCard(h,src){ const ev=(h.events||[]).map(e=>(e.year!=null?e.year+' ':'')+e.text).join(' ／ ');
   showCard({ tag:'HOLDINGS ／ 現在所蔵', title:h.institution, sub:h.city+' ／ '+h.country+' ・ 重要度 '+h.importance,
-    body:(h.summary||'')+(h.formerOwner?'\n\n旧蔵: '+h.formerOwner:'')+(ev?'\n\n取得: '+ev:''),
-    rel:'※人物関係ではない（P-LINKと別系統）' }); }
+    body:'CURRENT HOLDING（現在所蔵）: '+(h.summary||'')+(h.formerOwner?'\n\n旧蔵: '+h.formerOwner:'')+(ev?'\n\n代表取得: '+ev:'')+'\n\n情報確認: 2026年',
+    rel:'※人物関係ではない（P-LINKと別系統）／WHERE NOW' }, src); }
 function renderWorldPersons(list,type){ worldInfoList.innerHTML='';
   list.forEach(p=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=p.id;
     d.innerHTML='<div class="nm">'+p.name+'</div><div class="meta">'+p.birth+'–'+p.death+' / '+p.country+'</div><div class="cls">'+p.classification+'</div>'+
       (p.place?'<div><button class="wi-see">地点を見る（'+p.place.name+'）</button></div>':'');
-    d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type); };  // クリック=選択+カード（地図は動かさない）
+    d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type,d); };  // クリック=選択+カード（地図は動かさない・カードは行の近くに）
     const b=d.querySelector('.wi-see'); if(b)b.onclick=(e)=>{e.stopPropagation();focusPlace(p.place.lat,p.place.lng);}; // 明示のみカメラ移動
     worldInfoList.appendChild(d);}); }
 function renderHoldings(){ worldInfoList.innerHTML='';
   holdings.forEach(h=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=h.id;
     const yrs=(h.events||[]).map(e=>e.year).filter(Boolean);
     d.innerHTML='<div class="nm">'+h.institution+'</div><div class="meta">'+h.city+' / '+h.country+'</div>'+
-      '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 取得 '+yrs.join('/'):'')+'</div>'+
+      '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 代表取得 '+yrs.join('/'):'')+'</div>'+
       '<div><button class="wi-see">地点を見る（'+h.city+'）</button></div>';
-    d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h); };
+    d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h,d); };
     d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation();focusPlace(h.lat,h.lng);};
     worldInfoList.appendChild(d);}); }
 function renderLeftBottom(force){ const m=leftMode(); if(m===lastLeftMode&&!force)return; lastLeftMode=m;
@@ -631,10 +645,14 @@ document.getElementById('nowBtn').onclick=(e)=>{ State.nowMode=!State.nowMode; e
   if(State.nowMode && State.spaceView!=='WORLD'){ [...document.querySelectorAll('#spaceSeg button')].forEach(x=>x.classList.toggle('on',x.dataset.v==='WORLD'));
     State.spaceView='WORLD'; document.getElementById('globeViz').hidden=false; document.getElementById('japanMap').hidden=true;
     document.getElementById('attrib').textContent='地球: NASA Blue Marble'; const s=sz(); world.width(s.w).height(s.h); }
-  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:30,lng:40,altitude:2.6},900); } // 世界分布を俯瞰
+  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:40,lng:-30,altitude:2.6},900); } // 大西洋中心＝欧州+米州の所蔵を俯瞰
   renderLeftBottom(true); emit(); };
 function eraLabel(y){ if(y>=1831&&y<=1833)return '富嶽三十六景 刊行期'; const g=gagoAt(y); return g+' 期'; }
-function syncTimeLabels(){document.getElementById('tlYear').textContent=State.timeCursor;
+function syncTimeLabels(){
+  if(State.nowMode){ // NOW=現在モード。historical年を主表示しない（内部にtimeCursorは保持し、解除で復帰）
+    document.getElementById('tlYear').textContent='NOW';
+    document.getElementById('tlEra').textContent='現在の海外所蔵（情報確認 2026年）'; return; }
+  document.getElementById('tlYear').textContent=State.timeCursor;
   document.getElementById('tlEra').textContent=eraLabel(State.timeCursor);}
 
 // ---------- lightbox ----------
@@ -643,17 +661,30 @@ function openLB(w){lbImg.src=thumb(w.file,1400);lb.classList.add('open');}
 lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('open');document.getElementById('detailCard').hidden=true;}});
 
-// ---------- 詳細カード（ART/TECH・画材・人物 共通）----------
+// ---------- 詳細カード（共通）：呼び出し元近くに出し（source-aware）中央SPACEを塞がない。ドラッグ可 ----------
 const detailCard=document.getElementById('detailCard');
-function showCard({tag,title,sub,body,rel}){
+function positionCard(src){ const c=detailCard, cw=c.offsetWidth||320, ch=c.offsetHeight||200, M=12, W=innerWidth, Ht=innerHeight; let x,y;
+  if(src&&src.getBoundingClientRect){ const r=src.getBoundingClientRect(); x=r.right+M; if(x+cw>W-M)x=r.left-cw-M; y=r.top; } // 元要素の右→入らなければ左
+  else if(src&&typeof src.x==='number'){ x=src.x+M; y=src.y+M; }                                                         // 地図クリック座標の近く
+  else { x=24; y=120; }                                                                                                    // 既定=左側（中央を避ける）
+  x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(M,Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; }        // 画面端でflip/clamp
+function showCard({tag,title,sub,body,rel},src){
   document.getElementById('dcTag').textContent=tag||'';
   document.getElementById('dcTitle').textContent=title||'';
   document.getElementById('dcSub').textContent=sub||'';
   document.getElementById('dcBody').textContent=body||'';
-  const relEl=document.getElementById('dcRel'); if(rel){relEl.hidden=false;relEl.textContent='関連: '+rel;}else relEl.hidden=true;
-  detailCard.hidden=false;
+  const relEl=document.getElementById('dcRel'); if(rel){relEl.hidden=false;relEl.textContent=(String(rel).startsWith('※')||String(rel).startsWith('区分'))?rel:'関連: '+rel;}else relEl.hidden=true;
+  detailCard.hidden=false; positionCard(src);
 }
 document.getElementById('dcClose').onclick=()=>{detailCard.hidden=true;};
+document.getElementById('dcClose').addEventListener('pointerdown',e=>e.stopPropagation()); // ×はドラッグ開始しない
+// カードのドラッグ（ヘッダーをつかむ）。テキスト選択・本文は妨げない。
+(function(){ const head=document.getElementById('dcHead'); let d=null;
+  head.addEventListener('pointerdown',e=>{ const r=detailCard.getBoundingClientRect(); d={dx:e.clientX-r.left,dy:e.clientY-r.top}; head.setPointerCapture(e.pointerId); });
+  head.addEventListener('pointermove',e=>{ if(!d)return; detailCard.style.left=Math.max(4,Math.min(innerWidth-detailCard.offsetWidth-4,e.clientX-d.dx))+'px';
+    detailCard.style.top=Math.max(4,Math.min(innerHeight-detailCard.offsetHeight-4,e.clientY-d.dy))+'px'; });
+  head.addEventListener('pointerup',()=>d=null);
+})();
 // 「名前について」= 本姓/養家/確定しない旨を詳細カードへ（人物ヘッダーには常設しない）
 document.getElementById('nameInfo').onclick=()=>showCard({tag:'NAME / 名前について',title:'葛飾北斎 の名',
   sub:'本姓・養家・幼名・画号', body:nameMeta.line+'\n\n'+nameMeta.note, rel:nameMeta.sources.join(' / ')});
