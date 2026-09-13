@@ -95,14 +95,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "押送船の航路である本牧沖合。大波のフラクタル曲線と富士山頂の対比。",
       "fujiAnchor": {
-        "x": 0.72,
+        "x": 0.47,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -175,14 +175,14 @@ export const hokusaiViews = [
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 18.0,
       "fujiAnchor": {
-        "x": 0.72,
+        "x": 0.55,
         "y": null,
         "type": "summit",
         "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 28,
-        "applicability": "applicable",
-        "note": "実画像でグリッド実測(±0.03)。画角は粗推定。"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       },
       "source": "gemini",
       "note": "赤富士。夏の早朝に山肌が赤く染まる気象現象の心象的クローズアップ。"
@@ -259,14 +259,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "黒富士。山頂は晴れ、山麓に積乱雲と稲妻。高度による気象の二重性。",
       "fujiAnchor": {
-        "x": 0.55,
+        "x": 0.6,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 26,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -339,14 +339,14 @@ export const hokusaiViews = [
       "compositionGeometry": "literal",
       "coneHalfDeg": 5.5,
       "fujiAnchor": {
-        "x": 0.42,
+        "x": 0.44,
         "y": null,
         "type": "summit",
         "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 10,
-        "applicability": "weak_effect",
-        "note": "実画像でグリッド実測(±0.03)。画角は粗推定。"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       },
       "source": "gemini",
       "note": "小名木川のアーチ橋越しに隅田川対岸と富士を覗く透視図法的構図。"
@@ -423,14 +423,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "神田川沿いの高台から武家屋敷の屋根越しに西方を望む。",
       "fujiAnchor": {
-        "x": 0.5,
+        "x": 0.6,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -505,14 +505,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "傘のように円形に仕立てられた巨松越しに遠望する富士。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.48,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -587,14 +587,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "荒川（現隅田川）土手から水門と農夫、釣竿越しに望む。",
       "fujiAnchor": {
-        "x": 0.35,
+        "x": 0.4,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -669,14 +669,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "多摩川の清流と小舟、朝霧の向こうに端正な富士。",
       "fujiAnchor": {
-        "x": 0.48,
+        "x": 0.5,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
         "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -751,14 +751,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "前衛尾根が両側から裾野を挟み込む稜線マッチングの模範地点。",
       "fujiAnchor": {
-        "x": 0.62,
+        "x": 0.38,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -831,14 +831,14 @@ export const hokusaiViews = [
       "compositionGeometry": "imaginative",
       "coneHalfDeg": 3.5,
       "fujiAnchor": {
-        "x": 0.73,
+        "x": 0.53,
         "y": null,
         "type": "summit",
         "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 8,
-        "applicability": "weak_effect",
-        "note": "実画像でグリッド実測(±0.03)。画角は粗推定。"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       },
       "source": "gemini",
       "note": "本来見える近郊・木曽の山々を省略し、遠景に富士のみを立てる。描かれた山容は南アルプス聖岳の誤認説もあり、地形上の遮蔽もある（すみだ北斎美術館等）。大樽の円枠越しに覗く幾何学的構成。"
@@ -915,14 +915,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "本堂屋根の修繕風景と、凧が揚がる大空に小さくそびえる富士。",
       "fujiAnchor": {
-        "x": 0.4,
+        "x": 0.52,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 10,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -997,14 +997,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "佃島の漁船群と干潟、江戸湾の広がり越しに見る富士。",
       "fujiAnchor": {
-        "x": 0.45,
+        "x": 0.58,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1079,14 +1079,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "波打ち際の小島と小動岬、白波の向こうにそびえる雪山富士。",
       "fujiAnchor": {
-        "x": 0.48,
+        "x": 0.62,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1161,14 +1161,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "青と藍のグラデーション、群れ飛ぶツルと静謐な砂浜の夜明け。",
       "fujiAnchor": {
-        "x": 0.5,
+        "x": 0.6,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1243,14 +1243,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "富士川の難所・兎の瀬。岩場と投網の漁師、雲間の山頂の相似形。",
       "fujiAnchor": {
-        "x": 0.68,
+        "x": 0.72,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 18,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1325,14 +1325,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "旅人が手をつないで見上げる巨杉と、目前の富士山頂。",
       "fujiAnchor": {
-        "x": 0.52,
+        "x": 0.68,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 24,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1407,14 +1407,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "諏訪湖の高島城と湖水を手前に、八ヶ岳山麓の彼方に浮かぶ富士。",
       "fujiAnchor": {
-        "x": 0.45,
+        "x": 0.52,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
         "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1489,14 +1489,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "強烈な突風に菅笠や紙を吹き飛ばされる旅人と、不動の富士。",
       "fujiAnchor": {
-        "x": 0.6,
+        "x": 0.28,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1571,14 +1571,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "巨大な材木を斜めに挽く木挽き職人たちの対角線構図。",
       "fujiAnchor": {
-        "x": 0.66,
+        "x": 0.3,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1653,14 +1653,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "牛堀（権現山公園付近）からは冬晴に富士が実見できる（国交省「関東の富士見百景」・潮来市）。北浦の苫舟の生活と対岸遠景の富士。",
       "fujiAnchor": {
-        "x": 0.32,
+        "x": 0.72,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 8,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1735,14 +1735,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "駿河町通りの直線の消失点に富士が完璧に収まる都市計画的構図。",
       "fujiAnchor": {
-        "x": 0.52,
+        "x": 0.48,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
         "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1817,14 +1817,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "渡し舟の人々と、両国橋の橋脚越しに沈む夕陽と富士。",
       "fujiAnchor": {
-        "x": 0.35,
+        "x": 0.5,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1899,14 +1899,14 @@ export const hokusaiViews = [
       "source": "claude",
       "note": "栄螺堂の螺旋回廊上層からの眺望。江戸市中の屋根越しに西方の富士。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.45,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -1981,14 +1981,14 @@ export const hokusaiViews = [
       "source": "claude",
       "note": "雪晴れの朝、高台の茶屋二階から雪化粧の富士を眺める人々。",
       "fujiAnchor": {
-        "x": 0.4,
+        "x": 0.78,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2063,14 +2063,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "のどかな農村と丘陵の切り通し、富士講の参道でもあった目黒。",
       "fujiAnchor": {
-        "x": 0.5,
+        "x": 0.52,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
         "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2145,14 +2145,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "原宿キャットストリート付近。大きな水車と農作業風景。",
       "fujiAnchor": {
-        "x": 0.45,
+        "x": 0.75,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2227,14 +2227,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "干潮の砂州を江島神社へ渡る人々、相模湾越しの夕富士。",
       "fujiAnchor": {
-        "x": 0.42,
+        "x": 0.82,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2309,14 +2309,14 @@ export const hokusaiViews = [
       "source": "claude",
       "note": "田子の浦の浜と小舟、間近に大きくそびえる冠雪の富士。",
       "fujiAnchor": {
-        "x": 0.6,
+        "x": 0.62,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 20,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2394,11 +2394,11 @@ export const hokusaiViews = [
         "x": 0.3,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 10,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2473,14 +2473,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "波のうねりと浦賀水道を行き交う五大力船越しに見る富士。",
       "fujiAnchor": {
-        "x": 0.28,
+        "x": 0.3,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2555,14 +2555,14 @@ export const hokusaiViews = [
       "source": "claude",
       "note": "日本橋の賑わいと蔵の白壁の連なり、通りの奥に小さく富士。",
       "fujiAnchor": {
-        "x": 0.52,
+        "x": 0.35,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2637,14 +2637,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "曲がりくねる土手を疾走する3騎の早馬と、松並木越しの富士。",
       "fujiAnchor": {
-        "x": 0.35,
+        "x": 0.6,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2719,14 +2719,14 @@ export const hokusaiViews = [
       "source": "claude",
       "note": "登戸浦の干潟で網を繕う漁師、江戸湾越しに西方の富士。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.45,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2801,14 +2801,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "霧のカルデラ湖水と険しい外輪山、その頂越しにそびえる富士。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.28,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 18,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -2881,14 +2881,14 @@ export const hokusaiViews = [
       "compositionGeometry": "composite",
       "coneHalfDeg": 12.0,
       "fujiAnchor": {
-        "x": 0.57,
+        "x": 0.5,
         "y": null,
         "type": "summit",
         "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 20,
-        "applicability": "weak_effect",
-        "note": "実画像でグリッド実測(±0.03)。画角は粗推定。"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       },
       "source": "gemini",
       "note": "河口湖を見下ろす。実景は夏山、湖面の逆さ富士は雪山の構図合成。"
@@ -2965,14 +2965,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "並木松の枝と幹がリズミカルに富士を額縁のように囲む。",
       "fujiAnchor": {
-        "x": 0.62,
+        "x": 0.5,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3047,14 +3047,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "高く積み上げられた材木の垂直線・幾何学と、遠景の富士。",
       "fujiAnchor": {
-        "x": 0.45,
+        "x": 0.72,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
-        "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "applicable",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3129,14 +3129,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "大名行列の槍の穂先が並ぶ土手の向こうに広がる水田と富士。",
       "fujiAnchor": {
-        "x": 0.42,
+        "x": 0.58,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 12,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3211,14 +3211,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "桜爛漫の御殿山から品川浦と遠景の富士を望む。",
       "fujiAnchor": {
-        "x": 0.65,
+        "x": 0.42,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
-        "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "weak_effect",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3296,11 +3296,11 @@ export const hokusaiViews = [
         "x": 0.5,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
         "applicability": "minimal",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3378,11 +3378,11 @@ export const hokusaiViews = [
         "x": 0.45,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 16,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3457,14 +3457,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "身延山への参詣道。天子山地の背後から覗く西側山肌（裏富士）。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.48,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 20,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3539,14 +3539,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "葦の湿地帯を牛を引いて行く農民と、真北に高くそびえる富士。",
       "fujiAnchor": {
-        "x": 0.45,
+        "x": 0.52,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 20,
-        "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "applicability": "minimal",
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3621,14 +3621,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "茶摘みをする農民たちと、目前に迫る富士山南西面。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.38,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 24,
         "applicability": "applicable",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
@@ -3703,14 +3703,14 @@ export const hokusaiViews = [
       "source": "gemini",
       "note": "大井川を渡る人足たちと対岸の島田宿。志太平野の奥にそびえる富士。",
       "fujiAnchor": {
-        "x": 0.58,
+        "x": 0.38,
         "y": null,
         "type": "summit",
-        "confidence": "estimated",
+        "confidence": "reviewed",
         "compositionAlgorithm": "hokusai-composition-v2",
         "compositionHalfDeg": 14,
         "applicability": "weak_effect",
-        "note": "山頂水平位置と作品水平画角の粗い推定（富士山頂軸で要目視QA）"
+        "note": "実画像で山頂の水平位置を目視再測(±0.05)。画角は粗推定。"
       }
     },
     "derived": {
