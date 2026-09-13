@@ -306,9 +306,10 @@ const WORKS = hokusaiViews.filter(e=>PICK.includes(e.no)).map(e=>{
   const vp=e.interpretation.viewpoint, half=e.interpretation.coneHalfDeg, brg=e.derived.bearingToFuji, dist=e.derived.distanceKm;
   const anchor=e.interpretation.fujiAnchor||null;
   let ccb=brg, offsetDeg=0, farL=e.derived.cone.farLeft, farR=e.derived.cone.farRight;
-  if(anchor){ const ch=anchor.compositionHalfDeg||half; // v2: 扇中心の回転量は作品の水平画角(compositionHalfDeg)で決める（透視式）
-    offsetDeg=+(Math.atan((anchor.x-0.5)*2*Math.tan(ch*D))/D).toFixed(2); ccb=+(brg-offsetDeg).toFixed(2);
-    farL=destPoint(vp.lat,vp.lng,ccb-half,dist); farR=destPoint(vp.lat,vp.lng,ccb+half,dist); } // 扇の幅は従来どおり coneHalfDeg
+  if(anchor){ // v3: 富士(実方位)が扇開口の割合 x の位置に来るよう左右端を直接置く。開口=2*coneHalfDeg。
+    const lb=brg-anchor.x*2*half, rb=brg+(1-anchor.x)*2*half; // 左端=fraction0 / 右端=fraction1
+    farL=destPoint(vp.lat,vp.lng,lb,dist); farR=destPoint(vp.lat,vp.lng,rb,dist);
+    ccb=+((((lb+rb)/2)%360+360)%360).toFixed(2); offsetDeg=+(((brg-ccb+540)%360)-180).toFixed(2); } // 表示用の中心・Δ
   return { no:e.no, ja:e.identity.title_ja, en:e.identity.title_en, lat:vp.lat, lng:vp.lng,
     farL, farR, half, brg, dist,
     anchorX:anchor?anchor.x:null, offsetDeg, ccb, // Composition Mapping (v1)
@@ -506,7 +507,7 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
   d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
     '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+
     '<span class="chip k-座標">座標 '+w.axV+'</span><span class="chip k-構図">構図 '+w.axC+'</span><br>'+(w.vpName||'')+
-    (w.anchorX!=null?'<br><span style="color:var(--art)">構図補正(v2): 富士x='+w.anchorX+' → 扇中心 '+w.ccb+'°（実富士方位 '+w.brg+'°, Δ'+((w.ccb-w.brg)>=0?'+':'')+(w.ccb-w.brg).toFixed(1)+'°）／富士山頂軸ONで実方位線と比較</span>':'')+
+    (w.anchorX!=null?'<br><span style="color:var(--art)">構図補正(v3): 富士は扇開口の '+Math.round(w.anchorX*100)+'% 位置（x='+w.anchorX+'）／実富士方位 '+w.brg+'°・扇中心 '+w.ccb+'°・開口±'+w.half+'°／富士山頂軸ONで実方位線と比較</span>':'')+
     '<br><span style="color:var(--dim)">薄い扇＝作者が作品上「この範囲」として富士を捉えた画角(View Field)。移動(ROUTE)や物理的視野そのものではない。JAPAN表示で展開。</span>'+
     '</div></div>';
   d.querySelector('.t').onclick=()=>{ setSel('work',w.no); setCursor(w.year); };
