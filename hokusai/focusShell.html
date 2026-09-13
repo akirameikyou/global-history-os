@@ -108,6 +108,7 @@
   .worktile .card .cap{font-size:10.5px;color:var(--sub);margin-top:5px;line-height:1.6}
   .chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-right:4px}
   .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)} .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
+  .compo-dbg{display:none} body.axison .compo-dbg{display:inline} /* 構図補正の数値は富士山頂軸ON(=QA/DEBUG)時のみ表示 */
 
   /* P-LINK（人物関係・折りたたみ） */
   .plink{border-top:1px solid var(--rule);margin-top:2px}
@@ -486,6 +487,7 @@ document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.targe
   renderWorld(); renderLeftBottom(true); // 左下パネルの意味を切替（JAPAN=WORKS / WORLD=時間・NOW）
 });
 document.getElementById('axisToggle').onclick=(e)=>{showAxis=!showAxis;e.currentTarget.classList.toggle('on',showAxis);
+  document.body.classList.toggle('axison',showAxis); // 富士山頂軸ON時のみ構図補正の数値(DEBUG)を表示
   renderWorld(); if(mapReady)renderJapan();};
 
 // ---------- left / right lists ----------
@@ -507,7 +509,7 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
   d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
     '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+
     '<span class="chip k-座標">座標 '+w.axV+'</span><span class="chip k-構図">構図 '+w.axC+'</span><br>'+(w.vpName||'')+
-    (w.anchorX!=null?'<br><span style="color:var(--art)">構図補正(v3): 富士は扇開口の '+Math.round(w.anchorX*100)+'% 位置（x='+w.anchorX+'）／実富士方位 '+w.brg+'°・扇中心 '+w.ccb+'°・開口±'+w.half+'°／富士山頂軸ONで実方位線と比較</span>':'')+
+    (w.anchorX!=null?'<br><span class="compo-dbg" style="color:var(--art)">DEBUG（暫定v3）: 富士は扇開口の '+Math.round(w.anchorX*100)+'% 位置（x='+w.anchorX+'）／実富士方位 '+w.brg+'°・扇中心 '+w.ccb+'°・開口±'+w.half+'°。※coneHalfDegは現行Representation幅で作品の実画角確定ではない</span>':'')+
     '<br><span style="color:var(--dim)">薄い扇＝作者が作品上「この範囲」として富士を捉えた画角(View Field)。移動(ROUTE)や物理的視野そのものではない。JAPAN表示で展開。</span>'+
     '</div></div>';
   d.querySelector('.t').onclick=()=>{ setSel('work',w.no); setCursor(w.year); };
