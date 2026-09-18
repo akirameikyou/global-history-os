@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>History OS｜葛飾北斎 Focus</title>
+<meta name="description" content="葛飾北斎《富嶽三十六景》全46図を、視点・富士・時間・人物・同時代とともにたどる History OS 第一弾公開版。" />
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/hokusai/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://akirameikyou.github.io/global-history-os/hokusai/" />
+<meta property="og:title" content="History OS｜葛飾北斎 Focus" />
+<meta property="og:description" content="葛飾北斎《富嶽三十六景》全46図を、視点・富士・時間・人物・同時代とともにたどる History OS 第一弾公開版。" />
+<meta property="og:site_name" content="History OS" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="History OS｜葛飾北斎 Focus" />
+<meta name="twitter:description" content="葛飾北斎《富嶽三十六景》全46図を、視点・富士・時間・人物・同時代とともにたどる History OS 第一弾公開版。" />
+<style>
+:root{
+  --bg:#06111f;
+  --bg2:#091a2d;
+  --ink:#edf3f6;
+  --muted:#95a5b0;
+  --hokusai:#17486f;
+  --hokusai2:#2e709a;
+  --focus:#66e0ff;
+  --work:#ff6b5c;
+  --fuji:#ffe08a;
+  --repr:#7cb3ff;
+  --panel:rgba(5,17,30,.58);
+  --border:rgba(237,243,246,.14);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:#02070c;color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit}
+.app{
+  position:relative;width:100%;height:100%;isolation:isolate;
+  background:
+    radial-gradient(circle at 74% 34%,rgba(31,86,126,.30),transparent 27%),
+    radial-gradient(circle at 22% 78%,rgba(16,61,93,.24),transparent 35%),
+    linear-gradient(160deg,#07131f 0%,#0a1b2c 43%,#04101b 72%,#02070c 100%);
+}
+.blue-field{
+  position:absolute;inset:0;pointer-events:none;opacity:.95;
+  background:
+    linear-gradient(105deg,transparent 0 46%,rgba(36,98,140,.07) 57%,transparent 75%),
+    radial-gradient(ellipse at 50% 110%,rgba(22,78,113,.32),transparent 57%);
+}
+.paper{
+  position:absolute;inset:0;pointer-events:none;opacity:.10;mix-blend-mode:soft-light;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+}
+.header{
+  position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));
+  left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(237,243,246,.52)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.88);letter-spacing:.29em}
+.edition{font-size:9px;letter-spacing:.17em;color:rgba(237,243,246,.30);padding-top:2px}
+.hero{
+  position:absolute;z-index:4;left:50%;top:47.5%;transform:translate(-50%,-50%);
+  width:min(88vw,880px);text-align:center;padding:28px;
+}
+.kicker{font-size:10px;letter-spacing:.36em;color:rgba(237,243,246,.47);margin-bottom:17px}
+h1{
+  font-family:var(--serif);font-size:clamp(38px,5.1vw,72px);font-weight:500;
+  line-height:1.06;margin:0 0 8px;text-align:center;
+  text-shadow:0 2px 28px rgba(0,0,0,.45);
+}
+.title-text{
+  display:inline-block;
+  letter-spacing:.15em;
+  margin-right:-.15em;
+}
+.life{font-size:11px;letter-spacing:.27em;color:rgba(237,243,246,.61);margin-bottom:32px}
+.thesis{
+  font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.45vw,34px);
+  line-height:1.55;margin:0 0 20px;text-align:center;
+}
+.thesis-text{
+  display:inline-block;
+  letter-spacing:.09em;
+  margin-right:-.09em;
+}
+.jp-period{
+  display:inline-block;
+  width:.58em;
+  overflow:visible;
+  letter-spacing:0;
+}
+.quote{
+  max-width:690px;margin:0 auto;color:rgba(237,243,246,.64);
+  font-family:var(--serif);font-size:clamp(12px,1.15vw,15px);line-height:1.9;letter-spacing:.055em;
+}
+.quote cite{
+  display:block;margin-top:7px;font-family:var(--sans);font-style:normal;
+  font-size:9px;letter-spacing:.14em;color:rgba(237,243,246,.36);
+}
+.enter-wrap{margin-top:36px;display:flex;justify-content:center}
+.enter{
+  border:1px solid rgba(237,243,246,.25);background:rgba(4,13,22,.34);
+  color:#f7fbfd;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;
+  cursor:pointer;backdrop-filter:blur(9px);
+  transition:background .25s ease,border-color .25s ease,transform .25s ease;
+}
+.enter::after{content:"→";display:inline-block;margin-left:15px;color:var(--focus);transition:transform .25s ease}
+.enter:hover,.enter:focus-visible{background:rgba(46,112,154,.12);border-color:rgba(102,224,255,.45);transform:translateY(-1px);outline:none}
+.enter:hover::after{transform:translateX(4px)}
+
+.guide{
+  width:min(92vw,760px);margin:24px auto 0;display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid rgba(237,243,246,.10);border-bottom:1px solid rgba(237,243,246,.10);
+}
+.guide button{
+  appearance:none;border:0;border-right:1px solid rgba(237,243,246,.09);background:rgba(3,12,20,.10);
+  min-height:74px;color:var(--ink);padding:11px 15px 12px;text-align:left;cursor:pointer;
+}
+.guide button:last-child{border-right:0}
+.guide button:hover,.guide button:focus-visible{background:rgba(46,112,154,.09);outline:none}
+.g-num{display:block;font-size:8px;letter-spacing:.18em;color:rgba(102,224,255,.55);margin-bottom:6px}
+.g-title{display:block;font-size:10px;letter-spacing:.13em;color:rgba(237,243,246,.82);margin-bottom:5px}
+.g-copy{display:block;font-size:9px;line-height:1.45;letter-spacing:.04em;color:rgba(237,243,246,.40)}
+
+.foot{
+  position:absolute;z-index:4;left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  bottom:max(19px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;
+  font-size:8px;letter-spacing:.13em;color:rgba(237,243,246,.27)
+}
+
+dialog{
+  width:min(90vw,560px);border:1px solid var(--border);padding:0;
+  background:rgba(5,16,28,.96);color:var(--ink);
+  box-shadow:0 28px 90px rgba(0,0,0,.55);backdrop-filter:blur(16px);
+}
+dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
+.dlg{padding:28px 30px 30px}
+.d-kicker{font-size:9px;letter-spacing:.22em;color:rgba(102,224,255,.66);margin-bottom:12px}
+.dlg h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em;margin:0 0 18px}
+.dlg p{font-size:12px;line-height:1.95;color:rgba(237,243,246,.69);margin:0 0 12px}
+.dlg .steps{display:grid;gap:10px;margin:14px 0 0}
+.step{border-top:1px solid rgba(237,243,246,.09);padding-top:10px;display:grid;grid-template-columns:38px 1fr;gap:9px}
+.step b{font-size:9px;color:rgba(102,224,255,.65);letter-spacing:.12em;font-weight:500}
+.step span{font-size:11px;line-height:1.7;color:rgba(237,243,246,.67)}
+.close{margin-top:19px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+
+/* ===== ENTER 先：本物の Focus Shell を全画面iframeで表示 ===== */
+.os-frame{
+  position:absolute;inset:0;z-index:10;border:0;width:100%;height:100%;
+  opacity:0;pointer-events:none;transition:opacity .6s ease;background:#06111e;
+}
+.app.entered .os-frame{opacity:1;pointer-events:auto}
+.app.entered .hero,.app.entered .header,.app.entered .foot{opacity:0;pointer-events:none;transition:opacity .25s ease}
+/* iframe上の「表紙へ戻る」ボタン（読み込み中インジケータ兼用） */
+.os-back{
+  position:absolute;z-index:11;top:max(14px,env(safe-area-inset-top));left:clamp(14px,2vw,22px);
+  display:none;align-items:center;gap:8px;
+  border:1px solid rgba(237,243,246,.22);background:rgba(4,13,22,.55);backdrop-filter:blur(8px);
+  color:rgba(237,243,246,.82);padding:8px 14px;font-size:9px;letter-spacing:.14em;cursor:pointer;border-radius:6px;
+}
+.app.entered .os-back{display:inline-flex}
+.os-back:hover{border-color:rgba(102,224,255,.45);color:#fff}
+.os-loading{
+  position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;
+  color:rgba(237,243,246,.5);font-size:11px;letter-spacing:.22em;pointer-events:none;
+}
+.app.entered.loading .os-loading{display:flex}
+
+@media (max-width:640px){
+  .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
+  .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
+  .hero{top:48%;width:100%;padding:18px 18px}
+  .kicker{font-size:8px;margin-bottom:15px}
+  h1{font-size:42px}
+  .title-text{letter-spacing:.11em;margin-right:-.11em}
+  .life{font-size:9px;margin-bottom:28px}
+  .thesis{font-size:21px;margin-bottom:15px}
+  .quote{font-size:11px;line-height:1.8;max-width:330px}
+  .quote cite{font-size:8px}
+  .enter-wrap{margin-top:29px}
+  .enter{font-size:9px;padding:12px 18px 12px 21px}
+  .guide{width:min(94vw,365px);margin-top:20px}
+  .guide button{min-height:80px;padding:9px 8px 10px}
+  .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
+  .foot{left:18px;right:18px;font-size:7px}.foot>span:last-child{display:none}
+}
+@media (max-height:690px){
+  .hero{top:49%}
+  .quote{display:none}
+  .guide{margin-top:16px}
+  .guide button{min-height:62px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="blue-field"></div>
+  <div class="paper"></div>
+
+  <header class="header">
+    <div class="brand"><strong>HISTORY OS</strong>KATSUSHIKA HOKUSAI FOCUS</div>
+    <div class="edition">PUBLIC PREVIEW / COVER STUDY 05</div>
+  </header>
+
+  <main class="hero">
+    <div class="kicker">1760 — 1849</div>
+    <h1><span class="title-text">葛飾北斎</span></h1>
+    <div class="life">HOKUSAI / TIME · PLACE · WORK · WORLD</div>
+
+    <p class="thesis"><span class="thesis-text">画狂人と観る世界<span class="jp-period">。</span></span></p>
+
+    <p class="quote">
+      「・・・天我をして五年の命を保たしめは、真正の画工となるを得へしと・・・」
+      <cite>— 葛飾北斎 晩年の言葉</cite>
+    </p>
+
+    <div class="enter-wrap">
+      <button class="enter" id="enterBtn">ENTER HISTORY OS</button>
+    </div>
+
+    <div class="guide" aria-label="入口ガイド">
+      <button data-dialog="intro">
+        <span class="g-num">01 / INTRO</span>
+        <span class="g-title">この世界について</span>
+        <span class="g-copy">北斎の生涯と作品を、時間と場所から見る。</span>
+      </button>
+      <button data-dialog="view">
+        <span class="g-num">02 / HOW TO VIEW</span>
+        <span class="g-title">見方</span>
+        <span class="g-copy">地図・年表・作品・人物を重ねて辿る。</span>
+      </button>
+      <button data-dialog="method">
+        <span class="g-num">03 / METHOD</span>
+        <span class="g-title">史料と推定</span>
+        <span class="g-copy">事実・再構成・表現モデルを分けて読む。</span>
+      </button>
+    </div>
+  </main>
+
+  <footer class="foot"><span></span><span>HISTORY OS / FOCUS PERSON</span></footer>
+
+  <!-- ENTER先：本物の Focus Shell（日本地図の場面で開始） -->
+  <iframe id="osFrame" class="os-frame" title="History OS / Hokusai Focus" allow="fullscreen"></iframe>
+  <div class="os-loading" id="osLoading">JAPAN / 1831 を準備しています…</div>
+  <button class="os-back" id="backBtn">← 表紙へ戻る</button>
+
+  <dialog id="intro"><div class="dlg">
+    <div class="d-kicker">01 / INTRO</div><h2>北斎の観た世界</h2>
+    <p>History OSは、歴史を年表だけでなく、時間、場所、人物、作品、関係を重ねて見るための試みです。</p>
+    <p>葛飾北斎 Focusでは、《富嶽三十六景》を含む作品の視点、89年の生涯、江戸と旅、同時代の世界、没後の受容と現在の所蔵を一つの空間に重ねます。</p>
+    <button class="close">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="view"><div class="dlg">
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見るための三つの入口</h2>
+    <div class="steps">
+      <div class="step"><b>PLACE</b><span>地点や作品を選び、北斎がいた場所、描いた場所、富士との関係を見る。</span></div>
+      <div class="step"><b>TIME</b><span>年表を動かし、北斎の生涯と作品、同時代の出来事を重ねる。</span></div>
+      <div class="step"><b>WORLD</b><span>WORLD / JAPANを切り替え、国内の視点と世界の文脈を往復する。</span></div>
+    </div>
+    <button class="close">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="method"><div class="dlg">
+    <div class="d-kicker">03 / METHOD</div><h2>史料と推定を分ける</h2>
+    <p>地点や年次には、史料で確認できるものと、地名・地形・作品研究から再構成したものがあります。表示上でも、その違いを混同しないことを原則とします。</p>
+    <p>富士へ向かう扇形は実際のカメラ視野ではなく、作品の視点と構図を観察するための Representation です。出典は公開版で各カードから確認できる構成を想定しています。</p>
+    <button class="close">CLOSE</button>
+  </div></dialog>
+</div>
+
+<script>
+const app=document.getElementById('app');
+const osFrame=document.getElementById('osFrame');
+const enterBtn=document.getElementById('enterBtn');
+const backBtn=document.getElementById('backBtn');
+
+// ENTER先で開くOS本体（同一フォルダの復旧版 focusShell.html。ファイル自体は変更しない）
+const OS_URL='focusShell.html';
+
+// ── 開始時のJAPAN地図の見え方をここで指定 ──
+// 「アンカー地点」を画面の指定した高さに合わせる方式（ウィンドウサイズが変わっても同じ構図）。
+const START_ZOOM=7;                    // 小さいほど引き（広く）／大きいほど寄り
+const ANCHOR=[138.3167, 36.7017];      // 基準にする地点＝小布施
+const ANCHOR_LNG=138.7274;             // 画面中央にくる経度（富士の経度。小布施はやや左に来る）
+const ANCHOR_TOP_FRAC=0.13;            // アンカー（小布施）を画面上から何割の高さに置くか（小さいほど上）
+const START_DURATION=0;                // 0=一瞬で移動（>0でアニメーション）
+
+// iframe内で maplibregl.Map の生成を横取りし、JAPAN地図のインスタンスを捕まえる。
+// focusShell.html は無改変のまま、生成された地図オブジェクトを外側から使えるようにする仕掛け。
+function patchMaplibre(){
+  try{
+    const w=osFrame.contentWindow;
+    if(!w||!w.maplibregl||w.__mapPatched) return;
+    const Orig=w.maplibregl.Map;
+    if(!Orig) return;
+    w.__mapPatched=true;
+    function Wrapped(...args){ const inst=new Orig(...args); try{ w.__japanMap=inst; }catch(e){} return inst; }
+    Wrapped.prototype=Orig.prototype;
+    Object.setPrototypeOf(Wrapped,Orig);
+    w.maplibregl.Map=Wrapped;
+  }catch(e){ /* まだ maplibregl 未ロード */ }
+}
+
+// 捕まえた地図に、指定の中心・ズームを適用（読み込み完了後）。
+function applyStartView(){
+  try{
+    const w=osFrame.contentWindow; const map=w&&w.__japanMap;
+    if(!map) return false;
+    const go=()=>{ try{
+      const cv=map.getCanvas(), H=cv.clientHeight, W=cv.clientWidth;
+      // 1) 小布施をいったん画面中央（縦）に置く（横は富士経度で固定）
+      map.jumpTo({center:[ANCHOR_LNG, ANCHOR[1]], zoom:START_ZOOM, duration:0});
+      // 2) 小布施を上から ANCHOR_TOP_FRAC の高さへ持ち上げる（＝タイトル直下）
+      const nc=map.unproject([W/2, H-Math.round(H*ANCHOR_TOP_FRAC)]);
+      map.jumpTo({center:[nc.lng, nc.lat], zoom:START_ZOOM, duration:START_DURATION});
+    }catch(e){} };
+    if(map.loaded && map.loaded()) go(); else { try{ map.once('load',go); }catch(e){ go(); } }
+    setTimeout(go,500); // focusShell側の初期描画と競合しても最終的にこの見え方へ寄せる
+    app.classList.remove('loading');
+    return true;
+  }catch(e){ return false; }
+}
+
+// JAPANへ切替 → 地図インスタンス捕捉 → 中心・ズーム適用、の順に進める。
+// focusShell.html は無改変。外側からトグルUIを押し、生成された地図に指示するだけ（同一オリジンなので可能）。
+function forceJapanView(){
+  let tries=0;
+  const iv=setInterval(()=>{
+    tries++;
+    try{
+      const d=osFrame.contentDocument;
+      if(d){
+        const jb=d.querySelector('#spaceSeg button[data-v="JAPAN"]');
+        if(jb){
+          if(!jb.classList.contains('on')) jb.click(); // WORLD初期化でもJAPANへ＝日本地図の場面
+          clearInterval(iv);
+          let t=0;
+          const wait=setInterval(()=>{ // 地図インスタンスが出来るのを待って中心・ズーム適用
+            t++;
+            if(applyStartView()||t>60){ clearInterval(wait); if(t>60)app.classList.remove('loading'); }
+          },100);
+          return;
+        }
+      }
+    }catch(e){ /* まだ読み込み中 */ }
+    if(tries>60){ app.classList.remove('loading'); clearInterval(iv); } // 6秒で断念（それでも地図は表示される）
+  },100);
+}
+
+enterBtn.addEventListener('click',()=>{
+  app.classList.add('entered','loading');
+  osFrame.addEventListener('load',forceJapanView,{once:true});
+  osFrame.src=OS_URL; // ここで初めて本体を読み込む
+  // maplibregl.Map の生成を横取りするため、読み込み直後から素早くパッチを試みる
+  let p=0;
+  const patcher=setInterval(()=>{ p++; patchMaplibre();
+    const w=osFrame.contentWindow;
+    if((w&&w.__mapPatched)||p>400) clearInterval(patcher); // パッチ成功 or 8秒で終了
+  },20);
+});
+
+backBtn.addEventListener('click',()=>{
+  app.classList.remove('entered','loading');
+  osFrame.removeAttribute('src'); // 戻ったらOSを解放（次回ENTERで再読み込み＝1831/JAPANから）
+});
+
+document.querySelectorAll('[data-dialog]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.dialog).showModal()));
+document.querySelectorAll('.close').forEach(btn=>btn.addEventListener('click',()=>btn.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+</script>
+</body>
+</html>
