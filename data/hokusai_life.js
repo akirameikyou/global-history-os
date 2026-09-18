@@ -42,12 +42,47 @@ export const residences = [
   { id:'r_asakusa',   year:1840, title:'浅草聖天町（晩年の一つ）', lat:35.7160, lng:139.7970 },
 ];
 
+// WORLD版「北斎ゆかりの主要地点」＝人物史上の地点。46図の"描画視点"(hokusai_views)とは別category（意味を混同しない）。
+// 世界縮尺で読める代表点のみに限定（全転居先は出さない）。江戸内の生誕地・居住地は世界縮尺では一点に重なるため「江戸」に束ねる。
+// 座標・年はいずれも既存データ（residences/travels/personLinks）に基づく。推測地点は作らない。
+// type: birth_and_base / stay_and_work。46図の描画視点(hokusai_views)とは別category。
+// 座標は「家屋の厳密位置」ではなく史料に基づく現在地の代表点。card は Detail Card 表示用。
+// 同一Entityを Scale で出し分ける（データは二重に作らない）:
+//   card.world = WORLD用の簡潔な「人生上の意味」 / card.lines+note = JAPAN用の具体地点・史料・確度。
+// type: principal_activity_place（都市代表点） / stay_and_work（滞在・制作地） / work_site（特定作品の制作地点）。
+// 出生地(本所割下水=residences)とは type を分ける。座標は史料に基づく現在地の代表点（家屋の厳密位置ではない）。
+export const lifePlaces = [
+  { id:'lp_edo',    name:'江戸｜生活・制作の基盤', nameEn:'Edo',    lat:35.6990, lng:139.7900, type:'principal_activity_place',
+    card:{ years:'生涯', kindLabel:'生活・制作の基盤',
+      world:'北斎が生涯の大半を過ごした主要な生活・制作都市。',
+      lines:['生涯を通じた主要な生活・制作都市','江戸内で多数の転居があり、特定の住居跡ではなく都市圏の代表点','出生地（本所割下水）とは別に扱う'],
+      note:'都市代表点（特定の住居跡を示すものではない）。出生地とは区別。' } },
+  { id:'lp_nagoya', name:'名古屋｜牧墨僊宅跡',   nameEn:'Nagoya', lat:35.1676, lng:136.9086, type:'stay_and_work',
+    card:{ years:'1812', kindLabel:'滞在・制作',
+      world:'牧墨僊宅に滞在し、『北斎漫画』初編につながる制作を行った。',
+      lines:['牧墨僊宅に滞在','『北斎漫画』初編につながる下絵を制作','現在地は栄三丁目6付近を代表点とする'],
+      note:'滞在・制作地。家屋の厳密位置ではなく史料に基づく現在地の代表点。' } },
+  { id:'lp_obuse',  name:'小布施｜碧漪軒',       nameEn:'Obuse', lat:36.7017, lng:138.3167, type:'stay_and_work',
+    card:{ years:'1840年代', kindLabel:'滞在・制作',
+      world:'高井鴻山との交流のもと、晩年の重要な制作を行った。',
+      lines:['高井鴻山との交流','小布施滞在時の主要制作拠点（碧漪軒）','現在の高井鴻山記念館周辺（小布施805-1）を代表点とする'],
+      note:'晩年の滞在・制作拠点。現在地の代表点。' } },
+  // work_site: 滞在拠点ではなく「特定作品の制作地点」。推定行路(travels)の終点とは別扱い＝線には接続しない。
+  { id:'lp_ganshoin', name:'岩松院｜八方睨み鳳凰図', nameEn:'Ganshoin', lat:36.6958, lng:138.3365, type:'work_site',
+    card:{ years:'1848頃', kindLabel:'制作地点',
+      world:'本堂天井に《八方睨み鳳凰図》を制作した晩年の制作地点。',
+      lines:['本堂大間の天井に《八方睨み鳳凰図》を制作','小布施滞在期の代表的な制作地点','長野県小布施町雁田615'],
+      note:'滞在拠点ではなく特定作品の制作地点（work_site）。行路線には接続しない。' } },
+];
+
 // 遠方旅行・滞在制作（ROUTE/Connection）。※経路は史料未確定=推定。確定航路(万次郎)とは線種を分ける。
+// 遠方旅行・滞在制作（ROUTE/Connection）。※経路は史料未確定=推定(estimated connection)。確定航路(万次郎)とは線種を分ける。
+// to は lifePlaces の stay_and_work 代表点に一致させ、紫線の終点が地点markerで視覚的に完結するようにする（経路そのものは史実確定線にしない）。
 export const travels = [
-  { id:'t_obuse',   year:1842, title:'江戸 → 小布施（信州・晩年滞在制作）',
-    from:{lat:35.700,lng:139.770}, to:{lat:36.702,lng:138.320}, routeCertainty:'inferred' },
-  { id:'t_nagoya',  year:1812, title:'江戸 → 名古屋（滞在・北斎漫画関連）',
-    from:{lat:35.700,lng:139.770}, to:{lat:35.181,lng:136.907}, routeCertainty:'inferred' },
+  { id:'t_obuse',   year:1842, title:'江戸 → 小布施（信州・晩年滞在制作）', fromPlace:'lp_edo', toPlace:'lp_obuse',
+    from:{lat:35.6990,lng:139.7900}, to:{lat:36.7017,lng:138.3167}, routeCertainty:'inferred' },
+  { id:'t_nagoya',  year:1812, title:'江戸 → 名古屋（滞在・北斎漫画関連）', fromPlace:'lp_edo', toPlace:'lp_nagoya',
+    from:{lat:35.6990,lng:139.7900}, to:{lat:35.1676,lng:136.9086}, routeCertainty:'inferred' },
 ];
 
 // 日本側の代表イベント（lane: WORLD, 通常表示・北斎/日本史との関連が比較的高いもの）
@@ -155,23 +190,64 @@ export const reception = [
   { id:'rc_vangogh',  name:'Vincent van Gogh', birth:1853, death:1890, country:'Netherlands/France', place:{name:'Paris',lat:48.8566,lng:2.3522},
     classification:'broader_japonisme', summary:'日本版画を高く評価し作品へ強く取り入れた。北斎個人からの直接影響とは単純化しない（Japonisme一般）。' },
 ];
-// C: HOLDINGS（現在の海外所蔵。人物関係ではない＝P-LINKに入れない）。取得年不明は null 保持＝推定年を作らない。
+// C: HOLDINGS（現在の所蔵機関。人物関係ではない＝P-LINKに入れない）。取得年不明は null 保持＝推定年を作らない。
+//   institution-level（館が北斎作品を所蔵する）と、works[]＝specific-work holding（冨嶽三十六景46図のうち公式確認できた図番号）を分離。
+//   works[] は「その作品の現在所蔵が公式資料で確認できた図」だけを入れる。「北斎作品を持つ館だから」で個別作品を推測しない（空でよい）。
+//   作品選択時は works[] に該当番号がある館だけを表示（下流のfilter）。institution-levelは作品未選択NOWで表示。
 export const holdings = [
-  { id:'h_bm',     institution:'British Museum',                city:'London',    country:'UK',          lat:51.5194, lng:-0.1270, importance:'very_high',
-    summary:'北斎関連資料を大量に所蔵。2020年に《万物絵本大全図》版下絵103点を取得。', events:[{year:2020,text:'《万物絵本大全図》版下絵103点 取得'}] },
-  { id:'h_bnf',    institution:'Bibliothèque nationale de France', city:'Paris', country:'France',      lat:48.8339, lng:2.3760, importance:'very_high',
-    summary:'日本版画・絵本の重要コレクション。北斎資料も充実。', events:[{year:1899,text:'Théodore Duret Collection 約500点 収蔵'}] },
-  { id:'h_guimet', institution:'Musée Guimet',                  city:'Paris',     country:'France',      lat:48.8654, lng:2.2939, importance:'high',
-    summary:'日本美術の重要コレクション。《神奈川沖浪裏》の現存摺りを所蔵。', formerOwner:'Raymond Koechlin', events:[] },
-  { id:'h_mfa',    institution:'Museum of Fine Arts, Boston',   city:'Boston',    country:'USA',         lat:42.3394, lng:-71.0940, importance:'very_high',
-    summary:'日本国外最大級の日本美術コレクション。北斎作品が充実。', events:[{year:1911,text:'William Sturgis Bigelow Collection 寄贈（神奈川沖浪裏の一摺も1911収蔵）'}] },
-  { id:'h_met',    institution:'Metropolitan Museum of Art',    city:'New York',  country:'USA',         lat:40.7794, lng:-73.9632, importance:'very_high',
-    summary:'北斎・工房作を多数所蔵。神奈川沖浪裏も複数摺り。同一デザインの別々の物理摺りとして扱う。',
+  // works[]=公式ソースで verified の図（Gemini調査2026-09-15, 個別recordは impressionHoldings）。worksPending[]=旧データの未確認記載（推測を残さず退避・UI非表示）。
+  { id:'h_bm',     institution:'British Museum',                city:'London',    country:'UK',          lat:51.5194, lng:-0.1270, importance:'very_high', institutionType:'museum', works:[1], worksPending:[],
+    summary:'北斎関連資料を大量に所蔵。《神奈川沖浪裏》(#1, reg.1937,0710,0.147)を公式Collectionで確認。2020年《万物絵本大全図》版下絵103点取得。', events:[{year:2020,text:'《万物絵本大全図》版下絵103点 取得'}] },
+  { id:'h_bnf',    institution:'Bibliothèque nationale de France', city:'Paris', country:'France',      lat:48.8339, lng:2.3760, importance:'very_high', institutionType:'library', works:[], worksPending:[],
+    summary:'日本版画・絵本の重要コレクション。北斎資料も充実。※46図の個別所蔵は未調査。', events:[{year:1899,text:'Théodore Duret Collection 約500点 収蔵'}] },
+  { id:'h_guimet', institution:'Musée Guimet',                  city:'Paris',     country:'France',      lat:48.8654, lng:2.2939, importance:'high', institutionType:'museum', works:[], worksPending:[1],
+    summary:'日本美術の重要コレクション。※46図の個別所蔵は公式ソース照合待ち（未確認）。', formerOwner:'Raymond Koechlin', events:[] },
+  { id:'h_mfa',    institution:'Museum of Fine Arts, Boston',   city:'Boston',    country:'USA',         lat:42.3394, lng:-71.0940, importance:'very_high', institutionType:'museum', works:[1], worksPending:[],
+    summary:'日本国外最大級の日本美術コレクション。《神奈川沖浪裏》(#1, acc.11.17652)を公式Collectionで確認。', events:[{year:1911,text:'William Sturgis Bigelow Collection 寄贈'}] },
+  { id:'h_met',    institution:'Metropolitan Museum of Art',    city:'New York',  country:'USA',         lat:40.7794, lng:-73.9632, importance:'very_high', institutionType:'museum', works:[1,2,42], worksPending:[],
+    summary:'北斎・工房作を多数所蔵。《神奈川沖浪裏》(#1: JP1847等)・《凱風快晴》(#2: JP2960)・《身延川裏不二》(#42: JP13/JP2959)を公式Collectionで確認。同一デザインの別々の物理摺りとして扱う。',
     events:[{year:1914,text:'Rogers Fund'},{year:1929,text:'Havemeyer Collection'},{year:1936,text:'Howard Mansfield Collection'}] },
-  { id:'h_ngv',    institution:'National Gallery of Victoria',  city:'Melbourne', country:'Australia',   lat:-37.8226, lng:144.9689, importance:'high',
-    summary:'1909年に《神奈川沖浪裏》を含む北斎作品を取得。', events:[{year:1909,text:'北斎作品 取得'}] },
-  { id:'h_rijks',  institution:'Rijksmuseum',                   city:'Amsterdam', country:'Netherlands', lat:52.3600, lng:4.8852, importance:'mid',
-    summary:'北斎作品を所蔵。2023年《Poppies》取得。海外収集が現在も続く例。', events:[{year:2023,text:'《Poppies》取得'}] },
+  { id:'h_ngv',    institution:'National Gallery of Victoria',  city:'Melbourne', country:'Australia',   lat:-37.8226, lng:144.9689, importance:'high', institutionType:'museum', works:[], worksPending:[1],
+    summary:'北斎作品を所蔵。※46図の個別所蔵は公式ソース照合待ち（未確認）。', events:[] },
+  { id:'h_rijks',  institution:'Rijksmuseum',                   city:'Amsterdam', country:'Netherlands', lat:52.3600, lng:4.8852, importance:'mid', institutionType:'museum', works:[3,44], worksPending:[],
+    summary:'《山下白雨》(#3: RP-P-1956-728)・《駿州片倉茶園ノ不二》(#44: RP-P-1971-43)を公式Collectionで確認。#1神奈川沖浪裏は当館では公式同定できず(evidence_not_found)。', events:[{year:2023,text:'《Poppies》取得'}] },
+  // ── 国内主要所蔵館 ──
+  { id:'h_hokusaikan', institution:'北斎館', city:'Obuse', country:'Japan', lat:36.7013, lng:138.3170, importance:'very_high', domestic:true, institutionType:'hokusai_museum', works:[], worksPending:[],
+    summary:'長野県小布施町の北斎専門館（1976年開館・2026年開館50周年）。祭屋台天井絵「龍図」「鳳凰図」「男浪図」「女浪図」等を所蔵。※冨嶽三十六景46図の完揃い/個別所蔵は公式明文・整理番号を確認できず(evidence_not_found)。',
+    events:[{year:1976,text:'開館'}], note:'LIFEの小布施（高井鴻山との交流・晩年制作＝cyan）とは別Entity。北斎館は現在の所蔵機関（NOW＝gray）。同地でも統合しない。route線で結ばない。' },
+  { id:'h_sumida', institution:'すみだ北斎美術館', city:'Tokyo', country:'Japan', lat:35.6968, lng:139.7967, importance:'very_high', domestic:true, institutionType:'hokusai_museum', works:[1,8,17], worksPending:[],
+    summary:'北斎の生地・墨田区に2016年開館。北斎とその門人の作品を専門に所蔵・研究。冨嶽三十六景は#8武州玉川・#17信州諏訪湖=所蔵、#1神奈川沖浪裏=吉野石膏コレクションの寄託。', events:[{year:2016,text:'開館'}],
+    note:'#8/#17は公式に「初摺かそれに極めて近い/初摺に近く」＝near_first(原文はimpressionHoldingsに保持・強めない)。全46図展示実績を全46図所有へ変換しない。' },
+  // series-level OWN: 公式に「所蔵する冨嶽三十六景 全46点/全46図」と明記＝46図すべての所蔵presenceをseries evidenceで確認。個別摺の整理番号/摺状態はseries evidenceからは作らない。
+  { id:'h_ota',    institution:'太田記念美術館', city:'Tokyo', country:'Japan', lat:35.6702, lng:139.7040, importance:'high', domestic:true, institutionType:'ukiyoe_museum',
+    seriesComplete:true, ownership:'owned', works:Array.from({length:46},(_,i)=>i+1),
+    summary:'原宿の浮世絵専門館。公式に「太田記念美術館が所蔵する『冨嶽三十六景』全46点」＝46図すべての所蔵presenceをseries-levelで確認。',
+    source:{institution:'太田記念美術館',title:'葛飾北斎 冨嶽三十六景 奇想のカラクリ（2017）',sourceType:'official_exhibition',url:'http://www.ukiyoe-ota-muse.jp/exhibition-past/2017hokusai',quote:'太田記念美術館が所蔵する「冨嶽三十六景」全46点が一挙に公開されるのは2010年以来７年ぶり。',accessedAt:'2026-09-15'}, events:[] },
+  { id:'h_moa',    institution:'MOA美術館', city:'Atami', country:'Japan', lat:35.1053, lng:139.0847, importance:'high', domestic:true, institutionType:'museum',
+    seriesComplete:true, ownership:'owned', works:Array.from({length:46},(_,i)=>i+1),
+    summary:'熱海のMOA美術館。公式に「所蔵する『冨嶽三十六景』全46図」＝46図すべての所蔵presenceをseries-levelで確認。',
+    source:{institution:'MOA美術館',title:'北斎『冨嶽三十六景』（公式）',sourceType:'official_exhibition',url:'https://www.moaart.or.jp/events/hokusai-2/',quote:'所蔵する「冨嶽三十六景」全46図を2014年以来、3年ぶりに展観します。',accessedAt:'2026-09-15'}, events:[] },
+  { id:'h_tnm',    institution:'東京国立博物館',   city:'Tokyo', country:'Japan', lat:35.7188, lng:139.7765, importance:'high', domestic:true, institutionType:'museum', works:[1,2], worksPending:[3,34],
+    summary:'浮世絵を含む日本美術を幅広く所蔵する国内基幹館。ColBaseで《神奈川沖浪裏》(#1: A-10569-685)・《凱風快晴》(#2: A-11176-1)を確認。#3山下白雨・#34相州箱根湖水は今回未照合(worksPending)。', events:[] },
+  { id:'h_jukiyoe', institution:'日本浮世絵博物館', city:'Matsumoto', country:'Japan', lat:36.2256, lng:137.9156, importance:'high', domestic:true, institutionType:'ukiyoe_museum', works:[], worksPending:[8,15],
+    summary:'松本市の浮世絵専門館。※#8武州玉川・#15甲州石班澤の公式所蔵は今回未照合(worksPending)。', events:[] },
+];
+// IMPRESSION / HOLDING 正本（公式ソースで verified の「館×図の物理的な摺」。printStateRaw=公式原文, 強めない。Gemini調査2026-09-15）。
+// series-level(太田記念/MOA)は holdings[].seriesComplete で表現し、ここには個別摺のみ入れる。
+export const impressionHoldings = [
+  { workNo:1,  institutionId:'h_sumida', ownershipStatus:'deposited', accession:[], printStateRaw:null, sourceUrl:'https://hokusai-museum.jp/modules/exhibition/index.php?action=ItemView&item_id=198', sourceQuote:'葛飾北斎「冨嶽三十六景 神奈川沖浪裏」 吉野石膏コレクション すみだ北斎美術館寄託', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:1,  institutionId:'h_tnm',    ownershipStatus:'owned', accession:['A-10569-685'], printStateRaw:null, sourceUrl:'https://colbase.nich.go.jp/collection_items/tnm/A-10569-685', sourceQuote:'冨嶽三十六景・神奈川沖浪裏 / 所蔵者 東京国立博物館 / 機関管理番号 A-10569-685', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:1,  institutionId:'h_met',    ownershipStatus:'owned', accession:['JP1847','JP10','JP2972'], printStateRaw:null, sourceUrl:'https://www.metmuseum.org/art/collection/search/45434', sourceQuote:'Under the Wave off Kanagawa (Kanagawa oki nami ura) … Object Number: JP1847', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:1,  institutionId:'h_mfa',    ownershipStatus:'owned', accession:['11.17652'], printStateRaw:null, sourceUrl:'https://collections.mfa.org/objects/234199', sourceQuote:'Under the Wave off Kanagawa … Accession Number 11.17652', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:1,  institutionId:'h_bm',     ownershipStatus:'owned', accession:['1937,0710,0.147'], printStateRaw:null, sourceUrl:'https://www.britishmuseum.org/collection/object/A_1937-0710-0-147', sourceQuote:'Kanagawa-oki nami-ura 神奈川沖浪裏 … Registration number: 1937,0710,0.147', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:2,  institutionId:'h_moa',    ownershipStatus:'owned', accession:[], printStateRaw:'非常に早い時期の摺りと考えられています', sourceUrl:'https://www.moaart.or.jp/events/hokusai-2/', sourceQuote:'ＭＯＡ美術館所蔵の「凱風快晴」は…非常に早い時期の摺りと考えられています。', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:2,  institutionId:'h_tnm',    ownershipStatus:'owned', accession:['A-11176-1'], printStateRaw:null, sourceUrl:'https://colbase.nich.go.jp/collection_items/tnm/A-11176-1', sourceQuote:'冨嶽三十六景・凱風快晴 / 所蔵者 東京国立博物館 / 機関管理番号 A-11176-1', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:2,  institutionId:'h_met',    ownershipStatus:'owned', accession:['JP2960'], printStateRaw:null, sourceUrl:'https://www.metmuseum.org/art/collection/search/55736', sourceQuote:'South Wind, Clear Sky (Gaifū kaisei) … Object Number: JP2960', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:3,  institutionId:'h_rijks',  ownershipStatus:'owned', accession:['RP-P-1956-728'], printStateRaw:null, sourceUrl:'https://www.rijksmuseum.nl/en/collection/RP-P-1956-728', sourceQuote:'Regenstorm aan de voet van de berg … Object number RP-P-1956-728', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:8,  institutionId:'h_sumida', ownershipStatus:'owned', accession:[], printStateRaw:'初摺かそれに極めて近い時期のものと考えられており', sourceUrl:'https://hokusai-museum.jp/modules/collection/index.php?action=ItemView&item_id=14', sourceQuote:'本作は、初摺かそれに極めて近い時期のものと考えられており、後摺では省略されることの多い手の混んだ技法が見られます。', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:17, institutionId:'h_sumida', ownershipStatus:'owned', accession:[], printStateRaw:'初摺に近く', sourceUrl:'https://hokusai-museum.jp/modules/collection/index.php?action=ItemView&item_id=23', sourceQuote:'なお、藍のみで摺られた本作は 初摺(しょずり)に近く、静謐な雰囲気で諏訪湖の神聖さを表現しています。', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:42, institutionId:'h_met',    ownershipStatus:'owned', accession:['JP13','JP2959'], printStateRaw:null, sourceUrl:'https://www.metmuseum.org/art/collection/search/36494', sourceQuote:'View from the Other Side of Fuji from the Minobu River (Minobugawa ura Fuji) … Object Number: JP13', accessedAt:'2026-09-15', confidence:'verified' },
+  { workNo:44, institutionId:'h_rijks',  ownershipStatus:'owned', accession:['RP-P-1971-43'], printStateRaw:null, sourceUrl:'https://www.rijksmuseum.nl/en/collection/RP-P-1971-43', sourceQuote:'Fuji vanaf de Katakura theeplantage … Object number RP-P-1971-43', accessedAt:'2026-09-15', confidence:'verified' },
 ];
 // worldArt/reception を id で引く（Timeline比較バー用）。P-LINK(personLinks)とは別系統。
 export function worldPersonById(id){ return worldArt.find(p=>p.id===id) || reception.find(p=>p.id===id) || null; }

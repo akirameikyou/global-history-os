@@ -17,7 +17,21 @@
     --vermilion:#ff6b5c;   /* 描画視点 */
     --gold:#ffe08a;        /* 富士 */
     --indigo:#7cb3ff;      /* 画角コーン境界 */
-    --art:#c79bff;         /* 旅行ROUTE / 構図軸 */
+    --art:#c79bff;         /* P-LINK / 人物関係（旧: 旅行ROUTE。移動はcyanへ移設済） */
+    /* ── UI COLOR SYSTEM v1（History OS semantic tokens）──
+       色=意味 / 線種・opacity=確度 / 明度・white ring=selection / 形状=情報種別。
+       強い有彩は cyan・coral・violet の3系統。gold=富士限定。ART/TECH tealは他分類へ流用しない。 */
+    --c-focus:#66e0ff;   --c-focus-br:#c8f4ff;   /* 本人・LIFE PLACE・移動 */
+    --c-work:#ff6b5c;    --c-work-br:#ff9a8f;    /* 46図 viewpoint */
+    --c-relation:#c79bff;--c-relation-br:#e0ccff;/* P-LINK 人物関係 */
+    --c-repr:#7cb3ff;                            /* Representation（低opacity） */
+    --c-arttech:#4fd0b8;                         /* ART/TECH（teal・◆。この色は他分類へ流用しない） */
+    --c-fuji:#ffe08a;                            /* 富士・限定gold */
+    --c-worldart:#e6ecf1;--c-worldart-br:#ffffff;/* 海外同時代（外部人物）off-white・solid */
+    --c-reception:#c3ccd6;                       /* 受容（外部人物・没後）同系off-white/やや低トーン・hollow */
+    --c-holdings:#9aabb8;--c-holdings-br:#d7e0e7;/* 所蔵機関 gray */
+    --c-context:#8aa0b4;                         /* W-LINK等の中性slate（violetをP-LINK専用にするため） */
+    --c-sel-ring:rgba(255,255,255,.85);          /* selection共通ring（goldにしない） */
     --bg:#050c16;
     --panel:rgba(7,14,24,.62);
     --rule:rgba(255,255,255,.09);
@@ -143,6 +157,7 @@
   .tl-ctrl{margin-left:auto;display:flex;align-items:center;gap:6px;padding-bottom:4px}
   .zoombtn{background:rgba(7,14,24,.7);border:1px solid var(--rule);color:var(--ink);border-radius:6px;width:26px;height:24px;cursor:pointer;font-size:15px;line-height:1}
   .now{background:rgba(36,27,18,.8);border:1px solid var(--amber);color:var(--amber-soft);border-radius:6px;padding:3px 9px;font-size:10.5px;cursor:pointer}
+  .mlife{display:none;background:rgba(102,224,255,.12);border:1px solid rgba(102,224,255,.45);color:var(--cyan);border-radius:6px;padding:3px 9px;font-size:10.5px;cursor:pointer;font-family:inherit} /* モバイルのみ表示（下記media） */
   .tl-hint{font-size:10px;color:var(--dim);letter-spacing:.03em;padding-bottom:6px}
   #tl{width:100%;height:100px;display:block;cursor:ew-resize}
 
@@ -158,7 +173,7 @@
   /* ── 凡例・注記 ── */
   .legend{position:absolute;left:24px;bottom:30px;z-index:25;font-size:10.5px;color:var(--dim);line-height:1.95;letter-spacing:.3px}
   .legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-  .lg-verm{background:var(--vermilion)} .lg-gold{background:var(--gold)} .lg-ind{background:var(--indigo)} .lg-art{background:var(--art)} .lg-tech{background:#4fd0b8}
+  .lg-verm{background:var(--vermilion)} .lg-gold{background:var(--gold)} .lg-ind{background:var(--indigo)} .lg-art{background:var(--art)} .lg-tech{background:#4fd0b8} .lg-cyan{background:var(--cyan)}
   .repnote{position:absolute;right:24px;top:104px;z-index:12;display:none}
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
 
@@ -175,9 +190,99 @@
   #detailCard .dc-sub{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:.06em}
   #detailCard .dc-body{font-size:12.5px;line-height:1.85;color:rgba(238,243,248,.9);margin-top:12px}
   #detailCard .dc-rel{font-size:11px;color:var(--dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--rule)}
+  #detailCard .dc-act{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#cbe6ff;
+    background:rgba(124,179,255,.12);border:1px solid rgba(124,179,255,.4);border-radius:3px;padding:5px 10px;cursor:pointer}
+  #detailCard .dc-act:hover{background:rgba(124,179,255,.22)}
   /* ── 浮遊カード（WORKS拡大 / 画像ライトボックス）── */
   #lb{position:fixed;inset:0;z-index:80;background:rgba(4,8,14,.94);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
   #lb.open{display:flex} #lb img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:6px}
+  #lb .lb-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-family:var(--sans);
+    font-size:11px;color:var(--sub);background:rgba(6,10,16,.7);padding:5px 12px;border-radius:999px;
+    letter-spacing:.02em;white-space:nowrap;pointer-events:none}
+  /* ===== モバイル（M1）：地図主役・chrome最小・compact timeline・畳んだシート。PC版(≥641px)には一切影響しない ===== */
+  #mSheet{display:none}
+  @media (max-width:640px){
+    .title{left:12px;top:9px;transform:none;text-align:left}
+    .title h1{font-size:17px;letter-spacing:.12em}
+    .title p{display:none}
+    #spaceControls{top:8px;right:10px;gap:6px}
+    #spaceControls .seg button{padding:6px 9px;font-size:11px;letter-spacing:.02em}
+    #axisToggle{display:none}                                 /* 富士山頂軸トグルはM1では非表示 */
+    .attrib{display:none}
+    .left-panel,.left-works,.right-panel,#plinkPanel,.legend,.repnote{display:none!important} /* PC4パネル・凡例はM1では非表示（M2以降でシートへ） */
+
+    /* compact timeline：全幅・シートの上。年＋バーのみ、ヒント/ズームは隠す */
+    #timelineBar{left:0;right:0;transform:none;width:auto;margin:0 10px;bottom:70px}
+    .tl-head{margin-bottom:3px;align-items:center;gap:8px}
+    #tlYear{font-size:24px;text-shadow:0 1px 8px #000}
+    #tlEra{display:none}
+    .tl-hint{display:none}
+    .zoombtn{display:none}                                    /* Timeline Zoom は M5 */
+    .now{margin-left:auto;padding:4px 9px}
+    #tl{filter:drop-shadow(0 1px 3px #000)}
+
+    /* bottom sheet（M1=collapsed handle）。地図を完全に隠さない共通ルール */
+    #mSheet{display:block;position:fixed;left:0;right:0;bottom:0;z-index:40;
+      background:var(--panel);backdrop-filter:blur(9px);
+      border-top:1px solid rgba(255,255,255,.14);border-radius:15px 15px 0 0;
+      box-shadow:0 -10px 30px -18px #000}
+    #mSheet .ms-grip{width:34px;height:4px;border-radius:3px;background:rgba(255,255,255,.22);margin:7px auto 0}
+    #mSheet .ms-handle{display:flex;align-items:center;gap:8px;padding:7px 14px 12px}
+    /* シート見出しは分類色（WORK=coral / LIFE=cyan …）。goldは富士専用なので使わない。 */
+    #mSheet .ms-lead{font-family:var(--serif);font-size:13px;color:var(--cyan-soft)}
+    #mSheet[data-kind="work"] .ms-lead{color:var(--vermilion)}
+    #mSheet[data-kind="life"] .ms-lead{color:var(--cyan)}
+    #mSheet[data-kind="holding"] .ms-lead{color:var(--c-holdings-br)}
+    #mSheet .ms-cnt{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--sub)}
+    #mSheet[data-kind="work"] .ms-cnt{color:var(--vermilion)}
+    #mSheet[data-kind="life"] .ms-cnt{color:var(--cyan)}
+    #mSheet[data-kind="holding"] .ms-cnt{color:var(--c-holdings)}
+    #mSheet.collapsed .ms-body{display:none}
+    /* 展開時：画面の約50%まで。地図は上部に必ず残す（sheet≠全画面）。 */
+    #mSheet:not(.collapsed){display:flex;flex-direction:column;max-height:54vh}
+    #mSheet .ms-close{margin-left:8px;font-family:var(--mono);font-size:14px;line-height:1;color:var(--sub);
+      background:transparent;border:0;padding:2px 4px;cursor:pointer}
+    #mSheet.collapsed .ms-close{display:none}
+    .ms-body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 14px 16px}
+    /* 作品シート内容 */
+    .ws-img{width:100%;max-height:150px;object-fit:contain;border-radius:8px;border:1px solid var(--rule);
+      background:#08111d;display:block;margin:2px 0 10px}
+    .ws-row{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--rule);font-size:12px}
+    .ws-row:first-of-type{border-top:0}
+    .ws-row .lab{flex:0 0 78px;font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;color:var(--sub);
+      text-transform:uppercase;padding-top:1px}
+    .ws-row .val{color:var(--ink);line-height:1.5}
+    .ws-row .val .mono{font-family:var(--mono);font-size:11px;color:var(--cyan-soft)}
+    .ws-method{margin-top:10px;width:100%;text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+      color:var(--cyan);background:rgba(102,224,255,.08);border:1px solid rgba(102,224,255,.35);
+      border-radius:8px;padding:8px 11px;cursor:pointer}
+    .ws-detail{margin-top:8px;font-size:11px;color:var(--sub);line-height:1.7;border-left:2px solid var(--indigo);
+      padding:2px 0 2px 10px}
+    .ws-detail[hidden]{display:none}
+    .ws-img{cursor:zoom-in}
+    .mlife{display:inline-block}                       /* モバイル：年譜(LIFE)入口をtimeline headに表示 */
+    /* LIFEシート：選択イベントを中心に、前後の年譜を辿れる */
+    .ls-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--rule);cursor:pointer}
+    .ls-item:first-child{border-top:0}
+    .ls-item .ls-yr{flex:0 0 52px;font-family:var(--mono);font-size:11px;color:var(--cyan);padding-top:1px}
+    .ls-item .ls-t{font-size:12.5px;color:var(--sub);line-height:1.5}
+    .ls-item.on .ls-t{color:var(--ink)}
+    .ls-item.on{background:rgba(102,224,255,.06);border-radius:8px;margin:0 -8px;padding:8px}
+    .ls-cert{font-family:var(--mono);font-size:9px;color:var(--est,#e0b45f);margin-left:6px}
+    .ls-desc{display:block;font-size:11px;color:var(--sub);line-height:1.7;margin-top:5px}
+    /* HOLDINGS リスト行（現在所蔵）＝gray系 */
+    .hl-item{padding:9px 0;border-top:1px solid var(--rule)}
+    .hl-item:first-child{border-top:0}
+    .hl-item.on{background:rgba(154,171,184,.08);border-radius:8px;margin:0 -8px;padding:9px 8px}
+    .hl-item .hl-nm{font-size:12.5px;color:var(--ink)}
+    .hl-item .hl-meta{font-family:var(--mono);font-size:9.5px;color:var(--sub);margin-top:2px}
+    .hl-see{margin-top:6px;display:inline-block;font-family:var(--mono);font-size:9px;color:var(--c-holdings-br);
+      border:1px solid rgba(154,171,184,.5);border-radius:6px;padding:3px 9px}
+    .hl-detail{font-size:12px;color:var(--sub);line-height:1.7;margin:2px 0 8px}
+    /* モバイルlightbox：作品を画面いっぱいに（全体を切らない＝contain）・safe-area考慮・暗背景 */
+    #lb{height:100dvh;padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))}
+    #lb img{max-width:100%;max-height:100%;border-radius:3px} /* =safe-area内の100vw/100dvh。containで全体を切らない */
+  }
 </style></head>
 <body>
 
@@ -200,7 +305,7 @@
 
 <!-- 左下：JAPAN=WORKS(制作物) / WORLD=時間により CONTEMPORARIES→RECEPTION→HOLDINGS へ意味が変わる同一領域 -->
 <div class="panel left-works">
-  <div class="sec" id="leftSecTitle">Works<span class="series">冨嶽三十六景（代表6図）</span></div>
+  <div class="sec" id="leftSecTitle">Works<span class="series">冨嶽三十六景</span></div>
   <div id="worksList"></div>
   <div id="worldInfoList" hidden></div>
 </div>
@@ -251,9 +356,10 @@
     <div id="tlYear">1831</div>
     <div id="tlEra">富嶽三十六景 刊行期</div>
     <div class="tl-ctrl">
+      <button class="mlife" id="lifeBtn" title="人物年譜（現在年の最寄りイベントを開く）">年譜</button>
       <button class="zoombtn" id="zoomIn">＋</button>
       <button class="zoombtn" id="zoomOut">－</button>
-      <button class="now" id="nowBtn" title="現在の海外所蔵(HOLDINGS)を見るモード。historical年は内部保持し解除で戻る。">NOW / 現在</button>
+      <button class="now" id="nowBtn" title="現在の主な所蔵(HOLDINGS・国内外)を見るモード。historical年は内部保持し解除で戻る。">NOW / 現在</button>
     </div>
   </div>
   <svg id="tl"></svg>
@@ -263,9 +369,17 @@
 <!-- 凡例 -->
 <div class="legend">
   <div><b class="lg-verm"></b>描画視点（北斎が富士を描いた地点）</div>
+  <div><b class="lg-cyan"></b>北斎ゆかりの地点・本人の移動（推定＝破線）</div>
   <div><b class="lg-ind"></b>画角コーン（JAPAN／Representation）</div>
-  <div><b class="lg-art"></b>旅行(推定Connection) / 構図軸</div>
+  <div><b class="lg-art"></b>人物関係（P-LINK）</div>
   <div><b class="lg-tech"></b>ART/TECH（技術・画材・美術史）Timeline ◆</div>
+</div>
+
+<!-- モバイル：ボトムシート（M1は畳んだハンドルのみ。中身はM2以降で既存パネルを再配置）。地図を完全に隠さない共通ルール。 -->
+<div id="mSheet" class="collapsed" aria-hidden="true">
+  <div class="ms-grip" id="msGrip"></div>
+  <div class="ms-handle" id="msHandle"><span class="ms-lead" id="msLead">冨嶽三十六景</span><span class="ms-cnt" id="msCnt">46図 ・ 地点をタップ</span><button class="ms-close" id="msClose" aria-label="閉じる">✕</button></div>
+  <div class="ms-body" id="msBody"></div>
 </div>
 
 <!-- 詳細カード（ART/TECH・画材・人物等。固定パネルにせず、必要時のみ浮遊表示） -->
@@ -278,15 +392,16 @@
   </div>
   <div class="dc-body" id="dcBody"></div>
   <div class="dc-rel" id="dcRel" hidden></div>
+  <button class="dc-act" id="dcAct" hidden></button>
 </div>
 
-<div id="lb"><img alt=""></div>
+<div id="lb"><img alt=""><div class="lb-hint" id="lbHint" hidden>タップで閉じる ・ 横向きにするとより大きく</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js"></script>
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
-import { hokusaiViews } from '../data/hokusai_views.js';
-import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, worldPersonById } from '../data/hokusai_life.js';
+import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
 // 人物年譜（大北斎展図録1993）: 連続LIFEは scope==='life'。表示は primary+secondary、Timeline lane は primary、没後(1867/1893)は連続LIFEに混ぜない。
 const LIFE = chronology.filter(r=>r.scope==='life');
 const LIFE_SHOWN = LIFE.filter(r=>r.importance==='primary'||r.importance==='secondary');
@@ -294,6 +409,11 @@ const LIFE_PRIMARY = LIFE.filter(r=>r.importance==='primary');
 const DEATH_REC = chronology.find(r=>r.deathPoem) || null;
 
 const FUJI={lat:35.3606,lng:138.7274}, D=Math.PI/180;
+// UI COLOR SYSTEM v1 のJSミラー（CSS変数が使えないglobe.gl/MapLibre描画用）。CSS --c-* と同値を保つ。
+const OS_COLORS={ focus:'#66e0ff', focusBr:'#c8f4ff', work:'#ff6b5c', workBr:'#ff9a8f',
+  relation:'#c79bff', relationBr:'#e0ccff', repr:'#7cb3ff', arttech:'#4fd0b8', fuji:'#ffe08a',
+  worldart:'#e6ecf1', worldartBr:'#ffffff', reception:'#c3ccd6',
+  holdings:'#9aabb8', holdingsBr:'#d7e0e7', context:'#8aa0b4', selRing:'#ffffff' };
 const PICK=hokusaiViews.map(e=>e.no); // 46図を全配置（従来は代表6図[1,2,4,10,35,46]に絞っていた）
 // 前方測地（起点＋方位＋距離→到達点）。Composition Mappingで扇を coneCenterBearing 周りに再構成する用。
 function destPoint(lat,lng,brgDeg,distKm){const R=6371,d=distKm/R,br=brgDeg*D,la1=lat*D,lo1=lng*D;
@@ -342,41 +462,60 @@ function coneRing(w){const r=gc(w,w.farL,14).concat(gc(w.farL,w.farR,8).slice(1)
   const c=r.map(p=>[p.lng,p.lat]);c.push(c[0]);return c;}
 
 // ---------- WORLD: globe.gl ----------
+// 地球儀ラベルはASCIIに限定（globe.glのSpriteテキストがアクセント字(é等)・日本語を「?」/豆腐に化けさせるため）。正式名は左一覧/カード(DOM)で表示。
+const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum',h_sumida:'Sumida Hokusai',h_tnm:'Tokyo Nat. Museum',h_hokusaikan:'Hokusai-kan',h_ota:'Ota Memorial',h_jukiyoe:'Japan Ukiyo-e Mus.',h_moa:'MOA Museum'};
+const LIFE_PLACE_LABEL={lp_edo:'Edo',lp_nagoya:'Nagoya',lp_obuse:'Obuse'}; // WORLD常設ラベル（人物ゆかりの主要地点）
+const GLB_LABEL={size:0.24,dot:0.10}; // 地球儀ラベル共通サイズ（native label）。小さく・非boldで地図より前へ出ない・Focus間で揃える
 const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .pointsData(worldPoints()).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.012)
   .onPointClick((d,ev)=>{ const at=ev?{x:ev.clientX,y:ev.clientY}:null;
     if(d.holdingId){const h=holdings.find(x=>x.id===d.holdingId); if(h){setSel('holding',h.id);showHoldingCard(h,at);} } else if(d.no) setSel('work',d.no); })
-  .labelsData(worldLabels()).labelLat('lat').labelLng('lng').labelText('text').labelSize(l=>l.size||0.46).labelDotRadius(l=>l.dot||0.24).labelColor('color').labelResolution(2)
-  .onLabelClick((l,ev)=>{ if(l.onClick)l.onClick(ev?{x:ev.clientX,y:ev.clientY}:null); })
+  // 地点は native の labelsData レイヤーで描画（marker=dot＋label=text、上下配置を許容）。小さく・非bold・衝突を増やさない。
+  .labelsData(worldLabels()).labelLat('lat').labelLng('lng').labelText('text').labelColor('color')
+  .labelSize(GLB_LABEL.size).labelDotRadius(GLB_LABEL.dot).labelResolution(2)
+  .labelsTransitionDuration(0)          // 選択のsink/re-emerge等のアニメを無効化＝state変更を即時反映
+  .onLabelClick((l,ev)=>{ if(l.onClick)l.onClick(ev?{x:ev.clientX,y:ev.clientY}:null); }) // marker/labelどちらのクリックでも同じPlace選択
   .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke('stroke').arcAltitude('alt');
 world.controls().autoRotate=true; world.controls().autoRotateSpeed=0.25;
+// 操作（ドラッグ/ズーム）中は自転を止め、操作終了から一定時間後に再開（万次郎版と同じ挙動）。NOW/地点を見る中は再開しない。
+let spinResumeTimer=null;
+function resumeSpinAfter(ms){ clearTimeout(spinResumeTimer); spinResumeTimer=setTimeout(()=>{ if(!State.nowMode) world.controls().autoRotate=true; }, ms); }
+world.controls().addEventListener('start',()=>{ clearTimeout(spinResumeTimer); world.controls().autoRotate=false; }); // 触った瞬間に停止
+world.controls().addEventListener('end',()=>{ resumeSpinAfter(4000); });                                            // 操作終了4秒後に再開
 world.pointOfView({lat:35.6,lng:138.9,altitude:1.9},0);
 // WORLD: 北斎の活動地域が主役。作品視点＋富士＋居住地（Residence）を点で示す。
 // Representationの扇形は縮尺に対して巨大化し意味が読めないため WORLD では出さない（画角はJAPANで展開）。
 // WORLD: ごく小さな光点のみ（球面上の角度サイズ＝カメラを引くと自然に縮む＝ズーム連動）。
-function worldPoints(){const sel=State.selection.id;
-  if(State.nowMode){ return [{lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.1}]; } // HOLDINGS点はlabelsData側で描く（dot付き）＝二重描画回避
-  const p=WORKS.map(w=>({no:w.no,lat:w.lat,lng:w.lng,color:sel===w.no?'#ffd36a':'#ff6b5c',r:sel===w.no?0.16:0.1}));
-  p.push({lat:FUJI.lat,lng:FUJI.lng,color:'#ffe08a',r:0.13});
-  residences.forEach(rz=>p.push({lat:rz.lat,lng:rz.lng,color:'#8fd6c4',r:0.08}));return p;}
+function worldPoints(){
+  // WORLD = 北斎の「世界」を見る場所。46図の描画視点はJAPANに任せ、世界縮尺では出さない（赤い点群にしない）。
+  // 富士・人物ゆかり地点・所蔵館はいずれも labelsData 側の dot で描く（点spheresと二重描画しない）。
+  return []; }
 // 地球儀ラベル（WORLD scaleでは小さく・都市名優先）。NOW=所蔵の世界分布(都市名, 同都市は「·N」で束ねる=Paris·2)、
 // 選択された機関はその館名を強調。CONTEMPORARIES/RECEPTIONは「地点を見る」でセットした activePlace の都市のみ表示（人物名クリックでは出さない）。
 // 地球儀ラベルはASCIIに限定（globe.glのSpriteテキストがアクセント字(é等)を「?」に化けさせるため）。正式名は左一覧/カード(DOM)で表示。
-const HOLD_SHORT={h_bm:'British Museum',h_bnf:'BnF',h_guimet:'Guimet',h_mfa:'MFA Boston',h_met:'The Met',h_ngv:'NGV',h_rijks:'Rijksmuseum'};
 function worldLabels(){ const sel=State.selection;
-  if(State.nowMode){ const byCity={}; holdings.forEach(h=>{(byCity[h.city]=byCity[h.city]||[]).push(h);});
-    return Object.values(byCity).map(group=>{ const selH=group.find(h=>sel.type==='holding'&&h.id===sel.id); const n=group.length; const rep=selH||group[0];
-      const text=selH?HOLD_SHORT[selH.id]:(group[0].city+(n>1?' · '+n:'')); // 通常=都市名(·N) / 選択時=館名
-      return {lat:rep.lat,lng:rep.lng,text,color:selH?'#ffd36a':'#66e0ff',size:0.56,dot:0.26, // 拡大しない＝都市名と同大。選択は色のみ変更
-        onClick:(at)=>{ const h=selH||group[0]; setSel('holding',h.id); showHoldingCard(h,at); }}; }); } // 地図クリック=選択+カード（camera静止）
-  const ap=State.activePlace; // 「地点を見る」でのみ出る都市ラベル
-  if(ap)return [{lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||'#57c9c0',size:0.56,dot:0.26,
-    onClick:(at)=>{ if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }}];
-  return []; }
+  if(State.nowMode){ const byCity={}; holdings.forEach(h=>{(byCity[h.city]=byCity[h.city]||[]).push(h);}); // 同一都市の複数館は「City · N」で束ねる（国内Tokyoの過密も防ぐ）
+    const out=[{lat:FUJI.lat,lng:FUJI.lng,text:'Fuji',color:'#ffe08a',size:GLB_LABEL.size,dot:GLB_LABEL.dot}]; // NOWでも富士を地理アンカーとして残す
+    Object.values(byCity).forEach(group=>{ const selH=group.find(h=>sel.type==='holding'&&h.id===sel.id); const n=group.length; const rep=selH||group[0];
+      const text=selH?(HOLD_SHORT[selH.id]||selH.city):(group[0].city+(n>1?' · '+n:'')); // 通常=都市名(·N) / 選択時=館名（未登録は都市名にフォールバック＝undefined回避）
+      out.push({lat:rep.lat,lng:rep.lng,text,color:selH?OS_COLORS.holdingsBr:OS_COLORS.holdings,sel:!!selH, // HOLDINGS=gray（選択は明度up＋白ring）
+        onClick:(at)=>{ const h=selH||group[0]; setSel('holding',h.id); showHoldingCard(h,at); }}); }); // 地図クリック=選択+カード（camera静止）
+    return out; }
+  // 通常WORLD: 富士＋人物ゆかりの主要地点を常設ラベルで示す（背景地球→人物史地点→選択対象、の階層）。
+  // globe.glは自動衝突回避がないため、中部日本(Edo/Fuji/Obuse)が近接して重なる。文字・ドットを小さめにして重なりを緩和。
+  const base=[{lat:FUJI.lat,lng:FUJI.lng,text:'Fuji',color:OS_COLORS.fuji}]; // 富士＝限定gold。地点表示文法は他と同じ [marker] label
+  lifePlaces.filter(lp=>lp.type!=='work_site').forEach(lp=>{ const on=sel.type==='lifeplace'&&sel.id===lp.id; // work_site(岩松院)はWORLDに出さずJAPAN専用
+    // 北斎本人の地点＝FOCUS cyan。選択時もsemantic色(cyan)を保持し、明度＋白ringのみ（size/位置は不変）。
+    base.push({lat:lp.lat,lng:lp.lng,text:LIFE_PLACE_LABEL[lp.id]||lp.nameEn||'',color:on?OS_COLORS.focusBr:OS_COLORS.focus,sel:on,
+      onClick:(at)=>{ setSel('lifeplace',lp.id); showLifePlaceCard(lp,at); }}); });
+  const ap=State.activePlace; // 「地点を見る」でのみ出る都市ラベル（人物選択時にセット）
+  if(ap)base.push({lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||OS_COLORS.worldart,sel:true,
+    onClick:(at)=>{ if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }});
+  return base; }
 // 「地点を見る」= activePlace更新＋前地点解除＋marker/label＋cameraを一括更新（人物カードは維持）。selection!=camera原則を保つ明示操作。
-function goToPlace(ap){ State.activePlace=ap; renderWorld(); world.controls().autoRotate=false; world.pointOfView({lat:ap.lat,lng:ap.lng,altitude:1.15},800); }
+function goToPlace(ap){ State.activePlace=ap; renderWorld(); world.controls().autoRotate=false; world.pointOfView({lat:ap.lat,lng:ap.lng,altitude:ap.altitude||0.45},800); } // 「地点を見る」はしっかり寄る（都市規模／美術館はap.altitudeでさらに寄る）
 // WORLD arcs = なし（航路/Representation境界は出さない）。debug時のみ中心線。
 function worldArcs(){const s=State.selection;
   if(showAxis&&s.type==='work'&&s.id!=null){const w=workByNo(s.id);
@@ -386,6 +525,7 @@ function renderWorld(){ world.pointsData(worldPoints()); world.arcsData(worldArc
 
 // カメラ移動専用。現在のspaceViewに応じて、選択中のwork⇄富士へ寄る。年送りでは呼ばれない。
 function focusSelection(){
+  if(window.innerWidth<=640) return; // モバイル: 作品選択でcameraを動かさない（selection≠camera）。地図は現在の状態を維持。
   const s=State.selection; if(s.type!=='work'||s.id==null)return; const w=workByNo(s.id); if(!w)return;
   if(State.spaceView==='WORLD'){ world.controls().autoRotate=false;
     world.pointOfView({lat:(w.lat+FUJI.lat)/2,lng:(w.lng+FUJI.lng)/2,altitude:clamp(0.8+w.dist/220,0.9,2.0)},800); }
@@ -394,9 +534,9 @@ function focusSelection(){
     map.fitBounds(b,{padding:fitPadding(),maxZoom:9,duration:700}); }
 }
 // 「地点を見る」専用カメラ移動。イベント選択(setSel)では呼ばれず、明示ボタン押下時のみ。
-function focusPlace(lat,lng){
-  if(State.spaceView==='JAPAN'&&mapReady){ map.flyTo({center:[lng,lat],zoom:10,duration:800}); }
-  else { world.controls().autoRotate=false; world.pointOfView({lat,lng,altitude:1.15},800); }
+function focusPlace(lat,lng,opt){ opt=opt||{}; // opt.zoom(JAPAN)/opt.altitude(WORLD)で寄り具合を上書き（美術館は少し近寄る）
+  if(State.spaceView==='JAPAN'&&mapReady){ map.flyTo({center:[lng,lat],zoom:opt.zoom||10,duration:800}); }
+  else { world.controls().autoRotate=false; world.pointOfView({lat,lng,altitude:opt.altitude||0.45},800); } // WORLDでの「地点を見る」も同じ寄り具合に揃える
 }
 // 左右の浮遊パネル(左270/右340)・タイトル・タイムライン分を差し引き、見えている中央帯に収める。
 function fitPadding(){ const W=window.innerWidth,H=window.innerHeight;
@@ -406,7 +546,18 @@ function fitPadding(){ const W=window.innerWidth,H=window.innerHeight;
   return {top,bottom,left,right}; }
 
 // ---------- JAPAN: MapLibre + 国土地理院 ----------
-let map=null, mapReady=false;
+// 描画スタイル共通定義（data/presentation分離）。作品データ側にopacity/lineWidth/colorは持たせない。
+// 目的: 通常の46地点は背景へ沈め、選択した地点とRepresentationだけが静かに浮かぶ階層をつくる。
+const REPRESENTATION_STYLE={
+  point:{ normalOpacity:0.37, hoverOpacity:0.68, selectedOpacity:0.95,  // 通常を数%濃く＝どの背景でも存在が分かる（主張はしない）
+          normColor:'#ff6b5c', selColor:'#ff9a8f',          // 選択は明度を上げる（色相は赤系のまま）
+          normRingColor:'#050c16', normRingWidth:1.0,
+          selRingColor:'#ffffff', selRingWidth:2.0 },        // 選択=semantic色維持＋白の細い外周ring（goldは富士専用）
+  boundary:{ baseWidth:1.4, widthScale:0.5, opacity:0.42, axisOpacity:0.62 }, // 細いまま背景で消えない程度にopacityを上げる
+  fill:{ opacity:0.07 }                                       // 数%濃く。ただし地図を覆わない
+};
+let map=null, mapReady=false, japanSelId=null, japanHoverId=null;
+let PTS_OP_NORMAL=null, PTS_STROKE_OP_NORMAL=null; // NOW減光→通常復帰のため、通常時の不透明度式を保持
 function initMap(){
   map=new maplibregl.Map({container:'japanMap',attributionControl:false,
     style:{version:8,glyphs:'https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf',
@@ -420,22 +571,56 @@ function initMap(){
     center:[138.9,36.0],zoom:4.6,maxZoom:17,minzoom:3});
   map.on('load',()=>{ mapReady=true;
     map.addSource('cone',{type:'geojson',data:emptyFC()});
-    map.addLayer({id:'coneFill',type:'fill',source:'cone',filter:['==','$type','Polygon'],paint:{'fill-color':'#7cb3ff','fill-opacity':0.16}});
-    map.addLayer({id:'coneLine',type:'line',source:'cone',filter:['==','$type','LineString'],paint:{'line-color':['get','col'],'line-width':1.4,'line-opacity':0.85}});
+    map.addLayer({id:'coneFill',type:'fill',source:'cone',filter:['==','$type','Polygon'],paint:{'fill-color':'#7cb3ff','fill-opacity':REPRESENTATION_STYLE.fill.opacity}});
+    // 境界線は細く薄く（「青い図形が乗っている」ではなく「視野の方向が薄く見える」程度）。富士山頂軸(金)のみ少しだけ強く。
+    map.addLayer({id:'coneLine',type:'line',source:'cone',filter:['==','$type','LineString'],paint:{'line-color':['get','col'],
+      'line-width':+(REPRESENTATION_STYLE.boundary.baseWidth*REPRESENTATION_STYLE.boundary.widthScale).toFixed(2),
+      'line-opacity':['case',['==',['get','col'],'#ffd36a'],REPRESENTATION_STYLE.boundary.axisOpacity,REPRESENTATION_STYLE.boundary.opacity]}});
     map.addSource('travels',{type:'geojson',data:travelFC()});
-    map.addLayer({id:'travelLine',type:'line',source:'travels',paint:{'line-color':'#c79bff','line-width':1.4,'line-dasharray':[2,2],'line-opacity':0.7}});
+    // 北斎本人の移動＝FOCUS基調色(cyan)。推定であることは破線＋低opacityで示す（色は「誰の情報か」＝本人, 線種/opacity＝確度）。
+    map.addLayer({id:'travelLine',type:'line',source:'travels',paint:{'line-color':'#66e0ff','line-width':1.3,'line-dasharray':[2,2.4],'line-opacity':0.5}});
+    // NOW時のJAPAN国内所蔵館（確認済みデータのみ・gray）。pts source とは分離＝feature-stateを壊さない。
+    map.addSource('jhold',{type:'geojson',data:emptyFC()});
+    map.addLayer({id:'jholdC',type:'circle',source:'jhold',paint:{
+      'circle-radius':['interpolate',['linear'],['zoom'],4,5.5,8,6.5,13,8],'circle-color':OS_COLORS.holdings,'circle-opacity':0.95, // 引きでも見えるよう一定サイズ寄り
+      'circle-stroke-color':'rgba(255,255,255,0.85)','circle-stroke-width':1.6}});                                                 // subtle white ringで存在を上げる（yellow等は使わない）
+    map.addLayer({id:'jholdL',type:'symbol',source:'jhold',minzoom:4,layout:{
+      'text-field':['get','label'],'text-size':11.5,
+      'text-offset':['match',['get','hid'],'h_ota',['literal',[0.9,0.9]],'h_sumida',['literal',[0.9,0]],['literal',[0.9,-0.7]]],  // 太田記念=下／すみだ北斎=真横／他館=右上
+      'text-anchor':['match',['get','hid'],'h_ota','top-left','h_sumida','left','bottom-left'],
+      'text-allow-overlap':true,'text-ignore-placement':true},                                            // 美術館名は46図ラベルと衝突しても必ず出す（地点を見るで名前が読める）
+      paint:{'text-color':OS_COLORS.holdingsBr,'text-halo-color':'#050c16','text-halo-width':1.8}});      // gray→明色で衛星写真上でも読める
     map.addSource('pts',{type:'geojson',data:ptsFC()});
+    const PS=REPRESENTATION_STYLE.point;
+    // 通常/hover/selectedの不透明度を feature-state で切替（選択強調は点のサイズを変えず色・外周で示す）。
+    const opCase=['case',['boolean',['feature-state','selected'],false],PS.selectedOpacity,
+                         ['boolean',['feature-state','hover'],false],PS.hoverOpacity,
+                         PS.normalOpacity];
+    PTS_OP_NORMAL=['match',['get','kind'],'fuji',0,'stay',0.94,'worksite',0.94,opCase];              // 通常時の点不透明度（NOW解除で復帰）
+    PTS_STROKE_OP_NORMAL=['match',['get','kind'],'fuji',0.5,'stay',0.95,'worksite',0.95,opCase];
     map.addLayer({id:'ptsC',type:'circle',source:'pts',paint:{
       // ズーム連動：引き(z4)では小さく、寄る(z13)と大きく。点が増えても引き画面で地図を丸で覆わない。
       'circle-radius':['interpolate',['linear'],['zoom'],
-        4, ['match',['get','kind'],'fuji',5,'work',2,'res',1.5,1.2],
-        8, ['match',['get','kind'],'fuji',8,'work',5,'res',3.5,2.5],
-        13,['match',['get','kind'],'fuji',12,'work',8,'res',6,4]],
-      'circle-color':['match',['get','kind'],'fuji','rgba(0,0,0,0)','work','#ff6b5c','res','#8fd6c4','#c79bff'],
-      'circle-opacity':['match',['get','kind'],'fuji',0,1],                         // 富士は塗りを透過＝山頂が透ける
-      'circle-stroke-color':['match',['get','kind'],'fuji','#ffffff','#050c16'],    // 富士は白い中抜きリング
-      'circle-stroke-width':['match',['get','kind'],'fuji',1,1.4],                  // 富士リングは細く
-      'circle-stroke-opacity':['match',['get','kind'],'fuji',0.5,1]}});             // 富士リングは薄く（主役は文字）
+        4, ['match',['get','kind'],'fuji',5,'work',2,'res',1.5,'stay',2.4,'worksite',2.4,1.2],
+        8, ['match',['get','kind'],'fuji',8,'work',5,'res',3.5,'stay',5.5,'worksite',5.5,2.5],
+        13,['match',['get','kind'],'fuji',12,'work',8,'res',6,'stay',8,'worksite',8,4]],
+      'circle-color':['match',['get','kind'],'fuji','rgba(0,0,0,0)',
+        'work',['case',['boolean',['feature-state','selected'],false],PS.selColor,PS.normColor],
+        'res',OS_COLORS.focus,                                                                    // 居住地も本人＝FOCUS cyan（小・低opacityで名の付く地点と差）
+        'stay',['case',['boolean',['feature-state','selected'],false],OS_COLORS.focusBr,OS_COLORS.focus], // 北斎地点=FOCUS cyan。選択時もcyanを保ち明度up
+        'worksite',['case',['boolean',['feature-state','selected'],false],OS_COLORS.focusBr,OS_COLORS.focus],
+        OS_COLORS.relation],
+      'circle-opacity':PTS_OP_NORMAL,      // 北斎地点は46図の気配より前へ
+      'circle-stroke-color':['match',['get','kind'],'fuji','#ffffff',
+        'work',['case',['boolean',['feature-state','selected'],false],PS.selRingColor,PS.normRingColor],
+        'stay',['case',['boolean',['feature-state','selected'],false],OS_COLORS.selRing,'#0a1420'],        // 選択=白の細い外周（semantic色は保持・goldにしない）
+        'worksite',['case',['boolean',['feature-state','selected'],false],OS_COLORS.selRing,'#0a1420'],    // 制作地点も通常は暗色の控えめリング
+        PS.normRingColor],
+      'circle-stroke-width':['match',['get','kind'],'fuji',1,
+        'stay',['case',['boolean',['feature-state','selected'],false],2,1.2],
+        'worksite',['case',['boolean',['feature-state','selected'],false],2,1.2],
+        ['case',['boolean',['feature-state','selected'],false],PS.selRingWidth,PS.normRingWidth]],
+      'circle-stroke-opacity':PTS_STROKE_OP_NORMAL}});
     // ラベル: 富士は「丸の下・中央」/ 作品は「右上」。富士は衝突時に優先(sort-key=0)し縮小倍率でも消えにくく。
     // 通常ラベル: 衝突回避ON（46図でも重ならない分だけ表示・ズームで増える）。選択中workは除外し ptsLsel で常時表示。
     map.addLayer({id:'ptsL',type:'symbol',source:'pts',minzoom:4,filter:['!=',['get','no'],-1],layout:{
@@ -448,17 +633,28 @@ function initMap(){
     map.addLayer({id:'ptsLsel',type:'symbol',source:'pts',filter:['==',['get','no'],-1],layout:{
       'text-field':['get','label'],'text-size':11.5,'text-offset':[0.7,-0.7],'text-anchor':'bottom-left',
       'text-allow-overlap':true,'text-ignore-placement':true},
-      paint:{'text-color':'#ffd36a','text-halo-color':'#050c16','text-halo-width':1.8}});
-    map.on('click','ptsC',e=>{const f=e.features[0];if(f.properties.kind==='work')setSel('work',+f.properties.no);});
-    map.on('mouseenter','ptsC',()=>map.getCanvas().style.cursor='pointer');
-    map.on('mouseleave','ptsC',()=>map.getCanvas().style.cursor='');
+      paint:{'text-color':'#ffffff','text-halo-color':'#050c16','text-halo-width':1.8}});
+    map.on('click','ptsC',e=>{const f=e.features[0]; const k=f.properties.kind; const oe=e.originalEvent; const at=oe?{x:oe.clientX,y:oe.clientY}:null;
+      if(k==='work')setSel('work',+f.properties.no);
+      else if(k==='stay'||k==='worksite'){ const lp=lifePlaces.find(l=>l.id===f.properties.lpid); if(lp){ setSel('lifeplace',lp.id); showLifePlaceCard(lp,at); } }}); // 滞在/制作地=既存Detail Card
+    map.on('mousemove','ptsC',e=>{const f=e.features[0]; const k=f.properties.kind; const interactive=(k==='work'||k==='stay'||k==='worksite');
+      map.getCanvas().style.cursor=interactive?'pointer':'';
+      if(k==='work'&&f.id!=null){ if(japanHoverId!==f.id){ if(japanHoverId!=null)map.setFeatureState({source:'pts',id:japanHoverId},{hover:false}); japanHoverId=f.id; map.setFeatureState({source:'pts',id:f.id},{hover:true}); } }
+      else if(japanHoverId!=null){ map.setFeatureState({source:'pts',id:japanHoverId},{hover:false}); japanHoverId=null; }});
+    map.on('mouseleave','ptsC',()=>{map.getCanvas().style.cursor=''; if(japanHoverId!=null){map.setFeatureState({source:'pts',id:japanHoverId},{hover:false}); japanHoverId=null;}});
+    map.on('click','jholdC',e=>{const f=e.features[0]; const h=holdings.find(x=>x.id===f.properties.hid); const oe=e.originalEvent; const at=oe?{x:oe.clientX,y:oe.clientY}:null; if(h){ setSel('holding',h.id); if(window.innerWidth>640)showHoldingCard(h,at); }}); // モバイルはbottom sheetが詳細を出す
+    map.on('mouseenter','jholdC',()=>map.getCanvas().style.cursor='pointer'); map.on('mouseleave','jholdC',()=>map.getCanvas().style.cursor='');
     renderJapan(); focusSelection(); // 初回JAPAN表示時のみ、選択中workへ一度寄せる
   });
 }
 const emptyFC=()=>({type:'FeatureCollection',features:[]});
-function ptsFC(){const f=WORKS.map(w=>({type:'Feature',properties:{kind:'work',no:w.no,label:'#'+w.no+' '+w.ja},geometry:{type:'Point',coordinates:[w.lng,w.lat]}}));
+function ptsFC(){const f=WORKS.map(w=>({type:'Feature',id:w.no,properties:{kind:'work',no:w.no,label:'#'+w.no+' '+w.ja},geometry:{type:'Point',coordinates:[w.lng,w.lat]}}));
   f.push({type:'Feature',properties:{kind:'fuji',label:'富士山'},geometry:{type:'Point',coordinates:[FUJI.lng,FUJI.lat]}});
   residences.forEach(r=>f.push({type:'Feature',properties:{kind:'res',label:r.title},geometry:{type:'Point',coordinates:[r.lng,r.lat]}}));
+  // 北斎本人の地点（都市代表点/滞在制作/制作地点）＝FOCUS基調色cyanで統一。46図viewpoint(coral)とは kind/色/意味を分ける。
+  // feature.id に lpid を与え、選択時に feature-state で「semantic色を保ったまま」ring強調（別ラベルは足さない）。
+  lifePlaces.filter(lp=>['principal_activity_place','stay_and_work','work_site'].includes(lp.type)).forEach(lp=>
+    f.push({type:'Feature',id:lp.id,properties:{kind:lp.type==='work_site'?'worksite':'stay',lpid:lp.id,label:lp.name.split('｜')[0]},geometry:{type:'Point',coordinates:[lp.lng,lp.lat]}}));
   return {type:'FeatureCollection',features:f};}
 function travelFC(){return {type:'FeatureCollection',features:travels.map(t=>({type:'Feature',properties:{title:t.title,certainty:t.routeCertainty},
   geometry:{type:'LineString',coordinates:[[t.from.lng,t.from.lat],[t.to.lng,t.to.lat]]}}))};}
@@ -468,10 +664,42 @@ function coneFC(){const s=State.selection;if(s.type!=='work'||s.id==null)return 
     {type:'Feature',properties:{col:'#7cb3ff'},geometry:{type:'LineString',coordinates:gc(w,w.farR,14).map(p=>[p.lng,p.lat])}}];
   if(showAxis)fs.push({type:'Feature',properties:{col:'#ffd36a'},geometry:{type:'LineString',coordinates:gc(w,FUJI,20).map(p=>[p.lng,p.lat])}});
   return {type:'FeatureCollection',features:fs};}
+// NOW時のみ、確認済み国内所蔵館をJAPANに表示（推測はしない）。作品未選択時の全館表示ルールは今後の別工程で整理。
+function jholdFC(){ if(!State.nowMode) return emptyFC();
+  return {type:'FeatureCollection',features:holdingsFor().map(h=> // 作品選択時は works[] 該当館のみ（holdingsForで絞る）
+    ({type:'Feature',properties:{hid:h.id,label:h.institution},geometry:{type:'Point',coordinates:[h.lng,h.lat]}}))}; }
 function renderJapan(){ if(!mapReady)return; map.getSource('cone').setData(coneFC()); // Representation(コーン)描画のみ。カメラは触らない
+  if(map.getSource('jhold'))map.getSource('jhold').setData(jholdFC()); // NOW=国内所蔵館point（gray）
+  applyNowLayering(); // NOW時は行路(cyan)・46図点を沈め、美術館pointを最前面に
   const sel=(State.selection.type==='work'&&State.selection.id!=null)?State.selection.id:-1; // 選択作品ラベルの出し分け
   if(map.getLayer('ptsLsel'))map.setFilter('ptsLsel',['==',['get','no'],sel]);
-  if(map.getLayer('ptsL'))map.setFilter('ptsL',['!=',['get','no'],sel]); }
+  if(map.getLayer('ptsL'))map.setFilter('ptsL',['!=',['get','no'],sel]);
+  // 選択地点(work=no / lifeplace=lpid)だけを feature-state で強調（semantic色は保持しringで示す）
+  const nsel = State.selection.type==='work' ? State.selection.id
+             : State.selection.type==='lifeplace' ? State.selection.id : null;
+  if(japanSelId!==nsel){ if(japanSelId!=null)map.setFeatureState({source:'pts',id:japanSelId},{selected:false});
+    japanSelId=nsel; if(nsel!=null)map.setFeatureState({source:'pts',id:nsel},{selected:true}); } }
+// NOW時のJAPAN階層制御: 行路(cyan)と46図/地点点を沈め、確認済み美術館pointを最前面へ。
+// 重要: 通常表示(NOW OFF)では paint を一切触らない。NOWのON→OFF切替の瞬間だけ「減光適用／原状復帰」を行う（nowDimApplied で管理）。
+let nowDimApplied=false;
+function applyNowLayering(){ if(!mapReady)return; const now=State.nowMode;
+  if(now===nowDimApplied) return; // 状態が変わっていなければ何もしない＝通常表示は元の addLayer 値のまま
+  if(now){ // NOW ON: 減光を適用。46図(work)は少し濃く残し(0.30)、北斎の住所/滞在/制作地(cyan系)と行路は薄く(0.14)。
+    const nowCircleOp=['match',['get','kind'],'fuji',0,'work',0.30,0.14];
+    if(map.getLayer('travelLine')) map.setPaintProperty('travelLine','line-opacity',0.14);
+    if(map.getLayer('ptsC')){ map.setPaintProperty('ptsC','circle-opacity',nowCircleOp);
+      map.setPaintProperty('ptsC','circle-stroke-opacity',nowCircleOp); }
+    if(map.getLayer('coneLine')) map.setPaintProperty('coneLine','line-opacity',0.12);
+    ['ptsL','ptsLsel'].forEach(id=>{ if(map.getLayer(id)) map.setPaintProperty(id,'text-opacity',0.28); });
+    ['jholdC','jholdL'].forEach(id=>{ if(map.getLayer(id)) map.moveLayer(id); }); // 美術館point/labelを最前面へ
+  } else { // NOW OFF: 元の値へ原状復帰
+    if(map.getLayer('travelLine')) map.setPaintProperty('travelLine','line-opacity',0.5);
+    if(map.getLayer('ptsC')){ map.setPaintProperty('ptsC','circle-opacity',PTS_OP_NORMAL);
+      map.setPaintProperty('ptsC','circle-stroke-opacity',PTS_STROKE_OP_NORMAL); }
+    if(map.getLayer('coneLine')) map.setPaintProperty('coneLine','line-opacity',['case',['==',['get','col'],'#ffd36a'],REPRESENTATION_STYLE.boundary.axisOpacity,REPRESENTATION_STYLE.boundary.opacity]);
+    ['ptsL','ptsLsel'].forEach(id=>{ if(map.getLayer(id)) map.setPaintProperty(id,'text-opacity',1); });
+  }
+  nowDimApplied=now; }
 
 // ---------- WORLD⇄JAPAN scale toggle ----------
 function sz(){return {w:window.innerWidth,h:window.innerHeight};}
@@ -527,40 +755,70 @@ LIFE_SHOWN.forEach(ev=>{const d=document.createElement('div');d.className='chron
 // ---------- 左下パネルの意味切替（JAPAN=WORKS / WORLD=時間・NOWで CONTEMPORARIES→RECEPTION→HOLDINGS）----------
 const leftSecTitle=document.getElementById('leftSecTitle'), worksListEl=document.getElementById('worksList'), worldInfoList=document.getElementById('worldInfoList');
 const DIED=focusPersonBar.death; let lastLeftMode=null;
-function leftMode(){ if(State.spaceView==='JAPAN')return 'WORKS'; if(State.nowMode)return 'HOLDINGS';
+function leftMode(){ if(State.nowMode)return 'HOLDINGS'; if(State.spaceView==='JAPAN')return 'WORKS'; // NOW優先＝JAPANでも左下枠をHOLDINGSへ（新パネルを増やさない）
   return State.timeCursor<=DIED ? 'CONTEMPORARIES' : 'RECEPTION'; }
 function showWorldCard(p,type,src){ showCard({ tag:type==='worldart'?'WORLD ART ／ 同時代':'RECEPTION ／ 受容',
   title:p.name, sub:p.birth+'–'+p.death+' ／ '+p.country+(p.place?' ・ 主な活動地 '+p.place.name:''),
   body:(p.summary||'')+(p.note?'\n\n'+p.note:'')+(p.workLink?'\n\n作品対応: '+p.workLink.from+' → '+p.workLink.to:''),
-  rel:'区分: '+p.classification }, src); }
+  rel:'区分: '+p.classification, accent:type==='worldart'?'var(--c-worldart)':'var(--c-reception)' }, src); } // 外部人物＝off-white系（tagで同時代/受容を区別）
+// 人物史地点(lifePlaces)のDetail Card。クリック=カード（camera静止）／「地点を見る」ボタン=camera移動。46図の描画視点とは別category。
+// 同一Entityを Scale で出し分ける: WORLD=人生上の意味（compact） / JAPAN=具体地点・史料・確度（detailed）。データは共有。
+function showLifePlaceCard(lp,src){ const c=lp.card||{}; const world=State.spaceView==='WORLD';
+  const place=lp.name.split('｜')[0]; const kl=c.kindLabel||'人物史地点';
+  const btn={ label:'地点を見る（'+(LIFE_PLACE_LABEL[lp.id]||lp.nameEn||place)+'）', onClick:()=>focusPlace(lp.lat,lp.lng) };
+  if(world){ showCard({ tag:'HOKUSAI LIFE PLACE', title:place, sub:(c.years?c.years+'｜':'')+kl, body:c.world||'', action:btn, accent:'var(--c-focus)' }, src); }
+  else { showCard({ tag:'HOKUSAI LIFE PLACE ／ '+kl, title:lp.name, sub:(c.years?c.years+'｜':'')+kl,
+    body:(c.lines||[]).map(s=>'・'+s).join('\n'), rel:c.note?'※'+c.note:'', action:btn, accent:'var(--c-focus)' }, src); } } // LIFE PLACE=FOCUS cyan
 function showHoldingCard(h,src){ const ev=(h.events||[]).map(e=>(e.year!=null?e.year+' ':'')+e.text).join(' ／ ');
   showCard({ tag:'HOLDINGS ／ 現在所蔵', title:h.institution, sub:h.city+' ／ '+h.country+' ・ 重要度 '+h.importance,
     body:'CURRENT HOLDING（現在所蔵）: '+(h.summary||'')+(h.formerOwner?'\n\n旧蔵: '+h.formerOwner:'')+(ev?'\n\n代表取得: '+ev:'')+'\n\n情報確認: 2026年',
-    rel:'※人物関係ではない（P-LINKと別系統）／WHERE NOW' }, src); }
+    rel:'※人物関係ではない（P-LINKと別系統）／WHERE NOW', accent:'var(--c-holdings)' }, src); } // HOLDINGS=gray
 function renderWorldPersons(list,type){ worldInfoList.innerHTML='';
   list.forEach(p=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=p.id;
     d.innerHTML='<div class="nm">'+p.name+'</div><div class="meta">'+p.birth+'–'+p.death+' / '+p.country+'</div><div class="cls">'+p.classification+'</div>'+
       (p.place?'<div><button class="wi-see">地点を見る（'+p.place.name+'）</button></div>':'');
     d.onclick=()=>{ setSel(type,p.id); showWorldCard(p,type,d); };  // 人物名クリック=知る（選択+カードのみ。camera/marker/labelは変えない）
     const b=d.querySelector('.wi-see'); if(b)b.onclick=(e)=>{e.stopPropagation(); // 地点を見る=場所を見る（activePlace+marker+label+camera一括更新、カード維持）
-      goToPlace({lat:p.place.lat,lng:p.place.lng,name:p.place.name,color:type==='worldart'?'#57c9c0':'#e5a93c',refType:type,refId:p.id}); };
+      goToPlace({lat:p.place.lat,lng:p.place.lng,name:p.place.name,color:type==='worldart'?OS_COLORS.worldart:OS_COLORS.reception,refType:type,refId:p.id}); }; // 外部人物＝off-white系
     worldInfoList.appendChild(d);}); }
+// 選択作品×館の verified impression（整理番号・摺原文）。無ければnull。原文は強めず表示。
+function impFor(workNo,instId){ return impressionHoldings.find(i=>i.workNo===workNo && i.institutionId===instId) || null; }
+function impLine(h){ const s=State.selection; if(s.type!=='work'||s.id==null) return ''; const im=impFor(s.id,h.id); if(!im) return '';
+  const acc=im.accession&&im.accession.length?'整理番号 '+im.accession.join(' / '):''; const ps=im.printStateRaw?'摺「'+im.printStateRaw+'」':'';
+  const own=im.ownershipStatus==='deposited'?'寄託':(im.ownershipStatus==='owned'?'所蔵':im.ownershipStatus);
+  return [own,acc,ps].filter(Boolean).join(' ・ '); }
+function holdingsFor(){ const base = State.spaceView==='JAPAN' ? holdings.filter(h=>h.country==='Japan') : holdings; // JAPAN=国内 / WORLD=国内外
+  const s=State.selection;
+  if(s.type==='work'&&s.id!=null) return base.filter(h=>(h.works||[]).includes(s.id)); // 作品選択時＝その作品の所蔵が公式確認できた館のみ（institution-levelでは絞らない）
+  return base; }
+function holdingSee(h){ if(State.spaceView==='JAPAN') focusPlace(h.lat,h.lng,{zoom:12}); // 美術館は少し近寄る（名前が読める高度まで）
+  else goToPlace({lat:h.lat,lng:h.lng,name:h.city,color:OS_COLORS.holdings,refType:'holding',refId:h.id,altitude:0.32}); }
 function renderHoldings(){ worldInfoList.innerHTML='';
-  holdings.forEach(h=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=h.id;
+  const list=holdingsFor();
+  if(State.selection.type==='work'){ const bd=document.createElement('div'); bd.className='wi-item'; bd.style.cursor='pointer'; // 作品絞り込みを解除して全館へ
+    bd.innerHTML='<div class="nm" style="color:var(--c-holdings-br);font-size:12px">← 美術館一覧にもどる（作品の絞り込みを解除）</div>'; bd.onclick=()=>setSel(null,null); worldInfoList.appendChild(bd); }
+  if(!list.length){ const m=document.createElement('div'); m.className='wi-item'; m.style.cssText='color:var(--sub);font-size:12px;cursor:default';
+    m.innerHTML='この図の所蔵情報は現在調査・登録中です。<br><span style="color:var(--dim);font-size:10.5px">「未登録」＝所蔵不明ではありません。</span>'; worldInfoList.appendChild(m); return; }
+  list.forEach(h=>{const d=document.createElement('div');d.className='wi-item';d.dataset.wid=h.id;
     const yrs=(h.events||[]).map(e=>e.year).filter(Boolean);
-    d.innerHTML='<div class="nm">'+h.institution+'</div><div class="meta">'+h.city+' / '+h.country+'</div>'+
+    const workSel=State.selection.type==='work'&&State.selection.id!=null;
+    const series=h.seriesComplete?'<div class="cls" style="color:var(--c-holdings-br)">冨嶽三十六景 全46図所蔵（series確認）'+(workSel?'・この図もpresence成立':'')+'</div>':'';
+    const impl=(!h.seriesComplete&&workSel)?impLine(h):''; const imp=impl?'<div class="cls" style="color:var(--graybr)">'+impl+'</div>':'';
+    d.innerHTML='<div class="nm">'+h.institution+'</div><div class="meta">'+h.city+' / '+h.country+'</div>'+series+imp+
       '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 代表取得 '+yrs.join('/'):'')+'</div>'+
       '<div><button class="wi-see">地点を見る（'+h.city+'）</button></div>';
     d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h,d); };
-    d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation();goToPlace({lat:h.lat,lng:h.lng,name:h.city,color:'#66e0ff',refType:'holding',refId:h.id});};
+    d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation(); holdingSee(h); }; // HOLDINGS=gray
     worldInfoList.appendChild(d);}); }
-function renderLeftBottom(force){ const m=leftMode(); if(m===lastLeftMode&&!force)return; lastLeftMode=m;
+function renderLeftBottom(force){ const m=leftMode(); const selW=(m==='HOLDINGS'&&State.selection.type==='work')?State.selection.id:''; const key=m+'|'+State.spaceView+'|'+selW; if(key===lastLeftMode&&!force)return; lastLeftMode=key; // 空間変更/作品選択(HOLDINGS)でも再描画
   State.activePlace=null; // モードが変わったら「地点を見る」の地点ラベルは解除
-  if(m==='WORKS'){ worksListEl.hidden=false; worldInfoList.hidden=true; leftSecTitle.innerHTML='Works<span class="series">冨嶽三十六景（代表6図）</span>'; return; }
+  if(m==='WORKS'){ worksListEl.hidden=false; worldInfoList.hidden=true; leftSecTitle.innerHTML='Works<span class="series">冨嶽三十六景</span>'; return; }
   worksListEl.hidden=true; worldInfoList.hidden=false;
   if(m==='CONTEMPORARIES'){ leftSecTitle.innerHTML='World Art<span class="series">同時代の画家</span>'; renderWorldPersons(worldArt,'worldart'); }
   else if(m==='RECEPTION'){ leftSecTitle.innerHTML='Reception<span class="series">北斎を受け取った世界（没後）</span>'; renderWorldPersons(reception,'reception'); }
-  else { leftSecTitle.innerHTML='Holdings<span class="series">現在の主な海外所蔵</span>'; renderHoldings(); } }
+  else { const wsel=State.selection.type==='work'&&State.selection.id!=null?workByNo(State.selection.id):null; // 作品選択時はその作品の所蔵に絞る旨を見出しに
+    const sub=(wsel?('#'+wsel.no+' '+wsel.ja+' の所蔵'):'現在の主な所蔵')+'（'+(State.spaceView==='JAPAN'?'国内':'国内外')+'）';
+    leftSecTitle.innerHTML='Holdings<span class="series">'+sub+'</span>'; renderHoldings(); } }
 
 // ---------- P-LINK（人物関係）: 折りたたみ・現在年代に関連する人物を優先 ----------
 const plinkList=document.getElementById('plinkList');
@@ -588,7 +846,7 @@ const tl=document.getElementById('tl'); const SVGNS='http://www.w3.org/2000/svg'
 const LANES=[{key:'life', y:22,color:'#66e0ff',data:()=>LIFE_PRIMARY.map(e=>({year:e.year,label:e.title,id:e.id,type:'life'}))},
   {key:'works',y:50,color:'#ff6b5c',data:()=>WORKS.map(w=>({year:w.year,label:w.ja,id:w.no,type:'work'}))},
   {key:'world',y:63,color:'#E69445',data:()=>worldEventsJP.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))},
-  {key:'wlink',y:74,color:'#c79bff',data:()=>wlinkEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))}];
+  {key:'wlink',y:74,color:OS_COLORS.context,data:()=>wlinkEvents.map(e=>({year:e.year,label:e.title,id:e.id,type:'event'}))}]; // W-LINK=中性slate（violetはP-LINK専用に予約）
 const laneLabel={works:'作',world:'国内',wlink:'世界'};
 const ARTTECH_Y=87, ARTTECH_COL='#4fd0b8';
 function tlW(){return tl.clientWidth||900;}
@@ -597,11 +855,12 @@ function yearAt(px){const v=State.timeViewport;return v.from+px/tlW()*(v.to-v.fr
 function drawTL(){
   const W=tlW(),v=State.timeViewport, cl=x=>Math.max(0,Math.min(W,x));
   // 比較人物バー: P-LINK(関係) / WORLD ART(同時代) / RECEPTION(受容) を同一time軸で。系統は色・タグで区別。
-  const sType=State.selection.type; let person=null,pColor='#c79bff',pTag='';
-  if(sType==='person'){ person=personLinks.find(p=>p.id===State.selection.id); pColor='#c79bff'; }
-  else if(sType==='worldart'){ person=worldPersonById(State.selection.id); pColor='#57c9c0'; pTag='WORLD ART（同時代比較）'; }
-  else if(sType==='reception'){ person=worldPersonById(State.selection.id); pColor='#e5a93c'; pTag='RECEPTION（受容・没後）'; }
-  const H=person?124:106, gridBottom=person?112:94;
+  const sType=State.selection.type; let person=null,pColor=OS_COLORS.relation,pTag='';
+  if(sType==='person'){ person=personLinks.find(p=>p.id===State.selection.id); pColor=OS_COLORS.relation; }   // P-LINK=violet
+  else if(sType==='worldart'){ person=worldPersonById(State.selection.id); pColor=OS_COLORS.worldart; pTag='WORLD ART（同時代比較）'; } // off-white
+  else if(sType==='reception'){ person=worldPersonById(State.selection.id); pColor=OS_COLORS.reception; pTag='RECEPTION（受容・没後）'; } // off-white系
+  const compact = window.innerWidth<=640 && !State.tlExpanded; // モバイルは簡易表示（主バー＋現在位置のみ・レーンは展開時）
+  const H=compact?40:(person?124:106), gridBottom=compact?28:(person?112:94);
   tl.style.height=H+'px'; tl.setAttribute('viewBox','0 0 '+W+' '+H); tl.innerHTML='';
   const step = (v.to-v.from)>140?50:(v.to-v.from)>60?20:10;
   for(let yr=Math.ceil(v.from/step)*step; yr<=v.to; yr+=step){const x=xOf(yr);
@@ -611,6 +870,9 @@ function drawTL(){
   add('line',{x1:cl(xOf(focusPersonBar.birth)),y1:22,x2:cl(xOf(focusPersonBar.death)),y2:22,
     stroke:'#66e0ff','stroke-width':4,'stroke-linecap':'round','stroke-opacity':.55});
   add('text',{x:2,y:15,fill:'#9becff','font-size':9,'font-family':'sans-serif'},'北斎 '+focusPersonBar.birth+'–'+focusPersonBar.death);
+  if(compact){ const cxm=xOf(State.timeCursor); // モバイル簡易：主バー＋現在位置のみ（レーン/比較バーは展開時に表示）
+    add('line',{x1:cxm,y1:2,x2:cxm,y2:gridBottom,stroke:'#ffffff','stroke-width':1.4,'stroke-opacity':.85});
+    add('polygon',{points:(cxm-4)+',2 '+(cxm+4)+',2 '+cxm+',9',fill:'#fff'}); return; }
   // 画号 identity phase（主バーに薄く重ねる）
   gagoPhases.forEach(g=>{const x1=xOf(Math.max(g.from,v.from)),x2=xOf(Math.min(g.to,v.to));if(x2<0||x1>W)return;
     add('rect',{x:x1,y:27,width:Math.max(0,x2-x1),height:4,fill:'rgba(102,224,255,.18)'});
@@ -629,7 +891,7 @@ function drawTL(){
     d.setAttribute('transform','rotate(45 '+x+' '+ARTTECH_Y+')');
     d.setAttribute('fill',ARTTECH_COL);d.setAttribute('stroke','#050c16');d.setAttribute('stroke-width',1);d.setAttribute('style','cursor:pointer');
     // pointerdown＋stopPropagationで、背景のcursor/pan処理(=SVG再描画で◆が消える)を止めてから発火
-    d.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();showCard({tag:a.category,title:a.title,sub:String(a.year),body:a.desc,rel:a.related});setCursor(a.year);});
+    d.addEventListener('pointerdown',ev=>{ev.stopPropagation();ev.preventDefault();showCard({tag:a.category,title:a.title,sub:String(a.year),body:a.desc,rel:a.related,accent:'var(--c-arttech)'});setCursor(a.year);}); // ART/TECH=teal（この色は他カードへ流用しない）
     tl.appendChild(d);});
   // 比較人物バー（同一time軸・自動fitしない）。P-LINKは関係期間サブバー、WORLD ART/RECEPTIONは系統タグ。
   if(person){ const py=100;
@@ -637,8 +899,8 @@ function drawTL(){
     add('text',{x:2,y:py-6,fill:pColor,'font-size':9,'font-family':'sans-serif'},
       person.name+' '+(person.birthApprox?'c.':'')+person.birth+'–'+(person.deathApprox?'c.':'')+person.death+(pTag?'　'+pTag:''));
     if(sType==='person'&&person.relationFrom!=null){ add('line',{x1:cl(xOf(person.relationFrom)),y1:py+5,x2:cl(xOf(person.relationTo)),y2:py+5,
-        stroke:'#ffd36a','stroke-width':2.4,'stroke-linecap':'round','stroke-opacity':.85});
-      add('text',{x:cl(xOf(person.relationTo))+4,y:py+8,fill:'#caa85e','font-size':7.5,'font-family':'sans-serif'},'関係('+person.relationType+')'); }
+        stroke:OS_COLORS.relationBr||'#e0ccff','stroke-width':2.4,'stroke-linecap':'round','stroke-opacity':.85}); // 関係期間の強調もviolet系（goldにしない）
+      add('text',{x:cl(xOf(person.relationTo))+4,y:py+8,fill:OS_COLORS.relation,'font-size':7.5,'font-family':'sans-serif'},'関係('+person.relationType+')'); }
     if(sType==='person'&&person.keyWork){const kx=xOf(person.keyWork.year);if(kx>=-4&&kx<=W+4){
       add('circle',{cx:kx,cy:py,r:3.2,fill:'#ff6b5c',stroke:'#050c16','stroke-width':1});
       add('text',{x:kx+5,y:py-4,fill:'#f0b578','font-size':7.5,'font-family':'sans-serif'},person.keyWork.year+' '+person.keyWork.label);}}
@@ -667,24 +929,27 @@ function zoom(f){const v=State.timeViewport,c=State.timeCursor,span=(v.to-v.from
 document.getElementById('zoomIn').onclick=()=>zoom(0.6);
 document.getElementById('zoomOut').onclick=()=>zoom(1/0.6);
 // NOW: 現在所蔵(HOLDINGS)状態のトグル。WORLD表示に切替え、左下=HOLDINGS・地球儀に所蔵分布を出す。
+// ── NOW仕様（設計前提）── NOWは time/current-mode の切替であって SPACE切替でも camera移動でもない。原則: nowMode ≠ spaceView, nowMode ≠ camera。
+//   JAPANでNOW→JAPANのまま／WORLDでNOW→WORLDのまま。押しただけでは spaceView を変えず・WORLDへ強制移動せず・cameraを強制で引かない。
+//   ↓現状は旧挙動（NOW=WORLDへ強制切替＋大西洋へfly）。実変更はM4で行う（M2/M3ではこの結合を新規に増やさないこと）。
 document.getElementById('nowBtn').onclick=(e)=>{ State.nowMode=!State.nowMode; e.currentTarget.classList.toggle('on',State.nowMode);
-  if(State.nowMode && State.spaceView!=='WORLD'){ [...document.querySelectorAll('#spaceSeg button')].forEach(x=>x.classList.toggle('on',x.dataset.v==='WORLD'));
-    State.spaceView='WORLD'; document.getElementById('globeViz').hidden=false; document.getElementById('japanMap').hidden=true;
-    document.getElementById('attrib').textContent='地球: NASA Blue Marble'; const s=sz(); world.width(s.w).height(s.h); }
-  renderWorld(); if(State.nowMode){ world.controls().autoRotate=false; world.pointOfView({lat:42,lng:-25,altitude:2.15},900); } // 大西洋中心＝欧州+米州の所蔵を俯瞰
-  renderLeftBottom(true); emit(); };
+  // NOW = time/current-mode の切替のみ。spaceView も camera も変えない（JAPANはJAPANのまま／WORLDはWORLDのまま）。原則: nowMode ≠ spaceView, nowMode ≠ camera。
+  renderWorld(); if(mapReady)renderJapan(); renderLeftBottom(true); emit(); };
 function eraLabel(y){ if(y>=1831&&y<=1833)return '富嶽三十六景 刊行期'; const g=gagoAt(y); return g+' 期'; }
 function syncTimeLabels(){
   if(State.nowMode){ // NOW=現在モード。historical年を主表示しない（内部にtimeCursorは保持し、解除で復帰）
     document.getElementById('tlYear').textContent='NOW';
-    document.getElementById('tlEra').textContent='現在の海外所蔵（情報確認 2026年）'; return; }
+    document.getElementById('tlEra').textContent='現在の主な所蔵（国内外・情報確認 2026年）'; return; }
   document.getElementById('tlYear').textContent=State.timeCursor;
   document.getElementById('tlEra').textContent=eraLabel(State.timeCursor);}
 
 // ---------- lightbox ----------
-const lb=document.getElementById('lb'),lbImg=lb.querySelector('img');
-function openLB(w){lbImg.src=thumb(w.file,1400);lb.classList.add('open');}
-lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';});
+const lb=document.getElementById('lb'),lbImg=lb.querySelector('img'),lbHint=document.getElementById('lbHint');
+// lightbox open/close は selection / timeCursor / camera / sheet を一切変更しない（画像の表示のみ）。
+function openLB(w){lbImg.src=thumb(w.file,1400);lb.classList.add('open');
+  if(window.innerWidth<=640){ let seen=false; try{seen=localStorage.getItem('lbHintSeen')==='1';}catch(e){} // 初回のみ小さく補助表示
+    if(!seen){ lbHint.hidden=false; try{localStorage.setItem('lbHintSeen','1');}catch(e){} setTimeout(()=>{lbHint.hidden=true;},3800); } } }
+lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';lbHint.hidden=true;}); // 閉じる=元のsheetへそのまま戻る（選択は保持）
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('open');document.getElementById('detailCard').hidden=true;}});
 
 // ---------- 詳細カード（共通）：呼び出し元近くに出し（source-aware）中央SPACEを塞がない。ドラッグ可 ----------
@@ -694,12 +959,16 @@ function positionCard(src){ const c=detailCard, cw=c.offsetWidth||320, ch=c.offs
   else if(src&&typeof src.x==='number'){ x=src.x+M; y=src.y+M; }                                                         // 地図クリック座標の近く
   else { x=24; y=120; }                                                                                                    // 既定=左側（中央を避ける）
   x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(M,Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; }        // 画面端でflip/clamp
-function showCard({tag,title,sub,body,rel},src){
+function showCard({tag,title,sub,body,rel,action,accent},src){
+  const ac=accent||'var(--c-focus)'; // カード左端＋タグ色＝分類色（未指定はfocus cyan）。分類別にして「どの情報か」を一目で示す。
+  detailCard.style.borderLeftColor=ac; document.getElementById('dcTag').style.color=ac;
   document.getElementById('dcTag').textContent=tag||'';
   document.getElementById('dcTitle').textContent=title||'';
   document.getElementById('dcSub').textContent=sub||'';
   document.getElementById('dcBody').textContent=body||'';
   const relEl=document.getElementById('dcRel'); if(rel){relEl.hidden=false;relEl.textContent=(String(rel).startsWith('※')||String(rel).startsWith('区分'))?rel:'関連: '+rel;}else relEl.hidden=true;
+  const actEl=document.getElementById('dcAct'); // 任意アクション（例: 「地点を見る」=camera移動。selection≠cameraを保つ）
+  if(action&&action.label){ actEl.hidden=false; actEl.textContent=action.label; actEl.onclick=(e)=>{e.stopPropagation(); action.onClick&&action.onClick(); }; } else { actEl.hidden=true; actEl.onclick=null; }
   detailCard.hidden=false; positionCard(src);
 }
 document.getElementById('dcClose').onclick=()=>{detailCard.hidden=true;};
@@ -713,7 +982,7 @@ document.getElementById('dcClose').addEventListener('pointerdown',e=>e.stopPropa
 })();
 // 「名前について」= 本姓/養家/確定しない旨を詳細カードへ（人物ヘッダーには常設しない）
 document.getElementById('nameInfo').onclick=()=>showCard({tag:'NAME / 名前について',title:'葛飾北斎 の名',
-  sub:'本姓・養家・幼名・画号', body:nameMeta.line+'\n\n'+nameMeta.note, rel:nameMeta.sources.join(' / ')});
+  sub:'本姓・養家・幼名・画号', body:nameMeta.line+'\n\n'+nameMeta.note, rel:nameMeta.sources.join(' / '), accent:'var(--c-focus)'}); // 本人＝FOCUS cyan
 
 // ---------- LIFE年譜: timeCursorと独立scroll（最寄りhighlightのみ・自動連続scrollしない）----------
 const focusPanelEl=document.getElementById('focusPanel');
@@ -776,7 +1045,89 @@ on(()=>{ if(State.selection.type==='work'){ if(State.selection.id!==lastWorkScro
 on(()=>{ renderWorld(); if(mapReady)renderJapan(); drawTL(); renderLeftBottom(); }); // 左下は年代がDIED境界を跨ぐと自動でCONTEMPORARIES↔RECEPTION
 
 // init
+// ---------- モバイル：文脈連動 bottom sheet（M2=WORK）。sheet state と selection state は分離。 ----------
+const mSheet=document.getElementById('mSheet'), msLead=document.getElementById('msLead'), msCnt=document.getElementById('msCnt'), msBody=document.getElementById('msBody');
+let mSheetSelSig=null; // 直近で自動展開した選択signature（同一選択では再展開しない＝手動で閉じた状態を尊重）
+function workSheetHTML(w){ const coords=w.lat.toFixed(3)+', '+w.lng.toFixed(3); // 優先順: 名→画像→年代→視点→富士との関係→METHOD導線
+  return '<img class="ws-img" src="'+thumb(w.file,420)+'" alt="'+w.ja+'">'
+    +'<div class="ws-row"><span class="lab">制作</span><span class="val">冨嶽三十六景 刊行期 <span class="mono">1831前後</span></span></div>'
+    +'<div class="ws-row"><span class="lab">視点</span><span class="val">'+(w.vpName||'—')+'<br><span class="mono">'+coords+'</span></span></div>'
+    +'<div class="ws-row"><span class="lab">富士</span><span class="val">富士まで <span class="mono">'+w.dist+'km</span> ／ 方位 <span class="mono">'+w.brg+'°</span></span></div>'
+    +'<button class="ws-method" id="wsMethod">METHOD ／ 視点と構図の根拠 ▾</button>'
+    +'<div class="ws-detail" id="wsDetail" hidden>扇中心 '+w.ccb+'° ／ 開口 ±'+w.half+'°'
+      +(w.anchorX!=null?' ／ 富士は開口の '+Math.round(w.anchorX*100)+'%位置（x='+w.anchorX+'）':'')
+      +'<br>※画角コーンは現行Representation幅で、作品の実画角確定ではない（暫定v3）。距離で可視判定はしない。</div>';
+}
+// LIFE年譜：選択イベントを中心に、前後の年譜を辿れる（留保表現・timeCursor同期は既存仕様のまま）。
+function lifeSheetHTML(selId){ return LIFE_SHOWN.map(ev=>{
+  const yl=(ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year;
+  const on=ev.id===selId;
+  const cert=(ev.certainty!=='stated'&&ev.certaintyRaw)?'<span class="ls-cert">'+ev.certaintyRaw+'</span>':'';
+  return '<div class="ls-item'+(on?' on':'')+'" data-lid="'+ev.id+'" data-ly="'+ev.year+'">'
+    +'<span class="ls-yr">'+yl+'</span><span class="ls-t">'+ev.title+cert
+    +((on&&ev.summary)?'<span class="ls-desc">'+ev.summary+'</span>':'')+'</span></div>';
+}).join(''); }
+// HOLDINGS（現在所蔵）：JAPAN=国内 / WORLD=国内外。選択で詳細をインライン展開。確認済みデータのみ。
+function holdingListHTML(selH){ const list=holdingsFor();
+  const back = (State.selection.type==='work') ? '<button class="hl-see" id="hlAll" style="margin:2px 0 10px;display:block;width:100%;text-align:left">← 美術館一覧にもどる（作品の絞り込みを解除）</button>' : '';
+  if(!list.length) return back+'<div class="hl-detail">この図の所蔵情報は現在調査・登録中です。<br><span style="color:var(--dim)">「未登録」＝所蔵不明ではありません。</span></div>';
+  return back+list.map(h=>{ const on=h.id===selH;
+  const ev=(h.events||[]).map(e=>(e.year!=null?e.year+' ':'')+e.text).join(' ／ ');
+  const workSel=State.selection.type==='work'&&State.selection.id!=null;
+  const series=h.seriesComplete?'<div class="hl-meta" style="color:var(--c-holdings-br)">冨嶽三十六景 全46図所蔵（series確認）'+(workSel?'・この図もpresence成立':'')+'</div>':'';
+  const imp=(!h.seriesComplete&&workSel)?(function(){const l=impLine(h);return l?'<div class="hl-meta" style="color:var(--graybr)">'+l+'</div>':'';})():'';
+  return '<div class="hl-item'+(on?' on':'')+'" data-hid="'+h.id+'">'
+    +'<div class="hl-nm">'+h.institution+'</div><div class="hl-meta">'+h.city+' / '+h.country+' ・ 重要度 '+h.importance+'</div>'+series+imp
+    +(on?'<div class="hl-detail">'+(h.summary||'')+(ev?'<br>代表取得: '+ev:'')+'<br><span style="color:var(--dim)">情報確認: 2026年</span></div>':'')
+    +'<button class="hl-see" data-see="'+h.id+'">地点を見る（'+h.city+'）</button></div>'; }).join(''); }
+// compact Timeline をシート高の直上へ置く（MAP→Timeline→sheet の積層。重ならない）。PCではCSS既定に戻す。
+function syncMobileTL(){ const tlb=document.getElementById('timelineBar'); if(!tlb)return;
+  if(window.innerWidth>640){ tlb.style.bottom=''; return; }
+  tlb.style.bottom=(mSheet.getBoundingClientRect().height+8)+'px'; } // 同期設定（rAFはpane非表示時に発火しないため使わない）
+const sheetHasContent=()=> State.nowMode || ['work','life','holding'].includes(State.selection.type); // シートを開ける文脈（NOW=HOLDINGS / work / life / holding）
+function renderMobileSheet(){ if(window.innerWidth>640)return; // PCは無関係（≥641pxではsheet非表示）
+  const s=State.selection; const sig=(s.type||'')+':'+(s.id==null?'':s.id)+(State.nowMode?'|now':'');
+  if(State.nowMode){ // NOW = 現在所蔵（HOLDINGS一覧・選択で詳細インライン）。JAPAN=国内 / WORLD=国内外。NOWはspaceView/cameraを変えない。
+    mSheet.dataset.kind='holding'; const jp=State.spaceView==='JAPAN';
+    const wsel=s.type==='work'&&s.id!=null?workByNo(s.id):null; // 作品選択時はその作品の所蔵に絞る
+    msLead.textContent= wsel ? ('#'+wsel.no+' '+wsel.ja+' の所蔵') : '現在の主な所蔵'; msCnt.textContent='HOLDINGS ／ '+(jp?'国内':'国内外');
+    const selH=s.type==='holding'?s.id:null;
+    msBody.innerHTML=holdingListHTML(selH);
+    msBody.querySelectorAll('.hl-item').forEach(el=>el.onclick=(e)=>{ if(e.target.closest('.hl-see'))return; setSel('holding',el.dataset.hid); });
+    msBody.querySelectorAll('.hl-see').forEach(el=>el.onclick=(e)=>{ e.stopPropagation(); if(el.id==='hlAll')return; const h=holdings.find(x=>x.id===el.dataset.see); if(h)holdingSee(h); }); // 地点を見る=明示的camera移動のみ
+    const allB=msBody.querySelector('#hlAll'); if(allB)allB.onclick=()=>setSel(null,null); // 作品の絞り込み解除＝全所蔵館へ戻る
+    const onEl=msBody.querySelector('.hl-item.on'); if(onEl)onEl.scrollIntoView({block:'center'});
+    if(mSheetSelSig!==sig){ mSheet.classList.remove('collapsed'); mSheetSelSig=sig; } // NOW開始/館選択で展開
+    syncMobileTL(); return;
+  }
+  mSheet.dataset.kind = (s.type==='work'||s.type==='life') ? s.type : ''; // 見出しを分類色に（CSS）
+  if(s.type==='work'&&s.id!=null){ const w=workByNo(s.id); if(!w)return;
+    msLead.textContent='#'+w.no+' '+w.ja; msCnt.textContent='WORK ／ 冨嶽三十六景';
+    msBody.innerHTML=workSheetHTML(w);
+    const mb=document.getElementById('wsMethod'), md=document.getElementById('wsDetail');
+    if(mb)mb.onclick=()=>{ md.hidden=!md.hidden; mb.textContent='METHOD ／ 視点と構図の根拠 '+(md.hidden?'▾':'▴'); syncMobileTL(); };
+    const img=msBody.querySelector('.ws-img'); if(img){ img.onload=syncMobileTL; img.onclick=()=>openLB(w); } // 画像タップ=既存lightboxで全画面拡大
+  } else if(s.type==='life'&&s.id!=null){ const ev=chronology.find(e=>e.id===s.id)||LIFE_SHOWN.find(e=>e.id===s.id);
+    const yl=ev?((ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year):'';
+    msLead.textContent=(yl!==''?yl+'　':'')+(ev?ev.title:''); msCnt.textContent='LIFE ／ 人物年譜';
+    msBody.innerHTML=lifeSheetHTML(s.id);
+    msBody.querySelectorAll('.ls-item').forEach(el=>el.onclick=()=>{ setCursor(+el.dataset.ly); setSel('life',el.dataset.lid); }); // 前後イベント=選択+cursor同期
+    const onEl=msBody.querySelector('.ls-item.on'); if(onEl)onEl.scrollIntoView({block:'center'}); // 選択を中心に
+  } else { mSheetSelSig=null; msLead.textContent='冨嶽三十六景'; msCnt.textContent='46図タップ ／ 年譜'; msBody.innerHTML=''; mSheet.classList.add('collapsed'); syncMobileTL(); return; }
+  if(mSheetSelSig!==sig){ mSheet.classList.remove('collapsed'); mSheetSelSig=sig; } // 新規選択で展開（同一選択なら現状維持＝閉じた状態を尊重）
+  syncMobileTL();
+}
+on(()=>renderMobileSheet()); // 選択変化に追従（sheet中身）。開閉自体は下のハンドラ（selectionは保持）
+document.getElementById('msGrip').onclick=()=>{ if(sheetHasContent()){ mSheet.classList.toggle('collapsed'); syncMobileTL(); } };
+document.getElementById('msHandle').onclick=(e)=>{ if(e.target.id==='msClose')return; if(mSheet.classList.contains('collapsed')&&sheetHasContent()){ mSheet.classList.remove('collapsed'); syncMobileTL(); } };
+document.getElementById('msClose').onclick=()=>{ mSheet.classList.add('collapsed'); syncMobileTL(); }; // 閉じる=畳むだけ（selectionは保持＝別地点/明示操作で解除）
+// 年譜(LIFE)入口：現在年の最寄りイベントを開く（timeCursor同期）。nowMode/spaceView/cameraは変えない。
+document.getElementById('lifeBtn').onclick=()=>{ const ev=nearestLife(State.timeCursor); if(ev){ setCursor(ev.year); setSel('life',ev.id); } };
+
 renderLeftBottom(true); syncTimeLabels(); drawTL(); emit();
-window.addEventListener('resize',()=>{drawTL(); if(State.spaceView==='WORLD'){const s=sz();world.width(s.w).height(s.h);} if(map)map.resize();});
+// モバイル初期状態（M1）：JAPAN・1831・地図主役。PCはWORLDのまま（初期spaceViewは変えない）。
+if(window.innerWidth<=640){ const jb=document.querySelector('#spaceSeg button[data-v="JAPAN"]'); if(jb)jb.click(); }
+window.addEventListener('resize',()=>{drawTL(); if(State.spaceView==='WORLD'){const s=sz();world.width(s.w).height(s.h);} if(map)map.resize(); syncMobileTL();});
+syncMobileTL(); // 初期位置合わせ
 </script>
 </body></html>
