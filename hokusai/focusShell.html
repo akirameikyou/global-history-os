@@ -72,6 +72,9 @@
   .wi-item .cls{font-size:9.5px;color:var(--dim);margin-top:2px}
   .wi-see{margin-top:6px;background:rgba(102,224,255,.12);border:1px solid rgba(102,224,255,.5);color:var(--cyan);border-radius:6px;padding:3px 9px;font-size:10.5px;cursor:pointer;font-family:inherit}
   .wi-see:hover{background:rgba(102,224,255,.22)}
+  .wi-acts{display:flex;flex-wrap:wrap;align-items:center;column-gap:10px}
+  .wi-link{display:inline-block;margin-top:6px;font-size:10.5px;color:var(--c-holdings-br);text-decoration:none;border-bottom:1px solid rgba(215,224,231,.35)} /* 公式サイト（外部・HOLDINGS=gray系） */
+  .wi-link:hover{color:#fff;border-bottom-color:#fff}
   .ev{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
   .ev:hover{background:rgba(230,148,69,.08)} .ev.sel{background:rgba(230,148,69,.12);border-left:2px solid var(--amber)}
   .ev-row{display:flex;gap:9px}
@@ -278,6 +281,7 @@
     .hl-item .hl-meta{font-family:var(--mono);font-size:9.5px;color:var(--sub);margin-top:2px}
     .hl-see{margin-top:6px;display:inline-block;font-family:var(--mono);font-size:9px;color:var(--c-holdings-br);
       border:1px solid rgba(154,171,184,.5);border-radius:6px;padding:3px 9px}
+    .hl-link{display:inline-block;margin:6px 0 0 10px;font-family:var(--mono);font-size:9px;color:var(--c-holdings-br);text-decoration:none;border-bottom:1px solid rgba(215,224,231,.35)}
     .hl-detail{font-size:12px;color:var(--sub);line-height:1.7;margin:2px 0 8px}
     /* モバイルlightbox：作品を画面いっぱいに（全体を切らない＝contain）・safe-area考慮・暗背景 */
     #lb{height:100dvh;padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))}
@@ -402,6 +406,11 @@
 import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
+import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
+// 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
+const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
+const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
+const officialLinksHTML=(hid,cls)=>officialLinksFor(hid).map((l,i)=>'<a class="'+cls+'" href="'+l.url+'" target="_blank" rel="noopener noreferrer">'+(i===0?'公式サイト':l.label)+' ↗</a>').join('');
 // 人物年譜（大北斎展図録1993）: 連続LIFEは scope==='life'。表示は primary+secondary、Timeline lane は primary、没後(1867/1893)は連続LIFEに混ぜない。
 const LIFE = chronology.filter(r=>r.scope==='life');
 const LIFE_SHOWN = LIFE.filter(r=>r.importance==='primary'||r.importance==='secondary');
@@ -806,8 +815,8 @@ function renderHoldings(){ worldInfoList.innerHTML='';
     const impl=(!h.seriesComplete&&workSel)?impLine(h):''; const imp=impl?'<div class="cls" style="color:var(--graybr)">'+impl+'</div>':'';
     d.innerHTML='<div class="nm">'+h.institution+'</div><div class="meta">'+h.city+' / '+h.country+'</div>'+series+imp+
       '<div class="cls">重要度 '+h.importance+(yrs.length?' ・ 代表取得 '+yrs.join('/'):'')+'</div>'+
-      '<div><button class="wi-see">地点を見る（'+h.city+'）</button></div>';
-    d.onclick=()=>{ setSel('holding',h.id); showHoldingCard(h,d); };
+      '<div class="wi-acts"><button class="wi-see">地点を見る（'+h.city+'）</button>'+officialLinksHTML(h.id,'wi-link')+'</div>';
+    d.onclick=(e)=>{ if(e.target.closest('.wi-link'))return; setSel('holding',h.id); showHoldingCard(h,d); }; // 公式サイトリンクは選択・camera移動を起こさない
     d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation(); holdingSee(h); }; // HOLDINGS=gray
     worldInfoList.appendChild(d);}); }
 function renderLeftBottom(force){ const m=leftMode(); const selW=(m==='HOLDINGS'&&State.selection.type==='work')?State.selection.id:''; const key=m+'|'+State.spaceView+'|'+selW; if(key===lastLeftMode&&!force)return; lastLeftMode=key; // 空間変更/作品選択(HOLDINGS)でも再描画
@@ -1079,7 +1088,7 @@ function holdingListHTML(selH){ const list=holdingsFor();
   return '<div class="hl-item'+(on?' on':'')+'" data-hid="'+h.id+'">'
     +'<div class="hl-nm">'+h.institution+'</div><div class="hl-meta">'+h.city+' / '+h.country+' ・ 重要度 '+h.importance+'</div>'+series+imp
     +(on?'<div class="hl-detail">'+(h.summary||'')+(ev?'<br>代表取得: '+ev:'')+'<br><span style="color:var(--dim)">情報確認: 2026年</span></div>':'')
-    +'<button class="hl-see" data-see="'+h.id+'">地点を見る（'+h.city+'）</button></div>'; }).join(''); }
+    +'<button class="hl-see" data-see="'+h.id+'">地点を見る（'+h.city+'）</button>'+officialLinksHTML(h.id,'hl-link')+'</div>'; }).join(''); }
 // compact Timeline をシート高の直上へ置く（MAP→Timeline→sheet の積層。重ならない）。PCではCSS既定に戻す。
 function syncMobileTL(){ const tlb=document.getElementById('timelineBar'); if(!tlb)return;
   if(window.innerWidth>640){ tlb.style.bottom=''; return; }
@@ -1093,7 +1102,7 @@ function renderMobileSheet(){ if(window.innerWidth>640)return; // PCは無関係
     msLead.textContent= wsel ? ('#'+wsel.no+' '+wsel.ja+' の所蔵') : '現在の主な所蔵'; msCnt.textContent='HOLDINGS ／ '+(jp?'国内':'国内外');
     const selH=s.type==='holding'?s.id:null;
     msBody.innerHTML=holdingListHTML(selH);
-    msBody.querySelectorAll('.hl-item').forEach(el=>el.onclick=(e)=>{ if(e.target.closest('.hl-see'))return; setSel('holding',el.dataset.hid); });
+    msBody.querySelectorAll('.hl-item').forEach(el=>el.onclick=(e)=>{ if(e.target.closest('.hl-see')||e.target.closest('.hl-link'))return; setSel('holding',el.dataset.hid); });
     msBody.querySelectorAll('.hl-see').forEach(el=>el.onclick=(e)=>{ e.stopPropagation(); if(el.id==='hlAll')return; const h=holdings.find(x=>x.id===el.dataset.see); if(h)holdingSee(h); }); // 地点を見る=明示的camera移動のみ
     const allB=msBody.querySelector('#hlAll'); if(allB)allB.onclick=()=>setSel(null,null); // 作品の絞り込み解除＝全所蔵館へ戻る
     const onEl=msBody.querySelector('.hl-item.on'); if(onEl)onEl.scrollIntoView({block:'center'});

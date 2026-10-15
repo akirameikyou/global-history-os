@@ -145,6 +145,24 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 .step b{font-size:9px;color:rgba(102,224,255,.65);letter-spacing:.12em;font-weight:500}
 .step span{font-size:11px;line-height:1.7;color:rgba(237,243,246,.67)}
 .close{margin-top:19px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+/* 04 / LINKS：関連美術館・公式コレクション（フッター左の控えめなテキストから開く） */
+.foot-link{border:0;background:none;padding:0;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer}
+.foot-link:hover,.foot-link:focus-visible{color:rgba(237,243,246,.62);outline:none}
+.museums{display:grid;gap:10px;margin:14px 0 0}
+.museum{border-top:1px solid rgba(237,243,246,.09);padding-top:10px}
+.museum b{display:block;font-size:12px;font-weight:500;letter-spacing:.04em;color:rgba(237,243,246,.86)}
+.museum .en{display:block;font-size:9px;letter-spacing:.08em;color:rgba(237,243,246,.42);margin-top:2px}
+.museum .desc{display:block;font-size:11px;line-height:1.7;color:rgba(237,243,246,.67);margin-top:5px}
+.museum .links{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:5px}
+.museum a{font-size:10px;letter-spacing:.06em;color:rgba(102,224,255,.78);text-decoration:none;border-bottom:1px solid rgba(102,224,255,.25)}
+.museum a:hover,.museum a:focus-visible{color:var(--focus);border-bottom-color:var(--focus);outline:none}
+.dlg .fine{font-size:10px;line-height:1.8;color:rgba(237,243,246,.45);margin:16px 0 0}
+#museums .dlg{max-height:82vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}
+/* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則。focusShell の .panel と同じ thumb） */
+#museums .dlg::-webkit-scrollbar{width:6px;background:transparent}
+#museums .dlg::-webkit-scrollbar-track{background:transparent}
+#museums .dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+#museums .dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
 
 /* ===== ENTER 先：本物の Focus Shell を全画面iframeで表示 ===== */
 .os-frame{
@@ -240,7 +258,7 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
     </div>
   </main>
 
-  <footer class="foot"><span></span><span>HISTORY OS / FOCUS PERSON</span></footer>
+  <footer class="foot"><span><button class="foot-link" data-dialog="museums">関連美術館・公式コレクション</button></span><span>HISTORY OS / FOCUS PERSON</span></footer>
 
   <!-- ENTER先：本物の Focus Shell（日本地図の場面で開始） -->
   <iframe id="osFrame" class="os-frame" title="History OS / Hokusai Focus" allow="fullscreen"></iframe>
@@ -268,6 +286,15 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
     <div class="d-kicker">03 / METHOD</div><h2>史料と推定を分ける</h2>
     <p>地点や年次には、史料で確認できるものと、地名・地形・作品研究から再構成したものがあります。表示上でも、その違いを混同しないことを原則とします。</p>
     <p>富士へ向かう扇形は実際のカメラ視野ではなく、作品の視点と構図を観察するための Representation です。出典は公開版で各カードから確認できる構成を想定しています。</p>
+    <button class="close">CLOSE</button>
+  </div></dialog>
+
+  <!-- 04 / LINKS：内容は data/hokusai_museum_links.js（display:true の館のみ描画） -->
+  <dialog id="museums"><div class="dlg">
+    <div class="d-kicker">04 / LINKS</div><h2>関連美術館・公式コレクション</h2>
+    <p>北斎の作品や所蔵情報を、各館の公式サイトで確かめるための外部リンクです。</p>
+    <div class="museums" id="museumList"></div>
+    <p class="fine">各館が本サイトを推薦・監修するものではありません。作品画像や文章の利用条件は、各館の規定に従います。リンク先はいずれも外部サイトです。</p>
     <button class="close">CLOSE</button>
   </div></dialog>
 </div>
@@ -371,6 +398,22 @@ backBtn.addEventListener('click',()=>{
 document.querySelectorAll('[data-dialog]').forEach(btn=>btn.addEventListener('click',()=>document.getElementById(btn.dataset.dialog).showModal()));
 document.querySelectorAll('.close').forEach(btn=>btn.addEventListener('click',()=>btn.closest('dialog').close()));
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+</script>
+<script type="module">
+// 04 / LINKS：美術館リンク台帳を描画（訪問者向けには館名・一文・公式リンクのみ。許諾区分は表示しない）
+import { museumLinks } from '../data/hokusai_museum_links.js';
+const list=document.getElementById('museumList');
+const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
+museumLinks.filter(m=>m.display).forEach(m=>{
+  const row=el('div','museum');
+  row.append(el('b',null,m.name.ja));
+  if(m.name.en&&m.name.en!==m.name.ja) row.append(el('span','en',m.name.en));
+  row.append(el('span','desc',m.description));
+  const links=el('div','links');
+  m.links.forEach(l=>{const a=el('a',null,l.label);a.href=l.url;a.target='_blank';a.rel='noopener noreferrer';links.append(a);});
+  row.append(links);
+  list.append(row);
+});
 </script>
 </body>
 </html>
