@@ -151,6 +151,35 @@
   .chrono-cert{font-size:9px;color:var(--est,#e0b45f);margin-left:5px} /* 留保表現(頃/推定/伝承) */
   .chrono-desc{display:none;font-size:11px;line-height:1.6;color:var(--sub);margin-top:5px} /* 選択で展開 */
   .chrono-item.sel .chrono-desc{display:block}
+  /* 年代見出し（lifePhases）：クリックでその期の資料カード。年譜itemとは別の行（timeCursorは動かさない） */
+  .phase-head{display:flex;align-items:baseline;gap:8px;padding:9px 16px 7px;cursor:pointer;border-bottom:1px solid var(--rule);
+    border-top:1px solid rgba(255,224,138,.16);transition:.2s}
+  .phase-head:hover{background:rgba(255,224,138,.06)}
+  .phase-head .ph-l{font-family:var(--serif);font-size:12.5px;font-weight:700;color:var(--gold)}
+  .phase-head .ph-y{font-family:var(--mono);font-size:10px;color:var(--sub)}
+  .phase-head .ph-n{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--sub);white-space:nowrap}
+  .phase-head.general .ph-l{color:var(--sub)}
+  /* 年代資料カードの中身（#detailCard 内） */
+  #detailCard{max-height:calc(100vh - 24px);overflow:auto}
+  #detailCard::-webkit-scrollbar{width:6px} #detailCard::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  .pr-sec{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--sub);margin:14px 0 6px;padding-top:9px;border-top:1px solid var(--rule)}
+  .pr-lead{white-space:pre-wrap}
+  .pr-works{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px}
+  .pr-work img{width:100%;aspect-ratio:3/2;object-fit:contain;border-radius:4px;display:block;cursor:pointer}
+  .pr-work .cap{font-size:9.5px;color:var(--sub);margin-top:3px;line-height:1.45}
+  .pr-item{margin:0 0 9px;font-size:11.5px;line-height:1.6}
+  .pr-item a{color:#cbe6ff;text-decoration:none} .pr-item a:hover{text-decoration:underline}
+  .pr-item .org{color:var(--dim);font-size:10.5px}
+  .pr-item .d{color:var(--sub);font-size:10.5px}
+  .pr-chip{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;padding:0 5px;border-radius:3px;margin-left:4px;
+    border:1px solid currentColor;opacity:.85;vertical-align:1px}
+  .pr-ane{margin:0 0 9px;font-size:11.5px;line-height:1.6}
+  .pr-ane summary{cursor:pointer;list-style:none} .pr-ane summary::-webkit-details-marker{display:none}
+  .pr-ane .lb{display:block;font-size:10.5px;color:var(--sub)}
+  .pr-ane .more{font-size:10.5px;color:var(--sub);margin:5px 0 0 8px;white-space:pre-wrap}
+  .ly-primary{color:var(--cyan)} .ly-contemporary{color:#4fd0b8} .ly-biography{color:#c2b2ff} .ly-tradition{color:var(--est,#e0b45f)}
+  .pr-note{font-size:10.5px;color:var(--sub);margin:0 0 5px}
+  .pr-foot{font-size:10px;color:var(--dim);margin-top:12px;line-height:1.55}
 
   /* ── 中央下：タイムライン ── */
   #timelineBar{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);width:min(56%,760px);z-index:30;user-select:none}
@@ -407,6 +436,7 @@ import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
+import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta } from '../data/hokusai_resources.js?v=20261030';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -754,12 +784,64 @@ WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d
   d.querySelector('img').onclick=(e)=>{e.stopPropagation();openLB(w);};
   worksList.appendChild(d);});
 // LIFE年譜: PRIMARY(通常)＋SECONDARY(淡色)。選択で summary を展開（原文sourceTextは保持しつつ表示はsummary）。
-LIFE_SHOWN.forEach(ev=>{const d=document.createElement('div');d.className='chrono-item'+(ev.importance==='secondary'?' secondary':'');d.dataset.id=ev.id;
+// ---------- 年代別資料（data/hokusai_resources.js）：期 = lifePhases[].from。phases:[] = 生涯全体 ----------
+// 画像は image を持つ（個別作品で PD 確認済み）資料だけ。他は外部リンクのみ。根拠の層(layer)ごとに色とラベルを分け、同じ見た目にしない。
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const LAYER_JA={primary:'本人の言葉・作品',contemporary:'同時代の記録',biography:'後世の伝記',tradition:'伝承（初出未確認）'};
+const KIND_JA={work:'作品記録',commentary:'館・自治体の解説',catalog:'書誌・データベース',map:'地図',article:'研究的記事'};
+const KIND_ORDER=['commentary','catalog','map','article','work'];
+const inPhase=(r,from)=>from==null?(r.phases.length===0):r.phases.includes(from);
+function periodSources(from){ const role=from==null?'general':'period', byUrl=new Map(); // 同じURLは1件にまとめ、別台帳の説明は descs に残す
+  resourceSources.filter(s=>s.role===role&&inPhase(s,from)).forEach(s=>{ const g=byUrl.get(s.url);
+    if(g){ if(s.desc&&!g.descs.includes(s.desc))g.descs.push(s.desc); if(s.caution&&!g.cautions.includes(s.caution))g.cautions.push(s.caution); }
+    else byUrl.set(s.url,{...s,descs:s.desc?[s.desc]:[],cautions:s.caution?[s.caution]:[]}); });
+  return [...byUrl.values()]; }
+function periodAnecdotes(from){ return anecdotes.filter(a=>inPhase(a,from)); }
+function periodCounts(from){ return { s:periodSources(from).length, a:periodAnecdotes(from).length }; }
+const srcByUrl=u=>resourceSources.find(s=>s.url===u);
+const linkHTML=(url,label)=>'<a href="'+esc(url)+'" target="_blank" rel="noopener noreferrer">'+esc(label)+' ↗</a>';
+const rightsChip=s=>'<span class="pr-chip" title="'+esc(s.rights&&s.rights.status||'権利状態の記載なし（画像・文章は転載しない）')+'">リンクのみ</span>'; // 画像付き資料は WORKS 側に出るのでここは常にリンクのみ
+function showPeriodCard(ph,src){
+  const from=ph?ph.from:null, srcs=periodSources(from), anes=periodAnecdotes(from), box=document.createElement('div');
+  let h='';
+  if(ph&&ph.note) h+='<div class="pr-lead">'+esc(ph.note)+'</div>';
+  const works=srcs.filter(s=>s.image);
+  if(works.length){ h+='<div class="pr-sec">WORKS ／ 作品（画像はパブリックドメイン・クリックで所蔵館の作品ページ）</div><div class="pr-works">';
+    works.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
+      '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）">'+esc(s.title)+'（'+esc(s.image.objectDate)+'）<br>The Met・パブリックドメイン（'+esc(s.image.credit.replace(/^.*\(([^)]+)\)$/,'$1'))+'）</div></div>'; });
+    h+='</div>'; }
+  if(anes.length){ h+='<div class="pr-sec">ANECDOTES ／ 逸話と根拠</div>';
+    anes.forEach(a=>{ const links=a.sourceUrls.map(u=>{ const s=srcByUrl(u); return linkHTML(u,s?s.org+'「'+s.title+'」':u.replace(/^https?:\/\/([^/]+).*/,'$1')); }).join('<br>');
+      h+='<details class="pr-ane"><summary>'+esc(a.title)+'<span class="pr-chip ly-'+a.layer+'">'+LAYER_JA[a.layer]+'</span><span class="lb">'+esc(a.label)+'</span></summary>'+
+        '<div class="more">'+esc(a.claim)+'\n\n支持される点：'+esc(a.supported)+'\n未確定の点：'+esc(a.uncertain)+
+        (a.recordYear?'\n根拠記録の年：'+esc(a.recordYear):'')+(a.phaseNote?'\n（'+esc(a.phaseNote)+'）':'')+'\n\n</div><div class="more">'+links+'</div></details>'; }); }
+  const rest=srcs.filter(s=>!s.image);
+  if(rest.length){ h+='<div class="pr-sec">SOURCES ／ 資料リンク</div>';
+    KIND_ORDER.forEach(k=>rest.filter(s=>s.kind===k).forEach(s=>{
+      h+='<div class="pr-item">'+linkHTML(s.url,s.title)+rightsChip(s)+' <span class="org">'+esc(s.org)+'・'+KIND_JA[k]+'</span>'+
+        s.descs.map(t=>'<div class="d">'+esc(t)+'</div>').join('')+s.cautions.map(t=>'<div class="d">※'+esc(t)+'</div>').join('')+'</div>'; })); }
+  if(!works.length&&!anes.length&&!rest.length) h+='<div class="pr-sec">SOURCES ／ 資料リンク</div><div class="pr-note">この期の資料はまだ登録されていません。</div>';
+  const notes=from==null?[]:(periodResearchNotes[from]||[]);
+  if(notes.length){ h+='<div class="pr-sec">NOTE ／ 調べるときの注意</div>'+notes.map(n=>'<div class="pr-note">・'+esc(n)+'</div>').join(''); }
+  h+='<div class="pr-foot">資料台帳 '+esc(resourcesMeta.compiledFrom.join('・'))+'（'+esc(resourcesMeta.researchedAt)+' 調査）。'+esc(resourcesMeta.note)+' リンク先の内容・画像の権利は各機関に属します。</div>';
+  box.innerHTML=h;
+  showCard({ tag:ph?'PERIOD ／ 年代の資料':'LIFE ／ 生涯全体の資料', title:ph?ph.label:'葛飾北斎 生涯全体', sub:ph?ph.from+'–'+ph.to:'時期を特定しない資料・逸話', node:box, accent:'var(--gold)' }, src); }
+// 年代見出し（lifePhases）を各期の最初の年譜itemの前に差し込む。見出しクリック=その期の資料カード（timeCursor・cameraは動かさない）。
+const phaseHead=(ph,general)=>{ const d=document.createElement('div'); d.className='phase-head'+(general?' general':'');
+  const c=general?periodCounts(null):periodCounts(ph.from);
+  d.innerHTML='<span class="ph-l">'+(general?'生涯全体の資料':ph.label)+'</span><span class="ph-y">'+(general?'時期を特定しない':ph.from+'–'+ph.to)+'</span>'+
+    '<span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span>';
+  d.onclick=()=>showPeriodCard(general?null:ph,d); return d; };
+lifeList.appendChild(phaseHead(null,true));
+let phaseIx=0;
+LIFE_SHOWN.forEach(ev=>{ while(phaseIx<lifePhases.length && lifePhases[phaseIx].from<=ev.year){ lifeList.appendChild(phaseHead(lifePhases[phaseIx])); phaseIx++; }
+  const d=document.createElement('div');d.className='chrono-item'+(ev.importance==='secondary'?' secondary':'');d.dataset.id=ev.id;
   const yl=(ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year;
   const cert=ev.certainty!=='stated'?' <span class="chrono-cert">'+(ev.certaintyRaw||'')+'</span>':'';
   d.innerHTML='<div class="chrono-year">'+yl+'</div><div class="chrono-text">'+ev.title+cert+'</div>'+
     '<div class="chrono-desc">'+(ev.summary||'')+'</div>';
   d.onclick=()=>{setCursor(ev.year);setSel('life',ev.id);};lifeList.appendChild(d);});
+for(;phaseIx<lifePhases.length;phaseIx++) lifeList.appendChild(phaseHead(lifePhases[phaseIx])); // 年譜itemのない期（没後）も見出しは出す
 
 // ---------- 左下パネルの意味切替（JAPAN=WORKS / WORLD=時間・NOWで CONTEMPORARIES→RECEPTION→HOLDINGS）----------
 const leftSecTitle=document.getElementById('leftSecTitle'), worksListEl=document.getElementById('worksList'), worldInfoList=document.getElementById('worldInfoList');
@@ -968,13 +1050,14 @@ function positionCard(src){ const c=detailCard, cw=c.offsetWidth||320, ch=c.offs
   else if(src&&typeof src.x==='number'){ x=src.x+M; y=src.y+M; }                                                         // 地図クリック座標の近く
   else { x=24; y=120; }                                                                                                    // 既定=左側（中央を避ける）
   x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(M,Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; }        // 画面端でflip/clamp
-function showCard({tag,title,sub,body,rel,action,accent},src){
+function showCard({tag,title,sub,body,rel,action,accent,node},src){ // node=任意のDOM（年代資料カード等）。指定時は body より優先
   const ac=accent||'var(--c-focus)'; // カード左端＋タグ色＝分類色（未指定はfocus cyan）。分類別にして「どの情報か」を一目で示す。
   detailCard.style.borderLeftColor=ac; document.getElementById('dcTag').style.color=ac;
   document.getElementById('dcTag').textContent=tag||'';
   document.getElementById('dcTitle').textContent=title||'';
   document.getElementById('dcSub').textContent=sub||'';
-  document.getElementById('dcBody').textContent=body||'';
+  const bodyEl=document.getElementById('dcBody'); bodyEl.textContent=body||''; if(node)bodyEl.appendChild(node);
+  detailCard.scrollTop=0;
   const relEl=document.getElementById('dcRel'); if(rel){relEl.hidden=false;relEl.textContent=(String(rel).startsWith('※')||String(rel).startsWith('区分'))?rel:'関連: '+rel;}else relEl.hidden=true;
   const actEl=document.getElementById('dcAct'); // 任意アクション（例: 「地点を見る」=camera移動。selection≠cameraを保つ）
   if(action&&action.label){ actEl.hidden=false; actEl.textContent=action.label; actEl.onclick=(e)=>{e.stopPropagation(); action.onClick&&action.onClick(); }; } else { actEl.hidden=true; actEl.onclick=null; }
