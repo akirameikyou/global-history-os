@@ -2406,7 +2406,7 @@ export const resourceSources = [
   "url": "https://colbase.nich.go.jp/collection_items/tnm/QB-12110",
   "dateText": "嘉永2～7年（1849～1854）写",
   "relation": "関所手形の一般例（阿栄の手形そのものではない）",
-  "relationBasis": "年譜1841「阿栄の旅行手形」",
+  "relationBasis": "年譜1843「阿栄の旅行手形」",
   "rights": {
    "status": "LINK_ONLY",
    "basis": "ColBaseに画像の公開なし"
@@ -3575,7 +3575,7 @@ export const textLinks = [
   "linkBy": "OS編集"
  },
  {
-  "lifeId": "dh1993-1840-work-res",
+  "lifeId": "dh1993-1842-letter-res",
   "text": "亀沢町",
   "coord": {
    "lat": 35.69729,
@@ -3664,7 +3664,7 @@ export const textLinks = [
   "linkBy": "OS編集"
  },
  {
-  "lifeId": "dh1993-1841-obuse-network",
+  "lifeId": "dh1993-1843-obuse-network",
   "text": "阿栄の旅行手形",
   "ref": "CB-tnm-QB-12110",
   "note": "関所手形の一般例を開く（阿栄の手形そのものではない）",
