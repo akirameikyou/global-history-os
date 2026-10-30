@@ -136,6 +136,11 @@
   .era-work .t{font-size:11.5px;font-weight:600;line-height:1.45}
   .era-work .m{font-family:var(--mono);font-size:9.5px;color:var(--sub);margin-top:2px}
   .era-empty{padding:10px 16px;font-size:11px;color:var(--sub);line-height:1.6}
+  /* 参考作品（北斎作ではない）：見出しで区切り、札と左線の色を分ける */
+  :root{--ref:#b8b2d8}
+  .era-ref-head{padding:9px 16px 6px;font-size:10.5px;color:var(--ref);border-top:1px dashed rgba(184,178,216,.35);border-bottom:1px solid var(--rule);margin-top:4px}
+  .era-work.ref{box-shadow:inset 2px 0 0 rgba(184,178,216,.55)}
+  .ref-chip{font-family:var(--mono);font-size:8.5px;color:var(--ref);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:5px;vertical-align:1px}
   .chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-right:4px}
   .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)} .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
   .compo-dbg{display:none} body.axison .compo-dbg{display:inline} /* 構図補正の数値は富士山頂軸ON(=QA/DEBUG)時のみ表示 */
@@ -172,6 +177,18 @@
   .phase-head .ph-y{font-family:var(--mono);font-size:10px;color:var(--sub)}
   .phase-head .ph-n{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--sub);white-space:nowrap}
   .phase-head.general .ph-l{color:var(--sub)}
+  /* 年譜の語リンク：地名（下線のみ・背景なし）と「古地図」札 */
+  .tlink{color:#cbe6ff;border-bottom:1px dotted rgba(203,230,255,.6);cursor:pointer}
+  .tlink:hover{border-bottom-style:solid}
+  .tmap{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--est,#e0b45f);border:1px solid currentColor;border-radius:3px;
+    padding:0 4px;margin:0 3px 0 4px;cursor:pointer;vertical-align:1px;white-space:nowrap}
+  #oldMapPop{position:fixed;z-index:85;width:min(420px,calc(100vw - 24px));background:rgba(10,16,26,.97);border:1px solid var(--rule);
+    border-left:3px solid var(--est,#e0b45f);border-radius:9px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:10px 12px 12px}
+  #oldMapPop .om-img{position:relative;line-height:0} #oldMapPop img{width:100%;border-radius:4px}
+  #oldMapPop .om-mark{position:absolute;border:2px solid #ff6b4a;border-radius:3px;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+  #oldMapPop .om-cap{font-size:11px;line-height:1.6;color:var(--sub);margin-top:8px}
+  #oldMapPop .om-cap b{color:var(--ink)} #oldMapPop .om-gap{color:var(--est,#e0b45f);margin:4px 0}
+  #oldMapPop a{color:#cbe6ff;text-decoration:none} #oldMapPop a:hover{text-decoration:underline}
   /* 年代資料カードの中身（#detailCard 内） */
   #detailCard{max-height:calc(100vh - 24px);overflow:auto}
   #detailCard::-webkit-scrollbar{width:6px} #detailCard::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
@@ -445,6 +462,9 @@
   <button class="dc-act" id="dcAct" hidden></button>
 </div>
 
+<!-- 古地図ポップアップ（年譜の「古地図」：PC=ホバー／スマホ=タップ）。原図(IIIF)の該当範囲だけを表示 -->
+<div id="oldMapPop" hidden></div>
+
 <div id="lb"><img alt=""><div class="lb-hint" id="lbHint" hidden>タップで閉じる ・ 横向きにするとより大きく</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js"></script>
@@ -453,7 +473,7 @@ import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
-import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta } from '../data/hokusai_resources.js?v=20261030c';
+import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261030e';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -827,6 +847,11 @@ function showPeriodCard(ph,src){
     works.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
       '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）">'+esc(s.title)+'（'+esc(s.image.objectDate)+'）<br>The Met・パブリックドメイン（'+esc(s.image.credit.replace(/^.*\(([^)]+)\)$/,'$1'))+'）</div></div>'; });
     h+='</div>'; }
+  const refs=from==null?[]:referenceWorks(from);
+  if(refs.length){ h+='<div class="pr-sec" style="color:var(--ref)">REFERENCE ／ 参考：師・同時代の作品（北斎作ではない）</div><div class="pr-works">';
+    refs.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
+      '<div class="cap"><span class="ref-chip">参考</span>'+esc(s.artist)+'（'+esc(s.relation)+'）<br>'+esc(s.title)+'（'+esc(s.image.objectDate)+'）</div></div>'; });
+    h+='</div>'; }
   if(anes.length){ h+='<div class="pr-sec">ANECDOTES ／ 逸話と根拠</div>';
     anes.forEach(a=>{ const links=a.sourceUrls.map(u=>{ const s=srcByUrl(u); return linkHTML(u,s?s.org+'「'+s.title+'」':u.replace(/^https?:\/\/([^/]+).*/,'$1')); }).join('<br>');
       h+='<details class="pr-ane"><summary>'+esc(a.title)+'<span class="pr-chip ly-'+a.layer+'">'+LAYER_JA[a.layer]+'</span><span class="lb">'+esc(a.label)+'</span></summary>'+
@@ -843,6 +868,31 @@ function showPeriodCard(ph,src){
   h+='<div class="pr-foot">資料台帳 '+esc(resourcesMeta.compiledFrom.join('・'))+'（'+esc(resourcesMeta.researchedAt)+' 調査）。'+esc(resourcesMeta.note)+' リンク先の内容・画像の権利は各機関に属します。</div>';
   box.innerHTML=h;
   showCard({ tag:ph?'PERIOD ／ 年代の資料':'LIFE ／ 生涯全体の資料', title:ph?ph.label:'葛飾北斎 生涯全体', sub:ph?ph.from+'–'+ph.to:'時期を特定しない資料・逸話', node:box, accent:'var(--gold)' }, src); }
+// ---------- 年譜の語リンク（textLinks）：地名→JAPAN地図へズーム／「古地図」→原図の該当範囲をポップアップ ----------
+// 図録の本文は書き換えず、表示時に最初の一致語だけリンクにする。座標は代表点（家屋の位置ではない）。
+function linkifySummary(ev){ let s=ev.summary||''; textLinks.forEach((tl,i)=>{ if(tl.lifeId!==ev.id||!s.includes(tl.text))return;
+  s=s.replace(tl.text,'<span class="tlink" data-tl="'+i+'" title="'+esc(tl.note)+'">'+esc(tl.text)+'</span>'+(tl.oldMap?'<span class="tmap" data-om="'+tl.oldMap+'">古地図</span>':'')); });
+  return s; }
+const placeById=id=>residences.find(r=>r.id===id)||lifePlaces.find(p=>p.id===id);
+function goToTextPlace(tl){ const p=placeById(tl.place); if(!p)return;
+  if(State.spaceView!=='JAPAN') document.querySelector('#spaceSeg button[data-v="JAPAN"]').click(); // 地名リンク=JAPAN詳細へ（明示操作でのみcamera移動）
+  let n=0; (function fly(){ if(mapReady){ map.flyTo({center:[p.lng,p.lat],zoom:tl.zoom||13,duration:900}); return; } if(++n<60)setTimeout(fly,100); })(); }
+const omPop=document.getElementById('oldMapPop'); let omHideT=null;
+function showOldMap(om,src){ const [cx,cy,cw,ch]=om.crop, W=420;
+  const marks=om.marks.map(m=>{ const [x,y,w,h]=m.xywh; return '<div class="om-mark" style="left:'+((x-cx)/cw*100)+'%;top:'+((y-cy)/ch*100)+'%;width:'+(w/cw*100)+'%;height:'+(h/ch*100)+'%" title="'+esc(m.label)+'"></div>'; }).join('');
+  omPop.innerHTML='<div class="om-img"><img src="'+esc(om.iiif+'/'+om.crop.join(',')+'/'+W+',/0/default.jpg')+'" alt="'+esc(om.title)+'">'+marks+'</div>'+
+    '<div class="om-cap"><b>'+esc(om.title)+'</b>（'+esc(om.publisher)+'）<br>'+esc(om.dateText)+'<br>枠＝'+om.marks.map(m=>esc(m.label)).join('・')+'（江戸マップの地名位置）'+
+    '<div class="om-gap">※'+esc(om.gapNote)+'</div>'+linkHTML(om.page,om.rights.credit+'（パブリックドメイン）')+'</div>';
+  omPop.hidden=false; const r=src.getBoundingClientRect(), pw=omPop.offsetWidth, ph=omPop.offsetHeight;
+  let x=r.left-pw-10; if(x<8)x=Math.min(innerWidth-pw-8,r.right+10); let y=Math.max(8,Math.min(innerHeight-ph-8,r.top-ph/2));
+  if(innerWidth<=640){ x=(innerWidth-pw)/2; y=Math.max(8,r.top-ph-10); }
+  omPop.style.left=Math.max(8,x)+'px'; omPop.style.top=y+'px'; }
+document.addEventListener('click',e=>{ const a=e.target.closest('.tlink'), m=e.target.closest('.tmap');
+  if(a){ e.stopPropagation(); goToTextPlace(textLinks[+a.dataset.tl]); return; }
+  if(m){ e.stopPropagation(); if(!omPop.hidden&&omPop.dataset.om===m.dataset.om){omPop.hidden=true;return;} omPop.dataset.om=m.dataset.om; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); return; } // タップで開閉（スマホ）
+  if(!e.target.closest('#oldMapPop'))omPop.hidden=true; },true);
+document.addEventListener('mouseover',e=>{ const m=e.target.closest('.tmap'); if(!m||window.innerWidth<=640)return; clearTimeout(omHideT); omPop.dataset.om=m.dataset.om; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); }); // PC=ホバーで表示
+document.addEventListener('mouseout',e=>{ if(window.innerWidth<=640)return; if(e.target.closest('.tmap')||e.target.closest('#oldMapPop')){ clearTimeout(omHideT); omHideT=setTimeout(()=>{ if(!omPop.matches(':hover'))omPop.hidden=true; },250); } });
 // 年代見出し（lifePhases）を各期の最初の年譜itemの前に差し込む。見出しクリック=その期の資料カード（timeCursor・cameraは動かさない）。
 const phaseHead=(ph,general)=>{ const d=document.createElement('div'); d.className='phase-head'+(general?' general':'');
   const c=general?periodCounts(null):periodCounts(ph.from);
@@ -856,7 +906,7 @@ LIFE_SHOWN.forEach(ev=>{ while(phaseIx<lifePhases.length && lifePhases[phaseIx].
   const yl=(ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year;
   const cert=ev.certainty!=='stated'?' <span class="chrono-cert">'+(ev.certaintyRaw||'')+'</span>':'';
   d.innerHTML='<div class="chrono-year">'+yl+'</div><div class="chrono-text">'+ev.title+cert+'</div>'+
-    '<div class="chrono-desc">'+(ev.summary||'')+'</div>';
+    '<div class="chrono-desc">'+linkifySummary(ev)+'</div>';
   d.onclick=()=>{setCursor(ev.year);setSel('life',ev.id);};lifeList.appendChild(d);});
 for(;phaseIx<lifePhases.length;phaseIx++) lifeList.appendChild(phaseHead(lifePhases[phaseIx])); // 年譜itemのない期（没後）も見出しは出す
 
@@ -928,16 +978,24 @@ function showEraWorkCard(s,src){ const box=document.createElement('div');
     '<div class="pr-note">'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）</div>'+
     '<div class="pr-item">'+linkHTML(s.image.page,'所蔵館の作品ページ')+'</div>';
   box.querySelector('img').onclick=()=>openLB({src:s.image.full||s.image.src});
-  showCard({ tag:'WORK ／ この年代の作品', title:s.title, sub:s.image.objectDate+'｜'+s.org, node:box, accent:'var(--gold)' }, src); }
+  const ref=s.role==='reference';
+  if(ref) box.insertAdjacentHTML('afterbegin','<div class="pr-note" style="color:var(--ref)">参考作品：'+esc(s.artist)+'（'+esc(s.relation)+'）。北斎の作品ではありません。</div>');
+  showCard({ tag:ref?'REFERENCE ／ 参考作品（北斎作ではない）':'WORK ／ この年代の作品', title:s.title, sub:s.image.objectDate+'｜'+(ref?s.artist+'｜':'')+s.org, node:box, accent:ref?'var(--ref)':'var(--gold)' }, src); }
 function renderEraWorks(){ eraWorksList.innerHTML=''; const ph=phaseAt(State.timeCursor);
   const head=document.createElement('div'); head.className='era-head';
   head.innerHTML=ph?esc(ph.from+'–'+ph.to+' '+ph.label)+'<span class="lk">この年代の資料 ›</span>':'北斎の生涯の範囲外';
   const lk=head.querySelector('.lk'); if(lk)lk.onclick=()=>showPeriodCard(ph,head); eraWorksList.appendChild(head);
-  const list=ph?resourceSources.filter(s=>s.image&&s.phases.includes(ph.from)):[];
-  if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; eraWorksList.appendChild(m); return; }
-  list.forEach(s=>{ const d=document.createElement('div'); d.className='era-work';
-    d.innerHTML='<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"><div><div class="t">'+esc(s.title)+'</div><div class="m">'+esc(s.image.objectDate)+(s.image.classification?'・'+esc(s.image.classification):'')+'・The Met・PD</div></div>';
-    d.onclick=()=>showEraWorkCard(s,d); eraWorksList.appendChild(d); }); }
+  const list=ph?resourceSources.filter(s=>s.role==='period'&&s.image&&s.phases.includes(ph.from)):[];
+  const refs=ph?referenceWorks(ph.from):[];
+  if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の北斎の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; eraWorksList.appendChild(m); }
+  const row=(s,ref)=>{ const d=document.createElement('div'); d.className='era-work'+(ref?' ref':'');
+    d.innerHTML='<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"><div><div class="t">'+(ref?'<span class="ref-chip">参考</span>':'')+esc(s.title)+'</div>'+
+      '<div class="m">'+(ref?esc(s.artist)+'・':'')+esc(s.image.objectDate)+(s.image.classification?'・'+esc(s.image.classification):'')+'・The Met・PD</div></div>';
+    d.onclick=()=>showEraWorkCard(s,d); eraWorksList.appendChild(d); };
+  list.forEach(s=>row(s,false));
+  if(refs.length){ const h=document.createElement('div'); h.className='era-ref-head'; h.textContent='参考：師・同時代の作品（北斎作ではない）'; eraWorksList.appendChild(h); refs.forEach(s=>row(s,true)); } }
+// 参考作品（role:'reference'）＝北斎作ではない。北斎との関係(relation)の根拠があるものだけ。北斎の作品一覧・件数には混ぜない。
+function referenceWorks(from){ return resourceSources.filter(s=>s.role==='reference'&&s.image&&s.phases.includes(from)); }
 // タブ名＝今の期の範囲（右の年譜の年代見出しと同じ区切り）。数字は期をまたいだ時だけ変わる。例 1830–35年の作品
 const phaseRangeShort=p=>{ const a=String(p.from), b=String(p.to); return a+'–'+(a.slice(0,2)===b.slice(0,2)?b.slice(2):b); };
 function renderEraTabLabel(){ const ph=phaseAt(State.timeCursor);
@@ -1206,7 +1264,7 @@ function lifeSheetHTML(selId){ let pi=0, h=lsPhaseHTML(null);
   const cert=(ev.certainty!=='stated'&&ev.certaintyRaw)?'<span class="ls-cert">'+ev.certaintyRaw+'</span>':'';
   h+='<div class="ls-item'+(on?' on':'')+'" data-lid="'+ev.id+'" data-ly="'+ev.year+'">'
     +'<span class="ls-yr">'+yl+'</span><span class="ls-t">'+ev.title+cert
-    +((on&&ev.summary)?'<span class="ls-desc">'+ev.summary+'</span>':'')+'</span></div>';
+    +((on&&ev.summary)?'<span class="ls-desc">'+linkifySummary(ev)+'</span>':'')+'</span></div>';
   });
   while(pi<lifePhases.length)h+=lsPhaseHTML(lifePhases[pi++]); // 年譜itemのない期（没後）も見出しは出す
   return h; }

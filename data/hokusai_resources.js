@@ -2,7 +2,9 @@
 // 出典: GPT北斎資料 001〜005（2026-10-28 調査, 利用者提供）を統合。原資料の文言・権利状態は書き換えていない。
 //       ＋ 年代別作品 met-001（The Met Open Access から OS 編集で選定。id=MET-<objectID>）。
 // 期のキー = data/hokusai_life.js の lifePhases[].from。phases:[] = 生涯全体／時期を特定しない。
-// role: period=期の資料 / general=生涯全体 / anecdote=逸話の根拠としてのみ表示 / policy=利用条件の参照（画面の期一覧には出さない）。
+// role: period=期の資料 / general=生涯全体 / anecdote=逸話の根拠としてのみ表示 / policy=利用条件の参照（画面の期一覧には出さない）
+//       / reference=参考作品（北斎作ではない・relation に北斎との関係と根拠）。
+// oldMaps=古地図（個別資料で利用条件確認済み・IIIF原図の該当範囲）／ textLinks=年譜の語→地図・古地図（図録本文は書き換えない）。
 // 画像(image)は The Met 個別作品で isPublicDomain=true を API で確認したものだけ。それ以外は外部リンクのみ。
 // phaseBy / layerBy:'OS編集' = 期・根拠の層の割当は OS 側の判断（GPT資料の記載ではない）。
 // 逸話IDは 003＋004 を正とする（002 とは番号が異なる。002 の番号は prev002 に保持）。
@@ -1877,6 +1879,166 @@ export const resourceSources = [
    "classification": "肉筆画",
    "checkedAt": "2026-10-30"
   }
+ },
+ {
+  "id": "MET-36684",
+  "pkg": "met-ref-001",
+  "title": "Scene from the Drama \"Soga Moyo Aigo no Wakamatsu\"",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36684",
+  "kind": "work",
+  "role": "reference",
+  "phases": [
+   1760
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "勝川春章",
+  "relation": "北斎の師・1778年頃入門",
+  "relationBasis": "data/hokusai_life.js personLinks p_shunsho（documented）",
+  "desc": "版画・Woodblock print (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP132785.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36684",
+   "credit": "The Metropolitan Museum of Art, Gift of Louis V. Ledoux, 1931 (JP207)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "dated 1769",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36849",
+  "pkg": "met-ref-001",
+  "title": "The Second Yamashita Kinsaku in the Role of Shigenoi",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36849",
+  "kind": "work",
+  "role": "reference",
+  "phases": [
+   1760
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "勝川春章",
+  "relation": "北斎の師・1778年頃入門",
+  "relationBasis": "data/hokusai_life.js personLinks p_shunsho（documented）",
+  "desc": "版画・Woodblock print (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP132838.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36849",
+   "credit": "The Metropolitan Museum of Art, Purchase, Joseph Pulitzer Bequest, 1918 (JP385)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "summer, 1772",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36846",
+  "pkg": "met-ref-001",
+  "title": "The Second Ichikawa Yaozo in the Role of Soga no Goro",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36846",
+  "kind": "work",
+  "role": "reference",
+  "phases": [
+   1760
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "勝川春章",
+  "relation": "北斎の師・1778年頃入門",
+  "relationBasis": "data/hokusai_life.js personLinks p_shunsho（documented）",
+  "desc": "版画・Woodblock print (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP132755.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36846",
+   "credit": "The Metropolitan Museum of Art, Purchase, Joseph Pulitzer Bequest, 1918 (JP382)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "2nd month, 1773",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36832",
+  "pkg": "met-ref-001",
+  "title": "Kabuki Actor Ichikawa Danjūrō V in a Shibaraku (Stop Right There!) Role as Hannya no Gorō",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36832",
+  "kind": "work",
+  "role": "reference",
+  "phases": [
+   1760
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "勝川春章",
+  "relation": "北斎の師・1778年頃入門",
+  "relationBasis": "data/hokusai_life.js personLinks p_shunsho（documented）",
+  "desc": "版画・Woodblock print (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP132811.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36832",
+   "credit": "The Metropolitan Museum of Art, Purchase, Joseph Pulitzer Bequest, 1918 (JP368)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "11th month 1776",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36594",
+  "pkg": "met-ref-001",
+  "title": "The First Nakamura Tomijuro as a Woman Dancer",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36594",
+  "kind": "work",
+  "role": "reference",
+  "phases": [
+   1760
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "勝川春章",
+  "relation": "北斎の師・1778年頃入門",
+  "relationBasis": "data/hokusai_life.js personLinks p_shunsho（documented）",
+  "desc": "版画・Woodblock print (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP137012.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36594",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP115)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "dated October or November 1778",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
  }
 ];
 
@@ -2482,3 +2644,69 @@ export const periodResearchNotes = {
   "各時代の受容を語る際は、現代の評価を江戸期の同時代評価として扱わない。"
  ]
 };
+
+export const oldMaps = [
+ {
+  "id": "MAP-NDL-1286679",
+  "title": "〔江戸切絵図〕本所絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1852年版として掲載）",
+  "year": 1852,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286679/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   1350,
+   2600,
+   1100,
+   950
+  ],
+  "marks": [
+   {
+    "label": "南割下水",
+    "xywh": [
+     1917,
+     2924,
+     132,
+     42
+    ],
+    "codh": "16-251"
+   },
+   {
+    "label": "亀沢町",
+    "xywh": [
+     1737,
+     3284,
+     125,
+     54
+    ],
+    "codh": "16-221"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286679",
+  "doi": "10.11501/1286679",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/16/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "gapNote": "北斎の誕生（1760）から約90年後の地図。誕生時の町並みそのものではない。",
+  "checkedAt": "2026-10-30"
+ }
+];
+
+export const textLinks = [
+ {
+  "lifeId": "dh1993-1760-birth",
+  "text": "江戸本所割下水",
+  "place": "r_warishita",
+  "zoom": 14,
+  "oldMap": "MAP-NDL-1286679",
+  "note": "本所割下水付近の代表点（家屋の位置ではない）。墨田区は現在の亀沢付近と説明。",
+  "linkBy": "OS編集"
+ }
+];
