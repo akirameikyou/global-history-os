@@ -348,7 +348,8 @@ export const chronology = [
     title:'「九々蜃」号', summary:'「九々蜃」の号がみえる。', sourceText:'「九々蜃」の号がみえる。',
     certainty:'stated', certaintyRaw:'図録記載', sourcePage:76, source:'大北斎展図録(東武美術館,1993)' },
   { id:'dh1993-1806-network-travel', year:1806, yearOriginal:'1806', age:'47', category:'travel', categoryJa:'交流・旅', importance:'primary', scope:'life',
-    title:'馬琴宅寄宿・木更津', summary:'春から初夏頃まで曲亭馬琴宅に寄宿。6月頃、上総国木更津へ旅し、水野清兵衛方に逗留したとする。', sourceText:'春から初夏頃まで曲亭馬琴宅に寄宿。6月頃、上総国木更津へ旅し、水野清兵衛方に逗留したとする。',
+    // 2026-10-30 補訂: 整理資料で省かれていた「畳が池辺」「唐仙人の楽遊」を図録の記載どおり補う（利用者が図録で確認）。
+    title:'馬琴宅寄宿・木更津', summary:'春から初夏頃まで曲亭馬琴宅に寄宿。6月頃、上総国木更津へ旅し、畳が池辺の水野清兵衛方に逗留、同家で「唐仙人の楽遊」という襖絵を描いたという。', sourceText:'春から夏のはじめにかけ、曲亭馬琴宅に寄宿する。六月頃、上総国木更津に旅し、畳が池辺、水野清兵衛方に逗留、同家にて「唐仙人の楽遊」という襖絵を描くという。',
     certainty:'stated', certaintyRaw:'図録記載', sourcePage:76, source:'大北斎展図録(東武美術館,1993)' },
   { id:'dh1993-1808-network-res', year:1808, yearOriginal:'1808', age:'49', category:'residence', categoryJa:'交流・居所', importance:'secondary', scope:'life',
     title:'亀沢町新宅・書画会', summary:'柳亭種彦の日記に北斎訪問の記録。8月24日、亀沢町に新宅を構え、柳橋で書画会を開催。', sourceText:'柳亭種彦の日記に北斎訪問の記録。8月24日、亀沢町に新宅を構え、柳橋で書画会を開催。',
@@ -368,9 +369,14 @@ export const chronology = [
   { id:'dh1993-1815-residence', year:1815, yearOriginal:'1815頃', age:'56', category:'residence', categoryJa:'居所', importance:'detail', scope:'life',
     title:'蛇山か', summary:'春頃、蛇山に住んだ可能性（絵本の記載による）。', sourceText:'春頃、蛇山に住んだ可能性（絵本の記載による）。',
     certainty:'catalog_inference', certaintyRaw:'図録推定', sourcePage:77, source:'大北斎展図録(東武美術館,1993)' },
-  { id:'dh1993-1816-travel-live', year:1816, yearOriginal:'1816', age:'57', category:'travel', categoryJa:'旅・実演', importance:'secondary', scope:'life',
+  // 2026-10-30 訂正: 整理資料では1816(57)だったが、図録の年譜は1817（利用者が図録で確認）。名古屋市博物館も文化14年(1817)10月5日・数え58とする。
+  { id:'dh1993-1817-travel-live', year:1817, yearOriginal:'1817', age:'58', category:'travel', categoryJa:'旅・実演', importance:'secondary', scope:'life',
     title:'名古屋 大達磨・上方旅', summary:'春頃名古屋花屋町に滞在した可能性。10月5日、名古屋西掛所で百二十畳大の達磨半身を描く。年末頃、大坂・伊勢・紀州・吉野などへ旅行したとされる。', sourceText:'春頃名古屋花屋町に滞在した可能性。10月5日、名古屋西掛所で百二十畳大の達磨半身を描く。年末頃、大坂・伊勢・紀州・吉野などへ旅行したとされる。',
     certainty:'stated', certaintyRaw:'図録記載＋推定', sourcePage:78, source:'大北斎展図録(東武美術館,1993)' },
+  // 2026-10-30 追加: 整理資料に無かった図録の記載（利用者が図録で確認。頁番号は未記録）。
+  { id:'dh1993-1817-letter', year:1817, yearOriginal:'1817', age:'58', category:'network', categoryJa:'書簡', importance:'secondary', scope:'life',
+    title:'永楽屋の番頭へ借金願の手紙', summary:'10月16日、永楽屋の番頭・藤助に借金願の手紙を送る。', sourceText:'10月16日、永楽屋の番頭・藤助に借金願の手紙を送る。',
+    certainty:'stated', certaintyRaw:'図録記載', sourcePage:null, source:'大北斎展図録(東武美術館,1993)' },
   { id:'dh1993-1819-name', year:1819, yearOriginal:'1819頃', age:'60', category:'name', categoryJa:'画号', importance:'detail', scope:'life',
     title:'戴斗号を譲るか', summary:'「戴斗」号を門人・斗円楼北泉へ譲った可能性。', sourceText:'「戴斗」号を門人・斗円楼北泉へ譲った可能性。',
     certainty:'catalog_inference', certaintyRaw:'図録推定', sourcePage:78, source:'大北斎展図録(東武美術館,1993)' },

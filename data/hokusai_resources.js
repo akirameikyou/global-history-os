@@ -12,11 +12,8 @@
 export const resourcesMeta = {
  "version": "001",
  "compiledFrom": [
-  "001",
-  "002",
-  "003",
-  "004",
-  "005"
+  "GPT北斎資料 001〜005",
+  "The Met・ColBase・都立図書館・国立国会図書館ほか（OS編集で追加, 各資料に出典と確認日）"
  ],
  "researchedAt": "2026-10-28",
  "compiledAt": "2026-10-30",
@@ -2046,6 +2043,237 @@ export const resourceSources = [
   }
  },
  {
+  "id": "MET-37286",
+  "pkg": "met-ref-002",
+  "title": "Butterfly (Chō); Dragonfly (Kagerō or Tonbo), from the Picture Book of Crawling Creatures (Ehon mushi erami)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37286",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "喜多川歌麿",
+  "relation": "同時代の浮世絵師（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Page from woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP143122.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37286",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1918 (JP1046)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1788",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-51137",
+  "pkg": "met-ref-002",
+  "title": "“Hour of the Rat: Mistress,” from the series Women’s Daily Customs (Fuzoku bijin tokei)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/51137",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "喜多川歌麿",
+  "relation": "同時代の浮世絵師（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP135613.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/51137",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1922 (JP1278)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1790",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37352",
+  "pkg": "met-ref-002",
+  "title": "Kabuki Actor Ichikawa Komazō III as Shiga Daishichi in the Play A Medley of Tales of Revenge (Katakiuchi noriaibanashi)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37352",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1794
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "東洲斎写楽",
+  "relation": "同時代の浮世絵師・1794–95年に活動（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Woodblock print; ink, color, white mica on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP130222.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37352",
+   "credit": "The Metropolitan Museum of Art, The Howard Mansfield Collection, Purchase, Rogers Fund, 1936 (JP2649)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "5th month, 1794",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37382",
+  "pkg": "met-ref-002",
+  "title": "Ichikawa Yaozō III (R) and Nakayama Tomisaburō I (L) as Two Kamuro Performing a Lion Dance",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37382",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1794
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "東洲斎写楽",
+  "relation": "同時代の浮世絵師・1794–95年に活動（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Diptych of woodblock prints (nishiki-e); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP130208.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37382",
+   "credit": "The Metropolitan Museum of Art, Harris Brisbane Dick Fund and Rogers Fund, 1949 (JP3128a, b)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1794 (Kansei 6), 11th month",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37354",
+  "pkg": "met-ref-002",
+  "title": "The Kitchen",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37354",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1794
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "喜多川歌麿",
+  "relation": "同時代の浮世絵師・暮らしの場面（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Right-hand sheet of a triptych of woodblock prints; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP141294.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37354",
+   "credit": "The Metropolitan Museum of Art, The Howard Mansfield Collection, Purchase, Rogers Fund, 1936 (JP2732)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1795",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36510",
+  "pkg": "met-ref-002",
+  "title": "Evening Cherries on Gotem Yama",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36510",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1830
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "歌川広重",
+  "relation": "同時代の風景版画の絵師（直接の関係は未確認）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP123237.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36510",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP30)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1830",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36536",
+  "pkg": "met-ref-002",
+  "title": "Toto, Ryogoku, from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36536",
+  "kind": "work",
+  "role": "reference",
+  "refKind": "contemporary",
+  "phases": [
+   1850
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "artist": "歌川広重",
+  "relation": "北斎没後の広重『富士三十六景』（題名の近い後続作。影響関係は断定しない）",
+  "relationBasis": "同じ時代に活動した絵師（同時代であることは影響関係を意味しない）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP120489.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36536",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP57)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "4th month, Horse year 1858",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
   "id": "CB-tnm-A-8778",
   "pkg": "cur-001",
   "role": "reference",
@@ -2205,6 +2433,29 @@ export const resourceSources = [
   "rights": {
    "status": "LINK_ONLY",
    "basis": "個別ページにPD表示なし（ToMuCo規約：表示のない収蔵品画像は第三者権利）"
+  },
+  "image": null,
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "NDL-2542961",
+  "pkg": "cur-002",
+  "role": "reference",
+  "refKind": "record",
+  "phases": [
+   1836
+  ],
+  "title": "守貞謾稿",
+  "artist": "喜田川守貞 著",
+  "org": "国立国会図書館",
+  "url": "https://dl.ndl.go.jp/pid/2542961",
+  "dateText": "江戸後期（天保8年〈1837〉起筆とされる）",
+  "relation": "同時代の江戸・上方の風俗記録（北斎の晩年と重なる）",
+  "relationBasis": "北斎の1830年代後半〜1840年代と同時代の生活記録",
+  "rights": {
+   "status": "LINK_ONLY",
+   "basis": "資料はPDM（国立国会図書館）。掲載するページ（挿図）を未選定のためリンクのみ"
   },
   "image": null,
   "kind": "work",
@@ -2918,7 +3169,286 @@ export const oldMaps = [
    "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
    "credit": "国立国会図書館デジタルコレクション"
   },
-  "gapNote": "北斎の誕生（1760）から約90年後の地図。誕生時の町並みそのものではない。",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286679-ishihara",
+  "title": "〔江戸切絵図〕本所絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1852年版として掲載）",
+  "year": 1852,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286679/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   1500,
+   1700,
+   1100,
+   800
+  ],
+  "marks": [
+   {
+    "label": "石原町",
+    "xywh": [
+     1683,
+     2197,
+     108,
+     42
+    ],
+    "codh": "16-146"
+   },
+   {
+    "label": "石原町",
+    "xywh": [
+     1955,
+     2267,
+     118,
+     38
+    ],
+    "codh": "16-149"
+   },
+   {
+    "label": "石原町",
+    "xywh": [
+     2215,
+     2270,
+     113,
+     42
+    ],
+    "codh": "16-151"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286679",
+  "doi": "10.11501/1286679",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/16/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286679-komume",
+  "title": "〔江戸切絵図〕本所絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1852年版として掲載）",
+  "year": 1852,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286679/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   3200,
+   600,
+   1000,
+   800
+  ],
+  "marks": [
+   {
+    "label": "小梅村",
+    "xywh": [
+     3691,
+     905,
+     162,
+     69
+    ],
+    "codh": "16-282"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286679",
+  "doi": "10.11501/1286679",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/16/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286680-mannen",
+  "title": "〔江戸切絵図〕深川絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1852年版として掲載）",
+  "year": 1852,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286680/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   800,
+   1500,
+   1000,
+   800
+  ],
+  "marks": [
+   {
+    "label": "万年橋",
+    "xywh": [
+     1247,
+     1865,
+     118,
+     44
+    ],
+    "codh": "14-028"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286680",
+  "doi": "10.11501/1286680",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/14/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286673-gokokuji",
+  "title": "〔江戸切絵図〕音羽絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1853年版として掲載）",
+  "year": 1853,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286673/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   3150,
+   350,
+   1000,
+   800
+  ],
+  "marks": [
+   {
+    "label": "護国寺",
+    "xywh": [
+     3615,
+     745,
+     84,
+     88
+    ],
+    "codh": "19-030"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286673",
+  "doi": "10.11501/1286673",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/19/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286659-iida",
+  "title": "〔江戸切絵図〕駿河台小川町絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1850年版として掲載）",
+  "year": 1850,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286659/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   3550,
+   1450,
+   1000,
+   850
+  ],
+  "marks": [
+   {
+    "label": "飯田町中坂通",
+    "xywh": [
+     4036,
+     1966,
+     185,
+     78
+    ],
+    "codh": "6-049"
+   },
+   {
+    "label": "九段坂",
+    "xywh": [
+     4069,
+     1727,
+     91,
+     54
+    ],
+    "codh": "6-053"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286659",
+  "doi": "10.11501/1286659",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/06/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MAP-NDL-1286208-shoten",
+  "title": "〔江戸切絵図〕今戸箕輪浅草絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1853年版として掲載）",
+  "year": 1853,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286208/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   2700,
+   2850,
+   1000,
+   800
+  ],
+  "marks": [
+   {
+    "label": "浅草聖天町",
+    "xywh": [
+     3023,
+     3206,
+     203,
+     95
+    ],
+    "codh": "21-200"
+   },
+   {
+    "label": "浅草聖天町",
+    "xywh": [
+     3210,
+     3230,
+     152,
+     66
+    ],
+    "codh": "21-206"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286208",
+  "doi": "10.11501/1286208",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/21/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
   "checkedAt": "2026-10-30"
  }
 ];
@@ -2934,6 +3464,102 @@ export const textLinks = [
   "linkBy": "OS編集"
  },
  {
+  "lifeId": "dh1993-1804-live",
+  "text": "音羽護国寺",
+  "coord": {
+   "lat": 35.72123,
+   "lng": 139.7258
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286673-gokokuji",
+  "note": "護国寺の所在地（文京区大塚五丁目40番）。",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1806-network-travel",
+  "text": "曲亭馬琴宅",
+  "coord": {
+   "lat": 35.69665,
+   "lng": 139.75066
+  },
+  "zoom": 16,
+  "oldMap": "MAP-NDL-1286659-iida",
+  "note": "馬琴は寛政5年（1793）から飯田町中坂（世継稲荷下、履物商・伊勢屋）に住み、1806年もここ（Wikipedia「曲亭馬琴」）。現・千代田区九段北一丁目の代表点（国土地理院）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1806-network-travel",
+  "text": "上総国木更津",
+  "coord": {
+   "lat": 35.3858232,
+   "lng": 139.9385292
+  },
+  "zoom": 16,
+  "pinLabel": "畳が池",
+  "note": "畳が池（木更津市朝日三丁目4付近。Googleマップの地点、国土地理院の住所検索と約30m差で照合）。図録の「畳が池辺、水野清兵衛方」による。水野家の位置ではない",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1808-network-res",
+  "text": "亀沢町",
+  "coord": {
+   "lat": 35.69729,
+   "lng": 139.79875
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286679",
+  "note": "現在の墨田区亀沢の代表点（新宅の位置ではない）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1840-work-res",
+  "text": "亀沢町",
+  "coord": {
+   "lat": 35.69729,
+   "lng": 139.79875
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286679",
+  "note": "現在の墨田区亀沢の代表点（住居の位置ではない）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1836-res-work",
+  "text": "深川万年橋",
+  "coord": {
+   "lat": 35.68487,
+   "lng": 139.79442
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286680-mannen",
+  "note": "万年橋付近（江東区常盤一丁目の代表点。住居の位置ではない）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1839-fire-travel",
+  "text": "本所石原片町",
+  "coord": {
+   "lat": 35.70033,
+   "lng": 139.79852
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286679-ishihara",
+  "note": "現在の墨田区石原の代表点。切絵図に「石原片町」の名は見当たらず、枠は石原町",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1844-res-travel",
+  "text": "向島小梅村",
+  "coord": {
+   "lat": 35.71177,
+   "lng": 139.80461
+  },
+  "zoom": 15,
+  "oldMap": "MAP-NDL-1286679-komume",
+  "note": "小梅村の範囲の代表点（墨田区向島一丁目。住居の位置ではない）",
+  "linkBy": "OS編集"
+ },
+ {
   "lifeId": "dh1993-1812-travel-work",
   "text": "名古屋",
   "place": "lp_nagoya",
@@ -2942,11 +3568,25 @@ export const textLinks = [
   "linkBy": "OS編集"
  },
  {
-  "lifeId": "dh1993-1816-travel-live",
-  "text": "名古屋",
-  "place": "lp_nagoya",
-  "zoom": 12,
-  "note": "名古屋の代表点（花屋町・西掛所の位置ではない）",
+  "lifeId": "dh1993-1817-travel-live",
+  "text": "名古屋花屋町",
+  "coord": {
+   "lat": 35.16561,
+   "lng": 136.90295
+  },
+  "zoom": 16,
+  "note": "花屋町の滞在先の現在地付近（名古屋市中区「北斎が描いた名古屋のまちの記憶」は中区栄三丁目20-4の辺りとする。同ページは移転中のため検索結果の抜粋で確認。座標は国土地理院 住所検索）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1817-travel-live",
+  "text": "名古屋西掛所",
+  "coord": {
+   "lat": 35.15707,
+   "lng": 136.90048
+  },
+  "zoom": 16,
+  "note": "西掛所（現・本願寺名古屋別院〔西別院〕、名古屋市中区門前町1-23。座標は国土地理院 住所検索）。名古屋市博物館は文化14年（1817）10月5日とする",
   "linkBy": "OS編集"
  },
  {
@@ -2988,6 +3628,7 @@ export const textLinks = [
   "text": "浅草聖天町",
   "place": "r_asakusa",
   "zoom": 14,
+  "oldMap": "MAP-NDL-1286208-shoten",
   "note": "浅草聖天町の代表点（遍照院・仮宅の位置ではない）",
   "linkBy": "OS編集"
  }
