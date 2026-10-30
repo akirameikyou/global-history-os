@@ -168,7 +168,7 @@
   .pr-work img{width:100%;aspect-ratio:3/2;object-fit:contain;border-radius:4px;display:block;cursor:pointer}
   .pr-work .cap{font-size:9.5px;color:var(--sub);margin-top:3px;line-height:1.45}
   .pr-item{margin:0 0 9px;font-size:11.5px;line-height:1.6}
-  .pr-item a{color:#cbe6ff;text-decoration:none} .pr-item a:hover{text-decoration:underline}
+  #detailCard .dc-body a,#detailCard .dc-body a:visited{color:#cbe6ff;text-decoration:none} #detailCard .dc-body a:hover{text-decoration:underline} /* カード内リンクは全て明るい青（既定の濃い青は黒地で読めない） */
   .pr-item .org{color:var(--dim);font-size:10.5px}
   .pr-item .d{color:var(--sub);font-size:10.5px}
   .pr-chip{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;padding:0 5px;border-radius:3px;margin-left:4px;
@@ -302,6 +302,8 @@
     .ls-item.on{background:rgba(102,224,255,.06);border-radius:8px;margin:0 -8px;padding:8px}
     .ls-cert{font-family:var(--mono);font-size:9px;color:var(--est,#e0b45f);margin-left:6px}
     .ls-desc{display:block;font-size:11px;color:var(--sub);line-height:1.7;margin-top:5px}
+    .ls-phase{padding:9px 2px 7px;flex-wrap:wrap;row-gap:2px}               /* シート内の年代見出し（左右余白はシート側） */
+    #detailCard{width:calc(100vw - 24px)}                                     /* 年代資料カード：スマホは画面幅いっぱい（左右12px） */
     /* HOLDINGS リスト行（現在所蔵）＝gray系 */
     .hl-item{padding:9px 0;border-top:1px solid var(--rule)}
     .hl-item:first-child{border-top:0}
@@ -1151,14 +1153,21 @@ function workSheetHTML(w){ const coords=w.lat.toFixed(3)+', '+w.lng.toFixed(3); 
       +'<br>※画角コーンは現行Representation幅で、作品の実画角確定ではない（暫定v3）。距離で可視判定はしない。</div>';
 }
 // LIFE年譜：選択イベントを中心に、前後の年譜を辿れる（留保表現・timeCursor同期は既存仕様のまま）。
-function lifeSheetHTML(selId){ return LIFE_SHOWN.map(ev=>{
+// PC右パネルと同じ年代見出し（lifePhases）を差し込む。タップ=年代資料カード（selection・timeCursorは変えない）。
+function lifeSheetHTML(selId){ let pi=0, h=lsPhaseHTML(null);
+  LIFE_SHOWN.forEach(ev=>{ while(pi<lifePhases.length&&lifePhases[pi].from<=ev.year)h+=lsPhaseHTML(lifePhases[pi++]);
   const yl=(ev.yearOriginal&&ev.yearOriginal!==String(ev.year))?ev.yearOriginal:ev.year;
   const on=ev.id===selId;
   const cert=(ev.certainty!=='stated'&&ev.certaintyRaw)?'<span class="ls-cert">'+ev.certaintyRaw+'</span>':'';
-  return '<div class="ls-item'+(on?' on':'')+'" data-lid="'+ev.id+'" data-ly="'+ev.year+'">'
+  h+='<div class="ls-item'+(on?' on':'')+'" data-lid="'+ev.id+'" data-ly="'+ev.year+'">'
     +'<span class="ls-yr">'+yl+'</span><span class="ls-t">'+ev.title+cert
     +((on&&ev.summary)?'<span class="ls-desc">'+ev.summary+'</span>':'')+'</span></div>';
-}).join(''); }
+  });
+  while(pi<lifePhases.length)h+=lsPhaseHTML(lifePhases[pi++]); // 年譜itemのない期（没後）も見出しは出す
+  return h; }
+function lsPhaseHTML(ph){ const c=periodCounts(ph?ph.from:null);
+  return '<div class="phase-head ls-phase'+(ph?'':' general')+'" data-pfrom="'+(ph?ph.from:'')+'"><span class="ph-l">'+(ph?ph.label:'生涯全体の資料')+'</span>'
+    +'<span class="ph-y">'+(ph?ph.from+'–'+ph.to:'時期を特定しない')+'</span><span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span></div>'; }
 // HOLDINGS（現在所蔵）：JAPAN=国内 / WORLD=国内外。選択で詳細をインライン展開。確認済みデータのみ。
 function holdingListHTML(selH){ const list=holdingsFor();
   const back = (State.selection.type==='work') ? '<button class="hl-see" id="hlAll" style="margin:2px 0 10px;display:block;width:100%;text-align:left">← 美術館一覧にもどる（作品の絞り込みを解除）</button>' : '';
@@ -1204,6 +1213,7 @@ function renderMobileSheet(){ if(window.innerWidth>640)return; // PCは無関係
     msLead.textContent=(yl!==''?yl+'　':'')+(ev?ev.title:''); msCnt.textContent='LIFE ／ 人物年譜';
     msBody.innerHTML=lifeSheetHTML(s.id);
     msBody.querySelectorAll('.ls-item').forEach(el=>el.onclick=()=>{ setCursor(+el.dataset.ly); setSel('life',el.dataset.lid); }); // 前後イベント=選択+cursor同期
+    msBody.querySelectorAll('.ls-phase').forEach(el=>el.onclick=()=>{ const f=el.dataset.pfrom; showPeriodCard(f?lifePhases.find(p=>p.from===+f):null,el); }); // 年代見出し=資料カード
     const onEl=msBody.querySelector('.ls-item.on'); if(onEl)onEl.scrollIntoView({block:'center'}); // 選択を中心に
   } else { mSheetSelSig=null; msLead.textContent='冨嶽三十六景'; msCnt.textContent='46図タップ ／ 年譜'; msBody.innerHTML=''; mSheet.classList.add('collapsed'); syncMobileTL(); return; }
   if(mSheetSelSig!==sig){ mSheet.classList.remove('collapsed'); mSheetSelSig=sig; } // 新規選択で展開（同一選択なら現状維持＝閉じた状態を尊重）
