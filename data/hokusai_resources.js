@@ -1,5 +1,6 @@
 // data/hokusai_resources.js — 年代別資料レイヤー（北斎Focus）  ※自動生成。手で直さず生成スクリプトを直す
 // 出典: GPT北斎資料 001〜005（2026-10-28 調査, 利用者提供）を統合。原資料の文言・権利状態は書き換えていない。
+//       ＋ 年代別作品 met-001（The Met Open Access から OS 編集で選定。id=MET-<objectID>）。
 // 期のキー = data/hokusai_life.js の lifePhases[].from。phases:[] = 生涯全体／時期を特定しない。
 // role: period=期の資料 / general=生涯全体 / anecdote=逸話の根拠としてのみ表示 / policy=利用条件の参照（画面の期一覧には出さない）。
 // 画像(image)は The Met 個別作品で isPublicDomain=true を API で確認したものだけ。それ以外は外部リンクのみ。
@@ -218,6 +219,7 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "ca. 1800",
+   "classification": "版画",
    "checkedAt": "2026-10-30"
   }
  },
@@ -347,6 +349,7 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "ca. 1830–32",
+   "classification": "版画",
    "checkedAt": "2026-10-30"
   }
  },
@@ -380,6 +383,7 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "ca. 1830–32",
+   "classification": "版画",
    "checkedAt": "2026-10-30"
   }
  },
@@ -413,6 +417,7 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "ca. 1830–32",
+   "classification": "版画",
    "checkedAt": "2026-10-30"
   }
  },
@@ -446,6 +451,7 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "ca. 1830–32",
+   "classification": "版画",
    "checkedAt": "2026-10-30"
   }
  },
@@ -1114,6 +1120,761 @@ export const resourceSources = [
    "license": "Public Domain（The Met Open Access / CC0）",
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "1834",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-48878",
+  "pkg": "met-001",
+  "title": "In Front of a Shop",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/48878",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink and color on silk",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP-24789-002.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/48878",
+   "credit": "The Metropolitan Museum of Art, Charles Stewart Smith Collection, Gift of Mrs. Charles Stewart Smith, Charles Stewart Smith Jr., and Howard Caswell Smith, in memory of Charles Stewart Smith, 1914 (14.76.34)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "dated 1780",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37190",
+  "pkg": "met-001",
+  "title": "The Sumo Wrestlers Wadagahara Jinshirō and Kachōzan Gorokichi",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37190",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP148843.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37190",
+   "credit": "The Metropolitan Museum of Art, The Francis Lathrop Collection, Purchase, Frederick C. Hewitt Fund, 1911 (JP742)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1783",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45822",
+  "pkg": "met-001",
+  "title": "Woman Spinning Silk",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45822",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink and color on silk",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DT5290.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45822",
+   "credit": "The Metropolitan Museum of Art, Charles Stewart Smith Collection, Gift of Mrs. Charles Stewart Smith, Charles Stewart Smith Jr., and Howard Caswell Smith, in memory of Charles Stewart Smith, 1914 (14.76.30)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "dated 1790",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37189",
+  "pkg": "met-001",
+  "title": "The Sumo Wrestlers Takaneyama Yoichiemon and Sendagawa Kichigorō",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37189",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1779
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP148842.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37189",
+   "credit": "The Metropolitan Museum of Art, The Francis Lathrop Collection, Purchase, Frederick C. Hewitt Fund, 1911 (JP741)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1790–93",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45494",
+  "pkg": "met-001",
+  "title": "The Ninth-Month Kabuki Dance \"Kikujido\"",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45494",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1794
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP148845.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45494",
+   "credit": "The Metropolitan Museum of Art, The Howard Mansfield Collection, Purchase, Rogers Fund, 1936 (JP2570)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1796",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45218",
+  "pkg": "met-001",
+  "title": "Squeaking a Ground Cherry, from the series Seven Fashionable Useless Habits (Furyu nakute nana kuse)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45218",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1794
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP140967.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45218",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1922 (JP1290)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1798",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36483",
+  "pkg": "met-001",
+  "title": "New Year's Day at the Ōgiya Brothel, Yoshiwara",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36483",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1800
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Pentaptych of woodblock prints; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP317443.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36483",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP29a–e)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1804",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37391",
+  "pkg": "met-001",
+  "title": "Mariko",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37391",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1800
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP141264.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37391",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP1)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1805",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-44634",
+  "pkg": "met-001",
+  "title": "Drunken Asaina",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/44634",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1800
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Fan mounted as hanging scroll; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP-24853-002.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/44634",
+   "credit": "The Metropolitan Museum of Art, Purchase, Friends of Asian Art Gifts, 1991 (1991.151)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1810",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-37193",
+  "pkg": "met-001",
+  "title": "Seaside Village in Winter, from Hokusai’s Album of Realistic Pictures (Hokusai shashin gafu)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/37193",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Detached plate from a woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP148844.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/37193",
+   "credit": "The Metropolitan Museum of Art, The Francis Lathrop Collection, Purchase, Frederick C. Hewitt Fund, 1911 (JP748)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1814",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-54114",
+  "pkg": "met-001",
+  "title": "Women Preparing Tea Around the Fire-Holder",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/54114",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Part of an album of woodblock prints (surimono); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP138989.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/54114",
+   "credit": "The Metropolitan Museum of Art, H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929 (JP2330)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1816",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45029",
+  "pkg": "met-001",
+  "title": "View of Saruhashi (Monkey Bridge)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45029",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP141120.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45029",
+   "credit": "The Metropolitan Museum of Art, H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929 (JP1856)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1816–20",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-78796",
+  "pkg": "met-001",
+  "title": "Picture Album Transmitting the Spirit: The Hokusai Drawing Style (Denshin gafu Hokusai gashiki)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/78796",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版本・Set of three woodblock printed books; ink on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/LC-2013_725_a_c_a_005_crd.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/78796",
+   "credit": "The Metropolitan Museum of Art, Purchase, Mary and James G. Wallach Foundation Gift, 2013 (2013.725a–c)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1819",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-78797",
+  "pkg": "met-001",
+  "title": "Various Pictures by Hokusai (Hokusai soga) 北斎麁画",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/78797",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版本・Woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/2013_726_08_crd.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/78797",
+   "credit": "The Metropolitan Museum of Art, Purchase, Mary and James G. Wallach Foundation Gift, 2013 (2013.726)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1820 (Bunsei 3)",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-54438",
+  "pkg": "met-001",
+  "title": "Ashi Clam, from the series \"Genroku Kasen Kai-awase\"",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/54438",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1821
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP143425.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/54438",
+   "credit": "The Metropolitan Museum of Art, H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929 (JP1873)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1821",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-54389",
+  "pkg": "met-001",
+  "title": "Horse Pattern (Koma shōbu), from the series Horses",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/54389",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1821
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print (surimono); ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP143416.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/54389",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1922 (JP1393)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1822",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-78799",
+  "pkg": "met-001",
+  "title": "Transmitting the Spirit, Revealing Form of Things: Picture Album of Drawings at One Stroke (Denshin kaishu ippitsu gafu) 伝神開手 一筆画譜",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/78799",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1821
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版本・Woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/2013_728_05_crd.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/78799",
+   "credit": "The Metropolitan Museum of Art, Purchase, Mary and James G. Wallach Foundation Gift, 2013 (2013.728)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1823 (Bunsei 6)",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36489",
+  "pkg": "met-001",
+  "title": "Kintai Bridge in Suō Province (Suō no kuni Kintaibashi), from the series Remarkable Views of Bridges in Various Provinces (Shokoku meikyō kiran)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36489",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1821
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP141228.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36489",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP8)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1827–30",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-78801",
+  "pkg": "met-001",
+  "title": "Picture Book of the Suikoden (The Water Margin) Loyalty (Chūgi Suikoden ehon) 忠義水滸伝画本",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/78801",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1821
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版本・Woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/2013_730_25_crd.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/78801",
+   "credit": "The Metropolitan Museum of Art, Purchase, Mary and James G. Wallach Foundation Gift, 2013 (2013.730)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1829 (Bunsei 12)",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-44981",
+  "pkg": "met-001",
+  "title": "Snow on the Sumida River (Sumida), from the series, Snow, Moon, and Flowers (Setsugekka)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/44981",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1830
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP141240.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/44981",
+   "credit": "The Metropolitan Museum of Art, Henry L. Phillips Collection, Bequest of Henry L. Phillips, 1939 (JP2921)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "ca. 1833",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-78805",
+  "pkg": "met-001",
+  "title": "Picture Book of New Designs for the Various Crafts (Shōshoku ehon Katsushika shin hinagata) 諸職絵本葛飾新鄙形",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/78805",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1836
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版本・Woodblock printed book; ink on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/2013_734_28_crd.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/78805",
+   "credit": "The Metropolitan Museum of Art, Purchase, Mary and James G. Wallach Foundation Gift, 2013 (2013.734)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1836, first month (Tenpō 7)",
+   "classification": "版本",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45816",
+  "pkg": "met-001",
+  "title": "Gamecocks",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45816",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1836
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink and color on silk",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP279646.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45816",
+   "credit": "The Metropolitan Museum of Art, Charles Stewart Smith Collection, Gift of Mrs. Charles Stewart Smith, Charles Stewart Smith Jr., and Howard Caswell Smith, in memory of Charles Stewart Smith, 1914 (14.76.56)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "dated 1838",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-36485",
+  "pkg": "met-001",
+  "title": "Poem by Jitō Tenno (Empress Jitō), from the series One Hundred Poems Explained by the Nurse (Hyakunin isshu uba ga etoki)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/36485",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1836
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "版画・Woodblock print; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP140961.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/36485",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1914 (JP3)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1839",
+   "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-48880",
+  "pkg": "met-001",
+  "title": "Wild Geese and Water",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/48880",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1836
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP-24851-002.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/48880",
+   "credit": "The Metropolitan Museum of Art, H. O. Havemeyer Collection, Bequest of Mrs. H. O. Havemeyer, 1929 (29.100.1403)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1839",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45818",
+  "pkg": "met-001",
+  "title": "Red Zhong Kui, the Demon Queller",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45818",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1844
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink and color on silk",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP317438.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45818",
+   "credit": "The Metropolitan Museum of Art, Charles Stewart Smith Collection, Gift of Mrs. Charles Stewart Smith, Charles Stewart Smith Jr., and Howard Caswell Smith, in memory of Charles Stewart Smith, 1914 (14.76.37)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1846",
+   "classification": "肉筆画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "MET-45819",
+  "pkg": "met-001",
+  "title": "Black Shōki, the Demon Queller",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/45819",
+  "kind": "work",
+  "role": "period",
+  "phases": [
+   1844
+  ],
+  "phaseBy": "OS編集（The Metの年代表記 objectDate による）",
+  "desc": "肉筆画・Hanging scroll; ink on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/DP-24791-002.jpg",
+   "page": "https://www.metmuseum.org/art/collection/search/45819",
+   "credit": "The Metropolitan Museum of Art, Charles Stewart Smith Collection, Gift of Mrs. Charles Stewart Smith, Charles Stewart Smith Jr., and Howard Caswell Smith, in memory of Charles Stewart Smith, 1914 (14.76.57)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "1849",
+   "classification": "肉筆画",
    "checkedAt": "2026-10-30"
   }
  }

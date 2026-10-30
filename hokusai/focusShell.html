@@ -123,6 +123,19 @@
   .worktile .card{margin-top:8px;display:none} .worktile.sel .card{display:block}
   .worktile .card img{width:100%;border-radius:6px;border:1px solid var(--rule);cursor:zoom-in}
   .worktile .card .cap{font-size:10.5px;color:var(--sub);margin-top:5px;line-height:1.6}
+  /* WORKSタブ（JAPANのみ）：冨嶽三十六景＝既存46図 / この年代＝timeCursorの期の作品（画像PD）。背景なし・選択は金の下線 */
+  .wtabs{display:flex;gap:14px;padding:0 16px 7px;border-bottom:1px solid var(--rule)}
+  .wtabs [data-tab]{font-size:11px;color:var(--dim);cursor:pointer;padding-bottom:3px;border-bottom:2px solid transparent}
+  .wtabs [data-tab].on{color:var(--gold);border-bottom-color:var(--gold)}
+  .wtabs .yr{font-family:var(--mono);font-size:13.5px;color:inherit;letter-spacing:.02em;margin-right:1px} /* 年代範囲＝等幅。等幅数字は和文より小さく見えるため少し大きく、色は「年の作品」と同じ */
+  .era-head{padding:8px 16px 6px;font-size:10.5px;color:var(--sub);border-bottom:1px solid var(--rule)}
+  .era-head .lk{color:#cbe6ff;cursor:pointer;margin-left:6px;white-space:nowrap}
+  .era-work{display:flex;gap:10px;padding:8px 16px;border-bottom:1px solid var(--rule);cursor:pointer}
+  .era-work:hover{background:rgba(255,255,255,.04)}
+  .era-work img{flex:0 0 64px;width:64px;height:48px;object-fit:contain;border-radius:3px}
+  .era-work .t{font-size:11.5px;font-weight:600;line-height:1.45}
+  .era-work .m{font-family:var(--mono);font-size:9.5px;color:var(--sub);margin-top:2px}
+  .era-empty{padding:10px 16px;font-size:11px;color:var(--sub);line-height:1.6}
   .chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-right:4px}
   .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)} .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
   .compo-dbg{display:none} body.axison .compo-dbg{display:inline} /* 構図補正の数値は富士山頂軸ON(=QA/DEBUG)時のみ表示 */
@@ -341,7 +354,9 @@
 <!-- 左下：JAPAN=WORKS(制作物) / WORLD=時間により CONTEMPORARIES→RECEPTION→HOLDINGS へ意味が変わる同一領域 -->
 <div class="panel left-works">
   <div class="sec" id="leftSecTitle">Works<span class="series">冨嶽三十六景</span></div>
+  <div class="wtabs" id="worksTabs" hidden><span data-tab="36" class="on">冨嶽三十六景</span><span data-tab="era" id="eraTabLabel">この年代</span></div>
   <div id="worksList"></div>
+  <div id="eraWorksList" hidden></div>
   <div id="worldInfoList" hidden></div>
 </div>
 
@@ -438,7 +453,7 @@ import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
-import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta } from '../data/hokusai_resources.js?v=20261030';
+import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta } from '../data/hokusai_resources.js?v=20261030c';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -903,9 +918,39 @@ function renderHoldings(){ worldInfoList.innerHTML='';
     d.onclick=(e)=>{ if(e.target.closest('.wi-link'))return; setSel('holding',h.id); showHoldingCard(h,d); }; // 公式サイトリンクは選択・camera移動を起こさない
     d.querySelector('.wi-see').onclick=(e)=>{e.stopPropagation(); holdingSee(h); }; // HOLDINGS=gray
     worldInfoList.appendChild(d);}); }
-function renderLeftBottom(force){ const m=leftMode(); const selW=(m==='HOLDINGS'&&State.selection.type==='work')?State.selection.id:''; const key=m+'|'+State.spaceView+'|'+selW; if(key===lastLeftMode&&!force)return; lastLeftMode=key; // 空間変更/作品選択(HOLDINGS)でも再描画
+// WORKSタブ「この年代」：timeCursorの期(lifePhases)に属する作品のうち画像PD確認済みのものだけ。場所データは持たない＝地図にピンを立てない。
+// 46図の採録地ポイント・コーンはタブに関係なく表示のまま（地図描画は変えない）。
+const worksTabsEl=document.getElementById('worksTabs'), eraWorksList=document.getElementById('eraWorksList'); let worksTab='36';
+const phaseAt=y=>lifePhases.find(p=>p.from<=y&&y<=p.to)||null;
+worksTabsEl.querySelectorAll('[data-tab]').forEach(t=>t.onclick=()=>{ worksTab=t.dataset.tab; renderLeftBottom(true); });
+function showEraWorkCard(s,src){ const box=document.createElement('div');
+  box.innerHTML='<div class="pr-work"><img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'" style="aspect-ratio:auto;cursor:zoom-in"></div>'+
+    '<div class="pr-note">'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）</div>'+
+    '<div class="pr-item">'+linkHTML(s.image.page,'所蔵館の作品ページ')+'</div>';
+  box.querySelector('img').onclick=()=>openLB({src:s.image.full||s.image.src});
+  showCard({ tag:'WORK ／ この年代の作品', title:s.title, sub:s.image.objectDate+'｜'+s.org, node:box, accent:'var(--gold)' }, src); }
+function renderEraWorks(){ eraWorksList.innerHTML=''; const ph=phaseAt(State.timeCursor);
+  const head=document.createElement('div'); head.className='era-head';
+  head.innerHTML=ph?esc(ph.from+'–'+ph.to+' '+ph.label)+'<span class="lk">この年代の資料 ›</span>':'北斎の生涯の範囲外';
+  const lk=head.querySelector('.lk'); if(lk)lk.onclick=()=>showPeriodCard(ph,head); eraWorksList.appendChild(head);
+  const list=ph?resourceSources.filter(s=>s.image&&s.phases.includes(ph.from)):[];
+  if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; eraWorksList.appendChild(m); return; }
+  list.forEach(s=>{ const d=document.createElement('div'); d.className='era-work';
+    d.innerHTML='<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"><div><div class="t">'+esc(s.title)+'</div><div class="m">'+esc(s.image.objectDate)+(s.image.classification?'・'+esc(s.image.classification):'')+'・The Met・PD</div></div>';
+    d.onclick=()=>showEraWorkCard(s,d); eraWorksList.appendChild(d); }); }
+// タブ名＝今の期の範囲（右の年譜の年代見出しと同じ区切り）。数字は期をまたいだ時だけ変わる。例 1830–35年の作品
+const phaseRangeShort=p=>{ const a=String(p.from), b=String(p.to); return a+'–'+(a.slice(0,2)===b.slice(0,2)?b.slice(2):b); };
+function renderEraTabLabel(){ const ph=phaseAt(State.timeCursor);
+  document.getElementById('eraTabLabel').innerHTML=ph?'<span class="yr">'+phaseRangeShort(ph)+'</span>年の作品':'この年代の作品'; }
+function renderLeftBottom(force){ const m=leftMode(); const selW=(m==='HOLDINGS'&&State.selection.type==='work')?State.selection.id:'';
+  const era=(m==='WORKS')?'|'+((phaseAt(State.timeCursor)||{}).from):''; // WORKSは期が変わった時だけ再描画（タブ名の年代範囲も更新）
+  const key=m+'|'+State.spaceView+'|'+selW+era; if(key===lastLeftMode&&!force)return; lastLeftMode=key; // 空間変更/作品選択(HOLDINGS)でも再描画
   State.activePlace=null; // モードが変わったら「地点を見る」の地点ラベルは解除
-  if(m==='WORKS'){ worksListEl.hidden=false; worldInfoList.hidden=true; leftSecTitle.innerHTML='Works<span class="series">冨嶽三十六景</span>'; return; }
+  worksTabsEl.hidden=m!=='WORKS'; eraWorksList.hidden=true;
+  if(m==='WORKS'){ worldInfoList.hidden=true; leftSecTitle.innerHTML='Works';
+    worksTabsEl.querySelectorAll('[data-tab]').forEach(t=>t.classList.toggle('on',t.dataset.tab===worksTab)); renderEraTabLabel();
+    if(worksTab==='era'){ worksListEl.hidden=true; eraWorksList.hidden=false; renderEraWorks(); } else worksListEl.hidden=false;
+    return; }
   worksListEl.hidden=true; worldInfoList.hidden=false;
   if(m==='CONTEMPORARIES'){ leftSecTitle.innerHTML='World Art<span class="series">同時代の画家</span>'; renderWorldPersons(worldArt,'worldart'); }
   else if(m==='RECEPTION'){ leftSecTitle.innerHTML='Reception<span class="series">北斎を受け取った世界（没後）</span>'; renderWorldPersons(reception,'reception'); }
@@ -1039,7 +1084,7 @@ function syncTimeLabels(){
 // ---------- lightbox ----------
 const lb=document.getElementById('lb'),lbImg=lb.querySelector('img'),lbHint=document.getElementById('lbHint');
 // lightbox open/close は selection / timeCursor / camera / sheet を一切変更しない（画像の表示のみ）。
-function openLB(w){lbImg.src=thumb(w.file,1400);lb.classList.add('open');
+function openLB(w){lbImg.src=w.src||thumb(w.file,1400);lb.classList.add('open'); // w.src=年代作品（所蔵館の画像URL）
   if(window.innerWidth<=640){ let seen=false; try{seen=localStorage.getItem('lbHintSeen')==='1';}catch(e){} // 初回のみ小さく補助表示
     if(!seen){ lbHint.hidden=false; try{localStorage.setItem('lbHintSeen','1');}catch(e){} setTimeout(()=>{lbHint.hidden=true;},3800); } } }
 lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';lbHint.hidden=true;}); // 閉じる=元のsheetへそのまま戻る（選択は保持）
