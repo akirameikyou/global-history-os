@@ -189,23 +189,23 @@
   .tcau{font-size:9px;color:var(--est,#e0b45f);border:1px dashed currentColor;border-radius:3px;padding:0 4px;margin:0 3px 0 2px;cursor:pointer;white-space:nowrap;vertical-align:1px} /* 資料間の食い違いの札 */
   .tmap{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--est,#e0b45f);border:1px solid currentColor;border-radius:3px;
     padding:0 4px;margin:0 3px 0 4px;cursor:pointer;vertical-align:1px;white-space:nowrap}
-  #oldMapPop{position:fixed;z-index:85;width:min(420px,calc(100vw - 24px));background:rgba(10,16,26,.97);border:1px solid var(--rule);
+  .ompop{position:fixed;z-index:85;width:min(420px,calc(100vw - 24px));background:rgba(10,16,26,.97);border:1px solid var(--rule);
     border-left:3px solid var(--est,#e0b45f);border-radius:9px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:10px 12px 12px}
-  #oldMapPop .om-img{position:relative;line-height:0} #oldMapPop img{width:100%;border-radius:4px}
-  #oldMapPop .om-mark{position:absolute;border:2px solid #ff6b4a;border-radius:3px;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
-  #oldMapPop .om-cap{font-size:11px;line-height:1.6;color:var(--sub);margin-top:8px}
-  #oldMapPop .om-cap b{color:var(--ink)} #oldMapPop .om-gap{color:var(--est,#e0b45f);margin:4px 0}
-  #oldMapPop a{color:#cbe6ff;text-decoration:none} #oldMapPop a:hover{text-decoration:underline}
-  /* 年代資料カードの中身（#detailCard 内） */
-  #detailCard{max-height:calc(100vh - 24px);overflow:auto}
-  #detailCard::-webkit-scrollbar{width:6px} #detailCard::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  .ompop .om-img{position:relative;line-height:0} .ompop img{width:100%;border-radius:4px}
+  .ompop .om-mark{position:absolute;border:2px solid #ff6b4a;border-radius:3px;box-shadow:0 0 0 2px rgba(0,0,0,.35)}
+  .ompop .om-cap{font-size:11px;line-height:1.6;color:var(--sub);margin-top:8px}
+  .ompop .om-cap b{color:var(--ink)} .ompop .om-gap{color:var(--est,#e0b45f);margin:4px 0}
+  .ompop a{color:#cbe6ff;text-decoration:none} .ompop a:hover{text-decoration:underline}
+  /* 年代資料カードの中身（.dcard 内） */
+  .dcard{max-height:calc(100vh - 24px);overflow:auto}
+  .dcard::-webkit-scrollbar{width:6px} .dcard::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
   .pr-sec{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--sub);margin:14px 0 6px;padding-top:9px;border-top:1px solid var(--rule)}
   .pr-lead{white-space:pre-wrap}
   .pr-works{display:grid;grid-template-columns:1fr 1fr;gap:10px 8px}
   .pr-work img{width:100%;aspect-ratio:3/2;object-fit:contain;border-radius:4px;display:block;cursor:pointer}
   .pr-work .cap{font-size:9.5px;color:var(--sub);margin-top:3px;line-height:1.45}
   .pr-item{margin:0 0 9px;font-size:11.5px;line-height:1.6}
-  #detailCard .dc-body a,#detailCard .dc-body a:visited{color:#cbe6ff;text-decoration:none} #detailCard .dc-body a:hover{text-decoration:underline} /* カード内リンクは全て明るい青（既定の濃い青は黒地で読めない） */
+  .dcard .dc-body a,.dcard .dc-body a:visited{color:#cbe6ff;text-decoration:none} .dcard .dc-body a:hover{text-decoration:underline} /* カード内リンクは全て明るい青（既定の濃い青は黒地で読めない） */
   .pr-item .org{color:var(--dim);font-size:10.5px}
   .pr-item .d{color:var(--sub);font-size:10.5px}
   .pr-chip{display:inline-block;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;padding:0 5px;border-radius:3px;margin-left:4px;
@@ -248,20 +248,35 @@
 
   /* ── 詳細カード（ART/TECH・画材・人物）── */
   /* 呼び出し元近くに出す（source-aware）。left/topはJSで設定。中央SPACEを塞がない。 */
-  #detailCard{position:fixed;left:24px;top:120px;width:min(340px,86vw);z-index:75;
+  .dcard{position:fixed;left:24px;top:120px;width:min(340px,86vw);z-index:75;
     background:rgba(10,16,26,.96);border:1px solid var(--rule);border-left:3px solid var(--doc,#4fd0b8);
     border-radius:9px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 18px;animation:cardIn .16s ease-out}
   @keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-  #detailCard .dc-head{cursor:move;user-select:none} /* ヘッダーをドラッグハンドルに */
-  #detailCard .dc-x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer;z-index:2}
-  #detailCard .dc-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--doc,#4fd0b8);font-weight:700}
-  #detailCard .dc-title{font-family:var(--serif);font-size:20px;font-weight:700;margin-top:6px;line-height:1.3}
-  #detailCard .dc-sub{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:.06em}
-  #detailCard .dc-body{font-size:12.5px;line-height:1.85;color:rgba(238,243,248,.9);margin-top:12px}
-  #detailCard .dc-rel{font-size:11px;color:var(--dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--rule)}
-  #detailCard .dc-act{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#cbe6ff;
+  .dcard .dc-head{cursor:move;user-select:none} /* ヘッダーをドラッグハンドルに */
+  .dcard .dc-x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer;z-index:2}
+  .dcard .dc-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--doc,#4fd0b8);font-weight:700}
+  .dcard .dc-title{font-family:var(--serif);font-size:20px;font-weight:700;margin-top:6px;line-height:1.3}
+  .dcard .dc-sub{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:.06em}
+  .dcard .dc-body{font-size:12.5px;line-height:1.85;color:rgba(238,243,248,.9);margin-top:12px}
+  .dcard .dc-rel{font-size:11px;color:var(--dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--rule)}
+  .dcard .dc-act{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#cbe6ff;
     background:rgba(124,179,255,.12);border:1px solid rgba(124,179,255,.4);border-radius:3px;padding:5px 10px;cursor:pointer}
-  #detailCard .dc-act:hover{background:rgba(124,179,255,.22)}
+  .dcard .dc-act:hover{background:rgba(124,179,255,.22)}
+  /* PIN：カードを画面に残して並べる（PCのみ）。背景なし。固定カードはパネルより上・開いたカードより下 */
+  .dc-pin{position:absolute;top:9px;right:34px;background:transparent;border:1px solid rgba(238,243,248,.28);border-radius:4px;color:var(--sub);
+    font-family:var(--mono);font-size:9px;letter-spacing:.1em;line-height:1;padding:3px 6px;cursor:pointer;z-index:2}
+  .dc-pin:hover{color:var(--ink);border-color:rgba(238,243,248,.6)}
+  .ompop .dc-pin{top:16px;right:18px;background:rgba(10,16,26,.82)}
+  .ompop .dc-x{position:absolute;top:13px;right:62px;background:rgba(10,16,26,.82);border:0;border-radius:4px;color:var(--sub);font-size:13px;cursor:pointer;z-index:2}
+  .pinned-card.dcard,.pinned-card.ompop{z-index:60}
+  .pinned-card.dcard{max-height:min(62vh,560px)}
+  .pinned-card.ompop{cursor:move}
+  .pinned-card.ompop .dc-x{right:18px}
+  .pinned-card.ompop a,.pinned-card.ompop .om-cap{cursor:auto}
+  #pinCloseAll{position:fixed;top:92px;left:50%;transform:translateX(-50%);z-index:61;background:rgba(10,16,26,.82);border:1px solid rgba(238,243,248,.28);border-radius:4px;
+    color:var(--sub);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;padding:4px 9px;cursor:pointer}
+  #pinCloseAll:hover{color:var(--ink);border-color:rgba(238,243,248,.6)}
+  @media (max-width:640px){ .dc-pin,.pinned-card,#pinCloseAll{display:none!important} } /* スマホは画面が狭いのでPINなし */
   /* ── 浮遊カード（WORKS拡大 / 画像ライトボックス）── */
   #lb{position:fixed;inset:0;z-index:80;background:rgba(4,8,14,.94);display:none;align-items:center;justify-content:center;padding:24px;cursor:zoom-out}
   #lb.open{display:flex} #lb img{max-width:92vw;max-height:88vh;object-fit:contain;border-radius:6px}
@@ -340,7 +355,7 @@
     .ls-cert{font-family:var(--mono);font-size:9px;color:var(--est,#e0b45f);margin-left:6px}
     .ls-desc{display:block;font-size:11px;color:var(--sub);line-height:1.7;margin-top:5px}
     .ls-phase{padding:9px 2px 7px;flex-wrap:wrap;row-gap:2px}               /* シート内の年代見出し（左右余白はシート側） */
-    #detailCard{width:calc(100vw - 24px)}                                     /* 年代資料カード：スマホは画面幅いっぱい（左右12px） */
+    .dcard{width:calc(100vw - 24px)}                                     /* 年代資料カード：スマホは画面幅いっぱい（左右12px） */
     /* HOLDINGS リスト行（現在所蔵）＝gray系 */
     .hl-item{padding:9px 0;border-top:1px solid var(--rule)}
     .hl-item:first-child{border-top:0}
@@ -457,8 +472,9 @@
 </div>
 
 <!-- 詳細カード（ART/TECH・画材・人物等。固定パネルにせず、必要時のみ浮遊表示） -->
-<div id="detailCard" hidden>
+<div id="detailCard" class="dcard" hidden>
   <button class="dc-x" id="dcClose" aria-label="閉じる">✕</button>
+  <button class="dc-pin" id="dcPin" title="このカードを画面に残す（別のカードと並べて見られます）">PIN</button>
   <div class="dc-head" id="dcHead">
     <div class="dc-tag" id="dcTag"></div>
     <div class="dc-title" id="dcTitle"></div>
@@ -470,7 +486,11 @@
 </div>
 
 <!-- 古地図ポップアップ（年譜の「古地図」：PC=ホバー／スマホ=タップ）。原図(IIIF)の該当範囲だけを表示 -->
-<div id="oldMapPop" hidden></div>
+<div id="oldMapPop" class="ompop" hidden></div>
+
+<!-- PINで固定したカード（詳細カード・古地図のコピー）。後から触ったものほど手前 -->
+<div id="pinLayer"></div>
+<button id="pinCloseAll" hidden></button>
 
 <div id="lb"><img alt=""><div class="lb-hint" id="lbHint" hidden>タップで閉じる ・ 横向きにするとより大きく</div></div>
 
@@ -904,7 +924,7 @@ function omGapText(om,ey){ if(!ey)return '地図の年と出来事の年は一�
   return '年譜の出来事（'+ey+'年）の'+(d>0?'約'+d+'年後':d<0?'約'+(-d)+'年前':'同じ頃')+'の地図。出来事当時の町並みそのものではない。'; }
 function showOldMap(om,src){ const [cx,cy,cw,ch]=om.crop, W=420;
   const marks=om.marks.map(m=>{ const [x,y,w,h]=m.xywh; return '<div class="om-mark" style="left:'+((x-cx)/cw*100)+'%;top:'+((y-cy)/ch*100)+'%;width:'+(w/cw*100)+'%;height:'+(h/ch*100)+'%" title="'+esc(m.label)+'"></div>'; }).join('');
-  omPop.innerHTML='<div class="om-img"><img src="'+esc(om.iiif+'/'+om.crop.join(',')+'/'+W+',/0/default.jpg')+'" alt="'+esc(om.title)+'" style="aspect-ratio:'+cw+'/'+ch+'">'+marks+'</div>'+ // 縦横比を先に決め、画像の読み込み前に高さを測れるようにする（画面外へのはみ出し防止）
+  omPop.innerHTML='<button class="dc-pin" title="この古地図を画面に残す（並べて見られます）">PIN</button><div class="om-img"><img draggable="false" src="'+esc(om.iiif+'/'+om.crop.join(',')+'/'+W+',/0/default.jpg')+'" alt="'+esc(om.title)+'" style="aspect-ratio:'+cw+'/'+ch+'">'+marks+'</div>'+ // 縦横比を先に決め、画像の読み込み前に高さを測れるようにする（画面外へのはみ出し防止）
     '<div class="om-cap"><b>'+esc(om.title)+'</b>（'+esc(om.publisher)+'）<br>'+esc(om.dateText)+'<br>枠＝'+[...new Set(om.marks.map(m=>m.label))].map(esc).join('・')+'（江戸マップの地名位置）'+
     '<div class="om-gap">※'+esc(omGapText(om,+src.dataset.ey))+'</div>'+linkHTML(om.page,om.rights.credit+'（パブリックドメイン）')+'</div>';
   omPop.hidden=false; const r=src.getBoundingClientRect(), pw=omPop.offsetWidth, ph=omPop.offsetHeight;
@@ -1001,12 +1021,11 @@ const worksTabsEl=document.getElementById('worksTabs'), eraWorksList=document.ge
 const phaseAt=y=>lifePhases.find(p=>p.from<=y&&y<=p.to)||null;
 worksTabsEl.querySelectorAll('[data-tab]').forEach(t=>t.onclick=()=>{ worksTab=t.dataset.tab; renderLeftBottom(true); });
 function showEraWorkCard(s,src){ const box=document.createElement('div');
-  box.innerHTML=(s.image?'<div class="pr-work"><img src="'+esc(s.image.full||s.image.src)+'" alt="'+esc(s.title)+'" style="aspect-ratio:auto;cursor:zoom-in"></div>'+
+  box.innerHTML=(s.image?'<div class="pr-work"><img data-lb="'+esc(s.image.full||s.image.src)+'" src="'+esc(s.image.full||s.image.src)+'" alt="'+esc(s.title)+'" style="aspect-ratio:auto;cursor:zoom-in"></div>'+
       '<div class="pr-note">'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）</div>'
     : '<div class="pr-note">画像は載せていません（'+esc((s.rights&&s.rights.basis)||'利用条件未確認')+'）。所蔵館のページでご覧ください。</div>')+
     (s.phaseNote?'<div class="pr-note">※'+esc(s.phaseNote)+'</div>':'')+
     '<div class="pr-item">'+linkHTML(s.image?s.image.page:s.url,'所蔵館のページ')+'</div>';
-  const im=box.querySelector('img'); if(im) im.onclick=()=>openLB({src:s.image.full||s.image.src});
   const ref=s.role==='reference';
   if(ref) box.insertAdjacentHTML('afterbegin','<div class="pr-note" style="color:var(--ref)">参考（'+REFKIND_JA[s.refKind]+'）：'+esc(s.relation)+'。北斎の作品ではありません。'+
     (s.relationBasis?'<br>根拠：'+esc(s.relationBasis):'')+'</div>');
@@ -1187,6 +1206,7 @@ function positionCard(src){ const c=detailCard, cw=c.offsetWidth||320, ch=c.offs
   else if(src&&typeof src.x==='number'){ x=src.x+M; y=src.y+M; }                                                         // 地図クリック座標の近く
   else { x=24; y=120; }                                                                                                    // 既定=左側（中央を避ける）
   x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(M,Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; }        // 画面端でflip/clamp
+let cardAction=null; // 開いているカードのアクション（PINのコピーでも使う）
 function showCard({tag,title,sub,body,rel,action,accent,node},src){ // node=任意のDOM（年代資料カード等）。指定時は body より優先
   const ac=accent||'var(--c-focus)'; // カード左端＋タグ色＝分類色（未指定はfocus cyan）。分類別にして「どの情報か」を一目で示す。
   detailCard.style.borderLeftColor=ac; document.getElementById('dcTag').style.color=ac;
@@ -1196,7 +1216,7 @@ function showCard({tag,title,sub,body,rel,action,accent,node},src){ // node=任�
   const bodyEl=document.getElementById('dcBody'); bodyEl.textContent=body||''; if(node)bodyEl.appendChild(node);
   detailCard.scrollTop=0;
   const relEl=document.getElementById('dcRel'); if(rel){relEl.hidden=false;relEl.textContent=(String(rel).startsWith('※')||String(rel).startsWith('区分'))?rel:'関連: '+rel;}else relEl.hidden=true;
-  const actEl=document.getElementById('dcAct'); // 任意アクション（例: 「地点を見る」=camera移動。selection≠cameraを保つ）
+  cardAction=action||null; const actEl=document.getElementById('dcAct'); // 任意アクション（例: 「地点を見る」=camera移動。selection≠cameraを保つ）
   if(action&&action.label){ actEl.hidden=false; actEl.textContent=action.label; actEl.onclick=(e)=>{e.stopPropagation(); action.onClick&&action.onClick(); }; } else { actEl.hidden=true; actEl.onclick=null; }
   detailCard.hidden=false; positionCard(src);
 }
@@ -1209,6 +1229,32 @@ document.getElementById('dcClose').addEventListener('pointerdown',e=>e.stopPropa
     detailCard.style.top=Math.max(4,Math.min(innerHeight-detailCard.offsetHeight-4,e.clientY-d.dy))+'px'; });
   head.addEventListener('pointerup',()=>d=null);
 })();
+// ---------- PIN：開いているカード／古地図をコピーして画面に残す（万次郎版のPINと同じ考え方）。元のカードは閉じ、次のカードは今までどおり1枚で切り替わる ----------
+const pinLayer=document.getElementById('pinLayer'), pinCloseAll=document.getElementById('pinCloseAll');
+// 画像の読み込みで高くなっても画面の下へはみ出さないよう、上へ寄せる（loadはキャプチャで受ける）
+function keepInView(c){ const b=c.getBoundingClientRect(); if(b.bottom>innerHeight-8) c.style.top=Math.max(8,innerHeight-b.height-8)+'px'; }
+detailCard.addEventListener('load',()=>keepInView(detailCard),true);
+function syncPinCloseAll(){ const n=pinLayer.children.length; pinCloseAll.hidden=n<2; pinCloseAll.textContent='PINを全部閉じる（'+n+'）'; }
+pinCloseAll.onclick=()=>{ pinLayer.innerHTML=''; syncPinCloseAll(); };
+function pinCopy(src,dragSel,action){ const r=src.getBoundingClientRect(), c=src.cloneNode(true);
+  c.removeAttribute('id'); c.hidden=false; c.classList.add('pinned-card'); c.querySelectorAll('[id]').forEach(e=>e.removeAttribute('id'));
+  c.querySelectorAll('.dc-pin').forEach(e=>e.remove());
+  let x=c.querySelector('.dc-x'); if(!x){ x=document.createElement('button'); x.className='dc-x'; x.textContent='✕'; c.prepend(x); }
+  x.setAttribute('aria-label','閉じる'); x.onclick=()=>{ c.remove(); syncPinCloseAll(); };
+  const act=c.querySelector('.dc-act'); if(act&&action&&action.onClick) act.onclick=(e)=>{ e.stopPropagation(); action.onClick(); };
+  let left=r.left, top=r.top; // 同じ場所に重ねない（少しずらす）
+  while([...pinLayer.children].some(p=>Math.abs(parseFloat(p.style.left)-left)<12&&Math.abs(parseFloat(p.style.top)-top)<12)){ left+=30; top+=30; }
+  c.style.left=Math.min(left,innerWidth-r.width-4)+'px'; c.style.top=Math.min(top,innerHeight-120)+'px';
+  let d=null; // 触ったら手前へ。ドラッグはつかめる場所（dragSel）だけ
+  c.addEventListener('pointerdown',e=>{ if(pinLayer.lastElementChild!==c)pinLayer.appendChild(c);
+    if(e.target.closest('a,button,summary')||!e.target.closest(dragSel))return; const b=c.getBoundingClientRect(); d={dx:e.clientX-b.left,dy:e.clientY-b.top}; c.setPointerCapture(e.pointerId); });
+  c.addEventListener('pointermove',e=>{ if(!d)return; c.style.left=Math.max(4,Math.min(innerWidth-c.offsetWidth-4,e.clientX-d.dx))+'px'; c.style.top=Math.max(4,Math.min(innerHeight-60,e.clientY-d.dy))+'px'; });
+  const end=()=>{ d=null; }; c.addEventListener('pointerup',end); c.addEventListener('pointercancel',end);
+  pinLayer.appendChild(c); const st=src.scrollTop; c.scrollTop=st; keepInView(c); c.addEventListener('load',()=>keepInView(c),true); syncPinCloseAll(); return c; }
+document.getElementById('dcPin').onclick=(e)=>{ e.stopPropagation(); pinCopy(detailCard,'.dc-head',cardAction); detailCard.hidden=true; };
+document.getElementById('dcPin').addEventListener('pointerdown',e=>e.stopPropagation()); // PINはドラッグ開始しない
+omPop.addEventListener('click',e=>{ if(!e.target.closest('.dc-pin'))return; e.stopPropagation(); pinCopy(omPop,'.om-img',null); omPop.hidden=true; });
+document.addEventListener('click',e=>{ const i=e.target.closest('.dcard img[data-lb]'); if(i)openLB({src:i.dataset.lb}); }); // 作品カードの画像=拡大（固定カードでも効く）
 // 「名前について」= 本姓/養家/確定しない旨を詳細カードへ（人物ヘッダーには常設しない）
 document.getElementById('nameInfo').onclick=()=>showCard({tag:'NAME / 名前について',title:'葛飾北斎 の名',
   sub:'本姓・養家・幼名・画号', body:nameMeta.line+'\n\n'+nameMeta.note, rel:nameMeta.sources.join(' / '), accent:'var(--c-focus)'}); // 本人＝FOCUS cyan
