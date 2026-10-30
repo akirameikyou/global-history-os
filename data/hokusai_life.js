@@ -293,8 +293,9 @@ export const chronology = [
   { id:'dh1993-1760-birth', year:1760, yearOriginal:'1760', age:'1', category:'birth', categoryJa:'出生', importance:'primary', scope:'life',
     title:'出生（本所割下水）', summary:'9月23日、江戸本所割下水に出生。幼名は時太郎、のち鉄蔵。父については中島伊勢・川島某・倉田某など諸説を挙げ、図録は不明としている。', sourceText:'9月23日、江戸本所割下水に出生。幼名は時太郎、のち鉄蔵。父については中島伊勢・川島某・倉田某など諸説を挙げ、図録は不明としている。',
     certainty:'stated', certaintyRaw:'図録記載', sourcePage:73, source:'大北斎展図録(東武美術館,1993)' },
-  { id:'dh1993-1763-family-res', year:1763, yearOriginal:'1763頃', age:'4', category:'residence', categoryJa:'家族・居所', importance:'detail', scope:'life',
-    title:'中島伊勢の養子か', summary:'幕府御用鏡師・中島伊勢の養子となった可能性を図録が示す。', sourceText:'幕府御用鏡師・中島伊勢の養子となった可能性を図録が示す。',
+  // 2026-10-30 補訂: 図録の記載どおり中島家の移転を補い、年譜に表示する（detail→secondary, 利用者が図録で確認）。
+  { id:'dh1993-1763-family-res', year:1763, yearOriginal:'1763頃', age:'4', category:'residence', categoryJa:'家族・居所', importance:'secondary', scope:'life',
+    title:'中島伊勢の養子か', summary:'この頃、幕府御用鏡師・中島伊勢の養子となるか（中島家はこの前年に神田乗物町より本所松坂町一丁目に移転）。', sourceText:'この頃、幕府御用鏡師 中島伊勢の養子となるか（※中島家はこの前年に神田乗物町より、本所松坂町一丁目に移転）。',
     certainty:'catalog_inference', certaintyRaw:'図録推定', sourcePage:73, source:'大北斎展図録(東武美術館,1993)' },
   { id:'dh1993-1765-work', year:1765, yearOriginal:'1765頃', age:'6', category:'work', categoryJa:'制作', importance:'detail', scope:'life',
     title:'この頃から絵を描く', summary:'この頃から自ら好んで絵を描いたとする。図録は『富嶽百景』初編自跋を根拠に挙げる。', sourceText:'この頃から自ら好んで絵を描いたとする。図録は『富嶽百景』初編自跋を根拠に挙げる。',

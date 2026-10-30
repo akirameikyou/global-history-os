@@ -28,7 +28,7 @@ PHASE_MAP = {
  'SRC-001':[],'SRC-002':[1830],'SRC-003':'policy','SRC-004':'policy','SRC-005':[1760],'SRC-006':[1760],
  'SRC-007':'policy','SRC-008':'policy','SRC-009':'anecdote','SRC-010':'anecdote','SRC-011':'anecdote',
  'SRC-012':[],'SRC-013':[],'SRC-014':'anecdote','SRC-015':'anecdote',
- 'S005-01':[1811],'S005-02':[1811],'S005-03':[1811],'S005-04':[1830],'S005-05':[1830],'S005-06':[1830],
+ 'S005-01':[1811],'S005-02':[1811],'S005-03':'hold','S005-04':[1830],'S005-05':[1830],'S005-06':[1830],
  'S005-07':[],'S005-08':[1760],'S005-09':[],'S005-10':[],'S005-11':[1830],
 }
 # 出典の種別（表示の見出し）。work=作品記録 / commentary=館・自治体の解説 / catalog=書誌・DB・検索入口 / map=地図 / article=研究的記事
@@ -45,11 +45,15 @@ KIND_005 = {'S005-01':'catalog','S005-02':'commentary','S005-03':'catalog','S005
 # 画像: The Met 個別作品で isPublicDomain=true を API で確認したもののみ
 MET_IMAGE = {'HKR-008':54887,'HKR-013':56353,'HKR-014':36490,'HKR-015':36492,'HKR-016':55742,'S005-11':57551}
 
+# 公開前の点検（2026-10-30）で分かったリンクの問題。原資料のURLは urlOriginal に残す。
+URL_FIX = {'HKR-020':'https://ganshoin.com/'}  # 岩松院: 原資料の www.gansho-in.jp は存在せず、公式は ganshoin.com
+HOLD_NOTE = {'S005-03':'TLS証明書の不備でブラウザが警告を出すため画面に出さない'}
 met = json.load(open(MET_JSON, encoding='utf-8'))
 def place(sid):
     p = PHASE_MAP[sid]
     if p == 'policy': return 'policy', []
     if p == 'anecdote': return 'anecdote', []
+    if p == 'hold': return 'hold', []  # 画面に出さない（理由は HOLD_NOTE）
     return ('period' if p else 'general'), p
 
 sources = []
@@ -233,6 +237,7 @@ def edo_view(vid, pid, crop, marks):
       'checkedAt':met['_checked']}
 oldMaps = [
  edo_view('MAP-NDL-1286679','1286679',[1350,2600,1100,950],[('南割下水',[1917,2924,132,42],'16-251'),('亀沢町',[1737,3284,125,54],'16-221')]),
+ edo_view('MAP-NDL-1286679-matsuzaka','1286679',[900,3000,1000,800],[('松坂町一丁目',[1368,3405,39,193],'16-212'),('松坂町一丁目',[1416,3506,85,92],'16-214')]),
  edo_view('MAP-NDL-1286679-ishihara','1286679',[1500,1700,1100,800],[('石原町',[1683,2197,108,42],'16-146'),('石原町',[1955,2267,118,38],'16-149'),('石原町',[2215,2270,113,42],'16-151')]),
  edo_view('MAP-NDL-1286679-komume','1286679',[3200,600,1000,800],[('小梅村',[3691,905,162,69],'16-282')]),
  edo_view('MAP-NDL-1286680-mannen','1286680',[800,1500,1000,800],[('万年橋',[1247,1865,118,44],'14-028')]),
@@ -246,6 +251,8 @@ textLinks = [
  {'lifeId':'dh1993-1760-birth','text':'江戸本所割下水','place':'r_warishita','zoom':14,'oldMap':'MAP-NDL-1286679',
   'note':'本所割下水付近の代表点（家屋の位置ではない）。墨田区は現在の亀沢付近と説明。','linkBy':'OS編集'},
 # 以下 coord は国土地理院 住所検索（msearch.gsi.go.jp, 2026-10-30）で得た現在の町名の代表点。旧地名→現町名の対応は概略（OS編集）。
+ {'lifeId':'dh1993-1763-family-res','text':'本所松坂町一丁目','coord':{'lat':35.69322,'lng':139.79428},'zoom':16,'oldMap':'MAP-NDL-1286679-matsuzaka','pinLabel':'鏡師中島伊勢住居跡',
+  'note':'墨田区の案内板「鏡師中島伊勢住居跡」の地点（Monumento 掲載の座標。現・墨田区両国三丁目、本所松坂町公園の近く）','linkBy':'OS編集'},
  {'lifeId':'dh1993-1804-live','text':'音羽護国寺','coord':{'lat':35.72123,'lng':139.7258},'zoom':15,'oldMap':'MAP-NDL-1286673-gokokuji',
   'note':'護国寺の所在地（文京区大塚五丁目40番）。','linkBy':'OS編集'},
  {'lifeId':'dh1993-1806-network-travel','text':'曲亭馬琴宅','coord':{'lat':35.69665,'lng':139.75066},'zoom':16,'oldMap':'MAP-NDL-1286659-iida',
@@ -274,6 +281,10 @@ textLinks = [
  {'lifeId':'dh1993-1845-obuse-res','text':'小布施','place':'lp_obuse','zoom':13,'note':'小布施の滞在・制作拠点（碧漪軒）の代表点','linkBy':'OS編集'},
  {'lifeId':'dh1993-1849-death','text':'浅草聖天町','place':'r_asakusa','zoom':14,'oldMap':'MAP-NDL-1286208-shoten','note':'浅草聖天町の代表点（遍照院・仮宅の位置ではない）','linkBy':'OS編集'},
 ]
+
+for s_ in sources:
+    if s_['id'] in URL_FIX: s_['urlOriginal']=s_['url']; s_['url']=URL_FIX[s_['id']]
+    if s_['id'] in HOLD_NOTE: s_['holdNote']=HOLD_NOTE[s_['id']]
 
 # 根拠記録（003 evidence）: 逸話・資料に添える
 evidence = []
@@ -373,7 +384,7 @@ head = '''// data/hokusai_resources.js — 年代別資料レイヤー（北斎F
 //       ＋ 年代別作品 met-001（The Met Open Access から OS 編集で選定。id=MET-<objectID>）。
 // 期のキー = data/hokusai_life.js の lifePhases[].from。phases:[] = 生涯全体／時期を特定しない。
 // role: period=期の資料 / general=生涯全体 / anecdote=逸話の根拠としてのみ表示 / policy=利用条件の参照（画面の期一覧には出さない）
-//       / reference=参考作品（北斎作ではない・relation に北斎との関係と根拠）。
+//       / reference=参考作品（北斎作ではない・relation に北斎との関係と根拠） / hold=画面に出さない（holdNote に理由）。
 // oldMaps=古地図（個別資料で利用条件確認済み・IIIF原図の該当範囲）／ textLinks=年譜の語→地図・古地図（図録本文は書き換えない）。
 // 画像(image)は The Met 個別作品で isPublicDomain=true を API で確認したものだけ。それ以外は外部リンクのみ。
 // phaseBy / layerBy:'OS編集' = 期・根拠の層の割当は OS 側の判断（GPT資料の記載ではない）。

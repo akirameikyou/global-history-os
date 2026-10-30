@@ -478,9 +478,9 @@
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
-import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261030b';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261030c';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
-import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261030n';
+import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261030p';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -862,7 +862,7 @@ function showPeriodCard(ph,src){
   const refs=referenceWorks(from), refImg=refs.filter(s=>s.image), refLink=refs.filter(s=>!s.image);
   if(refs.length){ h+='<div class="pr-sec" style="color:var(--ref)">REFERENCE ／ 参考：師・同時代の作品と時代の資料（北斎作ではない）</div>';
     if(refImg.length){ h+='<div class="pr-works">'; refImg.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
-      '<div class="cap">'+refChip(s)+esc(s.title)+'（'+esc(dateOf(s))+'）<br>'+esc(s.relation)+'</div></div>'; }); h+='</div>'; }
+      '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'">'+refChip(s)+esc(s.title)+'（'+esc(dateOf(s))+'）<br>'+esc(s.relation)+'<br>'+esc(imgProv(s))+'・'+esc(imgLic(s))+'</div></div>'; }); h+='</div>'; }
     refLink.forEach(s=>{ h+='<div class="pr-item">'+refChip(s)+linkHTML(s.url,s.title)+rightsChip(s)+' <span class="org">'+esc(s.org)+'・'+esc(dateOf(s))+'</span>'+
       '<div class="d">'+esc(s.relation)+'</div></div>'; }); }
   if(anes.length){ h+='<div class="pr-sec">ANECDOTES ／ 逸話と根拠</div>';

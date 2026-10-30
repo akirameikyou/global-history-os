@@ -3,7 +3,7 @@
 //       ＋ 年代別作品 met-001（The Met Open Access から OS 編集で選定。id=MET-<objectID>）。
 // 期のキー = data/hokusai_life.js の lifePhases[].from。phases:[] = 生涯全体／時期を特定しない。
 // role: period=期の資料 / general=生涯全体 / anecdote=逸話の根拠としてのみ表示 / policy=利用条件の参照（画面の期一覧には出さない）
-//       / reference=参考作品（北斎作ではない・relation に北斎との関係と根拠）。
+//       / reference=参考作品（北斎作ではない・relation に北斎との関係と根拠） / hold=画面に出さない（holdNote に理由）。
 // oldMaps=古地図（個別資料で利用条件確認済み・IIIF原図の該当範囲）／ textLinks=年譜の語→地図・古地図（図録本文は書き換えない）。
 // 画像(image)は The Met 個別作品で isPublicDomain=true を API で確認したものだけ。それ以外は外部リンクのみ。
 // phaseBy / layerBy:'OS編集' = 期・根拠の層の割当は OS 側の判断（GPT資料の記載ではない）。
@@ -532,7 +532,7 @@ export const resourceSources = [
   "pkg": "001",
   "title": "岩松院：八方睨み鳳凰図",
   "org": "岩松院",
-  "url": "https://www.gansho-in.jp/",
+  "url": "https://ganshoin.com/",
   "kind": "commentary",
   "role": "period",
   "phases": [
@@ -549,7 +549,8 @@ export const resourceSources = [
   },
   "confidence": "site attribution; precise date should be checked against institutional/academic sources",
   "priority": "P1",
-  "checkedAt": "2026-10-28"
+  "checkedAt": "2026-10-28",
+  "urlOriginal": "https://www.gansho-in.jp/"
  },
  {
   "id": "HKR-021",
@@ -991,13 +992,12 @@ export const resourceSources = [
   "org": "名古屋市博物館",
   "url": "https://museum-nagoya.sys-nw.com/activity/publish/index.html",
   "kind": "catalog",
-  "role": "period",
-  "phases": [
-   1811
-  ],
+  "role": "hold",
+  "phases": [],
   "desc": "『北斎大画即書細図』刊行情報",
   "caution": "刊行案内だけで全本文の検証とはならない",
-  "checkedAt": "2026-10-28"
+  "checkedAt": "2026-10-28",
+  "holdNote": "TLS証明書の不備でブラウザが警告を出すため画面に出さない"
  },
  {
   "id": "S005-04",
@@ -3172,6 +3172,56 @@ export const oldMaps = [
   "checkedAt": "2026-10-30"
  },
  {
+  "id": "MAP-NDL-1286679-matsuzaka",
+  "title": "〔江戸切絵図〕本所絵図",
+  "publisher": "尾張屋清七",
+  "creator": "景山致恭・戸松昌訓・井山能知 編",
+  "dateText": "嘉永2–文久2（1849–1862）刊（CODH江戸マップは1852年版として掲載）",
+  "year": 1852,
+  "iiif": "https://dl.ndl.go.jp/api/iiif/1286679/R0000001",
+  "size": [
+   6144,
+   4096
+  ],
+  "crop": [
+   900,
+   3000,
+   1000,
+   800
+  ],
+  "marks": [
+   {
+    "label": "松坂町一丁目",
+    "xywh": [
+     1368,
+     3405,
+     39,
+     193
+    ],
+    "codh": "16-212"
+   },
+   {
+    "label": "松坂町一丁目",
+    "xywh": [
+     1416,
+     3506,
+     85,
+     92
+    ],
+    "codh": "16-214"
+   }
+  ],
+  "page": "https://dl.ndl.go.jp/pid/1286679",
+  "doi": "10.11501/1286679",
+  "codh": "https://codh.rois.ac.jp/edo-maps/owariya/16/",
+  "rights": {
+   "status": "PDM",
+   "basis": "国立国会図書館デジタルコレクション IIIFマニフェスト Access Restrictions: PDM（個別資料）",
+   "credit": "国立国会図書館デジタルコレクション"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
   "id": "MAP-NDL-1286679-ishihara",
   "title": "〔江戸切絵図〕本所絵図",
   "publisher": "尾張屋清七",
@@ -3461,6 +3511,19 @@ export const textLinks = [
   "zoom": 14,
   "oldMap": "MAP-NDL-1286679",
   "note": "本所割下水付近の代表点（家屋の位置ではない）。墨田区は現在の亀沢付近と説明。",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1763-family-res",
+  "text": "本所松坂町一丁目",
+  "coord": {
+   "lat": 35.69322,
+   "lng": 139.79428
+  },
+  "zoom": 16,
+  "oldMap": "MAP-NDL-1286679-matsuzaka",
+  "pinLabel": "鏡師中島伊勢住居跡",
+  "note": "墨田区の案内板「鏡師中島伊勢住居跡」の地点（Monumento 掲載の座標。現・墨田区両国三丁目、本所松坂町公園の近く）",
   "linkBy": "OS編集"
  },
  {
