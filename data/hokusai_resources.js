@@ -1888,6 +1888,7 @@ export const resourceSources = [
   "url": "https://www.metmuseum.org/art/collection/search/36684",
   "kind": "work",
   "role": "reference",
+  "refKind": "master_work",
   "phases": [
    1760
   ],
@@ -1920,6 +1921,7 @@ export const resourceSources = [
   "url": "https://www.metmuseum.org/art/collection/search/36849",
   "kind": "work",
   "role": "reference",
+  "refKind": "master_work",
   "phases": [
    1760
   ],
@@ -1952,6 +1954,7 @@ export const resourceSources = [
   "url": "https://www.metmuseum.org/art/collection/search/36846",
   "kind": "work",
   "role": "reference",
+  "refKind": "master_work",
   "phases": [
    1760
   ],
@@ -1984,6 +1987,7 @@ export const resourceSources = [
   "url": "https://www.metmuseum.org/art/collection/search/36832",
   "kind": "work",
   "role": "reference",
+  "refKind": "master_work",
   "phases": [
    1760
   ],
@@ -2016,6 +2020,7 @@ export const resourceSources = [
   "url": "https://www.metmuseum.org/art/collection/search/36594",
   "kind": "work",
   "role": "reference",
+  "refKind": "master_work",
   "phases": [
    1760
   ],
@@ -2037,6 +2042,225 @@ export const resourceSources = [
    "basis": "The Met Collection API isPublicDomain=true",
    "objectDate": "dated October or November 1778",
    "classification": "版画",
+   "checkedAt": "2026-10-30"
+  }
+ },
+ {
+  "id": "CB-tnm-A-8778",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "object",
+  "phases": [
+   1760
+  ],
+  "title": "浮世絵版木・初代市川団蔵と初代大谷広次の草摺曳／梅下美人",
+  "artist": "鳥居清倍 筆",
+  "org": "東京国立博物館",
+  "url": "https://colbase.nich.go.jp/collection_items/tnm/A-8778",
+  "dateText": "江戸時代・18世紀",
+  "relation": "浮世絵版木の実物例（北斎以前）",
+  "relationBasis": "図録は1773年頃に木版技術を学んだ可能性を記す（北斎がこの版木に関わったわけではない）",
+  "rights": {
+   "status": "COLBASE_TERMS_FREE_WITH_CREDIT",
+   "basis": "ColBase利用規約（政府標準利用規約2.0準拠・CC BY互換、出典記載）"
+  },
+  "image": {
+   "src": "https://colbase.nich.go.jp/media/tnm/A-8778/image/slideshow_s/A-8778_E0060447.jpg",
+   "full": "https://colbase.nich.go.jp/media/tnm/A-8778/image/slideshow_l/A-8778_E0060447.jpg",
+   "page": "https://colbase.nich.go.jp/collection_items/tnm/A-8778",
+   "credit": "出典：ColBase（東京国立博物館所蔵）",
+   "license": "ColBase利用規約（CC BY互換）",
+   "objectDate": "江戸時代・18世紀",
+   "classification": "版木",
+   "providerShort": "ColBase",
+   "checkedAt": "2026-10-30"
+  },
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "CB-kyohaku-A408",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "object",
+  "phases": [],
+  "title": "煙草盆（北斎版木製）",
+  "artist": "（北斎の版木を転用）",
+  "org": "京都国立博物館",
+  "url": "https://colbase.nich.go.jp/collection_items/kyohaku/A%E4%B9%99408",
+  "dateText": "江戸時代",
+  "relation": "北斎の版木を材にした煙草盆（所蔵館の名称による）",
+  "relationBasis": "所蔵館の作品名「煙草盆（北斎版木製）」。どの作品の版木かは未確認",
+  "rights": {
+   "status": "COLBASE_TERMS_FREE_WITH_CREDIT",
+   "basis": "ColBase利用規約（政府標準利用規約2.0準拠・CC BY互換、出典記載）"
+  },
+  "image": {
+   "src": "https://colbase.nich.go.jp/media/kyohaku/A%E4%B9%99408/image/slideshow_l/393791_difile2-M.jpg",
+   "full": "https://colbase.nich.go.jp/media/kyohaku/A%E4%B9%99408/image/slideshow_l/393791_difile2-M.jpg",
+   "page": "https://colbase.nich.go.jp/collection_items/kyohaku/A%E4%B9%99408",
+   "credit": "出典：ColBase（京都国立博物館所蔵）",
+   "license": "ColBase利用規約（CC BY互換）",
+   "objectDate": "江戸時代",
+   "classification": "版木（転用）",
+   "providerShort": "ColBase",
+   "checkedAt": "2026-10-30"
+  },
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "TML-0000000017-00082079",
+  "pkg": "cur-001",
+  "role": "period",
+  "refKind": "document",
+  "kind": "work",
+  "phases": [
+   1811
+  ],
+  "title": "葛飾北斎（戴斗） 丁字屋作兵衛 宛書簡",
+  "artist": "葛飾北斎（戴斗）",
+  "org": "東京都立図書館",
+  "url": "https://archive.library.metro.tokyo.lg.jp/da/detail?tilcod=0000000017-00082079",
+  "dateText": "年不詳（戴斗の号による）",
+  "phaseNote": "書簡の年は所蔵館に記載なし。「戴斗」の号を用いた頃（1810年代）として推定",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_ON_ITEM_PAGE",
+   "basis": "TOKYOアーカイブ 個別資料「画像の使用条件：パブリックドメイン」"
+  },
+  "image": {
+   "src": "https://archive.library.metro.tokyo.lg.jp/da/download/?id=0000000017-00082079&size=listThumb&type=image&file=WT0742-393.jpg",
+   "full": "https://archive.library.metro.tokyo.lg.jp/da/download/?id=0000000017-00082079&size=view&type=image&file=%2F%E6%9B%B8%E7%B0%A1%2FWT0742-393.jpg",
+   "page": "https://archive.library.metro.tokyo.lg.jp/da/detail?tilcod=0000000017-00082079",
+   "credit": "東京都立図書館 TOKYOアーカイブ（渡辺刀水旧蔵諸家書簡文庫）",
+   "license": "パブリックドメイン（所蔵館表示）",
+   "objectDate": "年不詳（戴斗期）",
+   "classification": "書簡",
+   "providerShort": "都立図書館",
+   "checkedAt": "2026-10-30"
+  },
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "TMC-6652675",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "document",
+  "phases": [
+   1830
+  ],
+  "title": "金子借用証文之事",
+  "artist": "金子借用主 助右衛門 ほか",
+  "org": "江戸東京博物館",
+  "url": "https://museumcollection.tokyo/works/6652675/",
+  "dateText": "天保5年（1834）12月",
+  "relation": "同時代の借用証文の一般例（北斎に関わる文書ではない）",
+  "relationBasis": "北斎の年譜1834と同じ年の文書",
+  "rights": {
+   "status": "LINK_ONLY",
+   "basis": "個別ページに画像なし・PD表示なし（ToMuCo規約）"
+  },
+  "image": null,
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "CB-tnm-QB-12110",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "document",
+  "phases": [
+   1836
+  ],
+  "title": "箱根関所手形",
+  "artist": "",
+  "org": "東京国立博物館",
+  "url": "https://colbase.nich.go.jp/collection_items/tnm/QB-12110",
+  "dateText": "嘉永2～7年（1849～1854）写",
+  "relation": "関所手形の一般例（阿栄の手形そのものではない）",
+  "relationBasis": "年譜1841「阿栄の旅行手形」",
+  "rights": {
+   "status": "LINK_ONLY",
+   "basis": "ColBaseに画像の公開なし"
+  },
+  "image": null,
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "TMC-6655040",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "record",
+  "phases": [
+   1836
+  ],
+  "title": "饑饉歎（天保之飢饉被害記録）",
+  "artist": "",
+  "org": "江戸東京博物館",
+  "url": "https://museumcollection.tokyo/works/6655040/",
+  "dateText": "天保8年（1837）",
+  "relation": "同時代の出来事の記録（北斎の作品との因果は未確認）",
+  "relationBasis": "天保の飢饉（1833–37）は北斎の1830年代と重なる",
+  "rights": {
+   "status": "LINK_ONLY",
+   "basis": "個別ページにPD表示なし（ToMuCo規約：表示のない収蔵品画像は第三者権利）"
+  },
+  "image": null,
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "SDC-02OD5080040000",
+  "pkg": "cur-001",
+  "role": "reference",
+  "refKind": "record",
+  "phases": [
+   1836
+  ],
+  "title": "天保七年大不作世上一統飢饉之事",
+  "artist": "",
+  "org": "県立長野図書館（信州デジタルコモンズ）",
+  "url": "https://www.ro-da.jp/shinshu-dcommons/library/02OD5080040000",
+  "dateText": "天保7年（1836）の記録",
+  "relation": "信州の飢饉の記録（同時代の出来事。北斎の小布施行きより前）",
+  "relationBasis": "天保の飢饉。北斎は1840年代に信州小布施へ",
+  "rights": {
+   "status": "LINK_ONLY",
+   "basis": "個別ページの二次利用条件が空欄・画像表示なし"
+  },
+  "image": null,
+  "kind": "work",
+  "checkedAt": "2026-10-30"
+ },
+ {
+  "id": "MET-57679",
+  "pkg": "met-001",
+  "title": "Transmitting the Spirit, Revealing the Form of Things: Hokusai Sketchbooks, first volume (Denshin kaishu: Hokusai manga, shohen)",
+  "org": "The Metropolitan Museum of Art",
+  "url": "https://www.metmuseum.org/art/collection/search/57679",
+  "kind": "work",
+  "role": "period",
+  "refKind": "record",
+  "phases": [
+   1811
+  ],
+  "phaseBy": "OS編集（初編の刊年1814による）",
+  "phaseNote": "初編は1814年刊。The Metの本は1828年以降の摺り（after 1828）",
+  "desc": "版本・Woodblock printed book; ink and color on paper",
+  "rights": {
+   "status": "PUBLIC_DOMAIN_CONFIRMED_VIA_MET_API",
+   "basis": "The Met Collection API isPublicDomain=true（個別作品）"
+  },
+  "checkedAt": "2026-10-30",
+  "image": {
+   "src": "https://images.metmuseum.org/CRDImages/as/web-large/JIB_81_1_Preface_1_sf.JPG",
+   "page": "https://www.metmuseum.org/art/collection/search/57679",
+   "credit": "The Metropolitan Museum of Art, Rogers Fund, 1931 (JIB81.1)",
+   "license": "Public Domain（The Met Open Access / CC0）",
+   "basis": "The Met Collection API isPublicDomain=true",
+   "objectDate": "after 1828（初編1814年刊）",
+   "classification": "版本",
    "checkedAt": "2026-10-30"
   }
  }
@@ -2707,6 +2931,64 @@ export const textLinks = [
   "zoom": 14,
   "oldMap": "MAP-NDL-1286679",
   "note": "本所割下水付近の代表点（家屋の位置ではない）。墨田区は現在の亀沢付近と説明。",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1812-travel-work",
+  "text": "名古屋",
+  "place": "lp_nagoya",
+  "zoom": 12,
+  "note": "名古屋の代表点（牧墨僊宅跡付近）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1816-travel-live",
+  "text": "名古屋",
+  "place": "lp_nagoya",
+  "zoom": 12,
+  "note": "名古屋の代表点（花屋町・西掛所の位置ではない）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1834-res-artview",
+  "text": "相州浦賀",
+  "coord": {
+   "lat": 35.2493,
+   "lng": 139.7206
+  },
+  "zoom": 12,
+  "note": "浦賀の町の代表点（潜居先の位置ではない。座標は既存データの浦賀地点を流用）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1841-obuse-network",
+  "text": "阿栄の旅行手形",
+  "ref": "CB-tnm-QB-12110",
+  "note": "関所手形の一般例を開く（阿栄の手形そのものではない）",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1844-res-travel",
+  "text": "小布施",
+  "place": "lp_obuse",
+  "zoom": 13,
+  "note": "小布施の滞在・制作拠点（碧漪軒）の代表点",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1845-obuse-res",
+  "text": "小布施",
+  "place": "lp_obuse",
+  "zoom": 13,
+  "note": "小布施の滞在・制作拠点（碧漪軒）の代表点",
+  "linkBy": "OS編集"
+ },
+ {
+  "lifeId": "dh1993-1849-death",
+  "text": "浅草聖天町",
+  "place": "r_asakusa",
+  "zoom": 14,
+  "note": "浅草聖天町の代表点（遍照院・仮宅の位置ではない）",
   "linkBy": "OS編集"
  }
 ];

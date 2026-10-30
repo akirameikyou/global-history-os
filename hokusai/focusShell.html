@@ -140,6 +140,8 @@
   :root{--ref:#b8b2d8}
   .era-ref-head{padding:9px 16px 6px;font-size:10.5px;color:var(--ref);border-top:1px dashed rgba(184,178,216,.35);border-bottom:1px solid var(--rule);margin-top:4px}
   .era-work.ref{box-shadow:inset 2px 0 0 rgba(184,178,216,.55)}
+  .era-noimg{flex:0 0 64px;height:48px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;
+    color:var(--sub);border:1px dashed var(--rule);border-radius:3px} /* 画像を載せない参考資料（リンクのみ） */
   .ref-chip{font-family:var(--mono);font-size:8.5px;color:var(--ref);border:1px solid currentColor;border-radius:3px;padding:0 4px;margin-right:5px;vertical-align:1px}
   .chip{display:inline-block;font-family:var(--mono);font-size:9px;font-weight:700;padding:1px 6px;border-radius:999px;margin-right:4px}
   .k-座標{background:rgba(124,179,255,.16);color:var(--indigo)} .k-構図{background:rgba(199,155,255,.16);color:var(--art)}
@@ -473,7 +475,7 @@ import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20260915b';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
-import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261030e';
+import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261030g';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -827,6 +829,10 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;',
 const LAYER_JA={primary:'本人の言葉・作品',contemporary:'同時代の記録',biography:'後世の伝記',tradition:'伝承（初出未確認）'};
 const KIND_JA={work:'作品記録',commentary:'館・自治体の解説',catalog:'書誌・データベース',map:'地図',article:'研究的記事'};
 const KIND_ORDER=['commentary','catalog','map','article','work'];
+const REFKIND_JA={master_work:'師の作品',object:'版木・物',document:'証文・手形',record:'時代の記録'}; // 参考資料の種類（北斎作ではない）
+const imgProv=s=>s.image.providerShort||'The Met';
+const imgLic=s=>/Public Domain|パブリックドメイン/.test(s.image.license)?'パブリックドメイン':'出典表示で自由利用';
+const dateOf=s=>s.image?s.image.objectDate:(s.dateText||'');
 const inPhase=(r,from)=>from==null?(r.phases.length===0):r.phases.includes(from);
 function periodSources(from){ const role=from==null?'general':'period', byUrl=new Map(); // 同じURLは1件にまとめ、別台帳の説明は descs に残す
   resourceSources.filter(s=>s.role===role&&inPhase(s,from)).forEach(s=>{ const g=byUrl.get(s.url);
@@ -843,15 +849,16 @@ function showPeriodCard(ph,src){
   let h='';
   if(ph&&ph.note) h+='<div class="pr-lead">'+esc(ph.note)+'</div>';
   const works=srcs.filter(s=>s.image);
-  if(works.length){ h+='<div class="pr-sec">WORKS ／ 作品（画像はパブリックドメイン・クリックで所蔵館の作品ページ）</div><div class="pr-works">';
+  if(works.length){ h+='<div class="pr-sec">WORKS ／ 作品（画像は利用条件を確認済み・クリックで所蔵館のページ）</div><div class="pr-works">';
     works.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
-      '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）">'+esc(s.title)+'（'+esc(s.image.objectDate)+'）<br>The Met・パブリックドメイン（'+esc(s.image.credit.replace(/^.*\(([^)]+)\)$/,'$1'))+'）</div></div>'; });
+      '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）">'+esc(s.title)+'（'+esc(s.image.objectDate)+'）<br>'+esc(imgProv(s))+'・'+esc(imgLic(s))+'</div></div>'; });
     h+='</div>'; }
-  const refs=from==null?[]:referenceWorks(from);
-  if(refs.length){ h+='<div class="pr-sec" style="color:var(--ref)">REFERENCE ／ 参考：師・同時代の作品（北斎作ではない）</div><div class="pr-works">';
-    refs.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
-      '<div class="cap"><span class="ref-chip">参考</span>'+esc(s.artist)+'（'+esc(s.relation)+'）<br>'+esc(s.title)+'（'+esc(s.image.objectDate)+'）</div></div>'; });
-    h+='</div>'; }
+  const refs=referenceWorks(from), refImg=refs.filter(s=>s.image), refLink=refs.filter(s=>!s.image);
+  if(refs.length){ h+='<div class="pr-sec" style="color:var(--ref)">REFERENCE ／ 参考：師・同時代の作品と時代の資料（北斎作ではない）</div>';
+    if(refImg.length){ h+='<div class="pr-works">'; refImg.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
+      '<div class="cap"><span class="ref-chip">'+REFKIND_JA[s.refKind]+'</span>'+esc(s.title)+'（'+esc(dateOf(s))+'）<br>'+esc(s.relation)+'</div></div>'; }); h+='</div>'; }
+    refLink.forEach(s=>{ h+='<div class="pr-item"><span class="ref-chip">'+REFKIND_JA[s.refKind]+'</span>'+linkHTML(s.url,s.title)+rightsChip(s)+' <span class="org">'+esc(s.org)+'・'+esc(dateOf(s))+'</span>'+
+      '<div class="d">'+esc(s.relation)+'</div></div>'; }); }
   if(anes.length){ h+='<div class="pr-sec">ANECDOTES ／ 逸話と根拠</div>';
     anes.forEach(a=>{ const links=a.sourceUrls.map(u=>{ const s=srcByUrl(u); return linkHTML(u,s?s.org+'「'+s.title+'」':u.replace(/^https?:\/\/([^/]+).*/,'$1')); }).join('<br>');
       h+='<details class="pr-ane"><summary>'+esc(a.title)+'<span class="pr-chip ly-'+a.layer+'">'+LAYER_JA[a.layer]+'</span><span class="lb">'+esc(a.label)+'</span></summary>'+
@@ -874,7 +881,9 @@ function linkifySummary(ev){ let s=ev.summary||''; textLinks.forEach((tl,i)=>{ i
   s=s.replace(tl.text,'<span class="tlink" data-tl="'+i+'" title="'+esc(tl.note)+'">'+esc(tl.text)+'</span>'+(tl.oldMap?'<span class="tmap" data-om="'+tl.oldMap+'">古地図</span>':'')); });
   return s; }
 const placeById=id=>residences.find(r=>r.id===id)||lifePlaces.find(p=>p.id===id);
-function goToTextPlace(tl){ const p=placeById(tl.place); if(!p)return;
+// 行き先: place=既存地点 / coord=既存データの座標を流用した代表点 / ref=参考資料のカードを開く
+function goToTextPlace(tl,src){ if(tl.ref){ const s=resourceSources.find(x=>x.id===tl.ref); if(s)showEraWorkCard(s,src); return; }
+  const p=tl.coord||placeById(tl.place); if(!p)return;
   if(State.spaceView!=='JAPAN') document.querySelector('#spaceSeg button[data-v="JAPAN"]').click(); // 地名リンク=JAPAN詳細へ（明示操作でのみcamera移動）
   let n=0; (function fly(){ if(mapReady){ map.flyTo({center:[p.lng,p.lat],zoom:tl.zoom||13,duration:900}); return; } if(++n<60)setTimeout(fly,100); })(); }
 const omPop=document.getElementById('oldMapPop'); let omHideT=null;
@@ -888,7 +897,7 @@ function showOldMap(om,src){ const [cx,cy,cw,ch]=om.crop, W=420;
   if(innerWidth<=640){ x=(innerWidth-pw)/2; y=Math.max(8,r.top-ph-10); }
   omPop.style.left=Math.max(8,x)+'px'; omPop.style.top=y+'px'; }
 document.addEventListener('click',e=>{ const a=e.target.closest('.tlink'), m=e.target.closest('.tmap');
-  if(a){ e.stopPropagation(); goToTextPlace(textLinks[+a.dataset.tl]); return; }
+  if(a){ e.stopPropagation(); goToTextPlace(textLinks[+a.dataset.tl],a); return; }
   if(m){ e.stopPropagation(); if(!omPop.hidden&&omPop.dataset.om===m.dataset.om){omPop.hidden=true;return;} omPop.dataset.om=m.dataset.om; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); return; } // タップで開閉（スマホ）
   if(!e.target.closest('#oldMapPop'))omPop.hidden=true; },true);
 document.addEventListener('mouseover',e=>{ const m=e.target.closest('.tmap'); if(!m||window.innerWidth<=640)return; clearTimeout(omHideT); omPop.dataset.om=m.dataset.om; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); }); // PC=ホバーで表示
@@ -974,13 +983,16 @@ const worksTabsEl=document.getElementById('worksTabs'), eraWorksList=document.ge
 const phaseAt=y=>lifePhases.find(p=>p.from<=y&&y<=p.to)||null;
 worksTabsEl.querySelectorAll('[data-tab]').forEach(t=>t.onclick=()=>{ worksTab=t.dataset.tab; renderLeftBottom(true); });
 function showEraWorkCard(s,src){ const box=document.createElement('div');
-  box.innerHTML='<div class="pr-work"><img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'" style="aspect-ratio:auto;cursor:zoom-in"></div>'+
-    '<div class="pr-note">'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）</div>'+
-    '<div class="pr-item">'+linkHTML(s.image.page,'所蔵館の作品ページ')+'</div>';
-  box.querySelector('img').onclick=()=>openLB({src:s.image.full||s.image.src});
+  box.innerHTML=(s.image?'<div class="pr-work"><img src="'+esc(s.image.full||s.image.src)+'" alt="'+esc(s.title)+'" style="aspect-ratio:auto;cursor:zoom-in"></div>'+
+      '<div class="pr-note">'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）</div>'
+    : '<div class="pr-note">画像は載せていません（'+esc((s.rights&&s.rights.basis)||'利用条件未確認')+'）。所蔵館のページでご覧ください。</div>')+
+    (s.phaseNote?'<div class="pr-note">※'+esc(s.phaseNote)+'</div>':'')+
+    '<div class="pr-item">'+linkHTML(s.image?s.image.page:s.url,'所蔵館のページ')+'</div>';
+  const im=box.querySelector('img'); if(im) im.onclick=()=>openLB({src:s.image.full||s.image.src});
   const ref=s.role==='reference';
-  if(ref) box.insertAdjacentHTML('afterbegin','<div class="pr-note" style="color:var(--ref)">参考作品：'+esc(s.artist)+'（'+esc(s.relation)+'）。北斎の作品ではありません。</div>');
-  showCard({ tag:ref?'REFERENCE ／ 参考作品（北斎作ではない）':'WORK ／ この年代の作品', title:s.title, sub:s.image.objectDate+'｜'+(ref?s.artist+'｜':'')+s.org, node:box, accent:ref?'var(--ref)':'var(--gold)' }, src); }
+  if(ref) box.insertAdjacentHTML('afterbegin','<div class="pr-note" style="color:var(--ref)">参考（'+REFKIND_JA[s.refKind]+'）：'+esc(s.relation)+'。北斎の作品ではありません。'+
+    (s.relationBasis?'<br>根拠：'+esc(s.relationBasis):'')+'</div>');
+  showCard({ tag:ref?'REFERENCE ／ 参考資料（北斎作ではない）':'WORK ／ この年代の作品', title:s.title, sub:dateOf(s)+'｜'+(s.artist?s.artist+'｜':'')+s.org, node:box, accent:ref?'var(--ref)':'var(--gold)' }, src); }
 function renderEraWorks(){ eraWorksList.innerHTML=''; const ph=phaseAt(State.timeCursor);
   const head=document.createElement('div'); head.className='era-head';
   head.innerHTML=ph?esc(ph.from+'–'+ph.to+' '+ph.label)+'<span class="lk">この年代の資料 ›</span>':'北斎の生涯の範囲外';
@@ -989,13 +1001,15 @@ function renderEraWorks(){ eraWorksList.innerHTML=''; const ph=phaseAt(State.tim
   const refs=ph?referenceWorks(ph.from):[];
   if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の北斎の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; eraWorksList.appendChild(m); }
   const row=(s,ref)=>{ const d=document.createElement('div'); d.className='era-work'+(ref?' ref':'');
-    d.innerHTML='<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"><div><div class="t">'+(ref?'<span class="ref-chip">参考</span>':'')+esc(s.title)+'</div>'+
-      '<div class="m">'+(ref?esc(s.artist)+'・':'')+esc(s.image.objectDate)+(s.image.classification?'・'+esc(s.image.classification):'')+'・The Met・PD</div></div>';
+    d.innerHTML=(s.image?'<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'">':'<span class="era-noimg">リンク</span>')+
+      '<div><div class="t">'+(ref?'<span class="ref-chip">'+REFKIND_JA[s.refKind]+'</span>':'')+esc(s.title)+'</div>'+
+      '<div class="m">'+(s.artist&&ref?esc(s.artist)+'・':'')+esc(dateOf(s))+(s.image&&s.image.classification?'・'+esc(s.image.classification):'')+'・'+(s.image?esc(imgProv(s))+'・'+esc(imgLic(s)):esc(s.org))+'</div></div>';
     d.onclick=()=>showEraWorkCard(s,d); eraWorksList.appendChild(d); };
   list.forEach(s=>row(s,false));
-  if(refs.length){ const h=document.createElement('div'); h.className='era-ref-head'; h.textContent='参考：師・同時代の作品（北斎作ではない）'; eraWorksList.appendChild(h); refs.forEach(s=>row(s,true)); } }
-// 参考作品（role:'reference'）＝北斎作ではない。北斎との関係(relation)の根拠があるものだけ。北斎の作品一覧・件数には混ぜない。
-function referenceWorks(from){ return resourceSources.filter(s=>s.role==='reference'&&s.image&&s.phases.includes(from)); }
+  if(refs.length){ const h=document.createElement('div'); h.className='era-ref-head'; h.textContent='参考：師・同時代の作品と時代の資料（北斎作ではない）'; eraWorksList.appendChild(h); refs.forEach(s=>row(s,true)); } }
+// 参考資料（role:'reference'）＝北斎作ではない。北斎との関係(relation)とその根拠があるものだけ。北斎の作品一覧・件数には混ぜない。
+// from=null は時期を特定しない参考資料（生涯全体）。画像のないもの（リンクのみ）も含む。
+function referenceWorks(from){ return resourceSources.filter(s=>s.role==='reference'&&(from==null?s.phases.length===0:s.phases.includes(from))); }
 // タブ名＝今の期の範囲（右の年譜の年代見出しと同じ区切り）。数字は期をまたいだ時だけ変わる。例 1830–35年の作品
 const phaseRangeShort=p=>{ const a=String(p.from), b=String(p.to); return a+'–'+(a.slice(0,2)===b.slice(0,2)?b.slice(2):b); };
 function renderEraTabLabel(){ const ph=phaseAt(State.timeCursor);
