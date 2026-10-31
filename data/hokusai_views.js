@@ -235,15 +235,15 @@ export const hokusaiViews = [
         "Wikimedia Commons"
       ],
       "image": {
-        "file": "Katsushika Hokusai, tempesta sotto la vetta, dalla serie delle 36 vedute del monte fuji, 1831 ca.jpg",
-        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c6/Katsushika_Hokusai%2C_tempesta_sotto_la_vetta%2C_dalla_serie_delle_36_vedute_del_monte_fuji%2C_1831_ca.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
-        "page": "https://commons.wikimedia.org/wiki/File:Katsushika_Hokusai%2C_tempesta_sotto_la_vetta%2C_dalla_serie_delle_36_vedute_del_monte_fuji%2C_1831_ca.jpg",
-        "w": 3780,
-        "h": 2556,
-        "bytes": 4825186,
+        "file": "冨嶽三十六景 山下白雨-Storm below Mount Fuji (Sanka no haku u), from the series Thirty-six Views of Mount Fuji (Fugaku sanjūrokkei) MET DP141040.jpg",
+        "url": "https://upload.wikimedia.org/wikipedia/commons/4/4c/%E5%86%A8%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF_%E5%B1%B1%E4%B8%8B%E7%99%BD%E9%9B%A8-Storm_below_Mount_Fuji_%28Sanka_no_haku_u%29%2C_from_the_series_Thirty-six_Views_of_Mount_Fuji_%28Fugaku_sanj%C5%ABrokkei%29_MET_DP141040.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=original",
+        "page": "https://commons.wikimedia.org/wiki/File:%E5%86%A8%E5%B6%BD%E4%B8%89%E5%8D%81%E5%85%AD%E6%99%AF_%E5%B1%B1%E4%B8%8B%E7%99%BD%E9%9B%A8-Storm_below_Mount_Fuji_%28Sanka_no_haku_u%29%2C_from_the_series_Thirty-six_Views_of_Mount_Fuji_%28Fugaku_sanj%C5%ABrokkei%29_MET_DP141040.jpg",
+        "w": 3879,
+        "h": 2658,
+        "bytes": 1544058,
         "mime": "image/jpeg",
-        "license": "CC BY 3.0",
-        "verify": "ok"
+        "license": "CC0",
+        "verify": "ok (差替済)"
       }
     },
     "interpretation": {

@@ -111,7 +111,7 @@ h1{
 .enter:hover::after{transform:translateX(4px)}
 
 .guide{
-  width:min(92vw,760px);margin:24px auto 0;display:grid;grid-template-columns:repeat(3,1fr);
+  width:min(92vw,860px);margin:24px auto 0;display:grid;grid-template-columns:repeat(4,1fr);
   border-top:1px solid rgba(237,243,246,.10);border-bottom:1px solid rgba(237,243,246,.10);
 }
 .guide button{
@@ -145,7 +145,7 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 .step b{font-size:9px;color:rgba(102,224,255,.65);letter-spacing:.12em;font-weight:500}
 .step span{font-size:11px;line-height:1.7;color:rgba(237,243,246,.67)}
 .close{margin-top:19px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
-/* 04 / LINKS：関連美術館・公式コレクション（フッター左の控えめなテキストから開く） */
+/* 05 / LINKS：関連美術館・公式コレクション（フッター左の控えめなテキストから開く） */
 .foot-link{border:0;background:none;padding:0;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer}
 .foot-link:hover,.foot-link:focus-visible{color:rgba(237,243,246,.62);outline:none}
 .museums{display:grid;gap:10px;margin:14px 0 0}
@@ -157,12 +157,14 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 .museum a{font-size:10px;letter-spacing:.06em;color:rgba(102,224,255,.78);text-decoration:none;border-bottom:1px solid rgba(102,224,255,.25)}
 .museum a:hover,.museum a:focus-visible{color:var(--focus);border-bottom-color:var(--focus);outline:none}
 .dlg .fine{font-size:10px;line-height:1.8;color:rgba(237,243,246,.45);margin:16px 0 0}
-#museums .dlg{max-height:82vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}
+#museums .dlg,#sources .dlg{max-height:82vh;overflow-y:auto}
+/* scrollbar-width を指定すると Chrome では下の ::-webkit-scrollbar が無効になり矢印が出るので、非対応ブラウザだけに使う */
+@supports not selector(::-webkit-scrollbar){#museums .dlg,#sources .dlg{scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}}
 /* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則。focusShell の .panel と同じ thumb） */
-#museums .dlg::-webkit-scrollbar{width:6px;background:transparent}
-#museums .dlg::-webkit-scrollbar-track{background:transparent}
-#museums .dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
-#museums .dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+#museums .dlg::-webkit-scrollbar,#sources .dlg::-webkit-scrollbar{width:6px;background:transparent}
+#museums .dlg::-webkit-scrollbar-track,#sources .dlg::-webkit-scrollbar-track{background:transparent}
+#museums .dlg::-webkit-scrollbar-thumb,#sources .dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+#museums .dlg::-webkit-scrollbar-button,#sources .dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
 
 /* ===== ENTER 先：本物の Focus Shell を全画面iframeで表示 ===== */
 .os-frame{
@@ -199,8 +201,10 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   .quote cite{font-size:8px}
   .enter-wrap{margin-top:29px}
   .enter{font-size:9px;padding:12px 18px 12px 21px}
-  .guide{width:min(94vw,365px);margin-top:20px}
-  .guide button{min-height:80px;padding:9px 8px 10px}
+  .guide{width:min(94vw,365px);margin-top:20px;grid-template-columns:repeat(2,1fr)}
+  .guide button{min-height:66px;padding:9px 8px 10px}
+  .guide button:nth-child(2){border-right:0}
+  .guide button:nth-child(-n+2){border-bottom:1px solid rgba(237,243,246,.09)}
   .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
   .foot{left:18px;right:18px;font-size:7px}.foot>span:last-child{display:none}
 }
@@ -255,6 +259,11 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
         <span class="g-title">史料と推定</span>
         <span class="g-copy">事実・再構成・表現モデルを分けて読む。</span>
       </button>
+      <button data-dialog="sources">
+        <span class="g-num">04 / SOURCES</span>
+        <span class="g-title">出典と資料</span>
+        <span class="g-copy">図録・美術館・図書館・地図の出典を確かめる。</span>
+      </button>
     </div>
   </main>
 
@@ -273,11 +282,12 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   </div></dialog>
 
   <dialog id="view"><div class="dlg">
-    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見るための三つの入口</h2>
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見るための三つの入口とPIN</h2>
     <div class="steps">
       <div class="step"><b>PLACE</b><span>地点や作品を選び、北斎がいた場所、描いた場所、富士との関係を見る。</span></div>
       <div class="step"><b>TIME</b><span>年表を動かし、北斎の生涯と作品、同時代の出来事を重ねる。</span></div>
       <div class="step"><b>WORLD</b><span>WORLD / JAPANを切り替え、国内の視点と世界の文脈を往復する。</span></div>
+      <div class="step"><b>PIN</b><span>カードや古地図のPINを押すと、画面に残して並べて見られる（PCのみ）。</span></div>
     </div>
     <button class="close">CLOSE</button>
   </div></dialog>
@@ -285,13 +295,27 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   <dialog id="method"><div class="dlg">
     <div class="d-kicker">03 / METHOD</div><h2>史料と推定を分ける</h2>
     <p>地点や年次には、史料で確認できるものと、地名・地形・作品研究から再構成したものがあります。表示上でも、その違いを混同しないことを原則とします。</p>
-    <p>富士へ向かう扇形は実際のカメラ視野ではなく、作品の視点と構図を観察するための Representation です。出典は公開版で各カードから確認できる構成を想定しています。</p>
+    <p>富士へ向かう扇形は実際のカメラ視野ではなく、作品の視点と構図を観察するための Representation です。主な出典は 04 / SOURCES にまとめています。</p>
     <button class="close">CLOSE</button>
   </div></dialog>
 
-  <!-- 04 / LINKS：内容は data/hokusai_museum_links.js（display:true の館のみ描画） -->
+  <!-- 04 / SOURCES：出典のみ。各館の了承範囲を超えて「協力」「監修」と読める表現にしない（data/hokusai_museum_links.js の規律） -->
+  <dialog id="sources"><div class="dlg">
+    <div class="d-kicker">04 / SOURCES</div><h2>出典と資料</h2>
+    <p>このサイトで使っている主な資料です。</p>
+    <div class="steps">
+      <div class="step"><b>年譜</b><span>『大北斎展』図録（東武美術館, 1993）の年譜を基に整理しています。他の資料に従った項目があります。</span></div>
+      <div class="step"><b>作品</b><span>《富嶽三十六景》の画像は Wikimedia Commons の公開画像（CC0・パブリックドメイン）を、年代別の作品はメトロポリタン美術館（The Met）の Open Access 作品（Public Domain / CC0）を掲載しています。</span></div>
+      <div class="step"><b>資料</b><span>国立国会図書館、ColBase（国立文化財機構）、東京都立図書館などの公開資料を、各館の利用条件を確認して掲載またはリンクしています。</span></div>
+      <div class="step"><b>地図</b><span>地理院タイル（国土地理院）、人文学オープンデータ共同利用センター（CODH）の江戸マップ地名データを利用しています。</span></div>
+    </div>
+    <p class="fine">各機関が本サイトを推薦・監修するものではありません。年代別の資料は、各カードに出典を記載しています。</p>
+    <button class="close">CLOSE</button>
+  </div></dialog>
+
+  <!-- 05 / LINKS：内容は data/hokusai_museum_links.js（display:true の館のみ描画） -->
   <dialog id="museums"><div class="dlg">
-    <div class="d-kicker">04 / LINKS</div><h2>関連美術館・公式コレクション</h2>
+    <div class="d-kicker">05 / LINKS</div><h2>関連美術館・公式コレクション</h2>
     <p>北斎の作品や所蔵情報を、各館の公式サイトで確かめるための外部リンクです。</p>
     <div class="museums" id="museumList"></div>
     <p class="fine">各館が本サイトを推薦・監修するものではありません。作品画像や文章の利用条件は、各館の規定に従います。リンク先はいずれも外部サイトです。</p>
@@ -400,7 +424,7 @@ document.querySelectorAll('.close').forEach(btn=>btn.addEventListener('click',()
 document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
 </script>
 <script type="module">
-// 04 / LINKS：美術館リンク台帳を描画（訪問者向けには館名・一文・公式リンクのみ。許諾区分は表示しない）
+// 05 / LINKS：美術館リンク台帳を描画（訪問者向けには館名・一文・公式リンクのみ。許諾区分は表示しない）
 import { museumLinks } from '../data/hokusai_museum_links.js';
 const list=document.getElementById('museumList');
 const el=(tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e;};
