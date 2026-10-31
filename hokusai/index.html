@@ -144,6 +144,17 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 .step{border-top:1px solid rgba(237,243,246,.09);padding-top:10px;display:grid;grid-template-columns:38px 1fr;gap:9px}
 .step b{font-size:9px;color:rgba(102,224,255,.65);letter-spacing:.12em;font-weight:500}
 .step span{font-size:11px;line-height:1.7;color:rgba(237,243,246,.67)}
+.step strong{font-weight:500;color:rgba(237,243,246,.86)}
+/* ボタン名：本体のボタンと同じ色（focusShell の --ink / --amber-soft / --sub） */
+.step .b-zoom{color:#eef3f8;letter-spacing:0;font-size:11px}
+.step .b-now{color:#f0b578}
+.step .b-pin{color:#9db4c8}
+.d-sub{font-size:9px;letter-spacing:.16em;color:rgba(237,243,246,.45);margin:20px 0 0}
+.d-sub+.steps{margin-top:8px}
+/* 印：本体の凡例・地図と同じ色と形（focusShell の --vermilion ほか） */
+.mk{display:block;width:11px;height:11px;margin-top:4px}
+.mk-dot{border-radius:50%;width:9px;height:9px}
+.mk-tech{color:#4fd0b8;font-size:11px;line-height:1;margin-top:3px}
 .close{margin-top:19px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
 /* 05 / LINKS：関連美術館・公式コレクション（フッター左の控えめなテキストから開く） */
 .foot-link{border:0;background:none;padding:0;font:inherit;letter-spacing:inherit;color:inherit;cursor:pointer}
@@ -157,14 +168,14 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 .museum a{font-size:10px;letter-spacing:.06em;color:rgba(102,224,255,.78);text-decoration:none;border-bottom:1px solid rgba(102,224,255,.25)}
 .museum a:hover,.museum a:focus-visible{color:var(--focus);border-bottom-color:var(--focus);outline:none}
 .dlg .fine{font-size:10px;line-height:1.8;color:rgba(237,243,246,.45);margin:16px 0 0}
-#museums .dlg,#sources .dlg{max-height:82vh;overflow-y:auto}
+#museums .dlg,#sources .dlg,#view .dlg{max-height:82vh;overflow-y:auto}
 /* scrollbar-width を指定すると Chrome では下の ::-webkit-scrollbar が無効になり矢印が出るので、非対応ブラウザだけに使う */
-@supports not selector(::-webkit-scrollbar){#museums .dlg,#sources .dlg{scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}}
+@supports not selector(::-webkit-scrollbar){#museums .dlg,#sources .dlg,#view .dlg{scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}}
 /* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則。focusShell の .panel と同じ thumb） */
-#museums .dlg::-webkit-scrollbar,#sources .dlg::-webkit-scrollbar{width:6px;background:transparent}
-#museums .dlg::-webkit-scrollbar-track,#sources .dlg::-webkit-scrollbar-track{background:transparent}
-#museums .dlg::-webkit-scrollbar-thumb,#sources .dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
-#museums .dlg::-webkit-scrollbar-button,#sources .dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+#museums .dlg::-webkit-scrollbar,#sources .dlg::-webkit-scrollbar,#view .dlg::-webkit-scrollbar{width:6px;background:transparent}
+#museums .dlg::-webkit-scrollbar-track,#sources .dlg::-webkit-scrollbar-track,#view .dlg::-webkit-scrollbar-track{background:transparent}
+#museums .dlg::-webkit-scrollbar-thumb,#sources .dlg::-webkit-scrollbar-thumb,#view .dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+#museums .dlg::-webkit-scrollbar-button,#sources .dlg::-webkit-scrollbar-button,#view .dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
 
 /* ===== ENTER 先：本物の Focus Shell を全画面iframeで表示 ===== */
 .os-frame{
@@ -282,12 +293,25 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   </div></dialog>
 
   <dialog id="view"><div class="dlg">
-    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見るための三つの入口とPIN</h2>
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見るための三つの入口</h2>
     <div class="steps">
       <div class="step"><b>PLACE</b><span>地点や作品を選び、北斎がいた場所、描いた場所、富士との関係を見る。</span></div>
       <div class="step"><b>TIME</b><span>年表を動かし、北斎の生涯と作品、同時代の出来事を重ねる。</span></div>
       <div class="step"><b>WORLD</b><span>WORLD / JAPANを切り替え、国内の視点と世界の文脈を往復する。</span></div>
-      <div class="step"><b>PIN</b><span>カードや古地図のPINを押すと、画面に残して並べて見られる（PCのみ）。</span></div>
+    </div>
+    <div class="d-sub">ボタン</div>
+    <div class="steps">
+      <div class="step"><b class="b-zoom">＋ －</b><span>年代バーの拡大・縮小（PCのみ）。</span></div>
+      <div class="step"><b class="b-now">NOW</b><span>現在の主な所蔵を見るモード。見ている場所は変わらず、もう一度押すと元の年に戻る。</span></div>
+      <div class="step"><b class="b-pin">PIN</b><span>カードや古地図のPINを押すと、画面に残して並べて見られる（PCのみ）。</span></div>
+    </div>
+    <div class="d-sub">地図と年代バーの印</div>
+    <div class="steps">
+      <div class="step"><i class="mk mk-tech" aria-hidden="true">◆</i><span><strong>ART/TECH</strong>：技術・画材・美術史の出来事。年代バーに表示。</span></div>
+      <div class="step"><i class="mk mk-dot" style="background:#ff6b5c" aria-hidden="true"></i><span><strong>描画視点</strong>：北斎が富士を描いた地点。JAPANで表示。</span></div>
+      <div class="step"><i class="mk mk-dot" style="background:#66e0ff" aria-hidden="true"></i><span><strong>ゆかりの地点・移動</strong>：北斎本人の地点と移動。破線は推定で、移動はJAPANで表示。</span></div>
+      <div class="step"><svg class="mk" viewBox="0 0 12 10" fill="#7cb3ff" aria-hidden="true"><path d="M0 5 11 0Q13 5 11 10Z"/></svg><span><strong>画角コーン</strong>：作品の視点と構図を観察するための表現で、実際のカメラ視野ではない。JAPANで表示。</span></div>
+      <div class="step"><i class="mk mk-dot" style="background:#9aabb8" aria-hidden="true"></i><span><strong>所蔵館</strong>：NOWで表示。WORLDでは都市名で示し、複数館あれば「Paris · 2」のように館数を添える。</span></div>
     </div>
     <button class="close">CLOSE</button>
   </div></dialog>
