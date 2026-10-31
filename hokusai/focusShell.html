@@ -240,9 +240,16 @@
   .tgl:disabled{opacity:.35;cursor:default}
 
   /* ── 凡例・注記 ── */
-  .legend{position:absolute;left:24px;bottom:30px;z-index:25;font-size:10.5px;color:var(--dim);line-height:1.95;letter-spacing:.3px}
+  /* 凡例：最下部の横一列（年代バー下の余白。左下の作品欄と高さに関わらず重ならない）。印は地図・年代バー上の実物と同じ形にする */
+  .legend{position:absolute;left:24px;right:24px;bottom:8px;z-index:25;display:flex;gap:22px;align-items:center;white-space:nowrap;font-size:10.5px;color:var(--dim);line-height:1.4;letter-spacing:.3px}
+  .legend>div{display:flex;align-items:center}
+  /* 表示中の空間・NOWにある印だけを出す（syncLegend）。WORLD=描画視点・コーン・移動線なし／NOW=所蔵館を追加 */
+  .legend[data-view="WORLD"] .lg-j,.legend[data-view="JAPAN"] .lg-w,.legend[data-view="WORLD"][data-now="1"] .lg-life,.legend[data-now="0"] .lg-n{display:none}
   .legend b{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-  .lg-verm{background:var(--vermilion)} .lg-gold{background:var(--gold)} .lg-ind{background:var(--indigo)} .lg-art{background:var(--art)} .lg-tech{background:#4fd0b8} .lg-cyan{background:var(--cyan)}
+  .lg-verm{background:var(--vermilion)} .lg-gold{background:var(--gold)} .lg-cyan{background:var(--cyan)} .lg-hold{background:var(--c-holdings)}
+  .lg-fan{width:12px;height:10px;margin-right:5px;fill:var(--indigo)}
+  .lg-tech{color:var(--c-arttech);margin-right:5px}
+  .legend b,.lg-fan,.lg-tech{opacity:.55} /* 印が文字(--dim=.42)より目立たないよう明度をそろえる */
   .repnote{position:absolute;right:24px;top:104px;z-index:12;display:none}
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
 
@@ -456,12 +463,13 @@
 </div>
 
 <!-- 凡例 -->
-<div class="legend">
-  <div><b class="lg-verm"></b>描画視点（北斎が富士を描いた地点）</div>
-  <div><b class="lg-cyan"></b>北斎ゆかりの地点・本人の移動（推定＝破線）</div>
-  <div><b class="lg-ind"></b>画角コーン（JAPAN／Representation）</div>
-  <div><b class="lg-art"></b>人物関係（P-LINK）</div>
-  <div><b class="lg-tech"></b>ART/TECH（技術・画材・美術史）Timeline ◆</div>
+<div class="legend" id="legend" data-view="WORLD" data-now="0">
+  <!-- 順序: 常時出る◆を先頭に固定し、切替で増減する項目を後ろへ（切替時に既存の項目が動いて視線をとらない） -->
+  <div><span class="lg-tech">◆</span>ART/TECH（技術・画材・美術史）</div>
+  <div class="lg-j"><b class="lg-verm"></b>描画視点</div>
+  <div class="lg-life"><b class="lg-cyan"></b>ゆかりの地点<span class="lg-j">・移動（破線＝推定）</span></div>
+  <div class="lg-j"><svg class="lg-fan" viewBox="0 0 12 10" aria-hidden="true"><path d="M0 5 11 0Q13 5 11 10Z"/></svg>画角コーン</div>
+  <div class="lg-n"><b class="lg-hold"></b>所蔵館<span class="lg-w">（都市名 · 館数）</span></div>
 </div>
 
 <!-- モバイル：ボトムシート（M1は畳んだハンドルのみ。中身はM2以降で既存パネルを再配置）。地図を完全に隠さない共通ルール。 -->
@@ -806,6 +814,7 @@ function applyNowLayering(){ if(!mapReady)return; const now=State.nowMode;
 
 // ---------- WORLD⇄JAPAN scale toggle ----------
 function sz(){return {w:window.innerWidth,h:window.innerHeight};}
+function syncLegend(){ const l=document.getElementById('legend'); l.dataset.view=State.spaceView; l.dataset.now=State.nowMode?'1':'0'; } // 凡例＝今見えている印だけ
 document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
   State.spaceView=b.dataset.v; [...e.currentTarget.querySelectorAll('button')].forEach(x=>x.classList.toggle('on',x===b));
   const gW=document.getElementById('globeViz'),jM=document.getElementById('japanMap');
@@ -815,7 +824,7 @@ document.getElementById('spaceSeg').addEventListener('click',e=>{const b=e.targe
     if(!map)initMap(); else setTimeout(()=>{map.resize();renderJapan();focusSelection();},30); }
   else { jM.hidden=true;gW.hidden=false; document.getElementById('attrib').textContent='地球: NASA Blue Marble';
     setTimeout(()=>{const s=sz();world.width(s.w).height(s.h);focusSelection();},20); }
-  renderWorld(); renderLeftBottom(true); // 左下パネルの意味を切替（JAPAN=WORKS / WORLD=時間・NOW）
+  renderWorld(); renderLeftBottom(true); syncLegend(); // 左下パネルの意味を切替（JAPAN=WORKS / WORLD=時間・NOW）
 });
 document.getElementById('axisToggle').onclick=(e)=>{showAxis=!showAxis;e.currentTarget.classList.toggle('on',showAxis);
   document.body.classList.toggle('axison',showAxis); // 富士山頂軸ON時のみ構図補正の数値(DEBUG)を表示
@@ -1181,7 +1190,7 @@ document.getElementById('zoomOut').onclick=()=>zoom(1/0.6);
 //   ↓現状は旧挙動（NOW=WORLDへ強制切替＋大西洋へfly）。実変更はM4で行う（M2/M3ではこの結合を新規に増やさないこと）。
 document.getElementById('nowBtn').onclick=(e)=>{ State.nowMode=!State.nowMode; e.currentTarget.classList.toggle('on',State.nowMode);
   // NOW = time/current-mode の切替のみ。spaceView も camera も変えない（JAPANはJAPANのまま／WORLDはWORLDのまま）。原則: nowMode ≠ spaceView, nowMode ≠ camera。
-  renderWorld(); if(mapReady)renderJapan(); renderLeftBottom(true); emit(); };
+  renderWorld(); if(mapReady)renderJapan(); renderLeftBottom(true); syncLegend(); emit(); };
 function eraLabel(y){ if(y>=1831&&y<=1833)return '富嶽三十六景 刊行期'; const g=gagoAt(y); return g+' 期'; }
 function syncTimeLabels(){
   if(State.nowMode){ // NOW=現在モード。historical年を主表示しない（内部にtimeCursorは保持し、解除で復帰）
