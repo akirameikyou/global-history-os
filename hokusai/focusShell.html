@@ -274,6 +274,7 @@
     font-family:var(--mono);font-size:9px;letter-spacing:.1em;line-height:1;padding:3px 6px;cursor:pointer;z-index:2}
   .dc-pin:hover{color:var(--ink);border-color:rgba(238,243,248,.6)}
   .ompop .dc-pin{top:16px;right:18px;background:rgba(10,16,26,.82)}
+  .ompop .om-x{display:none}
   .ompop .dc-x{position:absolute;top:13px;right:62px;background:rgba(10,16,26,.82);border:0;border-radius:4px;color:var(--sub);font-size:13px;cursor:pointer;z-index:2}
   .pinned-card.dcard,.pinned-card.ompop{z-index:60}
   .pinned-card.dcard{max-height:min(62vh,560px)}
@@ -293,13 +294,13 @@
   /* ===== モバイル（M1）：地図主役・chrome最小・compact timeline・畳んだシート。PC版(≥641px)には一切影響しない ===== */
   #mSheet{display:none}
   @media (max-width:640px){
-    .title{left:12px;top:9px;transform:none;text-align:left}
-    .title h1{font-size:17px;letter-spacing:.12em}
+    .title{left:80px;top:15px;transform:none;text-align:left}  /* 表紙の「← 表紙」ボタンの右（ボタンは親ページ側で常に手前） */
+    .title h1{font-size:15px;letter-spacing:.08em}
     .title p{display:none}
     #spaceControls{top:8px;right:10px;gap:6px}
     #spaceControls .seg button{padding:6px 9px;font-size:11px;letter-spacing:.02em}
     #axisToggle{display:none}                                 /* 富士山頂軸トグルはM1では非表示 */
-    .attrib{display:none}
+    .attrib{left:auto;right:10px;top:42px;font-size:8.5px;padding:1px 6px}   /* 地図の出典はスマホでも出す（切替ボタンの下に小さく） */
     .left-panel,.left-works,.right-panel,#plinkPanel,.legend,.repnote{display:none!important} /* PC4パネル・凡例はM1では非表示（M2以降でシートへ） */
 
     /* compact timeline：全幅・シートの上。年＋バーのみ、ヒント/ズームは隠す */
@@ -362,7 +363,17 @@
     .ls-cert{font-family:var(--mono);font-size:9px;color:var(--est,#e0b45f);margin-left:6px}
     .ls-desc{display:block;font-size:11px;color:var(--sub);line-height:1.7;margin-top:5px}
     .ls-phase{padding:9px 2px 7px;flex-wrap:wrap;row-gap:2px}               /* シート内の年代見出し（左右余白はシート側） */
-    .dcard{width:calc(100vw - 24px)}                                     /* 年代資料カード：スマホは画面幅いっぱい（左右12px） */
+    .dcard{width:calc(100vw - 24px);max-height:calc(100vh - 64px);max-height:calc(100dvh - 64px)} /* 年代資料カード：スマホは画面幅いっぱい（左右12px）・上は戻るボタンの下から */
+    .ompop .om-x{display:block;position:absolute;top:8px;right:8px;width:30px;height:30px;background:rgba(10,16,26,.82);border:0;border-radius:4px;color:var(--ink);font-size:14px;cursor:pointer;z-index:2}
+    #mSheet[data-kind="era"] .ms-lead{color:var(--gold)}
+    #mSheet[data-kind="era"] .ms-cnt{color:var(--gold)}
+    .mlife.on{background:rgba(102,224,255,.26);color:#fff}
+    .ms-body .era-head{padding:2px 0 8px}
+    .ms-body .era-work{padding:9px 0}
+    .ms-body .era-work img{flex-basis:76px;width:76px;height:58px}
+    .ms-body .era-empty{padding:8px 0}
+    .ms-body .era-ref-head{padding:10px 0 6px}
+    .ms-body .era-work.ref{padding-left:8px}
     /* HOLDINGS リスト行（現在所蔵）＝gray系 */
     .hl-item{padding:9px 0;border-top:1px solid var(--rule)}
     .hl-item:first-child{border-top:0}
@@ -452,6 +463,7 @@
     <div id="tlYear">1831</div>
     <div id="tlEra">富嶽三十六景 刊行期</div>
     <div class="tl-ctrl">
+      <button class="mlife" id="eraBtn" title="今の年代の作品（画像の利用条件を確認済みのもの）">作品</button>
       <button class="mlife" id="lifeBtn" title="人物年譜（現在年の最寄りイベントを開く）">年譜</button>
       <button class="zoombtn" id="zoomIn">＋</button>
       <button class="zoombtn" id="zoomOut">－</button>
@@ -559,7 +571,8 @@ const subs=[]; const on=f=>subs.push(f); const emit=()=>subs.forEach(f=>f(State)
 // 原則: timeCursor / selection / mapCamera は独立状態。
 // render系はstateを画面へ反映するだけでカメラを動かさない。カメラ移動は focusSelection() に一本化し、
 // 明示的に空間Focusが変化した時（work/place選択・必要なspaceView切替）だけ呼ぶ。
-function setSel(type,id){ State.selection={type,id}; emit(); focusSelection(); }
+let mEra=false; // スマホのシートに「年の作品」を出している間 true（作品ボタンで開き、何かを選ぶと解除）
+function setSel(type,id){ mEra=false; State.selection={type,id}; emit(); focusSelection(); }
 function setCursor(y){ State.timeCursor=Math.round(clamp(y,timelineConfig.rangeMin,timelineConfig.rangeMax)); emit(); } // 年送りはカメラを動かさない
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 
@@ -644,10 +657,13 @@ function focusSelection(){
     const b=new maplibregl.LngLatBounds([w.lng,w.lat],[w.lng,w.lat]).extend([FUJI.lng,FUJI.lat]);
     map.fitBounds(b,{padding:fitPadding(),maxZoom:9,duration:700}); }
 }
+// スマホでシートを開いたまま地図を動かす時、行き先がシートの裏に隠れないよう、見えている範囲（上の切替ボタンとTimelineの間）の中央へ寄せる。PCは常に[0,0]。
+function mapFlyOffset(){ if(innerWidth>640||mSheet.classList.contains('collapsed'))return [0,0];
+  const top=document.getElementById('timelineBar').getBoundingClientRect().top; return [0,Math.round((56+top)/2-innerHeight/2)]; }
 // 「地点を見る」専用カメラ移動。イベント選択(setSel)では呼ばれず、明示ボタン押下時のみ。
 function focusPlace(lat,lng,opt){ opt=opt||{}; // opt.zoom(JAPAN)/opt.altitude(WORLD)で寄り具合を上書き（美術館は少し近寄る）
-  if(State.spaceView==='JAPAN'&&mapReady){ map.flyTo({center:[lng,lat],zoom:opt.zoom||10,duration:800}); }
-  else { world.controls().autoRotate=false; world.pointOfView({lat,lng,altitude:opt.altitude||0.45},800); } // WORLDでの「地点を見る」も同じ寄り具合に揃える
+  if(State.spaceView==='JAPAN'&&mapReady){ map.flyTo({center:[lng,lat],zoom:opt.zoom||10,duration:800,offset:mapFlyOffset()}); }
+  else { if(innerWidth<=640){ mSheet.classList.add('collapsed'); syncMobileTL(); } /* スマホ：地球は中央へ寄るのでシートを畳んで見せる */ world.controls().autoRotate=false; world.pointOfView({lat,lng,altitude:opt.altitude||0.45},800); } // WORLDでの「地点を見る」も同じ寄り具合に揃える
 }
 // 左右の浮遊パネル(左270/右340)・タイトル・タイムライン分を差し引き、見えている中央帯に収める。
 function fitPadding(){ const W=window.innerWidth,H=window.innerHeight;
@@ -847,7 +863,7 @@ worldEventsJP.forEach(ev=>worldList.appendChild(renderEvent(ev)));
 wlinkEvents.forEach(ev=>wlinkList.appendChild(renderEvent(ev)));
 WORKS.forEach(w=>{const d=document.createElement('div');d.className='worktile';d.dataset.no=w.no;
   d.innerHTML='<div class="t">#'+w.no+' '+w.ja+'</div><div class="m">'+w.brg+'° / '+w.dist+'km / 半角'+w.half+'°</div>'+
-    '<div class="card"><img src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+
+    '<div class="card"><img'+(innerWidth<=640?' loading="lazy"':'')+' src="'+thumb(w.file,300)+'" alt="'+w.ja+'"><div class="cap">'+ // スマホは一覧を出さないので読み込まない
     '<span class="chip k-座標">座標 '+w.axV+'</span><span class="chip k-構図">構図 '+w.axC+'</span><br>'+(w.vpName||'')+
     (w.anchorX!=null?'<br><span class="compo-dbg" style="color:var(--art)">DEBUG（暫定v3）: 富士は扇開口の '+Math.round(w.anchorX*100)+'% 位置（x='+w.anchorX+'）／実富士方位 '+w.brg+'°・扇中心 '+w.ccb+'°・開口±'+w.half+'°。※coneHalfDegは現行Representation幅で作品の実画角確定ではない</span>':'')+
     '<br><span style="color:var(--dim)">薄い扇＝作者が作品上「この範囲」として富士を捉えた画角(View Field)。移動(ROUTE)や物理的視野そのものではない。JAPAN表示で展開。</span>'+
@@ -884,7 +900,7 @@ function showPeriodCard(ph,src){
   let h='';
   if(ph&&ph.note) h+='<div class="pr-lead">'+esc(ph.note)+'</div>';
   const works=srcs.filter(s=>s.image);
-  if(works.length){ h+='<div class="pr-sec">WORKS ／ 作品（画像は利用条件を確認済み・クリックで所蔵館のページ）</div><div class="pr-works">';
+  if(works.length){ h+='<div class="pr-sec">WORKS ／ 作品（画像は利用条件を確認済み・画像から所蔵館のページへ）</div><div class="pr-works">';
     works.forEach(s=>{ h+='<div class="pr-work"><a href="'+esc(s.image.page)+'" target="_blank" rel="noopener noreferrer"><img loading="lazy" src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'"></a>'+
       '<div class="cap" title="'+esc(s.image.credit)+'／'+esc(s.image.license)+'（確認 '+esc(s.image.checkedAt)+'）">'+esc(s.title)+'（'+esc(s.image.objectDate)+'）<br>'+esc(imgProv(s))+'・'+esc(imgLic(s))+'</div></div>'; });
     h+='</div>'; }
@@ -921,7 +937,7 @@ const placeById=id=>residences.find(r=>r.id===id)||lifePlaces.find(p=>p.id===id)
 function goToTextPlace(tl,src){ if(tl.ref){ const s=resourceSources.find(x=>x.id===tl.ref); if(s)showEraWorkCard(s,src); return; }
   const p=tl.coord||placeById(tl.place); if(!p)return;
   if(State.spaceView!=='JAPAN') document.querySelector('#spaceSeg button[data-v="JAPAN"]').click(); // 地名リンク=JAPAN詳細へ（明示操作でのみcamera移動）
-  let n=0; (function fly(){ if(mapReady){ map.flyTo({center:[p.lng,p.lat],zoom:tl.zoom||13,duration:900}); if(tl.coord)showTextPin(tl,p); return; } if(++n<60)setTimeout(fly,100); })(); }
+  let n=0; (function fly(){ if(mapReady){ map.flyTo({center:[p.lng,p.lat],zoom:tl.zoom||13,duration:900,offset:mapFlyOffset()}); if(tl.coord)showTextPin(tl,p); return; } if(++n<60)setTimeout(fly,100); })(); }
 // coord（既存の地点データにない代表点）へ寄せた時だけ、一時的な輪と名前を出す。次の地名リンクで置き換わる。
 let textPin=null;
 function showTextPin(tl,p){ if(textPin)textPin.remove(); const el=document.createElement('div'); el.className='tpin';
@@ -933,12 +949,12 @@ function omGapText(om,ey){ if(!ey)return '地図の年と出来事の年は一�
   return '年譜の出来事（'+ey+'年）の'+(d>0?'約'+d+'年後':d<0?'約'+(-d)+'年前':'同じ頃')+'の地図。出来事当時の町並みそのものではない。'; }
 function showOldMap(om,src){ const [cx,cy,cw,ch]=om.crop, W=420;
   const marks=om.marks.map(m=>{ const [x,y,w,h]=m.xywh; return '<div class="om-mark" style="left:'+((x-cx)/cw*100)+'%;top:'+((y-cy)/ch*100)+'%;width:'+(w/cw*100)+'%;height:'+(h/ch*100)+'%" title="'+esc(m.label)+'"></div>'; }).join('');
-  omPop.innerHTML='<button class="dc-pin" title="この古地図を画面に残す（並べて見られます）">PIN</button><div class="om-img"><img draggable="false" src="'+esc(om.iiif+'/'+om.crop.join(',')+'/'+W+',/0/default.jpg')+'" alt="'+esc(om.title)+'" style="aspect-ratio:'+cw+'/'+ch+'">'+marks+'</div>'+ // 縦横比を先に決め、画像の読み込み前に高さを測れるようにする（画面外へのはみ出し防止）
+  omPop.innerHTML='<button class="om-x" aria-label="閉じる">✕</button><button class="dc-pin" title="この古地図を画面に残す（並べて見られます）">PIN</button><div class="om-img"><img draggable="false" src="'+esc(om.iiif+'/'+om.crop.join(',')+'/'+W+',/0/default.jpg')+'" alt="'+esc(om.title)+'" style="aspect-ratio:'+cw+'/'+ch+'">'+marks+'</div>'+ // 縦横比を先に決め、画像の読み込み前に高さを測れるようにする（画面外へのはみ出し防止）
     '<div class="om-cap"><b>'+esc(om.title)+'</b>（'+esc(om.publisher)+'）<br>'+esc(om.dateText)+'<br>枠＝'+[...new Set(om.marks.map(m=>m.label))].map(esc).join('・')+'（江戸マップの地名位置）'+
     '<div class="om-gap">※'+esc(omGapText(om,+src.dataset.ey))+'</div>'+linkHTML(om.page,om.rights.credit+'（パブリックドメイン）')+'</div>';
   omPop.hidden=false; const r=src.getBoundingClientRect(), pw=omPop.offsetWidth, ph=omPop.offsetHeight;
   let x=r.left-pw-10; if(x<8)x=Math.min(innerWidth-pw-8,r.right+10); let y=Math.max(8,Math.min(innerHeight-ph-8,r.top-ph/2));
-  if(innerWidth<=640){ x=(innerWidth-pw)/2; y=Math.max(8,Math.min(innerHeight-ph-8,r.top-ph-10)); } // スマホ：札の上に出し、画面の上下からはみ出さない
+  if(innerWidth<=640){ x=(innerWidth-pw)/2; y=Math.max(cardTopMin(),Math.min(innerHeight-ph-8,r.top-ph-10)); } // スマホ：札の上に出し、画面の上下からはみ出さない
   omPop.style.left=Math.max(8,x)+'px'; omPop.style.top=y+'px'; }
 document.addEventListener('click',e=>{ const a=e.target.closest('.tlink'), m=e.target.closest('.tmap');
   if(a){ e.stopPropagation(); goToTextPlace(textLinks[+a.dataset.tl],a); return; }
@@ -946,7 +962,7 @@ document.addEventListener('click',e=>{ const a=e.target.closest('.tlink'), m=e.t
     showCard({ tag:'NOTE ／ 資料による違い', title:textLinks[+c.dataset.tl].text+'：'+cu.label, body:cu.text, rel:'※出典: '+cu.source,
       action:{label:'出典を開く ↗', onClick:()=>window.open(cu.url,'_blank','noopener')}, accent:'var(--est,#e0b45f)' }, c); return; }
   if(m){ e.stopPropagation(); const key=m.dataset.om+'|'+m.dataset.ey; if(!omPop.hidden&&omPop.dataset.key===key){omPop.hidden=true;return;} omPop.dataset.key=key; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); return; } // タップで開閉（スマホ）
-  if(!e.target.closest('#oldMapPop'))omPop.hidden=true; },true);
+  if(e.target.closest('.om-x')||!e.target.closest('#oldMapPop'))omPop.hidden=true; },true);
 document.addEventListener('mouseover',e=>{ const m=e.target.closest('.tmap'); if(!m||window.innerWidth<=640)return; clearTimeout(omHideT); omPop.dataset.key=m.dataset.om+'|'+m.dataset.ey; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); }); // PC=ホバーで表示
 document.addEventListener('mouseout',e=>{ if(window.innerWidth<=640)return; if(e.target.closest('.tmap')||e.target.closest('#oldMapPop')){ clearTimeout(omHideT); omHideT=setTimeout(()=>{ if(!omPop.matches(':hover'))omPop.hidden=true; },250); } });
 // 年代見出し（lifePhases）を各期の最初の年譜itemの前に差し込む。見出しクリック=その期の資料カード（timeCursor・cameraは動かさない）。
@@ -1039,20 +1055,20 @@ function showEraWorkCard(s,src){ const box=document.createElement('div');
   if(ref) box.insertAdjacentHTML('afterbegin','<div class="pr-note" style="color:var(--ref)">参考（'+REFKIND_JA[s.refKind]+'）：'+esc(s.relation)+'。北斎の作品ではありません。'+
     (s.relationBasis?'<br>根拠：'+esc(s.relationBasis):'')+'</div>');
   showCard({ tag:ref?'REFERENCE ／ 参考資料（北斎作ではない）':'WORK ／ この年代の作品', title:s.title, sub:dateOf(s)+'｜'+(s.artist?s.artist+'｜':'')+s.org, node:box, accent:ref?'var(--ref)':'var(--gold)' }, src); }
-function renderEraWorks(){ eraWorksList.innerHTML=''; const ph=phaseAt(State.timeCursor);
+function renderEraWorks(el=eraWorksList){ el.innerHTML=''; const ph=phaseAt(State.timeCursor); // el=PCは左下の一覧、スマホはシート
   const head=document.createElement('div'); head.className='era-head';
   head.innerHTML=ph?esc(ph.from+'–'+ph.to+' '+ph.label)+'<span class="lk">この年代の資料 ›</span>':'北斎の生涯の範囲外';
-  const lk=head.querySelector('.lk'); if(lk)lk.onclick=()=>showPeriodCard(ph,head); eraWorksList.appendChild(head);
+  const lk=head.querySelector('.lk'); if(lk)lk.onclick=()=>showPeriodCard(ph,head); el.appendChild(head);
   const list=ph?resourceSources.filter(s=>s.role==='period'&&s.image&&s.phases.includes(ph.from)):[];
   const refs=ph?referenceWorks(ph.from):[];
-  if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の北斎の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; eraWorksList.appendChild(m); }
+  if(!list.length){ const m=document.createElement('div'); m.className='era-empty'; m.textContent='この年代の北斎の作品（画像の利用条件を確認済みのもの）はまだ登録されていません。'; el.appendChild(m); }
   const row=(s,ref)=>{ const d=document.createElement('div'); d.className='era-work'+(ref?' ref':'');
     d.innerHTML=(s.image?'<img src="'+esc(s.image.src)+'" alt="'+esc(s.title)+'">':'<span class="era-noimg">リンク</span>')+
       '<div><div class="t">'+(ref?refChip(s):'')+esc(s.title)+'</div>'+
       '<div class="m">'+(s.artist&&ref?esc(s.artist)+'・':'')+esc(dateOf(s))+(s.image&&s.image.classification?'・'+esc(s.image.classification):'')+'・'+(s.image?esc(imgProv(s))+'・'+esc(imgLic(s)):esc(s.org))+'</div></div>';
-    d.onclick=()=>showEraWorkCard(s,d); eraWorksList.appendChild(d); };
+    d.onclick=()=>showEraWorkCard(s,d); el.appendChild(d); };
   list.forEach(s=>row(s,false));
-  if(refs.length){ const h=document.createElement('div'); h.className='era-ref-head'; h.textContent='参考：師・同時代の作品と時代の資料（北斎作ではない）'; eraWorksList.appendChild(h); refs.forEach(s=>row(s,true)); } }
+  if(refs.length){ const h=document.createElement('div'); h.className='era-ref-head'; h.textContent='参考：師・同時代の作品と時代の資料（北斎作ではない）'; el.appendChild(h); refs.forEach(s=>row(s,true)); } }
 // 参考資料（role:'reference'）＝北斎作ではない。北斎との関係(relation)とその根拠があるものだけ。北斎の作品一覧・件数には混ぜない。
 // from=null は時期を特定しない参考資料（生涯全体）。画像のないもの（リンクのみ）も含む。
 function referenceWorks(from){ return resourceSources.filter(s=>s.role==='reference'&&(from==null?s.phases.length===0:s.phases.includes(from))); }
@@ -1210,11 +1226,13 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove
 
 // ---------- 詳細カード（共通）：呼び出し元近くに出し（source-aware）中央SPACEを塞がない。ドラッグ可 ----------
 const detailCard=document.getElementById('detailCard');
+function cardTopMin(){ return innerWidth<=640?52:12; } // スマホ：表紙へ戻るボタン（親ページ側で常に手前）の下から
 function positionCard(src){ const c=detailCard, cw=c.offsetWidth||320, ch=c.offsetHeight||200, M=12, W=innerWidth, Ht=innerHeight; let x,y;
+  if(W<=640){ c.style.left=M+'px'; c.style.top=cardTopMin()+'px'; return; } // スマホ：幅いっぱいなので常に上から（画像の読み込みで下へはみ出さない）
   if(src&&src.getBoundingClientRect){ const r=src.getBoundingClientRect(); x=r.right+M; if(x+cw>W-M)x=r.left-cw-M; y=r.top; } // 元要素の右→入らなければ左
   else if(src&&typeof src.x==='number'){ x=src.x+M; y=src.y+M; }                                                         // 地図クリック座標の近く
   else { x=24; y=120; }                                                                                                    // 既定=左側（中央を避ける）
-  x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(M,Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; }        // 画面端でflip/clamp
+  x=Math.max(M,Math.min(W-cw-M,x)); y=Math.max(cardTopMin(),Math.min(Ht-ch-M,y)); c.style.left=x+'px'; c.style.top=y+'px'; } // 画面端でflip/clamp
 let cardAction=null; // 開いているカードのアクション（PINのコピーでも使う）
 function showCard({tag,title,sub,body,rel,action,accent,node},src){ // node=任意のDOM（年代資料カード等）。指定時は body より優先
   const ac=accent||'var(--c-focus)'; // カード左端＋タグ色＝分類色（未指定はfocus cyan）。分類別にして「どの情報か」を一目で示す。
@@ -1241,7 +1259,7 @@ document.getElementById('dcClose').addEventListener('pointerdown',e=>e.stopPropa
 // ---------- PIN：開いているカード／古地図をコピーして画面に残す（万次郎版のPINと同じ考え方）。元のカードは閉じ、次のカードは今までどおり1枚で切り替わる ----------
 const pinLayer=document.getElementById('pinLayer'), pinCloseAll=document.getElementById('pinCloseAll');
 // 画像の読み込みで高くなっても画面の下へはみ出さないよう、上へ寄せる（loadはキャプチャで受ける）
-function keepInView(c){ const b=c.getBoundingClientRect(); if(b.bottom>innerHeight-8) c.style.top=Math.max(8,innerHeight-b.height-8)+'px'; }
+function keepInView(c){ const b=c.getBoundingClientRect(); if(b.bottom>innerHeight-8) c.style.top=Math.max(innerWidth<=640?cardTopMin():8,innerHeight-b.height-8)+'px'; }
 detailCard.addEventListener('load',()=>keepInView(detailCard),true);
 function syncPinCloseAll(){ const n=pinLayer.children.length; pinCloseAll.hidden=n<2; pinCloseAll.textContent='PINを全部閉じる（'+n+'）'; }
 pinCloseAll.onclick=()=>{ pinLayer.innerHTML=''; syncPinCloseAll(); };
@@ -1375,9 +1393,18 @@ function holdingListHTML(selH){ const list=holdingsFor();
 function syncMobileTL(){ const tlb=document.getElementById('timelineBar'); if(!tlb)return;
   if(window.innerWidth>640){ tlb.style.bottom=''; return; }
   tlb.style.bottom=(mSheet.getBoundingClientRect().height+8)+'px'; } // 同期設定（rAFはpane非表示時に発火しないため使わない）
-const sheetHasContent=()=> State.nowMode || ['work','life','holding'].includes(State.selection.type); // シートを開ける文脈（NOW=HOLDINGS / work / life / holding）
+const sheetHasContent=()=> mEra || State.nowMode || ['work','life','holding'].includes(State.selection.type); // シートを開ける文脈（年の作品 / NOW=HOLDINGS / work / life / holding）
+let eraSheetKey=null; // シートに描いた「年の作品」の期。年送りの間は期が変わった時だけ描き直す
+const eraBtnEl=document.getElementById('eraBtn');
 function renderMobileSheet(){ if(window.innerWidth>640)return; // PCは無関係（≥641pxではsheet非表示）
   const s=State.selection; const sig=(s.type||'')+':'+(s.id==null?'':s.id)+(State.nowMode?'|now':'');
+  const eraOn=mEra&&!State.nowMode; eraBtnEl.classList.toggle('on',eraOn&&!mSheet.classList.contains('collapsed'));
+  if(eraOn){ const ph=phaseAt(State.timeCursor), key=ph?ph.from:'none'; mSheet.dataset.kind='era'; mSheetSelSig='era';
+    if(eraSheetKey!==key){ eraSheetKey=key; renderEraWorks(msBody); msBody.scrollTop=0;
+      msLead.textContent=ph?phaseRangeShort(ph)+'年の作品':'この年代の作品';
+      msCnt.textContent='WORKS ／ '+(ph?resourceSources.filter(x=>x.role==='period'&&x.image&&x.phases.includes(ph.from)).length:0)+'点'; }
+    syncMobileTL(); return; }
+  eraSheetKey=null;
   if(State.nowMode){ // NOW = 現在所蔵（HOLDINGS一覧・選択で詳細インライン）。JAPAN=国内 / WORLD=国内外。NOWはspaceView/cameraを変えない。
     mSheet.dataset.kind='holding'; const jp=State.spaceView==='JAPAN';
     const wsel=s.type==='work'&&s.id!=null?workByNo(s.id):null; // 作品選択時はその作品の所蔵に絞る
@@ -1405,16 +1432,20 @@ function renderMobileSheet(){ if(window.innerWidth>640)return; // PCは無関係
     msBody.querySelectorAll('.ls-item').forEach(el=>el.onclick=()=>{ setCursor(+el.dataset.ly); setSel('life',el.dataset.lid); }); // 前後イベント=選択+cursor同期
     msBody.querySelectorAll('.ls-phase').forEach(el=>el.onclick=()=>{ const f=el.dataset.pfrom; showPeriodCard(f?lifePhases.find(p=>p.from===+f):null,el); }); // 年代見出し=資料カード
     const onEl=msBody.querySelector('.ls-item.on'); if(onEl)onEl.scrollIntoView({block:'center'}); // 選択を中心に
-  } else { mSheetSelSig=null; msLead.textContent='冨嶽三十六景'; msCnt.textContent='46図タップ ／ 年譜'; msBody.innerHTML=''; mSheet.classList.add('collapsed'); syncMobileTL(); return; }
+  } else { mSheetSelSig=null; msLead.textContent='冨嶽三十六景'; msCnt.textContent='46図タップ ／ 作品 ／ 年譜'; msBody.innerHTML=''; mSheet.classList.add('collapsed'); syncMobileTL(); return; }
   if(mSheetSelSig!==sig){ mSheet.classList.remove('collapsed'); mSheetSelSig=sig; } // 新規選択で展開（同一選択なら現状維持＝閉じた状態を尊重）
   syncMobileTL();
 }
 on(()=>renderMobileSheet()); // 選択変化に追従（sheet中身）。開閉自体は下のハンドラ（selectionは保持）
-document.getElementById('msGrip').onclick=()=>{ if(sheetHasContent()){ mSheet.classList.toggle('collapsed'); syncMobileTL(); } };
-document.getElementById('msHandle').onclick=(e)=>{ if(e.target.id==='msClose')return; if(mSheet.classList.contains('collapsed')&&sheetHasContent()){ mSheet.classList.remove('collapsed'); syncMobileTL(); } };
-document.getElementById('msClose').onclick=()=>{ mSheet.classList.add('collapsed'); syncMobileTL(); }; // 閉じる=畳むだけ（selectionは保持＝別地点/明示操作で解除）
+document.getElementById('msGrip').onclick=()=>{ if(sheetHasContent()){ mSheet.classList.toggle('collapsed'); renderMobileSheet(); syncMobileTL(); } };
+document.getElementById('msHandle').onclick=(e)=>{ if(e.target.id==='msClose')return; if(mSheet.classList.contains('collapsed')&&sheetHasContent()){ mSheet.classList.remove('collapsed'); renderMobileSheet(); syncMobileTL(); } };
+document.getElementById('msClose').onclick=()=>{ mSheet.classList.add('collapsed'); renderMobileSheet(); syncMobileTL(); }; // 閉じる=畳むだけ（selectionは保持＝別地点/明示操作で解除）
 // 年譜(LIFE)入口：現在年の最寄りイベントを開く（timeCursor同期）。nowMode/spaceView/cameraは変えない。
-document.getElementById('lifeBtn').onclick=()=>{ const ev=nearestLife(State.timeCursor); if(ev){ setCursor(ev.year); setSel('life',ev.id); } };
+const leaveNow=()=>{ if(State.nowMode)document.getElementById('nowBtn').click(); }; // NOW中でも年譜・作品は開ける（年代の表示へ戻す）
+document.getElementById('lifeBtn').onclick=()=>{ leaveNow(); const ev=nearestLife(State.timeCursor); if(ev){ mEra=false; setCursor(ev.year); setSel('life',ev.id); } };
+// 年の作品（PC左下タブのスマホ版）：今の年代の作品をシートに出す。もう一度押すと畳む。selection/camera/timeCursorは変えない。
+eraBtnEl.onclick=()=>{ if(mEra&&!State.nowMode&&!mSheet.classList.contains('collapsed')){ mSheet.classList.add('collapsed'); renderMobileSheet(); return; }
+  leaveNow(); mEra=true; mSheet.classList.remove('collapsed'); renderMobileSheet(); };
 
 renderLeftBottom(true); syncTimeLabels(); drawTL(); emit();
 // モバイル初期状態（M1）：JAPAN・1831・地図主役。PCはWORLDのまま（初期spaceViewは変えない）。

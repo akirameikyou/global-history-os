@@ -193,6 +193,8 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 }
 .app.entered .os-back{display:inline-flex}
 .os-back:hover{border-color:rgba(102,224,255,.45);color:#fff}
+.os-back{gap:0}
+@media (max-width:640px){.os-back{padding:8px 10px}.os-back-more{display:none}} /* スマホ：題字「葛飾北斎」を隠さないよう短く */
 .os-loading{
   position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;
   color:rgba(237,243,246,.5);font-size:11px;letter-spacing:.22em;pointer-events:none;
@@ -283,7 +285,7 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   <!-- ENTER先：本物の Focus Shell（日本地図の場面で開始） -->
   <iframe id="osFrame" class="os-frame" title="History OS / Hokusai Focus" allow="fullscreen"></iframe>
   <div class="os-loading" id="osLoading">JAPAN / 1831 を準備しています…</div>
-  <button class="os-back" id="backBtn">← 表紙へ戻る</button>
+  <button class="os-back" id="backBtn" aria-label="表紙へ戻る">← 表紙<span class="os-back-more">へ戻る</span></button>
 
   <dialog id="intro"><div class="dlg">
     <div class="d-kicker">01 / INTRO</div><h2>北斎の観た世界</h2>
