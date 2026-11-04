@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>History OS｜人物フォーカス</title>
+<style>
+/* History OS 基本型「人物フォーカス」v0.1（docs/PERSON_FOCUS_BASE_DESIGN_v0.1.md）。
+   北斎Focus（hokusai/focusShell.html）の画面の文法を流用：全面の地球＋浮遊パネル・上中央の題・右 FOCUS PERSON・下の年代バー。
+   色＝意味：cyan=本人／off-white=同時代の外部人物（関係を意味しない）／violet=P-LINK（関係の記録がある人）。
+   UI 原則：スクロールバー・カーソルに背景を付けない。白い矢印ボタンは置かない。 */
+:root{
+  --c-focus:#66e0ff; --c-focus-br:#c8f4ff; --c-relation:#c79bff; --c-worldart:#e6ecf1; --c-context:#8aa0b4; --amber-soft:#f0b578;
+  --bg:#050c16; --panel:rgba(7,14,24,.66); --rule:rgba(255,255,255,.09);
+  --ink:#eef3f8; --sub:#9db4c8; --dim:rgba(238,243,248,.42);
+  --sans:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic UI",Meiryo,sans-serif;
+  --serif:"Hiragino Mincho ProN","Yu Mincho",serif; --mono:"SFMono-Regular",Consolas,Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+#globeViz{position:fixed;inset:0;z-index:1}
+[hidden]{display:none!important}
+::-webkit-scrollbar{width:6px;height:6px;background:transparent} ::-webkit-scrollbar-button{display:none;width:0;height:0}
+::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+@supports not selector(::-webkit-scrollbar){html{scrollbar-color:rgba(102,224,255,.25) transparent}}
+
+.title{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;width:min(560px,60vw)}
+.title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.42em;text-indent:.42em}
+.title p{margin:6px 0 0;font-size:10.5px;letter-spacing:.32em;color:var(--c-focus-br)}
+
+.panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-radius:5px;overflow:auto}
+.sec{font-size:10px;letter-spacing:.24em;color:var(--dim);padding:12px 16px 6px}
+.note{font-size:10.5px;color:var(--dim);padding:0 16px 8px;line-height:1.6}
+
+/* 左上：人物を選ぶ */
+#pick{left:24px;top:22px;width:290px;overflow:visible}
+#pick input{width:100%;font:inherit;font-size:13px;background:transparent;border:0;border-bottom:1px solid var(--rule);color:var(--ink);padding:10px 14px;outline:none}
+#pick input::placeholder{color:var(--dim)}
+#pickList{position:absolute;left:0;right:0;top:100%;background:rgba(7,14,24,.94);border:1px solid var(--rule);border-radius:0 0 5px 5px;max-height:46vh;overflow:auto}
+#pickList button{display:block;width:100%;text-align:left;background:none;border:0;border-bottom:1px solid var(--rule);color:var(--ink);font:inherit;font-size:12.5px;padding:7px 14px;cursor:pointer}
+#pickList button:hover,#pickList button.on{background:rgba(102,224,255,.12)}
+#pickList small{color:var(--sub);font-family:var(--mono);font-size:10px;margin-left:6px}
+
+/* 左：同時代の人 */
+#contemp{left:24px;top:84px;width:290px;max-height:calc(100vh - 84px - 168px)}
+#contemp .sec{color:var(--c-worldart)}
+.counts{display:flex;gap:14px;padding:0 16px 6px;font-size:11px;color:var(--sub);align-items:baseline}
+.counts b{font-size:20px;color:var(--c-worldart);font-weight:600;font-variant-numeric:tabular-nums;margin-right:3px}
+.counts .u b{color:var(--sub);font-size:15px}
+.ci{padding:7px 16px;border-top:1px solid var(--rule);cursor:pointer}
+.ci:hover{background:rgba(102,224,255,.06)}
+/* 選んだ副人物：北斎Focus の UI COLOR SYSTEM どおり「明るさ＋白い縁」で示す（新しい色相は足さない） */
+.ci.sel{background:rgba(255,255,255,.14);border-left:3px solid #fff} .ci.sel .nm{color:#fff}
+#selBox{margin:4px 10px 8px;border:1.5px solid rgba(255,255,255,.85);border-radius:6px;background:rgba(255,255,255,.07);box-shadow:0 0 14px -4px rgba(255,255,255,.7)}
+#selBox .sec{color:#fff;padding:9px 12px 2px}
+#selBox .snm{font-size:15px;font-weight:700;color:#fff;padding:0 12px} #selBox .snm small{font-size:10.5px;color:var(--sub);font-weight:400;margin-left:6px}
+#selBox .smeta{font-family:var(--mono);font-size:10.5px;color:var(--sub);padding:2px 12px}
+#selBox .sdesc{font-size:11px;color:var(--sub);padding:2px 12px;line-height:1.6}
+#selBox .sbtns{display:flex;flex-wrap:wrap;gap:6px;padding:6px 12px 10px}
+#selBox .sbtns button{font:inherit;font-size:10.5px;color:#fff;background:none;border:1px solid rgba(255,255,255,.55);border-radius:5px;padding:2px 8px;cursor:pointer}
+#selBox .sbtns button:hover{background:rgba(255,255,255,.12)} #selBox .sbtns button.focus{color:var(--c-focus);border-color:rgba(102,224,255,.55)}
+#selBox .sbtns button[disabled]{opacity:.35;cursor:default}
+#rowsSvg g.sel{filter:drop-shadow(0 0 4px rgba(255,255,255,.85))}
+.ci .nm{font-size:12.5px;font-weight:600} .ci .meta{font-family:var(--mono);font-size:10px;color:var(--sub);margin-top:1px}
+.ci.rel .nm{color:var(--c-relation)}
+.ci .go{float:right;font-size:10px;color:var(--c-focus);border:1px solid rgba(102,224,255,.45);border-radius:5px;padding:1px 7px;margin-top:2px;background:none;font-family:inherit;cursor:pointer}
+.ci.unsure .nm{color:var(--sub);font-weight:400}
+.grp{font-size:9.5px;letter-spacing:.16em;color:var(--dim);padding:8px 16px 3px}
+/* この年の出来事（琥珀＝出来事。北斎Focus の WORLD EVENTS と同じ系統） */
+#sameYr .sec{color:var(--amber-soft)}
+.ev{padding:6px 16px;border-top:1px solid var(--rule);font-size:12px;cursor:pointer}
+.ev:hover{background:rgba(240,181,120,.08)}
+.ev .who{font-weight:600} .ev .who.me{color:var(--c-focus)} .ev .ttl{color:var(--ink)}
+.ev .k{font-size:9.5px;border:1px solid rgba(240,181,120,.5);color:var(--amber-soft);border-radius:4px;padding:0 5px;margin-left:6px;white-space:nowrap}
+.ev .k.cur{background:rgba(240,181,120,.18)}
+.ev .src{font-size:9.5px;color:var(--dim);margin-left:6px} .ev .src a{color:var(--dim)}
+.ev .why{font-size:10.5px;color:var(--sub);margin-top:2px;line-height:1.5}
+.ci .evm{font-size:10px;color:var(--amber-soft);margin-top:1px}
+
+/* 右：FOCUS PERSON */
+#focus{right:24px;top:84px;width:330px;max-height:calc(100vh - 84px - 168px)}
+#focus .sec{color:var(--c-focus)}
+.fp{padding:2px 16px 12px}
+.fp .nm{font-family:var(--serif);font-size:22px;font-weight:700;letter-spacing:.08em}
+.fp .en{font-size:11px;color:var(--sub);letter-spacing:.06em}
+.fp .yrs{font-family:var(--mono);font-size:12px;color:var(--c-focus-br);margin-top:6px}
+.fp .age{font-size:13px;margin-top:4px} .fp .age b{color:var(--c-focus);font-size:18px}
+.fp .desc{font-size:12px;color:var(--sub);margin-top:8px;line-height:1.7}
+.row{display:flex;gap:8px;font-size:11.5px;padding:3px 16px;line-height:1.6} .row .k{color:var(--dim);min-width:4.5em}
+.row a,.row button.place{color:var(--c-focus-br);background:none;border:0;padding:0;font:inherit;cursor:pointer;text-decoration:none;text-align:left}
+.row button.place:hover,.row a:hover{text-decoration:underline}
+.ids{font-family:var(--mono);font-size:10px;color:var(--dim);padding:6px 16px 12px}
+.ids a{color:var(--dim)}
+.special{border-top:1px solid var(--rule);margin-top:4px}
+.special .sec{color:var(--c-relation)}
+.pl{padding:6px 16px;border-top:1px solid var(--rule);font-size:12px}
+.pl .nm{color:var(--c-relation);font-weight:600} .pl .meta{font-family:var(--mono);font-size:10px;color:var(--sub)}
+.pl.off{opacity:.45}
+.pl .base{font-size:10px;color:var(--c-focus);margin-left:6px;cursor:pointer;border:0;background:none;font-family:inherit;padding:0}
+.deep{display:block;margin:10px 16px 14px;padding:7px 10px;text-align:center;border:1px solid rgba(102,224,255,.5);border-radius:6px;color:var(--c-focus);text-decoration:none;font-size:12px}
+.deep:hover{background:rgba(102,224,255,.12)}
+
+/* 下：年代バー（「帯で並べる」で上へ広がる。広がった分だけ左右のパネルを縮める） */
+body{--tlh:124px}
+body.rows{--tlh:min(46vh,420px)}
+#contemp,#focus{max-height:calc(100vh - 84px - var(--tlh) - 44px)}
+#tl{left:24px;right:24px;bottom:22px;height:var(--tlh);overflow:hidden;display:flex;flex-direction:column}
+#tlSvg{width:100%;height:124px;flex:none;display:block;touch-action:none;cursor:pointer}
+#rowsBox{flex:1;overflow-y:auto;overflow-x:hidden;border-top:1px solid var(--rule)}
+#rowsSvg{width:100%;display:block;cursor:pointer}
+#rowsBtn{position:absolute;right:12px;top:8px;z-index:2;background:none;border:1px solid rgba(230,236,241,.4);color:var(--c-worldart);border-radius:6px;font:inherit;font-size:11px;padding:2px 10px;cursor:pointer}
+#rowsBtn:hover{background:rgba(230,236,241,.1)}
+#rowsSvg text{font:10.5px var(--sans);fill:var(--ink)}
+#tl text{font:10px var(--mono);fill:var(--sub)}
+#tl .lbl{font:11px var(--sans);fill:var(--ink)}
+#nowYr{position:absolute;left:16px;top:8px;font-family:var(--mono);font-size:18px;color:var(--c-focus);pointer-events:none}
+#nowYr small{font-size:10.5px;color:var(--sub);margin-left:8px;font-family:var(--sans)}
+
+@media (max-width:760px){
+  .title{top:10px;width:90vw} .title h1{font-size:18px;letter-spacing:.2em;text-indent:.2em}
+  #pick{left:10px;right:10px;width:auto;top:62px}
+  #contemp{left:10px;right:10px;width:auto;top:auto;bottom:146px;max-height:24vh}
+  #focus{left:10px;right:10px;width:auto;top:112px;max-height:30vh}
+  #tl{left:10px;right:10px;bottom:10px;height:var(--tlh)}
+  body.rows #contemp,body.rows #focus{display:none}
+  #tl .me{display:none}   /* 本人の名前は題に出ている。狭い画面では年の表示と重なるので出さない */   /* 狭い画面で帯を広げたら左右のパネルは隠す（重ねない） */
+}
+</style>
+</head>
+<body>
+<div id="globeViz"></div>
+<div class="title"><h1 id="tName">人物</h1><p id="tSub">HISTORY OS ｜ PERSON FOCUS</p></div>
+
+<div class="panel" id="pick">
+  <input id="pickIn" type="search" placeholder="人物を選ぶ（名前で探す・644人）" autocomplete="off" aria-label="人物を名前で探す">
+  <div id="pickList" hidden></div>
+</div>
+
+<div class="panel" id="contemp" aria-label="同時代の人">
+  <div id="sameYr"></div>
+  <div class="sec">CONTEMPORARIES ｜ 同じ年に生きていた人</div>
+  <div class="counts"><span><b id="nA">0</b>人</span><span class="u"><b id="nU">0</b>人は判定できない</span></div>
+  <div class="note">登録された生没年の幅からの判定。同じ年に生きていたことは関係を意味しません。</div>
+  <div id="cList"></div>
+</div>
+
+<div class="panel" id="focus" aria-label="FOCUS PERSON">
+  <div class="sec">FOCUS PERSON</div>
+  <div id="fBody"></div>
+  <div id="fSpecial"></div>
+</div>
+
+<div class="panel" id="tl" aria-label="年代バー">
+  <div id="nowYr"></div>
+  <button id="rowsBtn" aria-expanded="false">同時代を帯で並べる ▲</button>
+  <svg id="tlSvg" role="img" aria-label="生涯の年代バー。押す・引くと年を選びます"></svg>
+  <div id="rowsBox" hidden><svg id="rowsSvg" role="img" aria-label="この年に生きていた人の生涯を帯で並べたもの"></svg></div>
+</div>
+
+<script type="module">
+import Globe from 'https://esm.sh/globe.gl';
+import { basePersons } from '../data/base_persons.js?v=20261104';
+import { baseEvents } from '../data/base_events.js?v=20261104';
+
+// ---------- 判定（person-timeline-world-work/hokusai_link/LINK_SPEC_v0.1.md §2 と同じ決まり）----------
+const MAX_LIFE = 120;
+const span = (y, p) => y == null ? null : (p == null || p >= 9) ? [y, y] : p === 8 ? [y - 9, y + 9] : p === 7 ? [y - 99, y + 99] : [y - 999, y + 999];
+basePersons.forEach(p => { p.b = span(p.born, p.bp); p.d = span(p.died, p.dp); });
+function status(p, y) {
+  const b = p.b, d = p.d;
+  if (!b && !d) return 'unknown';
+  if (b && b[0] > y) return 'no';
+  if (d && d[1] < y) return 'no';
+  if (!d && b[1] + MAX_LIFE < y) return 'no';
+  if (!b && d[0] - MAX_LIFE > y) return 'no';
+  if (b && d && b[1] <= y && y <= d[0]) return 'alive';
+  return 'unsure';
+}
+const byId = Object.fromEntries(basePersons.map(p => [p.id, p]));
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const yr = y => y == null ? '?' : y < 0 ? '前' + (-y) : String(y);
+// ---------- 同じ年の出来事（data/base_events.js：Wikidata の出来事・作品＋手で選ぶ交点。年まで分かるものだけ）----------
+const evOf = id => baseEvents[id] || [];
+const KIND = { event: '出来事', pub: '刊行', made: '制作', curated: '交点' };
+function sameYear(y) {   // 本人＋その年に生きていた人の、その年の出来事（亡くなった人の没後の刊行は入れない）
+  const out = [];
+  basePersons.forEach(p => {
+    if (p.id !== P.id && status(p, y) !== 'alive') return;
+    evOf(p.id).forEach(e => { if (e.y === y) out.push({ p, e }); });
+  });
+  return out.sort((a, b) => (b.p.id === P.id) - (a.p.id === P.id) || (b.e.k === 'curated') - (a.e.k === 'curated'));
+}
+const evYears = {};   // 年 → その年に生きていた人（本人以外）の出来事の数（年代バーの印）
+function countEvYears() {
+  for (const k in evYears) delete evYears[k];
+  basePersons.forEach(p => { if (p.id === P.id) return; evOf(p.id).forEach(e => { if (e.y >= R[0] && e.y <= R[1] && status(p, e.y) === 'alive') evYears[e.y] = (evYears[e.y] || 0) + (e.k === 'curated' ? 3 : 1); }); });
+}
+function eventPoints() {
+  return sameYear(S.year).filter(x => x.e.pl).map(x => ({ lat: x.e.pl.lat, lng: x.e.pl.lng, color: x.e.k === 'curated' ? '#ffc98a' : 'rgba(240,181,120,.85)', r: x.e.k === 'curated' ? 0.5 : 0.32, pid: x.p.id === P.id ? null : x.p.id }));
+}
+const rough = (y, p) => y == null ? '' : p >= 9 ? '' : p === 8 ? '頃（十年単位）' : p === 7 ? '頃（世紀単位）' : '頃（千年単位）';
+
+// ---------- 人物ごとの特化（profiles）。基本型はデータから自動、特化はここに登録した人だけ ----------
+// P-LINK の人物は、基本人物にいる人だけ base_id を手で対応させる（名前の一致で自動に結ばない）。
+const PROFILES = {
+  b0384: {
+    deep: { href: '../hokusai/', label: '北斎Focus（詳しい版）を開く' },
+    load: async () => {
+      const m = await import('../data/hokusai_life.js?v=20261031c');
+      const BASE = { p_bakin: 'b0387', p_hiroshige: 'b0409' };
+      return {
+        nameAt: y => (m.nameAt(y) || {}).name || null,
+        events: m.lifeEvents.map(e => ({ year: e.year, title: e.title })),
+        links: m.personLinks.map(p => ({ id: p.id, name: p.name, birth: p.birth, death: p.death, rel: p.relationType, from: p.relationFrom, to: p.relationTo, cert: p.relationCertainty, note: p.note, base: BASE[p.id] || null })),
+        world: m.worldArt.map(w => ({ name: w.name, birth: w.birth, death: w.death, country: w.country, note: w.note, place: w.place })),
+      };
+    },
+  },
+};
+
+// ---------- 状態：timeCursor ≠ selection ≠ camera（北斎Focusの原則。年を動かしてもカメラは動かさない）----------
+const qs = new URLSearchParams(location.search);
+const S = { pid: byId[qs.get('p')] ? qs.get('p') : 'b0384', year: null, sel: null, region: '' };
+let P = byId[S.pid], SP = null;
+
+// ---------- 地球 ----------
+const world = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .backgroundColor('#050c16')
+  .pointsData([]).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude(0.006)
+  .onPointClick(d => { if (d.pid) select(d.pid); })
+  .labelsData([]).labelLat('lat').labelLng('lng').labelText('text').labelColor('color')
+  .labelSize(d => d.size || 0.24).labelDotRadius('dot').labelResolution(2).labelsTransitionDuration(0)
+  .onLabelClick(l => { if (l.pid && l.pid !== S.pid) select(l.pid); });
+world.controls().autoRotate = false;
+const fitGlobe = () => world.width(innerWidth || 800).height(innerHeight || 600);   // 北斎Focus と同じく明示的に大きさを与える
+fitGlobe();
+const ascii = s => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\x20-\x7e]/g, '').trim(); // 地球のラベルは ASCII に限る（北斎Focus の知見）
+// 生まれた所と亡くなった所を線で結ばない（移動の線に見え、近い所では読めない。11/4 清水さんの指摘）。
+// 地球に常に出すのは生まれた所だけ。没地・出来事の場所は「押したときだけ」印を出してそこへ回る（明示した二つ目の操作）。
+function flyTo(pl, mark) { if (!pl) return; S.mark = mark || null; drawGlobe(); world.pointOfView({ lat: pl.lat, lng: pl.lng, altitude: 1.0 }, 1200); }
+function drawGlobe() {
+  const labels = [], points = [];
+  const sur = ascii(P.en).split(' ').pop() || 'Focus';
+  if (P.bpl) labels.push({ lat: P.bpl.lat, lng: P.bpl.lng, text: (ascii(P.bpl.en) || sur) + ' (born)', color: '#66e0ff', dot: 0.16 });
+  if (S.mark) labels.push({ lat: S.mark.lat, lng: S.mark.lng, text: S.mark.text, color: S.mark.color || '#c8f4ff', dot: 0.14 });
+  basePersons.forEach(p => {
+    if (p.id === P.id || !p.bpl || status(p, S.year) !== 'alive') return;
+    if (S.sel === p.id) labels.push({ lat: p.bpl.lat, lng: p.bpl.lng, text: ascii(p.en) + ' (born)', color: '#ffffff', dot: 0.22, size: 0.34, pid: p.id });
+    else points.push({ lat: p.bpl.lat, lng: p.bpl.lng, color: 'rgba(230,236,241,.55)', r: 0.16, pid: p.id });
+  });
+  if (typeof eventPoints === 'function') eventPoints().forEach(e => points.push(e));
+  world.labelsData(labels).pointsData(points);
+}
+
+// ---------- 年代バー ----------
+const svg = document.getElementById('tlSvg'), NS = 'http://www.w3.org/2000/svg';
+let R = [0, 1], X = () => 0;
+function range() {
+  let b = P.born ?? (P.died != null ? P.died - 80 : 0), d = P.died ?? (P.born != null ? P.born + 80 : 100);
+  const pad = Math.max(5, Math.round((d - b) * 0.12));
+  return [b - pad, d + pad];
+}
+function el(n, a, t, parent = svg) { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (t != null) e.textContent = t; parent.appendChild(e); return e; }
+function drawTL() {
+  svg.innerHTML = '';
+  const W = svg.clientWidth || 800, H = svg.clientHeight || 124, L = 16, Rr = 16;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  X = y => L + (y - R[0]) / (R[1] - R[0]) * (W - L - Rr);
+  const step = [1, 2, 5, 10, 20, 25, 50, 100, 200, 500].find(s => (R[1] - R[0]) / s <= 12) || 1000;
+  for (let y = Math.ceil(R[0] / step) * step; y <= R[1]; y += step) { el('line', { x1: X(y), x2: X(y), y1: 98, y2: 104, stroke: 'rgba(255,255,255,.25)' }); el('text', { x: X(y), y: 116, 'text-anchor': 'middle' }, yr(y)); }
+  // 本人の帯（年が粗い端はぼかす＝推して伸ばさない）
+  const bx = P.born != null ? X(P.b[1]) : null, dx = P.died != null ? X(P.d[0]) : null;
+  if (bx != null && dx != null) el('rect', { x: bx, y: 40, width: Math.max(2, dx - bx), height: 12, rx: 2, fill: 'rgba(102,224,255,.35)', stroke: 'rgba(102,224,255,.8)' });
+  if (P.born != null) { el('circle', { cx: X(P.born), cy: 46, r: 4, fill: '#66e0ff' }); if (P.b[0] !== P.b[1]) el('rect', { x: X(P.b[0]), y: 44, width: X(P.b[1]) - X(P.b[0]), height: 4, fill: 'rgba(102,224,255,.25)' }); }
+  if (P.died != null) { el('circle', { cx: X(P.died), cy: 46, r: 4, fill: '#c8f4ff' }); if (P.d[0] !== P.d[1]) el('rect', { x: X(P.d[0]), y: 44, width: X(P.d[1]) - X(P.d[0]), height: 4, fill: 'rgba(200,244,255,.25)' }); }
+  el('text', { class: 'lbl me', x: bx != null && dx != null ? (bx + dx) / 2 : X(P.born ?? P.died), y: 34, 'text-anchor': 'middle' }, P.ja);   // 帯の中央（左上の年・右上のボタンと重ならない）
+  // 特化：出来事の点
+  if (SP && SP.events) SP.events.forEach(e => { const c = el('circle', { cx: X(e.year), cy: 62, r: 3, fill: '#c8f4ff', opacity: .8 }); el('title', {}, e.year + ' ' + e.title, c); });
+  // 本人の出来事（Wikidata）と、同時代の人に出来事がある年（琥珀。交点の候補）
+  evOf(P.id).forEach(e => { if (e.y >= R[0] && e.y <= R[1]) { const c = el('circle', { cx: X(e.y), cy: 62, r: 2.5, fill: '#f0b578' }); el('title', {}, e.y + ' ' + e.ja + '（' + KIND[e.k] + '）', c); } });
+  for (const yy in evYears) { const n = evYears[yy], c = el('rect', { x: X(+yy) - 1, y: 96 - Math.min(10, 2 + n * 1.5), width: 2, height: Math.min(10, 2 + n * 1.5), fill: '#f0b578', opacity: .75 }); el('title', {}, yy + '年：同時代の人の出来事 ' + n, c); }
+  // 選んだ同時代の人の帯（重なる年を明るく）
+  const s = S.sel && byId[S.sel];
+  if (s && s.born != null && s.died != null) {
+    const a = Math.max(R[0], s.born), b = Math.min(R[1], s.died);
+    if (b > a) el('rect', { x: X(a), y: 73, width: X(b) - X(a), height: 10, rx: 2, fill: 'rgba(255,255,255,.3)', stroke: '#fff', 'stroke-width': 1.5 });
+    const oa = Math.max(s.b[1], P.b ? P.b[1] : -1e9), ob = Math.min(s.d[0], P.d ? P.d[0] : 1e9);
+    if (ob > oa) el('rect', { x: X(Math.max(oa, R[0])), y: 73, width: X(Math.min(ob, R[1])) - X(Math.max(oa, R[0])), height: 10, rx: 2, fill: 'rgba(255,255,255,.9)', style: 'filter:drop-shadow(0 0 4px rgba(255,255,255,.8))' });
+    el('text', { class: 'lbl', x: X(a) + 4, y: 95, style: 'fill:#fff;font-size:11px;font-weight:700;paint-order:stroke;stroke:#050c16;stroke-width:3px' }, s.ja + '（重なる年 ' + (ob > oa ? (ob - oa) + '年' : 'なし') + '）');
+  }
+  const nx = X(S.year);
+  el('line', { x1: nx, x2: nx, y1: 22, y2: 104, stroke: '#66e0ff', 'stroke-width': 1.5 });
+}
+// 同時代の人を帯で並べる（初期の年表リストの見方。本人の帯と同じ年の目盛り・同じ NOW の線）
+const rsvg = document.getElementById('rowsSvg'), rbox = document.getElementById('rowsBox'), rbtn = document.getElementById('rowsBtn');
+function drawRows() {
+  if (rbox.hidden) return;
+  const y = S.year, rel = relBase();
+  const ps = basePersons.filter(p => p.id !== P.id && status(p, y) === 'alive').sort((a, b) => a.born - b.born || a.died - b.died);
+  const W = svg.clientWidth || 800, RH = 17, H = Math.max(40, (ps.length + 1) * RH + 10);
+  rsvg.setAttribute('viewBox', `0 0 ${W} ${H}`); rsvg.style.height = H + 'px'; rsvg.innerHTML = '';
+  const cx = v => Math.max(16, Math.min(W - 16, X(v)));
+  const row = (p, i, color, fill) => {   // color/fill は選択中なら白に置き換える
+    const top = 6 + i * RH, a = cx(p.b ? p.b[1] : R[0]), b = cx(p.d ? p.d[0] : R[1]);
+    const sel = S.sel === p.id;
+    if (sel) { color = '#ffffff'; fill = 'rgba(255,255,255,.42)'; }
+    const g = el('g', { 'data-id': p.id, class: sel ? 'sel' : '' }, null, rsvg);
+    el('rect', { x: 0, y: top - 2, width: W, height: RH, fill: sel ? 'rgba(255,255,255,.12)' : 'transparent' }, null, g);
+    el('rect', { x: a, y: top + 1, width: Math.max(2, b - a), height: 13, rx: 3, fill, stroke: color, 'stroke-opacity': sel ? 1 : .5, 'stroke-width': sel ? 2 : 1 }, null, g);
+    const label = p.ja + '　' + yr(p.born) + '–' + yr(p.died);
+    evOf(p.id).forEach(e => { if (e.y < R[0] || e.y > R[1]) return; const t = el('rect', { x: X(e.y) - (e.y === S.year ? 2 : 1), y: top - 1, width: e.y === S.year ? 4 : 2, height: 17, fill: '#f0b578', opacity: e.y === S.year ? 1 : .55 }, null, g); el('title', {}, e.y + ' ' + e.ja + '（' + KIND[e.k] + '）', t); });
+    // 名前は帯の中に重ねて書く。帯が短ければ右、右に入らなければ左（画面の端で切れないよう 16px で止める）
+    const lw = [...label].reduce((s, c) => s + (c.charCodeAt(0) > 255 ? 10.5 : 6.2), 0);
+    let x = a + 6, anchor = 'start';
+    if (b - a < lw + 12) { if (b + 6 + lw < W - 8) x = b + 6; else { x = Math.max(16 + lw, a - 6); anchor = 'end'; } }
+    el('text', { x, y: top + 10.5, 'text-anchor': anchor, style: 'fill:' + color + ';paint-order:stroke;stroke:#050c16;stroke-width:3px' }, label, g);
+    el('title', {}, label + (p.id === P.id ? '' : '　（押すと選ぶ）'), g);
+  };
+  row(P, 0, '#66e0ff', 'rgba(102,224,255,.35)');
+  ps.forEach((p, i) => row(p, i + 1, rel.has(p.id) ? '#c79bff' : '#e6ecf1', rel.has(p.id) ? 'rgba(199,155,255,.3)' : 'rgba(230,236,241,.22)'));
+  el('line', { x1: X(y), x2: X(y), y1: 0, y2: H, stroke: '#66e0ff', 'stroke-width': 1.5, opacity: .8 }, null, rsvg);
+  rsvg.querySelectorAll('g[data-id]').forEach(g => g.onclick = () => { if (g.dataset.id !== P.id) select(g.dataset.id); });
+}
+rbtn.onclick = () => {
+  const on = rbox.hidden; rbox.hidden = !on; document.body.classList.toggle('rows', on);
+  rbtn.textContent = on ? '帯を閉じる ▼' : '同時代を帯で並べる ▲'; rbtn.setAttribute('aria-expanded', on);
+  drawRows();
+};
+
+const yearAt = ev => { const r = svg.getBoundingClientRect(), W = svg.clientWidth; const px = (ev.clientX - r.left) / r.width * W; return Math.round(R[0] + (px - 16) / (W - 32) * (R[1] - R[0])); };
+let drag = false;
+svg.addEventListener('pointerdown', e => { drag = true; svg.setPointerCapture(e.pointerId); setYear(yearAt(e)); });
+svg.addEventListener('pointermove', e => { if (drag) setYear(yearAt(e)); });
+svg.addEventListener('pointerup', () => { drag = false; });
+svg.addEventListener('keydown', e => { if (e.key === 'ArrowRight') setYear(S.year + 1); if (e.key === 'ArrowLeft') setYear(S.year - 1); });
+svg.setAttribute('tabindex', '0');
+
+// ---------- 右：FOCUS PERSON ----------
+function ageText(p, y) {
+  if (p.born == null) return '';
+  if (y < p.b[0]) return 'まだ生まれていない';
+  if (p.died != null && y > p.d[1]) return '没後 ' + (y - p.died) + '年';
+  return '<b>' + (y - p.born) + '</b> 歳' + (p.b[0] !== p.b[1] ? 'ごろ' : '');
+}
+function drawFocus() {
+  const p = P, y = S.year, nm = SP && SP.nameAt ? SP.nameAt(y) : null;
+  document.getElementById('fBody').innerHTML =
+    `<div class="fp"><div class="nm">${esc(p.ja)}</div><div class="en">${esc(p.en)}</div>`
+    + `<div class="yrs">${yr(p.born)}${esc(rough(p.born, p.bp))} – ${yr(p.died)}${esc(rough(p.died, p.dp))}</div>`
+    + `<div class="age">${yr(y)}年　${ageText(p, y)}${nm ? '　名乗り：' + esc(nm) : ''}</div>`
+    + (p.desc ? `<div class="desc">${esc(p.desc)}<br><span style="color:var(--dim);font-size:10px">（Wikidata の説明）</span></div>` : '') + '</div>'
+    + `<div class="row"><span class="k">地域</span><span>${esc(p.region)}</span></div>`
+    + `<div class="row"><span class="k">分野</span><span>${esc(p.domain.join('・'))}</span></div>`
+    + `<div class="row"><span class="k">生まれ</span>${p.bpl ? `<button class="place" data-w="b">${esc(p.bpl.name)}</button>` : '<span style="color:var(--dim)">場所の記録なし</span>'}</div>`
+    + `<div class="row"><span class="k">没</span>${p.dpl ? `<button class="place" data-w="d">${esc(p.dpl.name)}</button>` : '<span style="color:var(--dim)">場所の記録なし</span>'}</div>`
+    + `<div class="ids">${esc(p.id)} · ${p.qid ? `<a href="https://www.wikidata.org/wiki/${esc(p.qid)}" target="_blank" rel="noopener">${esc(p.qid)}</a>` : 'QIDなし'}${p.notHuman ? ' · Wikidata は「人」と分類していない' : ''}</div>`;
+  document.querySelectorAll('#fBody .place').forEach(b => b.onclick = () => {
+    if (b.dataset.w === 'b') flyTo(P.bpl, null);
+    else flyTo(P.dpl, { lat: P.dpl.lat, lng: P.dpl.lng, text: (ascii(P.dpl.en) || 'place of death') + ' (died)', color: '#c8f4ff' });
+  });
+  // 特化
+  let h = '';
+  if (SP && SP.links) {
+    h += '<div class="special"><div class="sec">P-LINK ｜ 関係の記録がある人</div>';
+    SP.links.slice().sort((a, b) => (b.from <= y && y <= b.to) - (a.from <= y && y <= a.to)).forEach(l => {
+      const on = l.from <= y && y <= l.to;
+      h += `<div class="pl${on ? '' : ' off'}"><span class="nm">${esc(l.name)}</span>${l.base ? `<button class="base" data-go="${l.base}">→ この人を主軸に</button>` : ''}`
+        + `<div class="meta">${esc(l.rel)}　${l.from}–${l.to}${l.cert === 'documented' ? '' : '（概略）'}　生没 ${l.birth}–${l.death}</div></div>`;
+    });
+    h += '</div>';
+  }
+  if (SP && SP.world) {
+    const alive = SP.world.filter(w => w.birth <= y && y <= w.death);
+    h += `<div class="special"><div class="sec" style="color:var(--c-worldart)">WORLD ART ｜ 海外の同時代画家（${alive.length}/${SP.world.length}人がこの年に存命）</div>`;
+    SP.world.forEach(w => { const on = w.birth <= y && y <= w.death; h += `<div class="pl${on ? '' : ' off'}"><span class="nm" style="color:var(--c-worldart)">${esc(w.name)}</span><div class="meta">${w.birth}–${w.death}　${esc(w.country)}${on ? '　' + (y - w.birth) + '歳' : ''}</div></div>`; });
+    h += '<div class="note" style="padding-top:6px">直接の交流・影響は主張しません（北斎Focus のデータの注記どおり）。</div></div>';
+  }
+  if (PROFILES[P.id] && PROFILES[P.id].deep) h += `<a class="deep" href="${PROFILES[P.id].deep.href}">${esc(PROFILES[P.id].deep.label)}</a>`;
+  document.getElementById('fSpecial').innerHTML = h;
+  document.querySelectorAll('#fSpecial [data-go]').forEach(b => b.onclick = () => go(b.dataset.go));
+}
+
+// ---------- 左：同時代の人 ----------
+const relBase = () => new Set((SP && SP.links || []).map(l => l.base).filter(Boolean));
+function drawSameYear() {
+  const y = S.year, xs = sameYear(y), box = document.getElementById('sameYr');
+  if (!xs.length) { box.innerHTML = `<div class="sec">SAME YEAR ｜ ${yr(y)}年の出来事</div><div class="note">記録された出来事はありません（Wikidata の主な出来事・作品のうち、年まで分かるもの）。</div>`; return; }
+  box.innerHTML = `<div class="sec">SAME YEAR ｜ ${yr(y)}年の出来事 ${xs.length}件</div>` + xs.map((x, i) =>
+    `<div class="ev" data-i="${i}"><span class="who${x.p.id === P.id ? ' me' : ''}">${esc(x.p.ja)}</span>　<span class="ttl">${esc(x.e.ja)}</span>`
+    + `<span class="k${x.e.k === 'curated' ? ' cur' : ''}">${KIND[x.e.k]}</span>${x.e.pl ? '<span class="src">📍</span>' : ''}`
+    + `<span class="src"><a href="https://www.wikidata.org/wiki/${esc(x.e.q)}" target="_blank" rel="noopener" title="出典：Wikidata">WD</a></span>`
+    + (x.e.why ? `<div class="why">${esc(x.e.why)}</div>` : '') + '</div>').join('')
+    + '<div class="note" style="padding-top:6px">出典：Wikidata（人物の主な出来事・作品と、その年）。「交点」は出来事の項目を手で選んだもの（年は Wikidata）。</div>';
+  box.querySelectorAll('.ev').forEach(d => d.onclick = ev => {
+    if (ev.target.closest('a')) return;
+    const x = xs[+d.dataset.i];
+    if (x.p.id !== P.id && S.sel !== x.p.id) select(x.p.id);
+    if (x.e.pl) flyTo(x.e.pl, { lat: x.e.pl.lat, lng: x.e.pl.lng, text: ascii(x.e.en || x.e.pl.en) || 'event', color: '#ffc98a' });
+  });
+}
+function drawContemp() {
+  drawSameYear();
+  const y = S.year, rel = relBase();
+  const alive = basePersons.filter(p => p.id !== P.id && status(p, y) === 'alive');
+  const unsure = basePersons.filter(p => p.id !== P.id && status(p, y) === 'unsure');
+  document.getElementById('nA').textContent = alive.length; document.getElementById('nU').textContent = unsure.length;
+  // 本人の地域を先頭、地域の中は生年順
+  const regs = [...new Set(alive.map(p => p.region))].sort((a, b) => (b === P.region) - (a === P.region) || alive.filter(p => p.region === b).length - alive.filter(p => p.region === a).length);
+  let h = '';
+  const row = (p, uns) => `<div class="ci${S.sel === p.id ? ' sel' : ''}${rel.has(p.id) ? ' rel' : ''}${uns ? ' unsure' : ''}" data-id="${p.id}"><button class="go" data-go="${p.id}">主軸に</button><div class="nm">${esc(p.ja)}${rel.has(p.id) ? ' <span style="font-size:10px">P-LINK</span>' : ''}</div>`
+    + `<div class="meta">${uns ? '判定できない' : (y - p.born) + '歳'}　${yr(p.born)}–${yr(p.died)}</div>`
+    + evOf(p.id).filter(e => e.y === y).map(e => `<div class="evm">◆ ${esc(e.ja)}（${KIND[e.k]}）</div>`).join('') + '</div>';
+  regs.forEach(r => { const ps = alive.filter(p => p.region === r).sort((a, b) => a.born - b.born); h += `<div class="grp">${esc(r)}　${ps.length}</div>` + ps.map(p => row(p, false)).join(''); });
+  if (unsure.length) h += `<div class="grp">判定できない　${unsure.length}</div>` + unsure.map(p => row(p, true)).join('');
+  if (!alive.length && !unsure.length) h = '<div class="note">この年に生きていた基本人物はいません。</div>';
+  // 選択中の副人物を先頭に（下の並び＝地域・生年順はそのまま）。主軸は切り替えずに、副人物の場所へ地球だけ回せる
+  const s = S.sel && byId[S.sel];
+  if (s) {
+    const ov = (P.b && P.d && s.b && s.d) ? Math.min(s.d[0], P.d[0]) - Math.max(s.b[1], P.b[1]) : null;
+    h = `<div id="selBox"><div class="sec">SELECTED ｜ 選択中の副人物</div>`
+      + `<div class="snm">${esc(s.ja)}<small>${esc(s.en)}</small></div>`
+      + `<div class="smeta">${yr(s.born)}–${yr(s.died)}　${yr(y)}年 ${y - s.born}歳${ov != null ? '　重なる年 ' + (ov > 0 ? ov + '年' : 'なし') : ''}</div>`
+      + (s.desc ? `<div class="sdesc">${esc(s.desc)}</div>` : '')
+      + evOf(s.id).filter(e => e.y === y).map(e => `<div class="sdesc" style="color:var(--amber-soft)">◆ ${esc(e.ja)}（${KIND[e.k]}）</div>`).join('')
+      + `<div class="sbtns"><button data-fly="b"${s.bpl ? '' : ' disabled'}>生まれた所へ${s.bpl ? '（' + esc(s.bpl.name) + '）' : '（記録なし）'}</button>`
+      + `<button data-fly="d"${s.dpl ? '' : ' disabled'}>没した所へ${s.dpl ? '（' + esc(s.dpl.name) + '）' : '（記録なし）'}</button>`
+      + `<button class="focus" data-fly="me">${esc(P.ja)}へ戻る</button><button data-go="${s.id}">主軸にする</button><button data-clear="1">選択を外す</button></div></div>` + h;
+  }
+  const cl = document.getElementById('cList'); cl.innerHTML = h;
+  const sb = document.getElementById('selBox');
+  if (sb) sb.querySelectorAll('button').forEach(b => b.onclick = e => {
+    e.stopPropagation();
+    if (b.dataset.go) return go(b.dataset.go);
+    if (b.dataset.clear) return select(s.id);
+    if (b.dataset.fly === 'me') return flyTo(P.bpl || P.dpl, null);
+    const pl = b.dataset.fly === 'b' ? s.bpl : s.dpl;
+    flyTo(pl, { lat: pl.lat, lng: pl.lng, text: ascii(s.en) + (b.dataset.fly === 'b' ? ' (born)' : ' (died)'), color: '#ffffff' });
+  });
+  cl.querySelectorAll('.ci').forEach(d => d.onclick = e => { if (e.target.dataset.go) return go(e.target.dataset.go); select(d.dataset.id); });
+}
+
+// ---------- 操作 ----------
+function select(id) {
+  S.sel = S.sel === id ? null : id; drawContemp(); drawTL(); drawRows(); drawGlobe();
+  const sb = document.getElementById('selBox'), pn = document.getElementById('contemp');
+  if (sb) pn.scrollTop = sb.offsetTop - 8;   // 選んだ人の欄が見えるところまで左のパネルを送る
+}
+function setYear(y) {
+  y = Math.max(R[0], Math.min(R[1], y)); if (y === S.year) return; S.year = y;
+  document.getElementById('nowYr').innerHTML = yr(y) + `<small>${esc(P.ja)} ${P.born != null && y >= P.b[0] && (P.died == null || y <= P.d[1]) ? (y - P.born) + '歳' : ''}</small>`;
+  if (S.sel && status(byId[S.sel], y) !== 'alive') S.sel = null;
+  drawTL(); drawRows(); drawFocus(); drawContemp(); drawGlobe();
+  history.replaceState(null, '', `?p=${P.id}&y=${y}`);
+}
+function go(id) { location.search = `?p=${id}&y=${S.year}`; }
+
+// 人物を選ぶ
+const pin = document.getElementById('pickIn'), plist = document.getElementById('pickList');
+pin.addEventListener('input', () => {
+  const q = pin.value.trim().toLowerCase();
+  if (!q) { plist.hidden = true; return; }
+  const hits = basePersons.filter(p => p.ja.toLowerCase().includes(q) || p.en.toLowerCase().includes(q)).slice(0, 14);
+  plist.innerHTML = hits.map(p => `<button data-id="${p.id}">${esc(p.ja)}<small>${yr(p.born)}–${yr(p.died)}</small></button>`).join('') || '<div class="note" style="padding:8px 14px">見つかりません</div>';
+  plist.hidden = false;
+  plist.querySelectorAll('button').forEach(b => b.onclick = () => { location.search = `?p=${b.dataset.id}`; });
+});
+pin.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = plist.querySelector('button'); if (b) b.click(); } if (e.key === 'Escape') { plist.hidden = true; pin.blur(); } });
+document.addEventListener('click', e => { if (!document.getElementById('pick').contains(e.target)) plist.hidden = true; });
+
+// ---------- 起動 ----------
+(async () => {
+  document.title = `History OS｜${P.ja}`;
+  document.getElementById('tName').textContent = P.ja;
+  document.getElementById('tSub').textContent = `${ascii(P.en).toUpperCase()} ｜ PERSON FOCUS`;
+  if (PROFILES[P.id]) { try { SP = await PROFILES[P.id].load(); } catch (e) { console.warn('特化データを読めません', e); } }
+  R = range(); countEvYears();
+  const qy = parseInt(qs.get('y'), 10);
+  const mid = P.born != null && P.died != null ? Math.round((P.born + P.died) / 2) : (P.born ?? P.died);
+  const init = Number.isFinite(qy) && qy >= R[0] && qy <= R[1] ? qy : (P.id === 'b0384' ? 1831 : mid);
+  const at = P.bpl || P.dpl; if (at) world.pointOfView({ lat: at.lat, lng: at.lng, altitude: 2.0 }, 0);
+  S.year = null; setYear(init);
+  addEventListener('resize', () => { drawTL(); drawRows(); fitGlobe(); });
+})();
+</script>
+</body>
+</html>
