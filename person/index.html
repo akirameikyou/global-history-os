@@ -265,13 +265,22 @@ function ageShort(p, y) {
   if (p.died != null && y > p.d[1]) return '没後' + (y - p.died) + '年';
   return (y - p.born) + '歳' + (p.b[0] !== p.b[1] ? 'ごろ' : '');
 }
-function ageTag(parent, x, cy, text, bg, W) {   // NOW の線の右に小さな札。右端に入らなければ左に出す
+// 年齢の札（フラグ型、11/4 清水さん決定）：暗い地＋細い色の縁、角はほぼ四角、NOW の線にぴったり付ける。
+// 数字は等幅（北斎Focus の年・数値と同じ --mono）で桁をそろえ、単位（歳・年）は小さく薄く。
+function ageTag(parent, x, cy, text, color, W) {
   if (!text) return;
-  const w = [...text].reduce((s, c) => s + (c.charCodeAt(0) > 255 ? 10 : 6.4), 0) + 10;
-  const left = x + 5 + w > W - 4;
-  const x0 = left ? x - 5 - w : x + 5;
-  el('rect', { x: x0, y: cy - 8, width: w, height: 16, rx: 8, fill: bg, opacity: .95 }, null, parent);
-  el('text', { x: x0 + w / 2, y: cy + 4, 'text-anchor': 'middle', style: 'fill:#050c16;font:600 10.5px var(--sans)' }, text, parent);
+  const m = text.match(/^(\D*)(\d+)(\D*)$/);        // 例：「66歳」→ 前「」・数「66」・後「歳」／「没後3年」→「没後」「3」「年」
+  const pre = m ? m[1] : '', num = m ? m[2] : '', post = m ? m[3] : text;
+  const cw = c => c.charCodeAt(0) > 255 ? 9 : 5.4;
+  const w = [...pre].reduce((s, c) => s + cw(c), 0) + num.length * 6.9 + [...post].reduce((s, c) => s + cw(c), 0) + 10;
+  const x0 = x + w > W - 4 ? x - w : x;               // 右端に入らなければ線の左側に付ける
+  const h = 15, top = cy - h / 2;
+  el('rect', { x: x0, y: top, width: w, height: h, rx: 1, fill: 'rgba(5,12,22,.9)', stroke: color, 'stroke-width': 1 }, null, parent);
+  const t = el('text', { x: x0 + 5, y: cy + 3.8, style: `fill:${color};font:10px var(--sans);letter-spacing:.02em` }, null, parent);
+  const span = (str, st) => { if (str) { const e = document.createElementNS(NS, 'tspan'); e.setAttribute('style', st); e.textContent = str; t.appendChild(e); } };
+  span(pre, 'font-size:9px;opacity:.75');
+  span(num, 'font:600 11.5px var(--mono);font-variant-numeric:tabular-nums');
+  span(post, 'font-size:9px;opacity:.7');
 }
 function drawNow() {
   const y = S.year, s = S.sel && byId[S.sel];
