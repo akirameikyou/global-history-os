@@ -246,13 +246,16 @@ function flyTo(pl, mark) { if (!pl) return; S.mark = mark || null; drawGlobe(); 
 function drawGlobe() {
   const labels = [], points = [];
   const sur = ascii(P.en).split(' ').pop() || 'Focus';
-  if (P.bpl) labels.push({ lat: P.bpl.lat, lng: P.bpl.lng, text: (ascii(P.bpl.en) || sur) + ' (born)', color: '#66e0ff', dot: 0.16 });
-  if (S.mark) labels.push({ lat: S.mark.lat, lng: S.mark.lng, text: S.mark.text, color: S.mark.color || '#c8f4ff', dot: 0.14 });
+  const bd = p => p.dpl && p.bpl && p.dpl.q === p.bpl.q ? ' (born, died)' : ' (born)';   // 生まれた所と亡くなった所が同じ人
+  if (P.bpl) labels.push({ lat: P.bpl.lat, lng: P.bpl.lng, text: (ascii(P.bpl.en) || sur) + bd(P), color: '#66e0ff', dot: 0.16 });
   basePersons.forEach(p => {
     if (p.id === P.id || !p.bpl || (status(p, S.year) !== 'alive' && p.id !== S.sel)) return;
-    if (S.sel === p.id) labels.push({ lat: p.bpl.lat, lng: p.bpl.lng, text: ascii(p.en) + ' (born)', color: '#ffffff', dot: 0.22, size: 0.34, pid: p.id });
+    if (S.sel === p.id) labels.push({ lat: p.bpl.lat, lng: p.bpl.lng, text: ascii(p.en) + bd(p), color: '#ffffff', dot: 0.22, size: 0.34, pid: p.id });
     else points.push({ lat: p.bpl.lat, lng: p.bpl.lng, color: 'rgba(230,236,241,.55)', r: 0.16, pid: p.id });
   });
+  // 移動先の印は、同じ場所にラベルが既にあれば描かない（副人物の生まれた所で名前が二重になるのを防ぐ）
+  const same = l => Math.abs(l.lat - S.mark.lat) < 1e-3 && Math.abs(l.lng - S.mark.lng) < 1e-3;
+  if (S.mark && !labels.some(same)) labels.push({ lat: S.mark.lat, lng: S.mark.lng, text: S.mark.text, color: S.mark.color || '#c8f4ff', dot: 0.14 });
   if (typeof eventPoints === 'function') eventPoints().forEach(e => points.push(e));
   world.labelsData(labels).pointsData(points);
 }
