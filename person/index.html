@@ -160,7 +160,7 @@ body.rows{--tlh:min(46vh,420px)}
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { basePersons } from '../data/base_persons.js?v=20261104';
-import { baseEvents } from '../data/base_events.js?v=20261104';
+import { baseEvents } from '../data/base_events.js?v=20261104c';
 
 // ---------- 判定（person-timeline-world-work/hokusai_link/LINK_SPEC_v0.1.md §2 と同じ決まり）----------
 const MAX_LIFE = 120;
@@ -181,6 +181,7 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '
 const yr = y => y == null ? '?' : y < 0 ? '前' + (-y) : String(y);
 // ---------- 同じ年の出来事（data/base_events.js：Wikidata の出来事・作品＋手で選ぶ交点。年まで分かるものだけ）----------
 const evOf = id => baseEvents[id] || [];
+const worldEv = baseEvents._world || [];   // 手で選ぶ交点のうち、基本人物の外の人・人物なしの出来事
 const KIND = { event: '出来事', pub: '刊行', made: '制作', curated: '交点' };
 function sameYear(y) {   // 本人＋その年に生きていた人の、その年の出来事（亡くなった人の没後の刊行は入れない）
   const out = [];
@@ -188,15 +189,18 @@ function sameYear(y) {   // 本人＋その年に生きていた人の、その�
     if (p.id !== P.id && status(p, y) !== 'alive') return;
     evOf(p.id).forEach(e => { if (e.y === y) out.push({ p, e }); });
   });
-  return out.sort((a, b) => (b.p.id === P.id) - (a.p.id === P.id) || (b.e.k === 'curated') - (a.e.k === 'curated'));
+  worldEv.forEach(e => { if (e.y === y) out.push({ p: null, e }); });
+  const me = x => !!x.p && x.p.id === P.id;
+  return out.sort((a, b) => me(b) - me(a) || (b.e.k === 'curated') - (a.e.k === 'curated'));
 }
 const evYears = {};   // 年 → その年に生きていた人（本人以外）の出来事の数（年代バーの印）
 function countEvYears() {
   for (const k in evYears) delete evYears[k];
   basePersons.forEach(p => { if (p.id === P.id) return; evOf(p.id).forEach(e => { if (e.y >= R[0] && e.y <= R[1] && status(p, e.y) === 'alive') evYears[e.y] = (evYears[e.y] || 0) + (e.k === 'curated' ? 3 : 1); }); });
+  worldEv.forEach(e => { if (e.y >= R[0] && e.y <= R[1]) evYears[e.y] = (evYears[e.y] || 0) + 3; });
 }
 function eventPoints() {
-  return sameYear(S.year).filter(x => x.e.pl).map(x => ({ lat: x.e.pl.lat, lng: x.e.pl.lng, color: x.e.k === 'curated' ? '#ffc98a' : 'rgba(240,181,120,.85)', r: x.e.k === 'curated' ? 0.5 : 0.32, pid: x.p.id === P.id ? null : x.p.id }));
+  return sameYear(S.year).filter(x => x.e.pl).map(x => ({ lat: x.e.pl.lat, lng: x.e.pl.lng, color: x.e.k === 'curated' ? '#ffc98a' : 'rgba(240,181,120,.85)', r: x.e.k === 'curated' ? 0.5 : 0.32, pid: x.p && x.p.id !== P.id ? x.p.id : null }));
 }
 const rough = (y, p) => y == null ? '' : p >= 9 ? '' : p === 8 ? '頃（十年単位）' : p === 7 ? '頃（世紀単位）' : '頃（千年単位）';
 
@@ -387,15 +391,15 @@ function drawSameYear() {
   const y = S.year, xs = sameYear(y), box = document.getElementById('sameYr');
   if (!xs.length) { box.innerHTML = `<div class="sec">SAME YEAR ｜ ${yr(y)}年の出来事</div><div class="note">記録された出来事はありません（Wikidata の主な出来事・作品のうち、年まで分かるもの）。</div>`; return; }
   box.innerHTML = `<div class="sec">SAME YEAR ｜ ${yr(y)}年の出来事 ${xs.length}件</div>` + xs.map((x, i) =>
-    `<div class="ev" data-i="${i}"><span class="who${x.p.id === P.id ? ' me' : ''}">${esc(x.p.ja)}</span>　<span class="ttl">${esc(x.e.ja)}</span>`
+    `<div class="ev" data-i="${i}"><span class="who${x.p && x.p.id === P.id ? ' me' : ''}">${esc(x.p ? x.p.ja : x.e.who ? x.e.who.ja : '世界の出来事')}</span>${!x.p && x.e.who ? '<span class="src" title="人物年鑑の基本人物 644 人の外の人">基本人物の外</span>' : ''}　<span class="ttl">${esc(x.e.ja)}</span>`
     + `<span class="k${x.e.k === 'curated' ? ' cur' : ''}">${KIND[x.e.k]}</span>${x.e.pl ? '<span class="src">📍</span>' : ''}`
     + `<span class="src"><a href="https://www.wikidata.org/wiki/${esc(x.e.q)}" target="_blank" rel="noopener" title="出典：Wikidata">WD</a></span>`
-    + (x.e.why ? `<div class="why">${esc(x.e.why)}</div>` : '') + '</div>').join('')
-    + '<div class="note" style="padding-top:6px">出典：Wikidata（人物の主な出来事・作品と、その年）。「交点」は出来事の項目を手で選んだもの（年は Wikidata）。</div>';
+    + (x.e.why ? `<div class="why">${esc(x.e.why)}${x.e.by ? `<span class="src">選んだ：${esc(x.e.by.join('・'))}</span>` : ''}</div>` : '') + '</div>').join('')
+    + '<div class="note" style="padding-top:6px">出典：Wikidata（人物の主な出来事・作品と、その年）。「交点」は共通性と意外性の両方がある出来事を AI が挙げ、Wikidata で年を確かめて選んだもの。同じ頃に起きたことは、関係や影響を意味しません。</div>';
   box.querySelectorAll('.ev').forEach(d => d.onclick = ev => {
     if (ev.target.closest('a')) return;
     const x = xs[+d.dataset.i];
-    if (x.p.id !== P.id && S.sel !== x.p.id) select(x.p.id);
+    if (x.p && x.p.id !== P.id && S.sel !== x.p.id) select(x.p.id);
     if (x.e.pl) flyTo(x.e.pl, { lat: x.e.pl.lat, lng: x.e.pl.lng, text: ascii(x.e.en || x.e.pl.en) || 'event', color: '#ffc98a' });
   });
 }

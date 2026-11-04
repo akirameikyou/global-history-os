@@ -2,17 +2,293 @@
  "fetched": "2026-11-04",
  "moments": [
   {
-   "person": "b0416",
    "item": "Q1564366",
-   "why": "北斎が『富嶽三十六景』を出した頃（北斎Focus の年譜では1831年）、22歳のダーウィンがビーグル号で航海に出た。",
+   "who": {
+    "q": "Q1035",
+    "ja": "チャールズ・ダーウィン",
+    "en": "Charles Darwin",
+    "base": "b0416"
+   },
    "title": "ビーグル号の2回目の航海に出る",
+   "chosen_by": [
+    "Claude"
+   ],
+   "why": "北斎が『富嶽三十六景』を出した頃（北斎Focus の年譜では1831年）、22歳のダーウィンがビーグル号で航海に出た。",
    "ja": "ビーグル号の2回目の航海に出る",
    "wd_label": "世界一周航海",
    "en": "Second voyage of HMS Beagle",
    "year": 1831,
    "prec": 11,
+   "date": "12-27",
    "yby": "P580",
    "place": null
+  },
+  {
+   "item": "Q690989",
+   "who": {
+    "q": "Q517",
+    "ja": "ナポレオン・ボナパルト",
+    "en": "Napoleon",
+    "base": "b0390"
+   },
+   "title": "フォンテーヌブロー条約（ナポレオンの退位）",
+   "chosen_by": [
+    "GPT",
+    "Meta"
+   ],
+   "why": "北斎が庶民や職人の姿を集めた『北斎漫画』初編を出した年に、ヨーロッパを塗り替えた皇帝が退位した。",
+   "ja": "フォンテーヌブロー条約（ナポレオンの退位）",
+   "wd_label": "フォンテーヌブロー条約",
+   "en": "Treaty of Fontainebleau",
+   "year": 1814,
+   "prec": 11,
+   "date": "04-11",
+   "yby": "P585",
+   "place": {
+    "q": "Q201428",
+    "name": "フォンテーヌブロー宮殿",
+    "en": "Palace of Fontainebleau",
+    "lat": 48.4022,
+    "lng": 2.7006
+   }
+  },
+  {
+   "item": "Q1091086",
+   "who": {
+    "q": "Q5432",
+    "ja": "フランシスコ・デ・ゴヤ",
+    "en": "Francisco Goya",
+    "base": null
+   },
+   "title": "ゴヤ『マドリード、1808年5月3日』",
+   "chosen_by": [
+    "Gemini"
+   ],
+   "why": "北斎が人々の生き生きした姿を描いた年に、ゴヤは戦争の中の人間の姿を一枚に描いた。",
+   "ja": "ゴヤ『マドリード、1808年5月3日』",
+   "wd_label": "マドリード、1808年5月3日",
+   "en": "The Third of May 1808",
+   "year": 1814,
+   "prec": 9,
+   "date": "00-00",
+   "yby": "P585",
+   "place": null
+  },
+  {
+   "item": "Q4530883",
+   "who": {
+    "q": "Q8750",
+    "ja": "マイケル・ファラデー",
+    "en": "Michael Faraday",
+    "base": "b0405"
+   },
+   "title": "ファラデーが電磁誘導を発見",
+   "chosen_by": [
+    "GPT",
+    "Meta"
+   ],
+   "why": "北斎が一つの山を多くの場所から見直した頃、ファラデーは目に見えない力が電気を生む仕組みを見つけた。",
+   "ja": "ファラデーが電磁誘導を発見",
+   "wd_label": "電磁誘導",
+   "en": "Electromagnetic induction",
+   "year": 1831,
+   "prec": 9,
+   "date": "00-00",
+   "yby": "P575",
+   "place": null
+  },
+  {
+   "item": "Q191380",
+   "who": {
+    "q": "Q535",
+    "ja": "ヴィクトル・ユーゴー",
+    "en": "Victor Hugo",
+    "base": null
+   },
+   "title": "ユゴー『ノートルダム・ド・パリ』刊行",
+   "chosen_by": [
+    "Gemini",
+    "Meta",
+    "GPT"
+   ],
+   "why": "北斎が富士を連作で描いた頃、ユゴーはパリの大聖堂を物語の中心に置いた。山と大聖堂、どちらも一つの場所を描いて時代を越えた。",
+   "ja": "ユゴー『ノートルダム・ド・パリ』刊行",
+   "wd_label": "ノートルダム・ド・パリ",
+   "en": "The Hunchback of Notre Dame",
+   "year": 1831,
+   "prec": 9,
+   "date": "00-00",
+   "yby": "P577",
+   "place": null
+  },
+  {
+   "item": "Q238262",
+   "who": null,
+   "title": "南京条約（清とイギリス）",
+   "chosen_by": [
+    "Gemini",
+    "GPT"
+   ],
+   "why": "北斎が小布施へ向かった年に、海を隔てた中国では東アジアの国際秩序を変える条約が結ばれた。",
+   "ja": "南京条約（清とイギリス）",
+   "wd_label": "南京条約",
+   "en": "Treaty of Nanjing",
+   "year": 1842,
+   "prec": 11,
+   "date": "08-29",
+   "yby": "P585",
+   "place": null
+  },
+  {
+   "item": "Q2720196",
+   "who": {
+    "q": "Q84284",
+    "ja": "クリスチャン・ドップラー",
+    "en": "Christian Dopplerr",
+    "base": null
+   },
+   "title": "ドップラーの論文（ドップラー効果）",
+   "chosen_by": [
+    "Gemini"
+   ],
+   "why": "波を描き続けた北斎が小布施へ向かった年に、ドップラーは「動くものの波は、見る位置で違って届く」という考えを発表した。",
+   "ja": "ドップラーの論文（ドップラー効果）",
+   "wd_label": "Über das farbige Licht der Doppelsterne und einiger anderer Gestirne des Himmels",
+   "en": "Über das farbige Licht der Doppelsterne und einiger anderer Gestirne des Himmels",
+   "year": 1842,
+   "prec": 9,
+   "date": "00-00",
+   "yby": "P577",
+   "place": null
+  },
+  {
+   "item": "Q3614013",
+   "who": {
+    "q": "Q5686",
+    "ja": "チャールズ・ディケンズ",
+    "en": "Charles Dickens",
+    "base": null
+   },
+   "title": "ディケンズ『アメリカ紀行』刊行",
+   "chosen_by": [
+    "Meta"
+   ],
+   "why": "北斎が江戸を離れて小布施へ向かった年に、ディケンズも海を渡り、異国を見て書いた。移動して見ることで描いた二人。",
+   "ja": "ディケンズ『アメリカ紀行』刊行",
+   "wd_label": "アメリカ紀行",
+   "en": "American Notes",
+   "year": 1842,
+   "prec": 9,
+   "date": "00-00",
+   "yby": "P577",
+   "place": null
+  },
+  {
+   "item": "Q1268",
+   "who": {
+    "q": "Q1268",
+    "ja": "フレデリック・ショパン",
+    "en": "Frédéric Chopin",
+    "base": null
+   },
+   "title": "ショパンが亡くなる",
+   "chosen_by": [
+    "Gemini",
+    "GPT"
+   ],
+   "why": "90歳近くまで描き続けた北斎と、39歳で世を去ったショパン。二つの芸術の生涯が同じ年に閉じた。",
+   "ja": "ショパンが亡くなる",
+   "wd_label": "フレデリック・ショパン",
+   "en": "Frédéric Chopin",
+   "year": 1849,
+   "prec": 11,
+   "date": "10-17",
+   "yby": "P570",
+   "place": null
+  },
+  {
+   "item": "Q16867",
+   "who": {
+    "q": "Q16867",
+    "ja": "エドガー・アラン・ポー",
+    "en": "Edgar Allan Poe",
+    "base": null
+   },
+   "title": "ポーが亡くなる",
+   "chosen_by": [
+    "Meta"
+   ],
+   "why": "「ひと魂でゆく」と詠んだ北斎と、幻想と死を描いた詩人ポーが、同じ年にこの世を去った。",
+   "ja": "ポーが亡くなる",
+   "wd_label": "エドガー・アラン・ポー",
+   "en": "Edgar Allan Poe",
+   "year": 1849,
+   "prec": 11,
+   "date": "10-07",
+   "yby": "P570",
+   "place": null
+  }
+ ],
+ "rejected": [
+  {
+   "what": "バベッジの解析機関（1834）",
+   "chosen_by": [
+    "Gemini",
+    "Meta",
+    "GPT"
+   ],
+   "reason": "Wikidata Q485257 の年は 1833（P571）。1834 と言えない"
+  },
+  {
+   "what": "奴隷制廃止法の施行（1834）",
+   "chosen_by": [
+    "Meta",
+    "GPT"
+   ],
+   "reason": "Wikidata Q487420 は成立 1833（P577・P7589）。施行日の記録なし"
+  },
+  {
+   "what": "ラブレスの注釈（1842）",
+   "chosen_by": [
+    "Meta"
+   ],
+   "reason": "Wikidata Q123509784（Note G）は 1843"
+  },
+  {
+   "what": "スチーブンソンの機関車ブリュッヒャー号（1814）",
+   "chosen_by": [
+    "Gemini",
+    "Meta"
+   ],
+   "reason": "Wikidata に該当項目が見つからない"
+  },
+  {
+   "what": "タブマンの脱走（1849）",
+   "chosen_by": [
+    "Meta"
+   ],
+   "reason": "出来事の項目が見つからない"
+  },
+  {
+   "what": "ブラックウェルの医学博士号（1849）",
+   "chosen_by": [
+    "GPT"
+   ],
+   "reason": "出来事の項目が見つからない（人物 Q234572 のみ）"
+  },
+  {
+   "what": "ドラクロワ『アルジェの女たち』（1834）",
+   "chosen_by": [
+    "Gemini"
+   ],
+   "reason": "見つかった項目は 1833 の版画など。油彩の項目を確かめられなかった"
+  },
+  {
+   "what": "カリフォルニア・ゴールドラッシュ（1849）",
+   "chosen_by": [
+    "Gemini"
+   ],
+   "reason": "Wikidata Q17550 は 1848 開始の期間"
   }
  ]
 }
