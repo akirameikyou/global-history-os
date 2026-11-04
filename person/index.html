@@ -249,12 +249,34 @@ function drawGlobe() {
   if (P.bpl) labels.push({ lat: P.bpl.lat, lng: P.bpl.lng, text: (ascii(P.bpl.en) || sur) + ' (born)', color: '#66e0ff', dot: 0.16 });
   if (S.mark) labels.push({ lat: S.mark.lat, lng: S.mark.lng, text: S.mark.text, color: S.mark.color || '#c8f4ff', dot: 0.14 });
   basePersons.forEach(p => {
-    if (p.id === P.id || !p.bpl || status(p, S.year) !== 'alive') return;
+    if (p.id === P.id || !p.bpl || (status(p, S.year) !== 'alive' && p.id !== S.sel)) return;
     if (S.sel === p.id) labels.push({ lat: p.bpl.lat, lng: p.bpl.lng, text: ascii(p.en) + ' (born)', color: '#ffffff', dot: 0.22, size: 0.34, pid: p.id });
     else points.push({ lat: p.bpl.lat, lng: p.bpl.lng, color: 'rgba(230,236,241,.55)', r: 0.16, pid: p.id });
   });
   if (typeof eventPoints === 'function') eventPoints().forEach(e => points.push(e));
   world.labelsData(labels).pointsData(points);
+}
+
+// ---------- その年の年齢（主軸と選んだ副人物の 2 人だけ。NOW の線と同期）----------
+function ageShort(p, y) {
+  if (!p) return '';
+  if (p.born == null) return p.died != null && y > p.d[1] ? '没後' + (y - p.died) + '年' : '生年不明';
+  if (y < p.b[0]) return '誕生前';
+  if (p.died != null && y > p.d[1]) return '没後' + (y - p.died) + '年';
+  return (y - p.born) + '歳' + (p.b[0] !== p.b[1] ? 'ごろ' : '');
+}
+function ageTag(parent, x, cy, text, bg, W) {   // NOW の線の右に小さな札。右端に入らなければ左に出す
+  if (!text) return;
+  const w = [...text].reduce((s, c) => s + (c.charCodeAt(0) > 255 ? 10 : 6.4), 0) + 10;
+  const left = x + 5 + w > W - 4;
+  const x0 = left ? x - 5 - w : x + 5;
+  el('rect', { x: x0, y: cy - 8, width: w, height: 16, rx: 8, fill: bg, opacity: .95 }, null, parent);
+  el('text', { x: x0 + w / 2, y: cy + 4, 'text-anchor': 'middle', style: 'fill:#050c16;font:600 10.5px var(--sans)' }, text, parent);
+}
+function drawNow() {
+  const y = S.year, s = S.sel && byId[S.sel];
+  document.getElementById('nowYr').innerHTML = yr(y) + `<small>${esc(P.ja)} ${esc(ageShort(P, y))}</small>`
+    + (s ? `<small style="color:#fff">／ ${esc(s.ja)} ${esc(ageShort(s, y))}</small>` : '');
 }
 
 // ---------- 年代バー ----------
@@ -295,13 +317,16 @@ function drawTL() {
   }
   const nx = X(S.year);
   el('line', { x1: nx, x2: nx, y1: 22, y2: 104, stroke: '#66e0ff', 'stroke-width': 1.5 });
+  const Wt = svg.clientWidth || 800;
+  ageTag(svg, nx, 46, ageShort(P, S.year), '#66e0ff', Wt);
+  if (s) ageTag(svg, nx, 78, ageShort(s, S.year), '#ffffff', Wt);
 }
 // 同時代の人を帯で並べる（初期の年表リストの見方。本人の帯と同じ年の目盛り・同じ NOW の線）
 const rsvg = document.getElementById('rowsSvg'), rbox = document.getElementById('rowsBox'), rbtn = document.getElementById('rowsBtn');
 function drawRows() {
   if (rbox.hidden) return;
   const y = S.year, rel = relBase();
-  const ps = basePersons.filter(p => p.id !== P.id && status(p, y) === 'alive').sort((a, b) => a.born - b.born || a.died - b.died);
+  const ps = basePersons.filter(p => p.id !== P.id && (status(p, y) === 'alive' || p.id === S.sel)).sort((a, b) => (a.born ?? 1e9) - (b.born ?? 1e9) || (a.died ?? 1e9) - (b.died ?? 1e9));
   const W = svg.clientWidth || 800, RH = 17, H = Math.max(40, (ps.length + 1) * RH + 10);
   rsvg.setAttribute('viewBox', `0 0 ${W} ${H}`); rsvg.style.height = H + 'px'; rsvg.innerHTML = '';
   const cx = v => Math.max(16, Math.min(W - 16, X(v)));
@@ -324,6 +349,14 @@ function drawRows() {
   row(P, 0, '#66e0ff', 'rgba(102,224,255,.35)');
   ps.forEach((p, i) => row(p, i + 1, rel.has(p.id) ? '#c79bff' : '#e6ecf1', rel.has(p.id) ? 'rgba(199,155,255,.3)' : 'rgba(230,236,241,.22)'));
   el('line', { x1: X(y), x2: X(y), y1: 0, y2: H, stroke: '#66e0ff', 'stroke-width': 1.5, opacity: .8 }, null, rsvg);
+  ageTag(rsvg, X(y), 6 + 7.5, ageShort(P, y), '#66e0ff', W);
+  const si = S.sel ? ps.findIndex(p => p.id === S.sel) : -1;
+  if (si >= 0) {
+    ageTag(rsvg, X(y), 6 + (si + 1) * RH + 7.5, ageShort(ps[si], y), '#ffffff', W);
+    // 選んだ人の行が見えていなければ、見えるところまで送る（年を動かすと並びが入れ替わるため）
+    const ry = 6 + (si + 1) * RH;
+    if (ry < rbox.scrollTop || ry + RH > rbox.scrollTop + rbox.clientHeight) rbox.scrollTop = Math.max(0, ry - rbox.clientHeight / 2);
+  }
   rsvg.querySelectorAll('g[data-id]').forEach(g => g.onclick = () => { if (g.dataset.id !== P.id) select(g.dataset.id); });
 }
 rbtn.onclick = () => {
@@ -424,7 +457,7 @@ function drawContemp() {
     const ov = (P.b && P.d && s.b && s.d) ? Math.min(s.d[0], P.d[0]) - Math.max(s.b[1], P.b[1]) : null;
     h = `<div id="selBox"><div class="sec">SELECTED ｜ 選択中の副人物</div>`
       + `<div class="snm">${esc(s.ja)}<small>${esc(s.en)}</small></div>`
-      + `<div class="smeta">${yr(s.born)}–${yr(s.died)}　${yr(y)}年 ${y - s.born}歳${ov != null ? '　重なる年 ' + (ov > 0 ? ov + '年' : 'なし') : ''}</div>`
+      + `<div class="smeta">${yr(s.born)}–${yr(s.died)}　${yr(y)}年 ${esc(ageShort(s, y))}${ov != null ? '　重なる年 ' + (ov > 0 ? ov + '年' : 'なし') : ''}</div>`
       + (s.desc ? `<div class="sdesc">${esc(s.desc)}</div>` : '')
       + evOf(s.id).filter(e => e.y === y).map(e => `<div class="sdesc" style="color:var(--amber-soft)">◆ ${esc(e.ja)}（${KIND[e.k]}）</div>`).join('')
       + `<div class="sbtns"><button data-fly="b"${s.bpl ? '' : ' disabled'}>生まれた所へ${s.bpl ? '（' + esc(s.bpl.name) + '）' : '（記録なし）'}</button>`
@@ -446,14 +479,14 @@ function drawContemp() {
 
 // ---------- 操作 ----------
 function select(id) {
-  S.sel = S.sel === id ? null : id; drawContemp(); drawTL(); drawRows(); drawGlobe();
+  S.sel = S.sel === id ? null : id; drawNow(); drawContemp(); drawTL(); drawRows(); drawGlobe();
   const sb = document.getElementById('selBox'), pn = document.getElementById('contemp');
   if (sb) pn.scrollTop = sb.offsetTop - 8;   // 選んだ人の欄が見えるところまで左のパネルを送る
 }
 function setYear(y) {
   y = Math.max(R[0], Math.min(R[1], y)); if (y === S.year) return; S.year = y;
-  document.getElementById('nowYr').innerHTML = yr(y) + `<small>${esc(P.ja)} ${P.born != null && y >= P.b[0] && (P.died == null || y <= P.d[1]) ? (y - P.born) + '歳' : ''}</small>`;
-  if (S.sel && status(byId[S.sel], y) !== 'alive') S.sel = null;
+  drawNow();
+  // 副人物の選択は年を動かしても外さない（生まれる前・没後も「誕生前」「没後○年」と出して年齢を同期させる）
   drawTL(); drawRows(); drawFocus(); drawContemp(); drawGlobe();
   history.replaceState(null, '', `?p=${P.id}&y=${y}`);
 }
