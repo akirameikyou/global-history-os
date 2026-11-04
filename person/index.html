@@ -111,6 +111,24 @@ body.rows{--tlh:min(46vh,420px)}
 #rowsBtn{position:absolute;right:12px;top:8px;z-index:2;background:none;border:1px solid rgba(230,236,241,.4);color:var(--c-worldart);border-radius:6px;font:inherit;font-size:11px;padding:2px 10px;cursor:pointer}
 #rowsBtn:hover{background:rgba(230,236,241,.1)}
 #rowsSvg text{font:10.5px var(--sans);fill:var(--ink)}
+/* 交点の旅（試作：見て採否を決める。動画用か本作か） */
+#tripBtn{position:absolute;right:150px;top:8px;z-index:2;background:none;border:1px solid rgba(240,181,120,.6);color:var(--amber-soft);border-radius:6px;font:inherit;font-size:11px;padding:2px 10px;cursor:pointer}
+#tripBtn:hover{background:rgba(240,181,120,.1)}
+#trip{position:absolute;z-index:25;left:50%;transform:translateX(-50%);bottom:calc(var(--tlh) + 34px);width:min(600px,calc(100vw - 32px));
+  border:1px solid rgba(240,181,120,.45);background:rgba(5,12,22,.86);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-radius:4px;padding:12px 16px 10px;
+  transition:opacity .5s} #trip.dim{opacity:.0}
+#pick,#contemp,#focus{transition:opacity .6s}
+body.trip #pick,body.trip #contemp,body.trip #focus{opacity:.12}   /* 旅の間は地球・説明・年代バーを主役に（触れば戻る） */
+body.trip #pick:hover,body.trip #contemp:hover,body.trip #focus:hover{opacity:1}
+#trip .ty{display:flex;align-items:baseline;gap:12px}
+#trip .ty b{font:600 26px var(--mono);color:var(--c-focus);font-variant-numeric:tabular-nums}
+#trip .ty span{font-size:12px;color:var(--sub)}
+#trip .ti{margin-top:8px;font-size:13px;line-height:1.6;border-top:1px solid var(--rule);padding-top:7px}
+#trip .ti.me{color:var(--c-focus-br)} #trip .ti .who{font-weight:700;color:var(--amber-soft);margin-right:8px} #trip .ti .who.me{color:var(--c-focus)}
+#trip .ti .why{font-size:11.5px;color:var(--sub)}
+#trip .tc{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+#trip .tc button{font:inherit;font-size:11px;color:var(--ink);background:none;border:1px solid var(--rule);border-radius:4px;padding:2px 10px;cursor:pointer}
+#trip .tc button:hover{border-color:var(--amber-soft)}
 #tl text{font:10px var(--mono);fill:var(--sub)}
 #tl .lbl{font:11px var(--sans);fill:var(--ink)}
 #nowYr{position:absolute;left:16px;top:8px;font-family:var(--mono);font-size:18px;color:var(--c-focus);pointer-events:none}
@@ -150,8 +168,10 @@ body.rows{--tlh:min(46vh,420px)}
   <div id="fSpecial"></div>
 </div>
 
+<div id="trip" hidden aria-live="polite"></div>
 <div class="panel" id="tl" aria-label="年代バー">
   <div id="nowYr"></div>
+  <button id="tripBtn">交点の旅 ▶</button>
   <button id="rowsBtn" aria-expanded="false">同時代を帯で並べる ▲</button>
   <svg id="tlSvg" role="img" aria-label="生涯の年代バー。押す・引くと年を選びます"></svg>
   <div id="rowsBox" hidden><svg id="rowsSvg" role="img" aria-label="この年に生きていた人の生涯を帯で並べたもの"></svg></div>
@@ -516,6 +536,70 @@ pin.addEventListener('input', () => {
 });
 pin.addEventListener('keydown', e => { if (e.key === 'Enter') { const b = plist.querySelector('button'); if (b) b.click(); } if (e.key === 'Escape') { plist.hidden = true; pin.blur(); } });
 document.addEventListener('click', e => { if (!document.getElementById('pick').contains(e.target)) plist.hidden = true; });
+
+// ---------- 交点の旅（試作）：生涯を自動で進め、本人の出来事と交点の年で止まる ----------
+// 旅の間だけは、年に合わせて地球のカメラも動かす（普段の「年を動かしてもカメラは動かさない」の例外。採否は見て決める）
+const T = { on: false, paused: false, timer: null, stops: [], y: null };
+const tripEl = document.getElementById('trip'), tripBtn = document.getElementById('tripBtn');
+function tripStops() {
+  const b = P.born ?? R[0], d = P.died ?? R[1], by = {};
+  const add = (y, it) => { if (y >= b && y <= d) (by[y] = by[y] || []).push(it); };
+  const own = SP && SP.events ? SP.events : evOf(P.id).filter(e => e.k !== 'curated');
+  own.forEach(e => add(e.year ?? e.y, { me: true, title: e.title || e.ja }));
+  basePersons.forEach(p => evOf(p.id).forEach(e => { if (e.k === 'curated') add(e.y, { p: p.id === P.id ? null : p, me: p.id === P.id, e }); }));
+  worldEv.forEach(e => add(e.y, { p: null, e }));
+  return Object.keys(by).map(Number).sort((a, c) => a - c).map(y => ({ y, items: by[y] }));
+}
+function tripShow(stop) {
+  const y = stop.y, nm = SP && SP.nameAt ? SP.nameAt(y) : null;
+  let h = `<div class="ty"><b>${yr(y)}</b><span>${esc(P.ja)} ${esc(ageShort(P, y))}${nm ? '　名乗り：' + esc(nm) : ''}</span></div>`;
+  stop.items.forEach(it => {
+    if (it.me && !it.e) h += `<div class="ti me"><span class="who me">${esc(P.ja)}</span>${esc(it.title)}</div>`;
+    else {
+      const who = it.p ? it.p.ja + '（' + ageShort(it.p, y) + '）' : it.e.who ? it.e.who.ja : '世界の出来事';
+      h += `<div class="ti"><span class="who${it.me ? ' me' : ''}">${esc(it.me ? P.ja : who)}</span>${esc(it.e.ja)}${it.e.why ? `<div class="why">${esc(it.e.why)}</div>` : ''}</div>`;
+    }
+  });
+  h += `<div class="tc"><button data-t="pause">${T.paused ? '続ける ▶' : '一時停止 ❚❚'}</button><button data-t="stop">旅をやめる ✕</button></div>`;
+  tripEl.innerHTML = h; tripEl.hidden = false; tripEl.classList.remove('dim');
+  tripEl.querySelectorAll('[data-t]').forEach(bn => bn.onclick = () => bn.dataset.t === 'stop' ? tripStop() : tripPause());
+  // 交点の人を副人物に（年齢の札が一緒に動く）。地球は出来事の場所、無ければその人の生まれた所へ
+  const it = stop.items.find(i => i.e && i.p) || stop.items.find(i => i.e && i.e.pl) || null;
+  const want = it && it.p ? it.p.id : null;   // 人物の交点が無い年は副人物を外す（前の年の人を残さない）
+  if (S.sel !== want) { S.sel = want; S.mark = null; drawNow(); drawContemp(); drawTL(); drawRows(); }
+  const pl = it && it.e && it.e.pl ? it.e.pl : it && it.p ? it.p.bpl : null;
+  if (pl) flyTo(pl, it.e && it.e.pl ? { lat: pl.lat, lng: pl.lng, text: ascii(it.e.en || pl.en) || 'event', color: '#ffc98a' } : null);
+  else drawGlobe();
+}
+function tripTick() {
+  if (!T.on || T.paused) return;
+  const next = T.stops.find(st => st.y > S.year);
+  if (!next) { tripStop(true); return; }
+  const y = Math.min(next.y, S.year + 1);
+  if (y === S.year + 1) tripEl.classList.add('dim');
+  setYear(y);
+  if (y === next.y) { tripShow(next); T.timer = setTimeout(tripTick, 4200 + 900 * next.items.length); }
+  else T.timer = setTimeout(tripTick, 110);
+}
+function tripStart() {
+  T.stops = tripStops(); if (!T.stops.length) return;
+  T.on = true; T.paused = false; tripBtn.textContent = '旅をやめる ✕'; document.body.classList.add('trip');
+  S.sel = null; S.mark = null; drawNow(); drawContemp();
+  const start = (P.born ?? R[0]);
+  S.year = null; setYear(start);
+  const at = P.bpl || P.dpl; if (at) world.pointOfView({ lat: at.lat, lng: at.lng, altitude: 1.6 }, 1200);
+  if (T.stops[0].y === start) tripShow(T.stops[0]);
+  T.timer = setTimeout(tripTick, 1500);
+}
+function tripPause() { if (!T.on) return; T.paused = !T.paused; const bn = tripEl.querySelector('[data-t=pause]'); if (bn) bn.textContent = T.paused ? '続ける ▶' : '一時停止 ❚❚'; if (!T.paused) { clearTimeout(T.timer); T.timer = setTimeout(tripTick, 300); } }
+function tripStop(ended) {
+  clearTimeout(T.timer); T.on = false; tripBtn.textContent = '交点の旅 ▶'; document.body.classList.remove('trip');
+  if (ended) { tripEl.innerHTML = `<div class="ty"><b>${yr(S.year)}</b><span>${esc(P.ja)} の旅はここまで（止まった年 ${T.stops.length}）</span></div><div class="tc"><button data-t="close">閉じる</button></div>`; tripEl.querySelector('[data-t=close]').onclick = () => { tripEl.hidden = true; }; }
+  else tripEl.hidden = true;
+}
+tripBtn.onclick = () => T.on ? tripStop() : tripStart();
+document.addEventListener('keydown', e => { if (T.on && e.code === 'Space' && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); tripPause(); } });
+svg.addEventListener('pointerdown', () => { if (T.on && !T.paused) tripPause(); });   // 年代バーを触ったら旅は一時停止
 
 // ---------- 起動 ----------
 (async () => {
