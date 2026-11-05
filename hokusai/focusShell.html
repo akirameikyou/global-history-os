@@ -159,6 +159,17 @@
   .pl-item .yrs{font-family:var(--mono);font-size:9.5px;color:var(--dim)}
   .pl-hint{padding:4px 16px 10px;font-size:10px;color:var(--dim);line-height:1.5}
   #plinkPanel{right:24px;bottom:30px;width:340px;max-height:44vh}
+  /* P-LINK 下の段：人物年鑑（人物データバンク）の同時代の人。紫＝関係の記録がある人とは分ける（off-white＝外部人物・関係を意味しない） */
+  .pl-bank-head{padding:10px 16px 4px;font-size:10px;letter-spacing:.14em;color:var(--c-worldart);border-top:1px solid var(--rule)}
+  .pl-bank-head .n{font-family:var(--mono);color:var(--sub);letter-spacing:0;margin-left:6px}
+  .pl-bank-note{padding:0 16px 6px;font-size:9.5px;color:var(--dim);line-height:1.5}
+  .pl-item.bp .nm{color:var(--c-worldart)} .pl-item.bp .rel{color:var(--dim);font-family:var(--mono)}
+  .pl-item.bp.sel{background:rgba(255,255,255,.12);border-left:2px solid #fff} .pl-item.bp.sel .nm{color:#fff}
+  .pl-grp{padding:6px 16px 2px;font-size:9px;letter-spacing:.14em;color:var(--dim)}
+  .pl-more{display:block;width:calc(100% - 32px);margin:6px 16px 10px;background:none;border:1px solid var(--rule);color:var(--sub);border-radius:5px;font:inherit;font-size:10.5px;padding:3px;cursor:pointer}
+  .pl-more:hover{border-color:rgba(255,255,255,.35)}
+  .bp-age{font-family:var(--mono);color:var(--c-focus)} .bp-age.o{color:#fff}
+  .bp-link{display:inline-block;margin-top:8px;color:var(--c-focus-br);font-size:11.5px;text-decoration:none;border-bottom:1px solid rgba(102,224,255,.4)}
   .pl-active{margin-left:8px;font-size:10px;color:var(--art);letter-spacing:0}
   .pl-active .x{margin-left:6px;cursor:pointer;border:1px solid rgba(199,155,255,.5);border-radius:4px;padding:0 5px;color:var(--art)}
   .pl-active .x:hover{background:rgba(199,155,255,.18)}
@@ -521,6 +532,8 @@ import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261031c';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
 import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261031';
+import { basePersons } from '../data/base_persons.js?v=20261104';   // 人物データバンク（人物年鑑の基本人物。人物地球と共有）
+import { baseEvents } from '../data/base_events.js?v=20261104c';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
 const officialLinksFor=hid=>{ const m=museumLinks.find(x=>x.holdingsId===hid&&x.display&&LINK_OK.includes(x.linkPermission)); return m?m.links:[]; };
@@ -636,7 +649,7 @@ function worldLabels(){ const sel=State.selection;
       onClick:(at)=>{ setSel('lifeplace',lp.id); showLifePlaceCard(lp,at); }}); });
   const ap=State.activePlace; // 「地点を見る」でのみ出る都市ラベル（人物選択時にセット）
   if(ap)base.push({lat:ap.lat,lng:ap.lng,text:ap.name,color:ap.color||OS_COLORS.worldart,sel:true,
-    onClick:(at)=>{ if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }});
+    onClick:(at)=>{ if(ap.onClick){ ap.onClick(at); return; } if(ap.refType){ setSel(ap.refType,ap.refId); const p=worldPersonById(ap.refId); if(p)showWorldCard(p,ap.refType,at); } }});
   return base; }
 // 「地点を見る」= activePlace更新＋前地点解除＋marker/label＋cameraを一括更新（人物カードは維持）。selection!=camera原則を保つ明示操作。
 function goToPlace(ap){ State.activePlace=ap; renderWorld(); world.controls().autoRotate=false; world.pointOfView({lat:ap.lat,lng:ap.lng,altitude:ap.altitude||0.45},800); } // 「地点を見る」はしっかり寄る（都市規模／美術館はap.altitudeでさらに寄る）
@@ -1092,6 +1105,53 @@ function renderLeftBottom(force){ const m=leftMode(); const selW=(m==='HOLDINGS'
     const sub=(wsel?('#'+wsel.no+' '+wsel.ja+' の所蔵'):'現在の主な所蔵')+'（'+(State.spaceView==='JAPAN'?'国内':'国内外')+'）';
     leftSecTitle.innerHTML='Holdings<span class="series">'+sub+'</span>'; renderHoldings(); } }
 
+// ---------- 人物データバンク（人物年鑑の基本人物。人物地球 person/ と同じデータ・同じ判定） ----------
+// 判定は person-timeline-world-work/hokusai_link/LINK_SPEC_v0.1.md §2：年の精度で幅を取り、「生きていた」と「判定できない」を分ける。
+const BANK_MAX_LIFE=120;
+const bspan=(y,p)=>y==null?null:(p==null||p>=9)?[y,y]:p===8?[y-9,y+9]:p===7?[y-99,y+99]:[y-999,y+999];
+basePersons.forEach(p=>{ p.b=bspan(p.born,p.bp); p.d=bspan(p.died,p.dp); });
+const bankById=Object.fromEntries(basePersons.map(p=>[p.id,p]));
+const HOKUSAI_BASE_ID='b0384', PLINK_BASE={p_bakin:'b0387',p_hiroshige:'b0409'}; // P-LINK（紫）にいる人は下の段に重ねて出さない（手で対応。名前では結ばない）
+function bankStatus(p,y){ const b=p.b,d=p.d; if(!b&&!d)return 'unknown'; if(b&&b[0]>y)return 'no'; if(d&&d[1]<y)return 'no';
+  if(!d&&b[1]+BANK_MAX_LIFE<y)return 'no'; if(!b&&d[0]-BANK_MAX_LIFE>y)return 'no'; if(b&&d&&b[1]<=y&&y<=d[0])return 'alive'; return 'unsure'; }
+function ageShortB(p,y){ if(!p)return ''; if(p.born==null)return p.died!=null&&y>p.d[1]?'没後'+(y-p.died)+'年':'生年不明';
+  if(y<p.b[0])return '誕生前'; if(p.died!=null&&y>p.d[1])return '没後'+(y-p.died)+'年'; return (y-p.born)+'歳'+(p.b[0]!==p.b[1]?'ごろ':''); }
+const asciiB=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7e]/g,'').trim(); // 地球儀ラベルは ASCII のみ
+const BANK_KIND={event:'出来事',pub:'刊行',made:'制作',curated:'交点'};
+let bankAll=false; // 下の段を全員表示するか（既定は 日本・世界 それぞれ先頭 5 人）
+function renderBankSection(){ const y=State.timeCursor, inPL=new Set(Object.values(PLINK_BASE));
+  const alive=basePersons.filter(p=>p.id!==HOKUSAI_BASE_ID&&!inPL.has(p.id)&&bankStatus(p,y)==='alive');
+  const jp=alive.filter(p=>p.region==='日本').sort((a,b)=>a.born-b.born), ww=alive.filter(p=>p.region!=='日本').sort((a,b)=>a.born-b.born);
+  const head=document.createElement('div'); head.className='pl-bank-head'; head.innerHTML='同時代の人（人物年鑑）<span class="n">'+y+'年 '+alive.length+'人</span>';
+  plinkList.appendChild(head);
+  const note=document.createElement('div'); note.className='pl-bank-note'; note.textContent='この年に生きていた人（登録された生没年からの判定）。紫の人と違い、北斎との関係を意味しません。'; plinkList.appendChild(note);
+  const row=p=>{ const d=document.createElement('div'); d.className='pl-item bp'+(State.selection.type==='bperson'&&State.selection.id===p.id?' sel':'');
+    const ev=(baseEvents[p.id]||[]).find(e=>e.y===y);
+    d.innerHTML='<span class="nm">'+esc(p.ja)+'</span><span class="rel">'+esc(ageShortB(p,y))+'</span><br><span class="yrs">'+p.born+'–'+p.died+(ev?'　◆ '+esc(ev.ja):'')+'</span>';
+    d.onclick=()=>{ const on=State.selection.type==='bperson'&&State.selection.id===p.id; if(on){ State.activePlace=null; setSel(null,null); return; } selectBank(p,d); };
+    plinkList.appendChild(d); };
+  const LIM=5; [['日本',jp],['世界',ww]].forEach(([g,list])=>{ if(!list.length)return; const grp=document.createElement('div'); grp.className='pl-grp'; grp.textContent=g+'　'+list.length; plinkList.appendChild(grp);
+    (bankAll?list:list.slice(0,LIM)).forEach(row); });
+  if(jp.length>LIM||ww.length>LIM){ const b=document.createElement('button'); b.className='pl-more'; b.textContent=bankAll?'少なく表示':'すべて表示（'+alive.length+'人）';
+    b.onclick=(e)=>{e.stopPropagation(); bankAll=!bankAll; renderPLink(); }; plinkList.appendChild(b); } }
+// 選ぶ＝カード＋地球に生まれた所の点（カメラは動かさない）。「地点を見る」で初めてカメラが動く（selection≠camera）。
+function selectBank(p,src){ State.activePlace=p.bpl?{lat:p.bpl.lat,lng:p.bpl.lng,name:(asciiB(p.en)||'born')+' (born)',color:'#ffffff',onClick:(at)=>showBankCard(p,at)}:null;
+  setSel('bperson',p.id); showBankCard(p,src); }
+function showBankCard(p,src){ const y=State.timeCursor; const box=document.createElement('div');
+  const hk=bankById[HOKUSAI_BASE_ID];
+  const evs=(baseEvents[p.id]||[]).filter(e=>e.y===y).map(e=>'<div class="pr-item">◆ '+esc(e.ja)+'（'+BANK_KIND[e.k]+'）</div>').join('');
+  box.innerHTML='<div class="pr-item">'+y+'年　北斎 <span class="bp-age">'+esc(ageShortB(hk,y))+'</span> ／ '+esc(p.ja)+' <span class="bp-age o">'+esc(ageShortB(p,y))+'</span></div>'+
+    (p.desc?'<div class="pr-item">'+esc(p.desc)+'<span class="pr-note">（Wikidata の説明）</span></div>':'')+
+    '<div class="pr-item">生まれた所：'+(p.bpl?esc(p.bpl.name):'記録なし')+'　／　分野：'+esc((p.domain||[]).join('・'))+'</div>'+evs+
+    '<a class="bp-link" href="../person/?p='+encodeURIComponent(p.id)+'&y='+y+'" target="_blank" rel="noopener">人物地球で詳しく見る（'+y+'年）↗</a>';
+  const inJapan=pl=>pl&&pl.lat>24&&pl.lat<46&&pl.lng>122&&pl.lng<146;
+  const action=p.bpl?{ label:'地点を見る（'+(asciiB(p.bpl.en)||p.bpl.name)+'）', onClick:()=>{
+      if(State.spaceView==='JAPAN'&&inJapan(p.bpl)){ focusPlace(p.bpl.lat,p.bpl.lng); return; }
+      if(State.spaceView==='JAPAN') document.querySelector('#spaceSeg button[data-v="WORLD"]').click(); // 海外の生まれた所は地球で見る
+      goToPlace(State.activePlace||{lat:p.bpl.lat,lng:p.bpl.lng,name:asciiB(p.bpl.en)||'born',color:'#ffffff'}); } }:null;
+  showCard({ tag:'PERSON BANK ／ 同時代の人（人物年鑑）', title:p.ja, sub:(p.en?p.en+'｜':'')+p.born+'–'+p.died+'｜'+p.region, node:box,
+    rel:'※同じ年に生きていたことは、北斎との関係を意味しません', action, accent:'#ffffff' }, src); }
+
 // ---------- P-LINK（人物関係）: 折りたたみ・現在年代に関連する人物を優先 ----------
 const plinkList=document.getElementById('plinkList');
 function renderPLink(){ plinkList.innerHTML='';
@@ -1103,9 +1163,10 @@ function renderPLink(){ plinkList.innerHTML='';
     d.onclick=()=>{ const on=State.selection.type==='person'&&State.selection.id===p.id;
       if(on) setSel(null,null); else setSel('person',p.id); };
     plinkList.appendChild(d);});
+  renderBankSection();
   // 比較中インジケータ（畳んでも保持。×で解除）
   const pa=document.getElementById('plinkActive');
-  const sp=State.selection.type==='person'?personLinks.find(p=>p.id===State.selection.id):null;
+  const sp=State.selection.type==='person'?personLinks.find(p=>p.id===State.selection.id):(State.selection.type==='bperson'?{name:(bankById[State.selection.id]||{}).ja}:null);
   if(sp){ pa.hidden=false; pa.innerHTML='— 比較中: '+sp.name+'<span class="x" id="plinkClear">✕</span>';
     pa.querySelector('#plinkClear').onclick=(e)=>{e.preventDefault();e.stopPropagation();setSel(null,null);}; }
   else pa.hidden=true;
@@ -1131,6 +1192,8 @@ function drawTL(){
   if(sType==='person'){ person=personLinks.find(p=>p.id===State.selection.id); pColor=OS_COLORS.relation; }   // P-LINK=violet
   else if(sType==='worldart'){ person=worldPersonById(State.selection.id); pColor=OS_COLORS.worldart; pTag='WORLD ART（同時代比較）'; } // off-white
   else if(sType==='reception'){ person=worldPersonById(State.selection.id); pColor=OS_COLORS.reception; pTag='RECEPTION（受容・没後）'; } // off-white系
+  else if(sType==='bperson'){ const b=bankById[State.selection.id]; // 人物データバンクの人（白＝選択。関係を意味しない）
+    if(b&&b.born!=null&&b.died!=null){ person={name:b.ja,birth:b.born,death:b.died}; pColor='#ffffff'; pTag='同時代（人物年鑑）　'+State.timeCursor+'年 '+ageShortB(b,State.timeCursor); } }
   const compact = window.innerWidth<=640 && !State.tlExpanded; // モバイルは簡易表示（主バー＋現在位置のみ・レーンは展開時）
   const H=compact?40:(person?124:106), gridBottom=compact?28:(person?112:94);
   tl.style.height=H+'px'; tl.setAttribute('viewBox','0 0 '+W+' '+H); tl.innerHTML='';
