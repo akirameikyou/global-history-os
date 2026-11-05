@@ -291,6 +291,20 @@
   #lb .lb-hint{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);font-family:var(--sans);
     font-size:11px;color:var(--sub);background:rgba(6,10,16,.7);padding:5px 12px;border-radius:999px;
     letter-spacing:.02em;white-space:nowrap;pointer-events:none}
+  /* 幾何ガイド（拡大表示に重ねる補助線）。三十六景46図のみ。ボタンに白地を付けない */
+  #lb .lb-stage{position:relative;display:inline-block;line-height:0}
+  #lb .lb-geo{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+  #lbGeoBtn{position:absolute;top:14px;right:16px;font-family:var(--sans);font-size:12px;letter-spacing:.08em;color:var(--cyan-soft);
+    background:rgba(6,10,16,.55);border:1px solid rgba(102,224,255,.45);border-radius:999px;padding:5px 14px;cursor:pointer}
+  #lbGeoBtn.on{color:var(--cyan);border-color:var(--cyan);background:rgba(102,224,255,.12)}
+  #lbGeoPanel{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);max-width:min(980px,94vw);cursor:default;
+    font-family:var(--sans);font-size:12px;color:var(--ink);background:rgba(6,10,16,.78);border:1px solid rgba(102,224,255,.25);
+    border-radius:10px;padding:8px 14px;display:flex;flex-wrap:wrap;gap:4px 14px;justify-content:center;align-items:center}
+  #lbGeoPanel[hidden]{display:none}
+  #lb.geo-on img{max-height:calc(100vh - 2*var(--geoH,0px) - 40px)} /* パネルの分だけ絵を縮めて下端を隠さない（中央寄せなので上下に同じ幅を空ける） */
+  #lbGeoPanel label{white-space:nowrap;cursor:pointer} #lbGeoPanel input{accent-color:var(--cyan);vertical-align:middle}
+  #lbGeoPanel input[type=range]{width:72px}
+  #lbGeoPanel .lg-note{flex-basis:100%;text-align:center;font-size:10.5px;color:var(--sub)}
   /* ===== モバイル（M1）：地図主役・chrome最小・compact timeline・畳んだシート。PC版(≥641px)には一切影響しない ===== */
   #mSheet{display:none}
   @media (max-width:640px){
@@ -386,7 +400,10 @@
     .hl-detail{font-size:12px;color:var(--sub);line-height:1.7;margin:2px 0 8px}
     /* モバイルlightbox：作品を画面いっぱいに（全体を切らない＝contain）・safe-area考慮・暗背景 */
     #lb{height:100dvh;padding:max(6px,env(safe-area-inset-top)) max(6px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(6px,env(safe-area-inset-left))}
-    #lb img{max-width:100%;max-height:100%;border-radius:3px} /* =safe-area内の100vw/100dvh。containで全体を切らない */
+    #lb img{max-width:calc(100vw - 12px);max-height:calc(100dvh - 12px);border-radius:3px} /* =ほぼ100vw/100dvh。containで全体を切らない（幾何ガイドを重ねるため画像を枠で包む→%でなく画面単位） */
+    #lbGeoBtn{top:max(10px,env(safe-area-inset-top));right:10px;font-size:11px;padding:4px 11px}
+    #lbGeoPanel{left:8px;right:8px;transform:none;max-width:none;bottom:max(8px,env(safe-area-inset-bottom));font-size:11px;gap:2px 10px;padding:6px 10px;max-height:42dvh;overflow-y:auto}
+    #lb.geo-on img{max-height:calc(100dvh - 2*var(--geoH,0px) - 24px)}
   }
 </style></head>
 <body>
@@ -512,7 +529,9 @@
 <div id="pinLayer"></div>
 <button id="pinCloseAll" hidden></button>
 
-<div id="lb"><img alt=""><div class="lb-hint" id="lbHint" hidden>タップで閉じる ・ 横向きにするとより大きく</div></div>
+<div id="lb"><div class="lb-stage"><img alt=""><svg class="lb-geo" id="lbGeo" aria-hidden="true"></svg></div>
+  <button id="lbGeoBtn" type="button" hidden title="構図を観察する補助線（対角線・円弧など）を重ねる">幾何</button>
+  <div id="lbGeoPanel" hidden></div><div class="lb-hint" id="lbHint" hidden>タップで閉じる ・ 横向きにするとより大きく</div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js"></script>
 <script type="module">
@@ -520,6 +539,8 @@ import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
 import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261031c';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
+import { frameCorners } from '../data/hokusai_frame_corners.js?v=20261105';
+import { GUIDE_TYPES, GUIDE_NOTE, guideSVG } from './geometry_guide.js?v=20261105';
 import { resourceSources, anecdotes, evidenceRecords, periodResearchNotes, resourcesMeta, oldMaps, textLinks } from '../data/hokusai_resources.js?v=20261031';
 // 公式サイトリンク（Museum Link Registry）: 掲載許可あり（個別了承 or 公式方針）かつ display:true の館だけ。所蔵データとは別台帳で holdingsId 参照のみ。
 const LINK_OK=['explicit_link_permission','official_link_policy_allows'];
@@ -1218,10 +1239,35 @@ function syncTimeLabels(){
 // ---------- lightbox ----------
 const lb=document.getElementById('lb'),lbImg=lb.querySelector('img'),lbHint=document.getElementById('lbHint');
 // lightbox open/close は selection / timeCursor / camera / sheet を一切変更しない（画像の表示のみ）。
-function openLB(w){lbImg.src=w.src||thumb(w.file,1400);lb.classList.add('open'); // w.src=年代作品（所蔵館の画像URL）
+// 幾何ガイド：三十六景46図（frameCorners に四隅がある図）だけ「幾何」ボタンを出す。開閉・選択・地図には触れない（表示のみ）。
+const lbGeo=document.getElementById('lbGeo'),lbGeoBtn=document.getElementById('lbGeoBtn'),lbGeoPanel=document.getElementById('lbGeoPanel');
+const geo={work:null,show:false,opts:{on:Object.fromEntries(GUIDE_TYPES.map(t=>[t.key,t.def])),grid:8,opacity:.8,letters:true}};
+lbGeoPanel.innerHTML=GUIDE_TYPES.map(t=>`<label><input type="checkbox" data-k="${t.key}"${t.def?' checked':''}>${t.label}</label>`).join('')
+  +'<label>分割 <input type="range" id="lgN" min="2" max="16" value="8"> <span id="lgNv">8</span></label>'
+  +'<label><input type="checkbox" id="lgLetters" checked>頂点記号</label><label>濃さ <input type="range" id="lgOp" min="20" max="100" value="80"></label>'
+  +`<span class="lg-note">${GUIDE_NOTE}</span>`;
+function drawGeo(){
+  const fc=geo.work&&frameCorners[geo.work.no], W=lbImg.naturalWidth, H=lbImg.naturalHeight;
+  if(!geo.show||!fc||!W){lbGeo.innerHTML='';return;}
+  lbGeo.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  lbGeo.innerHTML=guideSVG(W,H,[fc.A,fc.B,fc.C,fc.D],geo.opts);
+}
+function fitGeoPanel(){const on=!!geo.work&&geo.show;lb.classList.toggle('geo-on',on);
+  if(on)lb.style.setProperty('--geoH',(lbGeoPanel.offsetHeight+8)+'px');}
+function setGeoShow(v){geo.show=v;lbGeoBtn.classList.toggle('on',v);lbGeoPanel.hidden=!v;fitGeoPanel();drawGeo();}
+addEventListener('resize',()=>{if(lb.classList.contains('open'))fitGeoPanel();});
+lbGeoBtn.addEventListener('click',e=>{e.stopPropagation();setGeoShow(!geo.show);});
+lbGeoPanel.addEventListener('click',e=>e.stopPropagation()); // 操作パネルのクリックで拡大表示を閉じない
+lbGeoPanel.addEventListener('input',()=>{lbGeoPanel.querySelectorAll('[data-k]').forEach(c=>geo.opts.on[c.dataset.k]=c.checked);
+  geo.opts.grid=+document.getElementById('lgN').value;document.getElementById('lgNv').textContent=geo.opts.grid;
+  geo.opts.letters=document.getElementById('lgLetters').checked;geo.opts.opacity=document.getElementById('lgOp').value/100;drawGeo();});
+lbImg.addEventListener('load',drawGeo);
+function openLB(w){lbGeo.innerHTML='';geo.work=(!w.src&&w.no&&frameCorners[w.no])?w:null; // 年代作品(w.src)は四隅データなし→ボタンを出さない
+  lbGeoBtn.hidden=!geo.work;lbGeoPanel.hidden=!(geo.work&&geo.show);
+  lbImg.src=w.src||thumb(w.file,1400);lb.classList.add('open');fitGeoPanel(); // w.src=年代作品（所蔵館の画像URL）／パネルの高さは表示後に測る
   if(window.innerWidth<=640){ let seen=false; try{seen=localStorage.getItem('lbHintSeen')==='1';}catch(e){} // 初回のみ小さく補助表示
     if(!seen){ lbHint.hidden=false; try{localStorage.setItem('lbHintSeen','1');}catch(e){} setTimeout(()=>{lbHint.hidden=true;},3800); } } }
-lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';lbHint.hidden=true;}); // 閉じる=元のsheetへそのまま戻る（選択は保持）
+lb.addEventListener('click',()=>{lb.classList.remove('open');lbImg.src='';lbHint.hidden=true;lbGeo.innerHTML='';}); // 閉じる=元のsheetへそのまま戻る（選択は保持）
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){lb.classList.remove('open');document.getElementById('detailCard').hidden=true;}});
 
 // ---------- 詳細カード（共通）：呼び出し元近くに出し（source-aware）中央SPACEを塞がない。ドラッグ可 ----------

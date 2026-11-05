@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>幾何ガイド 四隅の作業台</title>
+<style>
+:root{--bg:#04080e;--fg:#dfe8ef;--mut:#8aa0b0;--acc:#66e0ff}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,sans-serif;display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px}
+h1{font-size:15px;font-weight:normal;margin:0;color:var(--mut)}
+.stage{position:relative;display:inline-block;touch-action:none}
+.stage img{display:block;max-width:92vw;max-height:66vh;user-select:none;-webkit-user-drag:none}
+.stage svg,.cell svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.stage svg .h{pointer-events:all;cursor:grab}
+.bar{display:flex;flex-wrap:wrap;gap:6px 14px;justify-content:center;align-items:center;font-size:13px;max-width:1000px}
+.bar label{cursor:pointer;white-space:nowrap} .bar input[type=range]{width:80px;vertical-align:middle}
+select,button{background:#0d1824;color:var(--fg);border:1px solid #2a4458;border-radius:4px;padding:3px 8px;font-size:13px;cursor:pointer}
+button.on{border-color:var(--acc);color:var(--acc)}
+.note{font-size:12px;color:var(--mut);max-width:920px;text-align:center;line-height:1.6}
+#status{font-size:12px;color:var(--acc)}
+#gallery{display:none;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;width:min(1400px,96vw)}
+.cell{cursor:zoom-in} .cell .wrap{position:relative} .cell img{display:block;width:100%}
+.cell .cap{font-size:12px;color:var(--mut);margin-top:3px} .cell .cap b{color:var(--acc);font-weight:normal}
+body.gal #single{display:none} body.gal #gallery{display:grid}
+</style></head><body>
+<h1>幾何ガイド 四隅の作業台（作業用・公開画面からはリンクしない）</h1>
+<div class="bar">
+ <button id="prev">◀</button><select id="sel"></select><button id="next">▶</button>
+ <button id="galBtn">46図を並べる</button>
+ <span>基準：</span><button id="bImg">画像の端</button><button id="bFrame" class="on">絵の四隅</button>
+ <button id="editBtn">四隅を手直し</button><button id="resetBtn">この図を自動検出に戻す</button><button id="expBtn">データを書き出す</button>
+</div>
+<div id="status"></div>
+<div id="single"><div class="stage"><img id="im" crossorigin="anonymous" alt=""><svg id="g"></svg></div></div>
+<div id="gallery"></div>
+<div class="bar" id="toggles"></div>
+<div class="note">
+四隅の初期値は <code>data/hokusai_frame_corners.js</code>（データにない図はこの場で自動検出）。手直しはこのブラウザに一時保存されます。<br>
+「データを書き出す」で <code>hokusai_frame_corners.js</code> がダウンロードされます。それで <code>data/hokusai_frame_corners.js</code> を置き換えてコミットすると、本体の拡大表示に反映されます。<br>
+画像: Wikimedia Commons（960px の縮小画像）。
+</div>
+<script type="module">
+import { hokusaiViews } from '../../data/hokusai_views.js';
+import { frameCorners } from '../../data/hokusai_frame_corners.js';
+import { GUIDE_TYPES, GUIDE_NOTE, FULL_QUAD, guideSVG, detectFrame } from '../../hokusai/geometry_guide.js';
+
+const $=id=>document.getElementById(id), im=$('im'), g=$('g'), sel=$('sel');
+const WORKS=hokusaiViews.map(e=>({no:e.no,id:e.id,ja:e.identity.title_ja,url:e.evidence.image.url}));
+// Commons の縮小画像URL（upload.wikimedia.org は CORS 許可あり→画素を読める）
+const thumbUrl=u=>{const m=u.split('?')[0].match(/\/commons\/(.)\/(..)\/(.+)$/);return m?`https://upload.wikimedia.org/wikipedia/commons/thumb/${m[1]}/${m[2]}/${m[3]}/960px-${m[3]}`:u;};
+const r4=v=>Math.round(v*1e4)/1e4;
+
+// 状態：DATA=データファイルの値, AUTO=この場の自動検出, MAN=手直し(一時保存)
+const DATA={}; for(const [no,r] of Object.entries(frameCorners)) DATA[no]={quad:[r.A,r.B,r.C,r.D],source:r.source,note:r.note};
+const AUTO={}; let MAN={}; try{MAN=JSON.parse(localStorage.getItem('hk_geom_manual')||'{}')}catch(e){}
+const saveMan=()=>{try{localStorage.setItem('hk_geom_manual',JSON.stringify(MAN))}catch(e){}};
+let useFrame=true, editing=false, cur=0;
+const opts={on:{},grid:8,opacity:.8};
+GUIDE_TYPES.forEach(t=>opts.on[t.key]=t.def);
+
+function rec(no){ // その図の現在の四隅と出どころ
+  if(MAN[no]) return {quad:MAN[no],source:'manual',note:'手直し（未書き出し）'};
+  if(DATA[no]&&DATA[no].source==='manual') return DATA[no];
+  if(AUTO[no]) return {quad:AUTO[no].quad,source:'auto',note:AUTO[no].note};
+  if(DATA[no]) return DATA[no];
+  return {quad:FULL_QUAD,source:'auto',note:'未検出'};
+}
+function quadFor(no,img){ if(!AUTO[no]&&img.naturalWidth){try{AUTO[no]=detectFrame(img);}catch(e){AUTO[no]={quad:FULL_QUAD,note:'検出不可('+e.name+')'};}} return useFrame?rec(no).quad:FULL_QUAD; }
+function paint(svg,img,no,big){const W=img.naturalWidth,H=img.naturalHeight;if(!W)return;svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML=guideSVG(W,H,quadFor(no,img),{...opts,big,frame:useFrame,letters:big&&opts.on.letters!==false,handles:editing&&big});}
+
+// 切り替え
+const tg=$('toggles');
+tg.innerHTML=GUIDE_TYPES.map(t=>`<label><input type="checkbox" data-k="${t.key}" ${t.def?'checked':''}>${t.label}</label>`).join('')
+ +` <label>分割 <input type="range" id="n" min="2" max="16" value="8"> <span id="nv">8</span></label>`
+ +` <label><input type="checkbox" data-k="letters" checked>頂点記号</label> <label>濃さ <input type="range" id="op" min="20" max="100" value="80"></label>`;
+opts.on.letters=true;
+tg.querySelectorAll('input').forEach(i=>i.oninput=()=>{tg.querySelectorAll('[data-k]').forEach(c=>opts.on[c.dataset.k]=c.checked);
+  opts.grid=+$('n').value;$('nv').textContent=opts.grid;opts.opacity=$('op').value/100;redraw();});
+
+WORKS.forEach((w,i)=>sel.add(new Option(w.no+'. '+w.ja,i)));
+function stat(){const w=WORKS[cur],r=rec(w.no);$('status').textContent=useFrame?`この図：${r.source==='manual'?'手直しした四隅':'自動検出した四隅'}（${r.note||''}）`:'この図：画像の端を基準';}
+function show(i){cur=(i+WORKS.length)%WORKS.length;sel.value=cur;g.innerHTML='';im.alt=WORKS[cur].ja;im.src=thumbUrl(WORKS[cur].url);stat();}
+im.onload=()=>{paint(g,im,WORKS[cur].no,true);stat();};
+sel.onchange=()=>show(+sel.value);$('prev').onclick=()=>show(cur-1);$('next').onclick=()=>show(cur+1);
+
+let built=false;
+function buildGallery(){const gal=$('gallery');
+  WORKS.forEach((w,i)=>{const d=document.createElement('div');d.className='cell';
+    d.innerHTML=`<div class="wrap"><img crossorigin="anonymous" alt="${w.ja}"><svg></svg></div><div class="cap">${w.no}. ${w.ja} <b></b></div>`;
+    const img=d.querySelector('img'),svg=d.querySelector('svg');img.onload=()=>{paint(svg,img,w.no,false);mark(d,w.no);};img.src=thumbUrl(w.url);
+    d.onclick=()=>{toggleGal(false);show(i);};gal.appendChild(d);});built=true;}
+const mark=(d,no)=>d.querySelector('b').textContent=rec(no).source==='manual'?'手直し':'';
+function redraw(){paint(g,im,WORKS[cur].no,true);document.querySelectorAll('.cell').forEach((c,i)=>{paint(c.querySelector('svg'),c.querySelector('img'),WORKS[i].no,false);mark(c,WORKS[i].no);});stat();}
+function toggleGal(v){document.body.classList.toggle('gal',v);$('galBtn').classList.toggle('on',v);$('galBtn').textContent=v?'1図ずつ見る':'46図を並べる';
+  if(v){editing=false;$('editBtn').classList.remove('on');if(!built)buildGallery();}redraw();}
+$('galBtn').onclick=()=>toggleGal(!document.body.classList.contains('gal'));
+function setBase(f){useFrame=f;$('bFrame').classList.toggle('on',f);$('bImg').classList.toggle('on',!f);if(!f){editing=false;$('editBtn').classList.remove('on');}redraw();}
+$('bImg').onclick=()=>setBase(false);$('bFrame').onclick=()=>setBase(true);
+$('editBtn').onclick=()=>{if(!useFrame)setBase(true);if(document.body.classList.contains('gal'))toggleGal(false);editing=!editing;$('editBtn').classList.toggle('on',editing);redraw();};
+$('resetBtn').onclick=()=>{const no=WORKS[cur].no;delete MAN[no];if(DATA[no]&&DATA[no].source==='manual')DATA[no]={...DATA[no],source:'auto-reset'};saveMan();redraw();};
+
+// 四隅のドラッグ
+let drag=-1;
+g.addEventListener('pointerdown',e=>{const t=e.target;if(!t.classList||!t.classList.contains('h'))return;const no=WORKS[cur].no;drag=+t.dataset.i;MAN[no]=rec(no).quad.map(p=>p.slice());e.preventDefault();});
+addEventListener('pointermove',e=>{if(drag<0)return;const r=im.getBoundingClientRect(),no=WORKS[cur].no;
+  MAN[no][drag]=[Math.min(1,Math.max(0,(e.clientX-r.left)/r.width)),Math.min(1,Math.max(0,(e.clientY-r.top)/r.height))];paint(g,im,no,true);});
+addEventListener('pointerup',()=>{if(drag>=0){drag=-1;saveMan();stat();}});
+document.addEventListener('keydown',e=>{if(e.target.tagName==='SELECT')return;if(e.key==='ArrowLeft')show(cur-1);if(e.key==='ArrowRight')show(cur+1);});
+
+// 書き出し：data/hokusai_frame_corners.js をそのまま置き換えられる形
+function buildModuleText(today=new Date().toISOString().slice(0,10)){
+  const lines=WORKS.map(w=>{const r=rec(w.no);if(r.note==='未検出')throw new Error(w.no+' 未検出（46図を並べて全図を読み込んでから書き出してください）');
+    const q=r.quad.map(p=>'['+r4(p[0])+','+r4(p[1])+']');const src=r.source==='manual'?'manual':'auto';
+    return `  ${w.no}: { id:'${w.id}', A:${q[0]}, B:${q[1]}, C:${q[2]}, D:${q[3]}, source:'${src}', note:'${String(r.note||'').replace(/'/g,'')}' }, // ${w.ja}`;});
+  return `// data/hokusai_frame_corners.js — 富嶽三十六景46図の「絵の四隅」（幾何ガイドの基準）
+// 生成: tools/hokusai_geometry/index.html（自動検出＋手直し）。手で編集せず、作業台で直して書き出す。
+// 座標は Commons 画像（hokusai_views.js の evidence.image）の幅・高さに対する割合 [x,y]（0〜1, 左上原点）。
+// A=左下 B=右下 C=右上 D=左上。source: auto=自動検出 / manual=作業台で手直し。
+// 画像を差し替えたら、その図の四隅も作業台で確認し直す。
+export const frameCornersMeta = { updated:'${today}', count:${WORKS.length}, basis:'Wikimedia Commons image (evidence.image.file)', note:'${GUIDE_NOTE}' };
+export const frameCorners = {
+${lines.join('\n')}
+};
+`;}
+window.buildModuleText=buildModuleText;
+window.ensureAllDetected=async()=>{for(const w of WORKS){if(AUTO[w.no])continue;const img=new Image();img.crossOrigin='anonymous';img.src=thumbUrl(w.url);await img.decode();AUTO[w.no]=detectFrame(img);}return Object.keys(AUTO).length;};
+$('expBtn').onclick=async()=>{try{await window.ensureAllDetected();const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buildModuleText()],{type:'text/javascript'}));a.download='hokusai_frame_corners.js';a.click();}catch(e){alert(e.message);}};
+show(0);
+</script></body></html>
