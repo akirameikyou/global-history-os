@@ -197,6 +197,12 @@
   .tpin{position:relative;width:0;height:0;pointer-events:none}
   .tpin .ring{position:absolute;left:-9px;top:-9px;width:18px;height:18px;border:2px solid #cbe6ff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.45)}
   .tpin .lb{position:absolute;left:14px;top:-9px;white-space:nowrap;font-size:11px;color:#eef3f8;text-shadow:0 1px 3px #000,0 0 2px #000}
+  .bpin{position:relative;width:0;height:0;pointer-events:none}
+  .bpin .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;background:#fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.5)}
+  .bpin .ring{position:absolute;left:-11px;top:-11px;width:22px;height:22px;border:1.5px solid rgba(255,255,255,.85);border-radius:50%}
+  .bpin.wide .ring{left:-22px;top:-22px;width:44px;height:44px;border-style:dashed}   /* 広い地域・旧国名＝点ではなく「あたり」 */
+  .bpin .lb{position:absolute;left:16px;top:-10px;white-space:nowrap;font-size:11.5px;color:#fff;text-shadow:0 1px 3px #000,0 0 2px #000}
+  .bpin .lb small{font-size:10px;color:#cbd5df;margin-left:4px}
   .tcau{font-size:9px;color:var(--est,#e0b45f);border:1px dashed currentColor;border-radius:3px;padding:0 4px;margin:0 3px 0 2px;cursor:pointer;white-space:nowrap;vertical-align:1px} /* 資料間の食い違いの札 */
   .tmap{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--est,#e0b45f);border:1px solid currentColor;border-radius:3px;
     padding:0 4px;margin:0 3px 0 4px;cursor:pointer;vertical-align:1px;white-space:nowrap}
@@ -810,6 +816,7 @@ function jholdFC(){ if(!State.nowMode) return emptyFC();
     ({type:'Feature',properties:{hid:h.id,label:h.institution},geometry:{type:'Point',coordinates:[h.lng,h.lat]}}))}; }
 function renderJapan(){ if(!mapReady)return; map.getSource('cone').setData(coneFC()); // Representation(コーン)描画のみ。カメラは触らない
   if(map.getSource('jhold'))map.getSource('jhold').setData(jholdFC()); // NOW=国内所蔵館point（gray）
+  syncBankPin(); // 選んだ人（人物年鑑）の生まれた所の点も地図の準備ができたときに出す
   applyNowLayering(); // NOW時は行路(cyan)・46図点を沈め、美術館pointを最前面に
   const sel=(State.selection.type==='work'&&State.selection.id!=null)?State.selection.id:-1; // 選択作品ラベルの出し分け
   if(map.getLayer('ptsLsel'))map.setFilter('ptsLsel',['==',['get','no'],sel]);
@@ -1118,6 +1125,21 @@ function ageShortB(p,y){ if(!p)return ''; if(p.born==null)return p.died!=null&&y
   if(y<p.b[0])return '誕生前'; if(p.died!=null&&y>p.d[1])return '没後'+(y-p.died)+'年'; return (y-p.born)+'歳'+(p.b[0]!==p.b[1]?'ごろ':''); }
 const asciiB=s=>(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^\x20-\x7e]/g,'').trim(); // 地球儀ラベルは ASCII のみ
 const BANK_KIND={event:'出来事',pub:'刊行',made:'制作',curated:'交点'};
+// 生まれた所の細かさ（試作：名前で判断。将来は Wikidata の「何であるか」P31 で分ける）。
+// wide＝島・国全体・伝説の地など（寄らない）／province＝旧国名（引き気味）／place＝市・町・寺など（寄る）
+const WIDE_PLACES=new Set(['日本','本州','九州','四国','北海道','邪馬台国','琉球','蝦夷地']);
+function placeGrain(pl){ if(!pl)return null; const n=pl.name||''; if(WIDE_PLACES.has(n))return 'wide';
+  if(/国$/.test(n)&&n.length<=4)return 'province'; return 'place'; }
+const GRAIN_ZOOM={place:10,province:7.5};
+const GRAIN_NOTE={wide:'広い地域の代表点',province:'国のあたり（代表点）',place:''};
+let bankPin=null; // 日本地図に出す、選んだ人の生まれた所（選択中だけ）
+function syncBankPin(){ const s=State.selection, p=s.type==='bperson'?bankById[s.id]:null;
+  const want=p&&p.bpl&&State.spaceView==='JAPAN'&&mapReady?p:null;
+  if(bankPin&&(!want||bankPin._pid!==want.id)){ bankPin.remove(); bankPin=null; }
+  if(!want||bankPin)return;
+  const g=placeGrain(want.bpl), el=document.createElement('div'); el.className='bpin'+(g==='place'?'':' wide');
+  el.innerHTML='<span class="ring"></span><span class="dot"></span><span class="lb">'+esc(want.ja)+'　生まれた所：'+esc(want.bpl.name)+(GRAIN_NOTE[g]?'<small>（'+GRAIN_NOTE[g]+'）</small>':'')+'</span>';
+  bankPin=new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([want.bpl.lng,want.bpl.lat]).addTo(map); bankPin._pid=want.id; }
 let bankAll=false; // 下の段を全員表示するか（既定は 日本・世界 それぞれ先頭 5 人）
 function renderBankSection(){ const y=State.timeCursor, inPL=new Set(Object.values(PLINK_BASE));
   const alive=basePersons.filter(p=>p.id!==HOKUSAI_BASE_ID&&!inPL.has(p.id)&&bankStatus(p,y)==='alive');
@@ -1146,7 +1168,9 @@ function showBankCard(p,src){ const y=State.timeCursor; const box=document.creat
     '<a class="bp-link" href="../person/?p='+encodeURIComponent(p.id)+'&y='+y+'" target="_blank" rel="noopener">人物地球で詳しく見る（'+y+'年）↗</a>';
   const inJapan=pl=>pl&&pl.lat>24&&pl.lat<46&&pl.lng>122&&pl.lng<146;
   const action=p.bpl?{ label:'地点を見る（'+(asciiB(p.bpl.en)||p.bpl.name)+'）', onClick:()=>{
-      if(State.spaceView==='JAPAN'&&inJapan(p.bpl)){ focusPlace(p.bpl.lat,p.bpl.lng); return; }
+      if(State.spaceView==='JAPAN'&&inJapan(p.bpl)){ const g=placeGrain(p.bpl); syncBankPin();
+        if(g!=='wide') focusPlace(p.bpl.lat,p.bpl.lng,{zoom:GRAIN_ZOOM[g]}); else if(mapReady) map.flyTo({center:[p.bpl.lng,p.bpl.lat],duration:800,offset:mapFlyOffset()}); // 広い地域は寄らず中心だけ合わせる
+        return; }
       if(State.spaceView==='JAPAN') document.querySelector('#spaceSeg button[data-v="WORLD"]').click(); // 海外の生まれた所は地球で見る
       goToPlace(State.activePlace||{lat:p.bpl.lat,lng:p.bpl.lng,name:asciiB(p.bpl.en)||'born',color:'#ffffff'}); } }:null;
   showCard({ tag:'PERSON BANK ／ 同時代の人（人物年鑑）', title:p.ja, sub:(p.en?p.en+'｜':'')+p.born+'–'+p.died+'｜'+p.region, node:box,
@@ -1398,6 +1422,7 @@ on(()=>{ // selection highlight
   document.getElementById('axisToggle').disabled = !(State.selection.type==='work'&&State.selection.id!=null);
 });
 on(()=>renderPLink()); // P-LINK: 現在年代で再ランク＋選択ハイライト
+on(()=>syncBankPin()); // 日本地図：選んだ人の生まれた所の点（選択中・JAPAN のときだけ。カメラは動かさない）
 let lastLifeScrolled=null; // LIFE eventを明示選択した時だけ一度scroll（cursor連続移動では戻さない）
 on(()=>{ if(State.selection.type==='life'){ if(State.selection.id!==lastLifeScrolled){lastLifeScrolled=State.selection.id;scrollLifeIntoView(State.selection.id);} }
   else lastLifeScrolled=null; });
