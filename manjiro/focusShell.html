@@ -262,6 +262,21 @@
   .wl-person .qid:hover{text-decoration:underline}
   .wl-person .pg-link{font-size:10.5px;padding:2px 8px}
   .wl-person .pg-off{font-size:10px;padding:1px 7px}
+  /* 年譜のカードの資料（e.media：手紙・画像。将来のため。今のデータには無い）と、その拡大 */
+  .dm-row{display:flex;flex-wrap:wrap;gap:8px;white-space:normal}
+  .dm-item{display:flex;flex-direction:column;align-items:center;width:84px;padding:3px;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:5px;color:var(--sub);cursor:zoom-in}
+  .dm-item:hover{border-color:rgba(124,179,255,.55)}
+  .dm-item img{display:block;width:76px;height:56px;object-fit:cover;border-radius:3px;background:#0b1522}
+  .dm-item.broken{cursor:default;opacity:.6}
+  .dm-cap{font-size:9.5px;line-height:1.3;margin-top:3px;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mbox{position:fixed;inset:0;z-index:120;background:rgba(3,8,14,.88);display:flex;align-items:center;justify-content:center;padding:16px}
+  .mbox[hidden]{display:none}
+  .mb-inner{position:relative;max-width:min(980px,96vw);max-height:94vh;display:flex;flex-direction:column;align-items:center}
+  .mb-inner img{display:block;max-width:100%;max-height:78vh;object-fit:contain;border-radius:4px;background:#0b1522}
+  .mb-inner img[hidden]{display:none}
+  .mb-cap{margin-top:8px;font-size:11.5px;line-height:1.6;color:var(--sub);text-align:center;white-space:normal}
+  .mb-cap a{color:#cbe6ff}
+  .mb-close{position:absolute;top:-10px;right:-10px;width:28px;height:28px;border-radius:50%;background:rgba(10,16,26,.96);border:1px solid var(--rule);color:var(--ink);cursor:pointer;font-size:13px}
 
   /* ── 自動鑑賞（章の表紙・操作）── */
   .autobtn{background:rgba(102,224,255,.2);border:1px solid rgba(102,224,255,.8);color:#e4f9ff;border-radius:6px;height:26px;cursor:pointer;
@@ -420,7 +435,7 @@
         <span class="prog" id="autoProg"></span>
         <button id="autoPause" type="button" title="一時停止（Space）">❚❚<span class="lbl"> 一時停止</span></button>
         <button id="autoNext" type="button" title="次の章へ">›› <span class="lbl">次の章</span></button>
-        <button id="autoCam" type="button" title="カメラをこの章に合わせ直し、以後も章ごとに合わせます" hidden>◎<span class="lbl"> 章に合わせる</span></button>
+        <button id="autoCam" type="button" title="カメラをこの章に合わせ直し、以後も章ごとに合わせ、船が画面の中心から離れたら追います" hidden>◎<span class="lbl"> 章に合わせる</span></button>
         <button id="autoEnd" type="button" title="自動鑑賞を終える（Esc）">✕<span class="lbl"> 終了</span></button>
       </div>
       <button class="zoombtn" id="zoomIn" type="button" title="拡大" aria-label="拡大">＋</button>
@@ -470,6 +485,14 @@
   <button class="dc-act" id="dcAct" type="button" hidden></button>
 </div>
 
+<div id="mediaBox" class="mbox" hidden role="dialog" aria-label="資料の拡大">
+  <div class="mb-inner">
+    <button id="mbClose" class="mb-close" type="button" title="閉じる（Esc）">✕</button>
+    <img id="mbImg" alt="">
+    <div id="mbCap" class="mb-cap"></div>
+  </div>
+</div>
+
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { events } from '../data/events.js?v=20261109h';
@@ -478,7 +501,7 @@ import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceTex
 import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261109h';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
 import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
-import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks } from './play_steps.js?v=20261110d';
+import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, followNeeded } from './play_steps.js?v=20261110f';
 
 // ---------- 定数 ----------
 // 年月の範囲：W-LINK（同時代の世界）は誕生前（1789〜）からあるので、その年まで下げる（5年単位に切り下げ、3年の余白）
@@ -685,7 +708,8 @@ const pointCache = new Map();
 function lifePoints() {
   const out = [], seen = new Set();
   LIFE.forEach(e => {
-    if (e.t > State.t + 1e-9 || e.lat == null || e.lng == null || !e.placeName || autoHiddenEv(e)) return;
+    const te = State.auto && AUTO_STOP_T.has(e.id) ? AUTO_STOP_T.get(e.id) : e.t; // 自動鑑賞中は、カードを出す年月から
+    if (te > State.t + 1e-9 || e.lat == null || e.lng == null || !e.placeName || autoHiddenEv(e)) return;
     const key = (e.chapterId || '') + '|' + e.placeName; if (seen.has(key)) return; seen.add(key);
     const fg = isFgEv(e), sel = State.sel.type === 'life' && State.sel.id === e.id;
     const ck = e.id + '|' + (fg ? 1 : 0) + '|' + (sel ? 1 : 0);
@@ -909,12 +933,62 @@ on(() => { // 船のカードを開いたまま年月を送ると、中身をそ
 
 // 年譜の note（訂正の理由・出典・推論の印）をカードに出す
 function noteNode(text) { const n = mk('div'); n.appendChild(mk('div', 'dc-sec', '注記・出典')); n.appendChild(mk('p', 'dc-para', esc(text))); return n; }
+// 年譜のカードの下：注記・出典（e.note）と、資料（e.media）。
+// e.media は将来のための仕組みだけ（2026-11-10 清水さん「船長からの手紙や、舟の画像なども将来的には出したい」。今のデータには無い）：
+//   [{ type:'letter'|'image', title, src, credit, rights, sourceUrl }]。src と rights が明記されたものだけ出す（無ければ何も出ない）。
+//   src は http(s) か、このサイトの中の相対パスだけ（javascript: や data: は出さない）
+const MEDIA_TYPE = { letter: '手紙', image: '画像' };
+const mediaSrc = s => { const v = String(s || '').trim(); return /^https?:\/\//i.test(v) || (v && !/^[a-z][a-z0-9+.-]*:/i.test(v) && !/^\/\//.test(v)) ? v : ''; };
+const mediaList = e => (Array.isArray(e && e.media) ? e.media : []).filter(m => m && MEDIA_TYPE[m.type] && mediaSrc(m.src) && String(m.rights || '').trim());
+function mediaNode(e) {
+  const list = mediaList(e); if (!list.length) return null;
+  const box = mk('div', 'dc-media');
+  box.appendChild(mk('div', 'dc-sec', '資料'));
+  const row = mk('div', 'dm-row');
+  list.forEach(m => {
+    const kind = MEDIA_TYPE[m.type];
+    const b = mk('button', 'dm-item'); b.type = 'button'; b.title = kind + '：' + (m.title || '') + '（押すと拡大）';
+    const img = mk('img'); img.src = mediaSrc(m.src); img.alt = m.title || kind; img.loading = 'lazy'; img.draggable = false;
+    img.addEventListener('error', () => { b.classList.add('broken'); img.remove(); });
+    b.appendChild(img);
+    b.appendChild(mk('span', 'dm-cap', esc(kind + (m.title ? '・' + m.title : ''))));
+    b.addEventListener('pointerdown', ev => ev.stopPropagation());
+    b.onclick = ev => { ev.stopPropagation(); openMedia(m); };
+    row.appendChild(b);
+  });
+  box.appendChild(row);
+  return box;
+}
+function lifeCardNode(e) {
+  const n = e.note ? noteNode(e.note) : null, m = mediaNode(e);
+  if (!m) return n;
+  const box = mk('div'); if (n) box.appendChild(n); box.appendChild(m); return box;
+}
+// 資料の拡大（全画面の上に重ねる。✕・背景・Esc で閉じる）。自動鑑賞中に開いたら一時停止し、閉じたら再開する
+const mediaBox = document.getElementById('mediaBox'), mbImg = document.getElementById('mbImg'), mbCap = document.getElementById('mbCap');
+let mediaPausedAuto = false;
+function openMedia(m) {
+  const kind = MEDIA_TYPE[m.type] || '';
+  mbImg.hidden = false; mbImg.src = mediaSrc(m.src); mbImg.alt = m.title || kind;
+  mbImg.onerror = () => { mbImg.hidden = true; };
+  const src = m.sourceUrl && /^https?:\/\//i.test(m.sourceUrl) ? '<a href="' + esc(m.sourceUrl) + '" target="_blank" rel="noopener noreferrer">出典 ↗</a>' : '';
+  mbCap.innerHTML = '<b>' + esc(kind + (m.title ? '・' + m.title : '')) + '</b>' + (m.credit ? '<br>' + esc(m.credit) : '') + '<br>権利：' + esc(m.rights) + (src ? '　' + src : '');
+  mediaBox.hidden = false;
+  if (State.auto && !State.auto.paused) { autoPause(); mediaPausedAuto = true; }
+}
+function closeMedia() {
+  if (mediaBox.hidden) return false;
+  mediaBox.hidden = true; mbImg.removeAttribute('src');
+  if (mediaPausedAuto) { mediaPausedAuto = false; if (State.auto && State.auto.paused) autoResume(); }
+  return true;
+}
+mediaBox.addEventListener('click', e => { if (e.target === mediaBox || e.target.closest('#mbClose')) closeMedia(); });
 function showLifeCard(e, src, opt = {}) {
   cardCtx = { kind: 'life', id: e.id, auto: !!opt.auto };
   const ch = chapterById(e.chapterId);
   const timeNote = e.monthKnown ? '年月は既存データ（events.js）の年月です。' : '年だけが分かっている出来事です。タイムラインでは' + ymLabel(e.t) + 'に置いています（月は記録ではありません）。';
   showCard({ tag: 'LIFE / 年譜', title: e.title, sub: String(e.year || '') + (e.placeName ? ' ・ ' + e.placeName : '') + (ch && ch.id !== 'all' ? ' ・ ' + ch.en : ''),
-    body: e.cardText || e.description || '', node: e.note ? noteNode(e.note) : null, rel: timeNote + (e.approx ? '（' + e.approx + '）' : '') + (opt.autoNote ? '\n' + opt.autoNote : ''), accent: 'var(--c-focus)',
+    body: e.cardText || e.description || '', node: lifeCardNode(e), rel: (opt.noTimeNote ? '' : timeNote) + (e.approx ? '（' + e.approx + '）' : '') + (opt.autoNote ? (opt.noTimeNote ? '' : '\n') + opt.autoNote : ''), accent: 'var(--c-focus)',
     action: (e.lat != null && e.lng != null) ? { label: '地点を見る', onClick: () => goToPlace({ lat: e.lat, lng: e.lng, text: asciiLabel(e.placeName), color: OS_COLORS.focusBr }) } : null }, src);
 }
 function showWorldCard(e, src) {
@@ -1323,7 +1397,7 @@ document.getElementById('routeClose').onclick = () => { routePanel.hidden = true
 // ---------- タイムライン ----------
 const tl = document.getElementById('tl'); const SVGNS = 'http://www.w3.org/2000/svg';
 // 段の高さ（y）。W-LINK は分類ごとに3段（スマホ ≤640px は1段）。3段にした分、上の段の間を詰めて、全体の高さは前（98px）とほぼ同じに
-const LY = { title: 11, life: 17, voy: 30, ev: 41, wd: 51, wlTop: 57 };
+const LY = { title: 11, life: 17, voy: 30, evSub: 36, ev: 41, wd: 51, wlTop: 57 }; // evSub＝年譜の主でない出来事の細い段（2026-11-10）
 function tlLayout(sp) {
   const narrow = innerWidth <= 640;
   const rows = !State.wlink ? [] : narrow ? [{ id: '*', label: 'W-LINK' }] : WL_CATS.map(c => ({ id: c.id, label: c.ja, cat: c }));
@@ -1399,6 +1473,19 @@ function drawTL() {
     realAnchors(tr).forEach(a => { const ax = xOf(a.t); if (ax < -3 || ax > W + 3) return;
       add('circle', { cx: ax, cy: LY.voy, r: 2.3, fill: OS_COLORS.focusBr, stroke: '#050c16', 'stroke-width': .8, 'pointer-events': 'none' }); });
   });
+  // LIFE（主でない出来事）：小さく淡い点（右の年譜と同じ件を年代バーにも。2026-11-10 清水さん「年代バーと右年表が対応していない」）。
+  // 押すとカード、年月だけ動く（カメラは動かさない＝主な出来事と同じ）。年だけの出来事はその年の初めのまま。
+  // 年だけの出来事は同じ年の1月の主な出来事と同じ位置に来るので、年譜の段のすぐ上の細い段（LY.evSub）に置き、同じ時刻の点は events.js の並びで左右に少しずつずらす（押し分けられるように）
+  { const sec = LIFE.filter(e => e.timelineVisible === false), byT = new Map();
+    sec.forEach(e => { const k = Math.round(e.t * 12); if (!byT.has(k)) byT.set(k, []); byT.get(k).push(e); });
+    byT.forEach(list => list.forEach((e, j) => {
+      const x = xOf(e.t) + (j - (list.length - 1) / 2) * 5; if (x < -4 || x > W + 4) return;
+      const sel = State.sel.type === 'life' && State.sel.id === e.id;
+      const c = add('circle', { cx: x, cy: LY.evSub, r: sel ? 3.2 : 1.8, fill: sel ? OS_COLORS.focusBr : OS_COLORS.focus, 'fill-opacity': sel ? 1 : isFgEv(e) ? .55 : .22,
+        stroke: sel ? OS_COLORS.selRing : 'rgba(0,0,0,0)', 'stroke-width': sel ? 1.2 : 2.4 }, null, // 透明の縁で押せる幅を広げる
+        () => { State.sel = { type: 'life', id: e.id }; setT(e.t, { force: true }); showLifeCard(e, null); });
+      const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = String(e.year || '') + ' ' + (e.title || ''); c.appendChild(tt);
+    })); }
   // LIFE（主な出来事）
   LIFE_PRIMARY.forEach(e => { const x = xOf(e.t); if (x < -4 || x > W + 4) return;
     const sel = State.sel.type === 'life' && State.sel.id === e.id;
@@ -1485,7 +1572,7 @@ document.addEventListener('keydown', e => {
   if (e.target.closest && e.target.closest('input,textarea,select,[contenteditable]')) return;
   if (e.key === 'ArrowLeft') { e.preventDefault(); setT(State.t - 1 / 12); }
   else if (e.key === 'ArrowRight') { e.preventDefault(); setT(State.t + 1 / 12); }
-  else if (e.key === 'Escape') { if (State.auto) autoEnd(); closeCard(); chapMenu.hidden = true; }
+  else if (e.key === 'Escape') { if (closeMedia()) return; if (State.auto) autoEnd(); closeCard(); chapMenu.hidden = true; } // 資料の拡大が開いていれば、それだけ閉じる
   else if (e.code === 'Space' && State.auto) { e.preventDefault(); if (State.auto.paused) autoResume(); else autoPause(); }
 });
 // ▶：再生（1か月 1.5 秒で一定）。航海中（'sailing'）の月は1か月ずつ。記録の無い空白（'gap'）や航海の無い期間は1年ずつ（見出しは「○年」）。
@@ -1503,11 +1590,14 @@ playBtn.onclick = () => { if (State.playing) stopPlay(); else startPlay(); };
 
 // ---------- 自動鑑賞（2026-11-09 清水さんの依頼）----------
 // 章ごとに（年代順。範囲が他の章を含む章は、その前後で分ける＝晩年（1）・晩年（2））：表紙（約4秒）→ その章の航路だけを月ごとに伸ばす（航海中 1か月0.9秒。航海の無い期間は年ごとに0.6秒、出来事・航海の始まりは越えない）
-// → 年譜の主な出来事（timelineVisible!==false）でカードを開いて止まる（3秒＋文字数/40秒、4〜9秒）→ 次の章。最後に「生涯の全航路」。
+// → 年譜のすべての出来事でカードを開いて止まる（主な出来事は 3秒＋文字数/40秒＝4〜9秒、主でない出来事は 3〜6秒。2026-11-10 までは主な出来事だけだった）→ 次の章。最後に「生涯の全航路」。
+// 年だけの出来事は、章に航路があれば船がその場所を通る月に出す（play_steps.js の onTrackTime。タイムラインの位置は変えない）。
 // 【カメラの例外】通常は時間でカメラを動かさない（timeCursor ≠ camera）。自動鑑賞の時だけ、章が替わる時に
-// その章の航路（無ければ出来事の地点）が収まる向きと高さへ、ゆっくり動かす（autoFlyTo）。利用者が地球を動かしたら以後は動かさない（進行は続ける）。
+// その章の航路（無ければ出来事の地点）が収まる向きと高さへ、ゆっくり動かす（autoFlyTo）。航海中に船が画面の中心から大きく離れたら船の方へ寄せる（autoFollow）。
+// 利用者が地球を動かしたら以後は動かさない（進行は続ける。「章に合わせる」で戻る）。
 // 推測の印・二次資料の札・W-LINK・ガイドは、通常と同じ描き方のまま（自動鑑賞は「どの章を描くか」と「年月の進め方」だけを変える）。
-const AUTO = { coverMs: 4000, monthMs: 900, yearMs: 600, camMs: 2800, stopBaseMs: 3000, stopCharsPerSec: 40, stopMinMs: 4000, stopMaxMs: 9000 };
+const AUTO = { coverMs: 4000, monthMs: 900, yearMs: 600, camMs: 2800, stopBaseMs: 3000, stopCharsPerSec: 40, stopMinMs: 4000, stopMaxMs: 9000,
+  stopSecBaseMs: 2000, stopSecMinMs: 3000, stopSecMaxMs: 6000, followMs: 750 };
 // 章の表紙の一言（年譜 events.js の本文にあることだけで書く）
 const AUTO_LINE = {
   drift: '土佐・中浜に生まれ、宇佐浦から漁に出た船が流されて、鳥島へ漂着する。',
@@ -1530,14 +1620,20 @@ const autoCover = document.getElementById('autoCover'), acAct = document.getElem
 const prevMBtn = document.getElementById('prevM'), nextMBtn = document.getElementById('nextM');
 const timelineBar = document.getElementById('timelineBar');
 
-// 章の止まる所：その章の主な年譜を events.js の並び（＝起きた順）で（play_steps.js の autoStops。年だけの出来事の扱いもそこに）
+// 章の止まる所：その章の年譜のすべて（主でない出来事も。2026-11-10 清水さん）を events.js の並び（＝起きた順）で（play_steps.js の autoStops）。
+// 年だけの出来事は、章に航路があれば「船がその場所を通る月」に置く（onTrackTime。タイムラインの位置は変えない）。最後に時刻の順（同じ時刻は events.js の並び）
 const EV_ORDER = new Map(events.map((e, i) => [e.id, i]));
-const autoStops = cid => buildAutoStops(LIFE_PRIMARY, cid, EV_ORDER);
+const autoStops = cid => buildAutoStops(LIFE, cid, EV_ORDER, TRACKS);
 // 自動鑑賞で回る区間（年代順）。範囲が他の章を丸ごと含む章（晩年 1864〜1898 は 欧州へ 1870〜1871 を含む）は、その前後で分ける（play_steps.js の autoSegments）
 // 航路のある区間では、年だけの出来事のカードをその区間の航路を描き終えた後に出す（監査 r4 L7。play_steps.js の holdYearOnlyAfterTracks）
 const AUTO_SEGS = holdYearOnlyAfterTracks(autoSegments(AUTO_CHAPTERS, CHAPTER_RANGE, TRACKS, autoStops), LIFE, EV_ORDER);
 const segName = g => { const c = chapterById(g.chapterId); return { en: c.en + (g.part ? ' (' + g.part + ')' : ''), ja: (c.ja || '') + (g.part ? '（' + g.part + '）' : '') }; };
-const stopMs = e => clamp(AUTO.stopBaseMs + ((e.cardText || e.description || '').length + (e.title || '').length) / AUTO.stopCharsPerSec * 1000, AUTO.stopMinMs, AUTO.stopMaxMs);
+// 止まる時間：主な出来事は 3秒＋文字数/40秒（4〜9秒）。主でない出来事（timelineVisible===false）は少し短く 2秒＋文字数/40秒（3〜6秒）
+const stopMs = e => e.timelineVisible === false
+  ? clamp(AUTO.stopSecBaseMs + ((e.cardText || e.description || '').length + (e.title || '').length) / AUTO.stopCharsPerSec * 1000, AUTO.stopSecMinMs, AUTO.stopSecMaxMs)
+  : clamp(AUTO.stopBaseMs + ((e.cardText || e.description || '').length + (e.title || '').length) / AUTO.stopCharsPerSec * 1000, AUTO.stopMinMs, AUTO.stopMaxMs);
+// 自動鑑賞で、出来事のカードを出す年月（e.id → 時刻）。地球の年譜の地点も、自動鑑賞中はこの年月から出す（年だけの出来事が、船が着く前に1月から出ないように）
+const AUTO_STOP_T = new Map(AUTO_SEGS.flatMap(g => g.stops.map(s => [s.e.id, s.t])));
 
 // カメラ：点の集まりが収まる向き（単位ベクトルの平均）と高さ（中心から最も遠い点が画角の内側に入る距離）
 const toVec = (lat, lng) => { const p = lat * Math.PI / 180, l = lng * Math.PI / 180; return [Math.cos(p) * Math.cos(l), Math.cos(p) * Math.sin(l), Math.sin(p)]; };
@@ -1562,9 +1658,9 @@ function chapterPoints(seg, tracks) {
   if (!pts.length && seg) LIFE.filter(e => e.autoChapter === seg.chapterId).forEach(e => pts.push(e));
   return pts;
 }
-let camAnim = null;
-function cancelCamAnim() { if (camAnim) cancelAnimationFrame(camAnim); camAnim = null; }
-function autoFlyTo(to, ms) { // 自動鑑賞だけの、ゆっくりしたカメラの移動（大円に沿って向きを、高さは同時に）
+let camAnim = null, camAnimKind = null; // camAnimKind：'fit'（章・まとめに合わせる）／'follow'（船へ寄せる）
+function cancelCamAnim() { if (camAnim) cancelAnimationFrame(camAnim); camAnim = null; camAnimKind = null; }
+function autoFlyTo(to, ms, kind = 'fit') { // 自動鑑賞だけの、ゆっくりしたカメラの移動（大円に沿って向きを、高さは同時に）
   cancelCamAnim(); if (!to) return;
   const from = world.pointOfView(), a = toVec(from.lat, from.lng), b = toVec(to.lat, to.lng);
   const om = Math.acos(clamp(dot3(a, b), -1, 1)), so = Math.sin(om), t0 = performance.now();
@@ -1575,9 +1671,23 @@ function autoFlyTo(to, ms) { // 自動鑑賞だけの、ゆっくりしたカメ
     else { const w1 = Math.sin((1 - e) * om) / so, w2 = Math.sin(e * om) / so; u = [a[0] * w1 + b[0] * w2, a[1] * w1 + b[1] * w2, a[2] * w1 + b[2] * w2]; }
     const nu = Math.hypot(u[0], u[1], u[2]) || 1;
     world.pointOfView({ ...fromVec(u.map(x => x / nu)), altitude: from.altitude + (to.altitude - from.altitude) * e }, 0);
-    camAnim = k < 1 ? requestAnimationFrame(frame) : null;
+    camAnim = k < 1 ? requestAnimationFrame(frame) : null; if (!camAnim) camAnimKind = null;
   };
-  camAnim = requestAnimationFrame(frame);
+  camAnim = requestAnimationFrame(frame); camAnimKind = kind;
+}
+// 自動鑑賞の追跡（2026-11-10 清水さん「自動再生モードでの追跡が効かない。ジョン・ハウランド号がアメリカへ行くと見えなくなる」）。
+// 章の初めは章全体へ合わせる（autoFitNow。今のまま）。その後、航海中に船の先頭（その章の航路の船）が画面の中心から大きく離れたら
+// （play_steps.js の followNeeded：大圏で 35°、低い所から見る時は画面の短い方の半分の 6 割の所）、高さは保ったまま船の方へなめらかに寄せる（0.75秒）。
+// 寄せる先は船の今の位置。そこから次に大きく離れるまでは動かさない（月ごとに揺れない）。
+// 章に合わせる動きの途中・利用者が地球を動かした後（camFree。「章に合わせる」で戻る）・まとめでは追わない。通常の表示の「追跡」ボタンとは別（followShip は変えない）
+function autoFollow() {
+  // 章に合わせる動きの途中は待つ。前の「寄せる」動きの途中なら、今の船の位置へ寄せ直す（船が1か月で大きく動く所で、カメラが置いていかれないように）
+  const A = State.auto; if (!A || A.camFree || A.phase === 'summary' || (camAnim && camAnimKind !== 'follow')) return;
+  const head = autoShipHead(); if (!head) return;
+  const pov = world.pointOfView(), cam = typeof world.camera === 'function' ? world.camera() : null;
+  if (!followNeeded(pov, head, (cam && cam.fov) || 50, innerWidth / Math.max(1, innerHeight))) return;
+  A.follows = (A.follows || 0) + 1;
+  autoFlyTo({ lat: head.lat, lng: head.lng, altitude: pov.altitude }, AUTO.followMs, 'follow');
 }
 function autoCameraReleased() { const A = State.auto; if (!A) return; cancelCamAnim(); if (!A.camFree) { A.camFree = true; syncAutoCtl(); } }
 function autoFitNow() {
@@ -1675,7 +1785,8 @@ function autoNextT(t, A) {
   const n = nextStep(A.tracks, t, Math.min(A.endT, s ? s.t : Infinity));
   // 出来事に着いた一歩の見出し：月の分かる出来事なら月も出す／年だけの出来事（その年の1月に置いたまま）なら「○年」だけ（航海中の1か月送りはそのまま）
   const atStop = s && Math.abs(n.t - s.t) < 1e-6;
-  const kind = !atStop || n.kind === 'month' ? n.kind : s.e.monthKnown ? (n.kind === 'year' ? 'align' : n.kind) : (!s.after && !s.moved && !s.afterTracks ? 'year' : n.kind);
+  // 航路の上に置いた年だけの出来事（s.onTrack）は、船が通る月を出す
+  const kind = !atStop || n.kind === 'month' ? n.kind : s.e.monthKnown ? (n.kind === 'year' ? 'align' : n.kind) : (!s.after && !s.moved && !s.afterTracks && !s.onTrack ? 'year' : n.kind);
   return { t: n.t, kind, ms: kind === 'month' ? AUTO.monthMs : AUTO.yearMs };
 }
 
@@ -1715,6 +1826,7 @@ function autoStep() {
   if (State.t >= A.endT - 1e-6) { autoChapter(A.idx + 1); return; }
   const n = autoNextT(State.t, A);
   setT(n.t, { auto: true, yearStep: n.kind === 'year' });
+  autoFollow();
   autoSchedule(autoStep, n.ms);
 }
 // W-LINK の年：year の文字があればそれ、無ければ範囲（開始と終わりが違う時は「1789 — 1793」）
@@ -1723,10 +1835,16 @@ function autoShowStop(s) {
   const A = State.auto; A.phase = 'stop';
   State.sel = { type: 'life', id: s.e.id }; emit(); // 年譜の行の強調（既存の連動）
   const mv = s.moved && s.moved.chapter;
-  const note = s.after ? '自動鑑賞では、年譜の並び（起きた順）に合わせて「' + s.after.title + '」（' + ymLabel(s.after.t) + '）の後に出しています。この出来事の月は記録ではありません。'
+  const ym = ymLabel(s.t), yDiff = Math.floor(s.t + 1e-9) !== Math.floor(s.e.t + 1e-9);
+  const yNote = yDiff ? '出来事の年（' + String(s.e.year || Math.floor(s.e.t)) + '）と、航路の時刻づけの年は揃っていません。' : '';
+  const note = s.onTrack ? (s.onTrack.kind === 'start'
+      ? '年だけが分かる出来事です。この航路の出発の推測の時刻（' + ym + '）に出しています。月は記録ではありません（タイムラインの位置は変えていません）。'
+      : '年だけが分かる出来事です。航路の上で船がこの場所を通る推測の時刻（' + ym + '）に出しています。月は記録ではありません（タイムラインの位置は変えていません）。' + yNote)
+    : s.after ? '自動鑑賞では、年譜の並び（起きた順）に合わせて「' + s.after.title + '」（' + ymLabel(s.after.t) + '）の後に出しています。この出来事の月は記録ではありません。'
     : s.afterTracks ? '自動鑑賞では、この章の航路を描き終えた後（' + ymLabel(s.t) + '）に出しています。' + (Math.floor(s.t + 1e-9) !== Math.floor(s.e.t + 1e-9) ? '出来事の年は ' + String(s.e.year || Math.floor(s.e.t)) + 'で、' : '') + '年だけが分かる出来事で、月は記録ではありません（タイムラインの位置は変えていません）。'
     : mv ? '自動鑑賞では、「' + (mv.ja || mv.en) + '」の章の' + (s.moved.dir === 'after' ? '後' : '前') + 'に出しています（出来事の年は ' + String(s.e.year || '') + '。タイムラインの位置は変えていません）。' : '';
-  showLifeCard(s.e, null, { auto: true, autoNote: note });
+  showLifeCard(s.e, null, { auto: true, autoNote: note, noTimeNote: !!s.onTrack }); // 航路の上に置いた時は、注記に年だけの旨を書くので重ねない
+  autoFollow(); // 止まる所でも、船が離れていれば寄せる（カードを出している間、船が画面の外に残らないように）
   placeAutoCard(s.e);
   setTimeout(scrollNearIntoView, 0);
   syncAutoCtl();
@@ -1781,7 +1899,7 @@ function syncAutoCtl() {
   const A = State.auto, on = !!A;
   autoBtn.hidden = on; autoCtl.hidden = !on;
   prevMBtn.hidden = on; playBtn.hidden = on; nextMBtn.hidden = on; // 自動鑑賞中は手動の送りを隠す
-  followBtn.disabled = on; followBtn.title = on ? '自動鑑賞中は使いません（カメラは章ごとに合わせます）' : '年月を送る・再生する時に、カメラが船を追います（既定はオフ）';
+  followBtn.disabled = on; followBtn.title = on ? '自動鑑賞中は使いません（カメラは章ごとに合わせ、船が離れたら追います）' : '年月を送る・再生する時に、カメラが船を追います（既定はオフ）';
   if (!on) return;
   const sum = A.phase === 'summary';
   autoProg.textContent = sum ? 'まとめ' : (A.idx + 1) + '/' + AUTO_SEGS.length;

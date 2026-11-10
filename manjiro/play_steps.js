@@ -4,7 +4,7 @@
 //
 // 時刻 t は小数の年（track_engine.js と同じ。月の初め = year + (month-1)/12）。
 
-import { trackAt, snapMonth, tOf } from './track_engine.js?v=20261109e';
+import { trackAt, snapMonth, tOf, gcDistKm } from './track_engine.js?v=20261109e';
 
 const EPS = 1e-6;
 export const monthFloor = t => Math.floor(t * 12 + EPS) / 12; // t を含む月の初め
@@ -52,7 +52,9 @@ export function evTime(e, fallbackYear = 1820) {
   if (m && +m[1] === e.startYear) return tOf(+m[1], m[2] ? +m[2] : 1);
   return tOf(e.startYear || fallbackYear, 1);
 }
-export const evMonthKnown = e => /^\d{4}\.\d{1,2}/.test(String(e.year || ''));
+// 月が分かるのは、year 欄に月があり、その年が startYear と同じ時だけ（例「1848.11 — 1849.09」で startYear 1849 は、
+// evTime が 1849年1月に置くので月は記録ではない＝年だけの出来事として扱う。監査 r6 中1）
+export const evMonthKnown = e => { const m = String(e.year || '').match(/^(\d{4})\.\d{1,2}/); return !!m && +m[1] === e.startYear; };
 export const evApprox = e => { const s = String(e.year || ''); return /年代|未確定/.test(s) ? '年は確かでない' : /頃/.test(s) ? '頃' : ''; };
 export function lifeFromEvents(events, fallbackYear) {
   return events.filter(e => e.type === 'person')
@@ -127,20 +129,65 @@ export function autoSegments(autoChapters, ranges, tracks, stopsOf) {
   return segs.map((s, i) => ({ s, i })).sort((a, b) => a.s.startT - b.s.startT || a.i - b.i).map(x => x.s);
 }
 
+// ---------- 年だけの出来事を、航路の上の「船がその場所を通る時刻」に置く（自動鑑賞だけ。タイムラインの位置は変えない）----------
+// maxKm：出来事の場所と航路の点の距離の上限。yearPad：その年の中に点が無い時に、年の前後どこまでの点を見るか（年）。
+// endKm：航路の最初・最後の点に結ぶ時の距離の上限（港に着いた後・出る前の陸の出来事、例：サクラメント・金山を、船が通る所にしない）
+export const ON_TRACK = { maxKm: 1000, yearPad: 0.5, endKm: 50 };
+// 時刻 t を含む月の初め。その月の初めに船がまだ出ていなければ（出港・寄港が月の途中）、翌月の初め
+function sailMonth(tr, t) {
+  const f = monthFloor(t); if (trackAt(tr, f).state === 'sailing') return f;
+  const c = monthCeil(t); return trackAt(tr, c).state === 'sailing' ? c : f;
+}
 /**
- * autoStops(lifePrimary, cid, evOrder) → [{ e, t, after, i }]
- *   その章の主な年譜（timelineVisible!==false）を events.js の並び（＝起きた順）で。年だけの出来事（月は不明）は1月に置かれているので、
- *   同じ年の月の分かる出来事より並びが後なら、その後に出す（タイムラインの位置は変えない。カードに「月は記録ではない」と書く）。
+ * onTrackTime(e, tracks, opt) → null | { t, kind:'start'|'pass', how:'start'|'year'|'near', track, point, km }
+ *   月の分からない出来事（e.monthKnown でない）だけ。tracks はその章の航路。
+ *   ・航海の始まりの出来事（track.eventIds[0]）は、その航路の出発の月（kind 'start'）
+ *   ・lat/lng があれば、航路の点のうち出来事の年の中（t が [年, 年+1)）にあって、場所に最も近い点（maxKm 以内）。how 'year'
+ *     その年の中に無ければ、年の前後 yearPad 年までの点で最も近い点（maxKm 以内）。how 'near'（例：タヒチ 1843 は航路では 1842年12月）
+ *   ・結んだ点が航路の最初・最後の点で、距離が endKm を超える時は結ばない（陸の出来事）。見つからなければ null（今の規則のまま）
+ *   t は、その点を船が通る時刻を含む月の初め（その月の初めに船が出ていなければ翌月の初め）
  */
-export function autoStops(lifePrimary, cid, evOrder) {
-  const list = lifePrimary.filter(e => e.autoChapter === cid).sort((a, b) => evOrder.get(a.id) - evOrder.get(b.id));
-  const knownByYear = new Map(); // 年 → それまでに出た、月の分かる出来事のうち最も遅いもの
+export function onTrackTime(e, tracks, opt = ON_TRACK) {
+  if (!e || e.monthKnown) return null;
+  const trs = (tracks || []).filter(tr => tr.tStart != null && tr.points && tr.points.length);
+  if (!trs.length) return null;
+  const start = trs.find(tr => tr.eventIds && tr.eventIds[0] === e.id);
+  if (start) return { t: sailMonth(start, start.tStart), kind: 'start', how: 'start', track: start, point: start.points[0], km: 0 };
+  if (e.lat == null || e.lng == null) return null;
+  const y = Math.floor(e.t + EPS);
+  const cands = [];
+  trs.forEach(tr => tr.points.forEach((p, i) => { if (p.t != null && p.lat != null && p.lng != null) cands.push({ tr, p, i, km: gcDistKm(p, e) }); }));
+  const pick = list => { let b = null; list.forEach(c => { if (c.km <= opt.maxKm && (!b || c.km < b.km - 1e-9)) b = c; }); return b; };
+  let best = pick(cands.filter(c => c.p.t >= y - EPS && c.p.t < y + 1 - EPS)), how = 'year';
+  if (!best) { best = pick(cands.filter(c => c.p.t >= y - opt.yearPad - EPS && c.p.t < y + 1 + opt.yearPad - EPS)); how = 'near'; }
+  if (!best) return null;
+  const end = best.i === 0 || best.i === best.tr.points.length - 1;
+  if (end && best.km > opt.endKm) return null;
+  return { t: sailMonth(best.tr, best.p.t), kind: 'pass', how, track: best.tr, point: best.p, km: best.km };
+}
+
+/**
+ * autoStops(life, cid, evOrder, tracks) → [{ e, t, after, onTrack, i }]
+ *   その章の年譜のすべて（主でない出来事も。2026-11-10 清水さん「なるべく人生年譜に配置されているカードは展開していきたい」）を
+ *   events.js の並び（＝起きた順）で。
+ *   年だけの出来事（月は不明）は、章に航路があれば onTrackTime で「船がその場所を通る月」に置く（s.onTrack。タイムラインの位置は変えない）。
+ *   航路に結べない年だけの出来事は1月に置かれているので、同じ年の月の分かる出来事（航路に置いた出来事も含む）より並びが後なら、
+ *   その後に出す（s.after）。最後に時刻の順に並べ直す（同じ時刻は events.js の並び）。
+ */
+export function autoStops(life, cid, evOrder, tracks = []) {
+  const list = life.filter(e => e.autoChapter === cid).sort((a, b) => evOrder.get(a.id) - evOrder.get(b.id));
+  const ctr = (tracks || []).filter(tr => tr.chapterId === cid && tr.tStart != null);
+  const knownByYear = new Map(); // 年 → それまでに出た、時刻の決まった出来事のうち最も遅いもの
   return list.map((e, i) => {
     const y = Math.floor(e.t + 1e-9), k = knownByYear.get(y);
-    let t = e.t, after = null;
-    if (e.monthKnown) { if (!k || e.t > k.t) knownByYear.set(y, e); }
+    let t = e.t, after = null, onTrack = null;
+    const on = e.monthKnown ? null : onTrackTime(e, ctr);
+    if (on) {
+      t = on.t; onTrack = { kind: on.kind, how: on.how, track: on.track.key, point: on.point.label, km: Math.round(on.km) };
+      if (!k || t > k.t) knownByYear.set(y, { id: e.id, title: e.title, t });
+    } else if (e.monthKnown) { if (!k || e.t > k.t) knownByYear.set(y, e); }
     else if (k && k.t > e.t) { t = k.t; after = k; }
-    return { e, t, after, i };
+    return { e, t, after, onTrack, i };
   }).sort((a, b) => a.t - b.t || a.i - b.i);
 }
 
@@ -166,7 +213,7 @@ export function holdYearOnlyAfterTracks(segs, life, evOrder) {
     const startIds = new Set(trs.map(tr => tr.eventIds && tr.eventIds[0]).filter(Boolean)); // 航路を作る最初の出来事（航海の始まり）は送らない
     let changed = false;
     const stops = g.stops.map(s => {
-      if (s.e.monthKnown || s.moved || startIds.has(s.e.id)) return s;
+      if (s.e.monthKnown || s.moved || s.onTrack || startIds.has(s.e.id)) return s; // 航路の上に置いた出来事（onTrackTime）は動かさない
       const y = Math.floor(s.e.t + EPS);
       if (!(y + 1 > from + EPS && y <= to + EPS)) return s;
       if ((evOrder.get(s.e.id) ?? -1) <= lastKnown) return s;
@@ -178,4 +225,36 @@ export function holdYearOnlyAfterTracks(segs, life, evOrder) {
     stops.sort((a, b) => a.t - b.t || a.i - b.i);
     return { ...g, stops };
   });
+}
+
+// ---------- 自動鑑賞の追跡（カメラの向きから船がどれだけ離れたら寄せるか）----------
+// 2026-11-10 清水さん「自動再生モードでの追跡が効かない（ジョン・ハウランド号がアメリカへ行くと見えなくなる）」。
+// 画面に依存しない幾何だけをここに置く（focusShell.html の autoFollow が使う）。
+const D2R = Math.PI / 180;
+const unit = (lat, lng) => { const p = lat * D2R, l = lng * D2R; return [Math.cos(p) * Math.cos(l), Math.cos(p) * Math.sin(l), Math.sin(p)]; };
+/** centralAngleDeg(a, b) → 二点（{lat,lng}）の大圏の角度（度） */
+export function centralAngleDeg(a, b) {
+  const u = unit(a.lat, a.lng), v = unit(b.lat, b.lng);
+  return Math.acos(Math.max(-1, Math.min(1, u[0] * v[0] + u[1] * v[1] + u[2] * v[2]))) / D2R;
+}
+export const FOLLOW = { maxDeg: 35, frac: 0.6 };
+/**
+ * followLimitDeg(altitude, fovDeg, aspect, opt) → 度
+ *   カメラの向き（画面の中心の地点）から、船がこの角度（大圏）を超えて離れたら、船の方へ寄せる。
+ *   opt.maxDeg（35°）と、「船が画面の中心から、縦・横の短い方の半分の opt.frac の所に見える角度」の小さい方。
+ *   高い所から見る時（章全体を収めた高さ）は 35°、低い所から見る時は画面の端より内側で寄せる（地球の裏側へ回る前に）。
+ */
+export function followLimitDeg(altitude, fovDeg = 50, aspect = 1, opt = FOLLOW) {
+  const D = 1 + Math.max(0.01, altitude);
+  const vh = fovDeg / 2 * D2R, hh = Math.atan(Math.tan(vh) * aspect);
+  const beta = Math.min(vh, hh) * opt.frac;
+  // 地球の中心から θ 離れた地点の、視線からの角度 = atan(sinθ / (D − cosθ))。θ は 0〜地平線（acos(1/D)）で増えるので二分法
+  let lo = 0, hi = Math.acos(1 / D);
+  for (let k = 0; k < 40; k++) { const mid = (lo + hi) / 2; if (Math.atan2(Math.sin(mid), D - Math.cos(mid)) < beta) lo = mid; else hi = mid; }
+  return Math.min(opt.maxDeg, lo / D2R);
+}
+/** followNeeded(cam, head, fovDeg, aspect) → true なら船へ寄せる（cam＝{lat,lng,altitude}、head＝{lat,lng}） */
+export function followNeeded(cam, head, fovDeg = 50, aspect = 1, opt = FOLLOW) {
+  if (!cam || !head || head.lat == null || head.lng == null) return false;
+  return centralAngleDeg(cam, head) > followLimitDeg(cam.altitude, fovDeg, aspect, opt);
 }
