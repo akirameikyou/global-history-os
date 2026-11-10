@@ -22,28 +22,35 @@ export const sailingAt = (tracks, t) => tracks.some(tr => trackAt(tr, t).state =
  *   （その月の初めでは船も線も出ず、画面が何も変わらない一歩になっていた。2026-11-10 の不具合の調べ）。
  *   戻り値の t は必ず t より後の月の初め（同じ年月が続かない）。lim を越える時は lim（lim が t より後の時）。
  *   kind 'year' の一歩は、画面の見出しを「○年」だけにする（月の数字が同じまま年だけ変わると、月が止まって見えた）。
+ *   t・lim は月の途中でもよい（2026-11-10：航路の上の止まる所を、船がその場所にいる時刻そのものに置いた）。
+ *   t が月の途中なら、次は翌月の初め。行き先と lim が同じ月で lim の方が後なら、月の初めに寄らずに lim へ（同じ見出しが続かないように）。
  */
 export function nextStep(tracks, t, lim = Infinity) {
-  const n = snapMonth(t + 1 / 12);
-  const cap = x => (lim > t + EPS ? Math.min(x, lim) : x);
-  if (sailingAt(tracks, t) || sailingAt(tracks, n)) return { t: cap(n), kind: 'month' };
+  const k0 = Math.floor(t * 12 + EPS);
+  const n = (k0 + 1) / 12, j = (k0 + 12) / 12;
+  const limOk = lim > t + EPS ? lim : Infinity;
+  const fin = (x, kind) => {
+    if (x > limOk) x = limOk;
+    if (limOk < Infinity && x < limOk - EPS && Math.floor(x * 12 + EPS) === Math.floor(limOk * 12 + EPS)) { x = limOk; if (kind === 'year') kind = 'align'; }
+    return { t: x, kind };
+  };
+  if (sailingAt(tracks, t) || sailingAt(tracks, n)) return fin(n, 'month');
   let nxtTrack = Infinity;
   tracks.forEach(tr => {
     if (tr.tStart != null && tr.tStart > t + 1e-9) nxtTrack = Math.min(nxtTrack, tr.tStart);
     tr.points.forEach((p, i) => { const q = tr.points[i + 1]; if (p.gapToNext && q && q.t > t + 1e-9) nxtTrack = Math.min(nxtTrack, q.t); });
   });
-  const j = snapMonth(t + 1);
-  const limOk = lim > t + EPS ? lim : Infinity;
   const target = Math.min(nxtTrack, limOk);
   // 1年送った先で船が出ている（その月に出港の記録がある等）なら、月も見せる（'align'）
-  if (target >= j - EPS) return { t: j, kind: sailingAt(tracks, j) ? 'align' : 'year' };
+  if (target >= j - EPS) return fin(j, sailingAt(tracks, j) ? 'align' : 'year');
   let m = monthFloor(target);
   if (target === nxtTrack && nxtTrack < limOk - EPS && !sailingAt(tracks, m)) {
     const c = monthCeil(target);
     if (c <= limOk + EPS && c < j - EPS) m = c;
   }
-  return { t: Math.max(n, m), kind: Math.max(n, m) >= j - EPS ? 'year' : 'align' };
+  return fin(Math.max(n, m), Math.max(n, m) >= j - EPS ? 'year' : 'align');
 }
+export const isMonthStart = t => Math.abs(t * 12 - Math.round(t * 12)) < 1e-6;
 
 // ---------- 年譜（events.js の person）----------
 // events.js の year 欄 → 時刻（月が書いてあればその月、無ければ startYear の1月）
@@ -63,13 +70,18 @@ export function lifeFromEvents(events, fallbackYear) {
 }
 
 // 章の時間の範囲（年譜と航海から）。'all' は持たない
+// 年だけの出来事（その年の1月に置く）は、同じ章の時刻の分かるもの（月の分かる出来事・航海）のうち最も早いものと同じ年なら、それより前には置かない
+// （2026-11-10 フェアヘーブンの章：到着 1843.05 と「ストーン・スクール 1843」で、章が1843年1月から始まり、ハウランド号の章（〜1843年5月）と重なっていた）
 export function chapterRanges(chapters, life, tracks) {
   const out = {};
   chapters.forEach(c => {
     if (c.id === 'all') return;
     const ts = [];
-    life.filter(e => e.chapterId === c.id).forEach(e => ts.push(e.t));
-    tracks.filter(t => t.chapterId === c.id && t.tStart != null).forEach(t => { ts.push(t.tStart); ts.push(t.tEnd); });
+    const evs = life.filter(e => e.chapterId === c.id), trs = tracks.filter(t => t.chapterId === c.id && t.tStart != null);
+    const known = [...evs.filter(e => e.monthKnown).map(e => e.t), ...trs.map(t => t.tStart)];
+    const kMin = known.length ? Math.min(...known) : null;
+    evs.forEach(e => ts.push(!e.monthKnown && kMin != null && e.t < kMin && Math.floor(e.t + EPS) === Math.floor(kMin + EPS) ? kMin : e.t));
+    trs.forEach(t => { ts.push(t.tStart); ts.push(t.tEnd); });
     if (ts.length) out[c.id] = { from: Math.min(...ts), to: Math.max(...ts) };
   });
   return out;
@@ -126,13 +138,33 @@ export function autoSegments(autoChapters, ranges, tracks, stopsOf) {
       segs.push({ key: c.id + (keep.length > 1 ? '#' + (k + 1) : ''), chapterId: c.id, part: keep.length > 1 ? k + 1 : null, parts: keep.length, ...p });
     });
   });
-  return segs.map((s, i) => ({ s, i })).sort((a, b) => a.s.startT - b.s.startT || a.i - b.i).map(x => x.s);
+  const out = segs.map((s, i) => ({ s, i })).sort((a, b) => a.s.startT - b.s.startT || a.i - b.i).map(x => x.s);
+  // 続く区間が前の区間の終わりより前に始まる時（ハウランド号は航路の終わりの翌月 1843年6月まで、フェアヘーブンは到着の 1843年5月から）は、
+  // 前の区間の最後の止まる所が次の区間の始まり以前なら、前の区間をそこで終える（年月が後戻りしないように）。
+  // そうでなければ次の区間の始まりを前の区間の終わりへ送り、それより前の止まる所はそこに寄せる（s.moved）
+  for (let k = 1; k < out.length; k++) {
+    const p = out[k - 1], c = out[k];
+    if (c.startT >= p.endT - EPS) continue;
+    const last = Math.max(p.startT, ...p.stops.map(s => s.t));
+    if (last <= c.startT + EPS) { out[k - 1] = { ...p, endT: c.startT }; continue; }
+    if (Math.floor(last * 12 + EPS) === Math.floor(c.startT * 12 + EPS)) { // 同じ月の中（到着の日がその月の途中）：前の区間をそこで終え、次の区間もそこから
+      out[k - 1] = { ...p, endT: last };
+      out[k] = { ...c, startT: last, stops: c.stops.map(s => s.t < last - EPS ? { ...s, t: last, joined: last } : s).sort((a, b) => a.t - b.t || a.i - b.i) };
+      continue;
+    }
+    const st = p.endT;
+    out[k] = { ...c, startT: st, stops: c.stops.map(s => s.t < st - EPS ? { ...s, t: st, moved: { dir: 'after', chapter: { id: p.chapterId, en: p.key } } } : s).sort((a, b) => a.t - b.t || a.i - b.i) };
+  }
+  return out;
 }
 
 // ---------- 年だけの出来事を、航路の上の「船がその場所を通る時刻」に置く（自動鑑賞だけ。タイムラインの位置は変えない）----------
 // maxKm：出来事の場所と航路の点の距離の上限。yearPad：その年の中に点が無い時に、年の前後どこまでの点を見るか（年）。
 // endKm：航路の最初・最後の点に結ぶ時の距離の上限（港に着いた後・出る前の陸の出来事、例：サクラメント・金山を、船が通る所にしない）
 export const ON_TRACK = { maxKm: 1000, yearPad: 0.5, endKm: 50 };
+// 船がその点にいる時刻そのもの（2026-11-10：月の初めでは、船は1か月に数千 km 動くので、止まる時に船の印が場所から遠かった）。
+// 滞在のある点（入港〜出港）は滞在の中ほど
+export function shipAtPoint(p) { const d = p.tDep ?? p.t; return d > p.t + 1 / 365 ? (p.t + d) / 2 : p.t; }
 // 時刻 t を含む月の初め。その月の初めに船がまだ出ていなければ（出港・寄港が月の途中）、翌月の初め
 function sailMonth(tr, t) {
   const f = monthFloor(t); if (trackAt(tr, f).state === 'sailing') return f;
@@ -145,7 +177,7 @@ function sailMonth(tr, t) {
  *   ・lat/lng があれば、航路の点のうち出来事の年の中（t が [年, 年+1)）にあって、場所に最も近い点（maxKm 以内）。how 'year'
  *     その年の中に無ければ、年の前後 yearPad 年までの点で最も近い点（maxKm 以内）。how 'near'（例：タヒチ 1843 は航路では 1842年12月）
  *   ・結んだ点が航路の最初・最後の点で、距離が endKm を超える時は結ばない（陸の出来事）。見つからなければ null（今の規則のまま）
- *   t は、その点を船が通る時刻を含む月の初め（その月の初めに船が出ていなければ翌月の初め）
+ *   t は、kind 'pass' ならその点に船がいる時刻そのもの（shipAtPoint。月の途中のこともある）。kind 'start' は今の通り出発の月の初め（その月の初めに船が出ていなければ翌月の初め）
  */
 export function onTrackTime(e, tracks, opt = ON_TRACK) {
   if (!e || e.monthKnown) return null;
@@ -163,13 +195,67 @@ export function onTrackTime(e, tracks, opt = ON_TRACK) {
   if (!best) return null;
   const end = best.i === 0 || best.i === best.tr.points.length - 1;
   if (end && best.km > opt.endKm) return null;
-  return { t: sailMonth(best.tr, best.p.t), kind: 'pass', how, track: best.tr, point: best.p, km: best.km };
+  const x = shipAtPoint(best.p);
+  return { t: trackAt(best.tr, x).state === 'sailing' ? x : sailMonth(best.tr, best.p.t), kind: 'pass', how, track: best.tr, point: best.p, km: best.km };
+}
+
+// ---------- 月の分かる出来事を、航路の上で「船がその場所にいる時刻」に合わせる（自動鑑賞だけ。タイムラインの位置は変えない）----------
+// 2026-11-10 清水さん「1850.04 バルパライソ寄港のカードは地点はあっているが、自動再生だと、通り過ぎてから出ている」。
+// 航路の時刻（研究のアンカーと距離からの推測）と年譜の年月が食い違う所で、カードが船の着く前・通り過ぎた後に出ていた。
+// maxKm：出来事の場所と航路の点の距離の上限。maxMonths：年譜の月から動かしてよい幅（か月）。
+// samePlaceKm：最も近い点から、この距離の内の点は「同じ場所に寄った別の時」とみなす（例：グアム・ホノルルに二度寄る）
+export const SHIP_TIME = { maxKm: 1000, maxMonths: 4, samePlaceKm: 50 };
+/**
+ * shipTimeFor(e, tracks, opt) → null | { t, track, point, km, shipKm, months }
+ *   月の分かる出来事（e.monthKnown）で lat/lng があるものだけ。tracks はその章の航路。動かさない時は null。
+ *   ・航海の始まりの出来事（track.eventIds[0]）は動かさない（今の通り、出来事の月）
+ *   ・航路の点のうち出来事の場所に最も近い点（maxKm 以内）と、そこから samePlaceKm 以内の点を見る
+ *   ・出来事の月が、その点の航路の期間（出港の月〜終点）の外なら見ない（港に着いた後・出る前の陸の出来事。
+ *     例：サンフランシスコへ戻る 1850.08・母との再会 1852.11 は、航路の終わりより後）。記録の無い空白（陸にいた期間）の中の出来事も見ない
+ *   ・どれかの点で、船がそこにいる期間（入港〜出港）が出来事の月に重なれば、揃っている：その月の中で船がそこにいる時刻（months 0・aligned。注記なし）
+ *   ・揃っていなければ、船がその点にいる時刻そのもの（shipAtPoint：滞在があれば中ほど。月の途中のこともある）。
+ *     その時刻の月と年譜の月との差が maxMonths か月以内の時だけ（点がいくつかある時は差の小さい方、同じなら近い点）
+ *   km は出来事の場所と点の距離、shipKm はその時刻の船の印と出来事の場所の距離、months はその時刻の月 − 年譜の月
+ */
+export function shipTimeFor(e, tracks, opt = SHIP_TIME) {
+  if (!e || !e.monthKnown || e.lat == null || e.lng == null) return null;
+  const trs = (tracks || []).filter(tr => tr.tStart != null && tr.points && tr.points.length);
+  if (!trs.length || trs.some(tr => tr.eventIds && tr.eventIds[0] === e.id)) return null;
+  const cands = [];
+  trs.forEach(tr => tr.points.forEach((p, i) => { if (p.t != null && p.lat != null && p.lng != null) { const km = gcDistKm(p, e); if (km <= opt.maxKm) cands.push({ tr, p, i, km }); } }));
+  if (!cands.length) return null;
+  const minKm = Math.min(...cands.map(c => c.km));
+  const e0 = e.t, e1 = e.t + 1 / 12; // 出来事の月 [e0, e1)
+  const same = cands.filter(c => c.km <= minKm + opt.samePlaceKm)
+    .filter(c => e1 > monthFloor(c.tr.tStart) + EPS && e0 <= c.tr.tEnd + EPS); // 航路の期間に重なる月だけ
+  if (!same.length) return null;
+  // 船がその月にそこにいる＝揃っている。その月の中で、船がそこにいる時刻（滞在の中ほどを月の中に収めたもの）に置く（months 0。注記は出さない）
+  const al = same.filter(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS)
+    .map(c => ({ c, x: Math.min(Math.max(shipAtPoint(c.p), e0), e1 - 1 / 365) })).filter(a => trackAt(a.c.tr, a.x).state === 'sailing')
+    .sort((a, b) => a.c.km - b.c.km || a.x - b.x);
+  if (al.length) { const a = al[0], r = trackAt(a.c.tr, a.x); return { t: a.x, track: a.c.tr, point: a.c.p, km: a.c.km, shipKm: r.head ? gcDistKm(r.head, e) : a.c.km, months: 0, aligned: true }; }
+  if (same.some(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS)) return null;
+  if (same.some(c => trackAt(c.tr, e0).state === 'gap')) return null; // 記録の無い空白（陸にいた期間）の中の出来事
+  // 点ごとに：船がその点にいる時刻そのもの（船が出ている時・月の差が maxMonths 以内）
+  const perPoint = same.map(c => {
+    const x = shipAtPoint(c.p), r = trackAt(c.tr, x);
+    if (r.state !== 'sailing' || !r.head) return null;
+    const months = Math.round((monthFloor(x) - e0) * 12);
+    if (Math.abs(months) > opt.maxMonths) return null;
+    return { t: x, track: c.tr, point: c.p, km: c.km, shipKm: gcDistKm(r.head, e), months };
+  }).filter(Boolean);
+  // 点がいくつかある時は、年譜の月との差の小さい方（同じなら出来事の場所に近い点）
+  perPoint.sort((a, b) => Math.abs(a.months) - Math.abs(b.months) || a.km - b.km);
+  const best = perPoint[0];
+  if (!best || best.months === 0) return null;
+  return best;
 }
 
 /**
- * autoStops(life, cid, evOrder, tracks) → [{ e, t, after, onTrack, i }]
+ * autoStops(life, cid, evOrder, tracks) → [{ e, t, after, onTrack, shipTime, i }]
  *   その章の年譜のすべて（主でない出来事も。2026-11-10 清水さん「なるべく人生年譜に配置されているカードは展開していきたい」）を
  *   events.js の並び（＝起きた順）で。
+ *   月の分かる出来事は、航路の上で船がその場所にいる時刻が年譜の月から前後4か月以内で食い違う時、その時刻に置く（shipTimeFor。s.shipTime）。
  *   年だけの出来事（月は不明）は、章に航路があれば onTrackTime で「船がその場所を通る月」に置く（s.onTrack。タイムラインの位置は変えない）。
  *   航路に結べない年だけの出来事は1月に置かれているので、同じ年の月の分かる出来事（航路に置いた出来事も含む）より並びが後なら、
  *   その後に出す（s.after）。最後に時刻の順に並べ直す（同じ時刻は events.js の並び）。
@@ -180,14 +266,18 @@ export function autoStops(life, cid, evOrder, tracks = []) {
   const knownByYear = new Map(); // 年 → それまでに出た、時刻の決まった出来事のうち最も遅いもの
   return list.map((e, i) => {
     const y = Math.floor(e.t + 1e-9), k = knownByYear.get(y);
-    let t = e.t, after = null, onTrack = null;
+    let t = e.t, after = null, onTrack = null, shipTime = null;
     const on = e.monthKnown ? null : onTrackTime(e, ctr);
     if (on) {
-      t = on.t; onTrack = { kind: on.kind, how: on.how, track: on.track.key, point: on.point.label, km: Math.round(on.km) };
+      t = on.t; onTrack = { t: on.t, kind: on.kind, how: on.how, track: on.track.key, point: on.point.label, km: Math.round(on.km) };
       if (!k || t > k.t) knownByYear.set(y, { id: e.id, title: e.title, t });
-    } else if (e.monthKnown) { if (!k || e.t > k.t) knownByYear.set(y, e); }
+    } else if (e.monthKnown) {
+      const st = shipTimeFor(e, ctr);
+      if (st) { t = st.t; shipTime = { t: st.t, track: st.track.key, point: st.point.label, km: Math.round(st.km), shipKm: Math.round(st.shipKm), months: st.months, timing: st.point.timing }; }
+      if (!k || t > k.t) knownByYear.set(y, { id: e.id, title: e.title, t });
+    }
     else if (k && k.t > e.t) { t = k.t; after = k; }
-    return { e, t, after, onTrack, i };
+    return { e, t, after, onTrack, shipTime, i };
   }).sort((a, b) => a.t - b.t || a.i - b.i);
 }
 
@@ -224,6 +314,38 @@ export function holdYearOnlyAfterTracks(segs, life, evOrder) {
     if (!changed) return g;
     stops.sort((a, b) => a.t - b.t || a.i - b.i);
     return { ...g, stops };
+  });
+}
+
+/**
+ * sameMonthStops(segs) → segs（月の途中に置いた止まる所の前後を整える。元の区間は変えない）
+ *   航路の上の止まる所（shipTimeFor・onTrackTime）は月の途中の時刻のことがある。同じ月の初めに置いた別の止まる所があると、
+ *   月の初め → 月の途中 の一歩で見出し（年月）が変わらない。そこで、同じ月の、月の初めに置いた止まる所は、その月の最も早い月の途中の時刻へ寄せる
+ *   （s.joined＝その時刻。順は時刻、同じなら events.js の並び）。区間の始まり（月の初め）と最初の止まる所が同じ月なら、区間の始まりをその時刻にする。
+ *   月の途中の止まる所どうしが同じ月にあり、場所が joinKm 以内（例：琉球近海→冒険号→小渡浜、リバプール→ロンドン）なら、後の方を前の方の時刻へ寄せる（s.joined）。
+ *   場所が離れている時（例：ホノルル沖 1842年11月10日 → サモア 11月27日）は、どちらもそのまま（船は大きく動くが、見出しは同じ年月）
+ */
+export const JOIN_KM = 300;
+export function sameMonthStops(segs, joinKm = JOIN_KM) {
+  return segs.map(g => {
+    if (!g.stops || !g.stops.length || g.stops.every(s => isMonthStart(s.t))) return g;
+    const mk = t => Math.floor(t * 12 + EPS);
+    let prev = null;
+    const near = g.stops.map(s => {
+      if (isMonthStart(s.t)) return s;
+      if (prev && mk(prev.t) === mk(s.t) && s.t > prev.t && prev.e.lat != null && s.e.lat != null && gcDistKm(prev.e, s.e) <= joinKm) { const j = { ...s, t: prev.t, joined: prev.t }; prev = j; return j; }
+      prev = s; return s;
+    });
+    const firstExact = new Map(); // 月 → その月の最も早い月の途中の時刻
+    near.forEach(s => { if (!isMonthStart(s.t)) { const k = Math.floor(s.t * 12 + EPS); if (!firstExact.has(k) || s.t < firstExact.get(k)) firstExact.set(k, s.t); } });
+    const stops = near.map(s => {
+      if (!isMonthStart(s.t)) return s;
+      const x = firstExact.get(Math.floor(s.t * 12 + EPS));
+      return x != null && x > s.t ? { ...s, t: x, joined: x } : s;
+    }).sort((a, b) => a.t - b.t || a.i - b.i);
+    let startT = g.startT;
+    if (Math.floor(stops[0].t * 12 + EPS) === Math.floor(startT * 12 + EPS) && stops[0].t > startT) startT = stops[0].t;
+    return { ...g, stops, startT };
   });
 }
 
