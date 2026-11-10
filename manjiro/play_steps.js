@@ -143,3 +143,39 @@ export function autoStops(lifePrimary, cid, evOrder) {
     return { e, t, after, i };
   }).sort((a, b) => a.t - b.t || a.i - b.i);
 }
+
+/**
+ * holdYearOnlyAfterTracks(segs, life, evOrder) → segs（各区間の stops を直したもの。元の区間は変えない）
+ *   航路のある区間で、年だけが分かる出来事（monthKnown でない）のカードを、その区間の航路を描き終えた後に出す（監査 r4 L7）。
+ *   例：欧州へ（1870〜1871）の「スエズ運河経由で帰国」（1870）・「帰国（神戸・横浜）」（1871）は、年の1月や11月に置くと、航路（〜1871年4月）より先にカードが出ていた。
+ *   寄せるのは次の時だけ（航海の始まりを告げる出来事、例「フランクリン号捕鯨航海」（1846）・「咸臨丸で再渡米」（1860）を後ろへ送らないため）：
+ *     ・出来事の年が、区間の航路の期間（最初の出港〜最後の終点）に重なる
+ *     ・events.js の並び（＝起きた順）で、同じ章の月の分かる出来事のうち航路の期間の中にあるもの（主でない出来事も含む）の、どれよりも後
+ *     ・いまの止まる時刻が、航路の終わりより前
+ *   寄せた時は s.t を航路の終わりの月の初め（区間の終わりを越えない）にし、s.afterTracks＝true（s.after は外す）。タイムラインの年月は変えない。
+ */
+export function holdYearOnlyAfterTracks(segs, life, evOrder) {
+  return segs.map(g => {
+    const trs = (g.tracks || []).filter(tr => tr.tStart != null && tr.tEnd != null);
+    if (!trs.length || !g.stops || !g.stops.length) return g;
+    const from = Math.min(...trs.map(tr => tr.tStart)), to = Math.max(...trs.map(tr => tr.tEnd));
+    const endM = Math.min(monthCeil(to), g.endT ?? Infinity);
+    const known = life.filter(e => e.autoChapter === g.chapterId && e.monthKnown && e.t >= from - EPS && e.t <= to + EPS);
+    if (!known.length) return g; // 比べる相手（航路の期間の中の、月の分かる出来事）が無い章では寄せない（監査 r5 中1）
+    const lastKnown = Math.max(...known.map(e => evOrder.get(e.id) ?? -1));
+    const startIds = new Set(trs.map(tr => tr.eventIds && tr.eventIds[0]).filter(Boolean)); // 航路を作る最初の出来事（航海の始まり）は送らない
+    let changed = false;
+    const stops = g.stops.map(s => {
+      if (s.e.monthKnown || s.moved || startIds.has(s.e.id)) return s;
+      const y = Math.floor(s.e.t + EPS);
+      if (!(y + 1 > from + EPS && y <= to + EPS)) return s;
+      if ((evOrder.get(s.e.id) ?? -1) <= lastKnown) return s;
+      if (s.t >= endM - EPS) return s;
+      changed = true;
+      return { ...s, t: endM, after: null, afterTracks: true };
+    });
+    if (!changed) return g;
+    stops.sort((a, b) => a.t - b.t || a.i - b.i);
+    return { ...g, stops };
+  });
+}

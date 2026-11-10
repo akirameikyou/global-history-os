@@ -1,7 +1,7 @@
 // data/manjiro_wlink.js — W-LINK（同時代の世界）。万次郎 Focus 新装版（manjiro/focusShell.html）が読む。
 // 中身は sandbox/index.html の worldLinks（期間・場所・色）と WORLD_EXTRA（本文）を 2026-11-09 にそのまま写したもの（文は変えていない）。
 // 2026-11-10 追加：生まれる前の5件とスエズ運河の開通（docs/manjiro_monthly/RESEARCH_PREBIRTH_WLINK.md）、各件の persons（関わった人・QID・人物地球の名簿 id）と evidence・sources・dateNote。
-// 同日追加：最初の調査の #1・#3・#5・#14・#15（清水さん「省くより入れる方を優先」）。category＝whaling（捕鯨と海の道）／contact（日本への接近）／world（世界の動き）。
+// 同日追加：最初の調査の #1・#3・#5・#14・#15（清水さん「省くより入れる方を優先」）。persons の year＝人物地球へ渡す年（無ければ W-LINK の開始年）。category＝whaling（捕鯨と海の道）／contact（日本への接近）／world（世界の動き）。
 // 公開中の sandbox は自分の写しを使い続ける。二つを一本にするのは sandbox を直す時（別の工程）。
 
 export const worldLinks = [
@@ -50,7 +50,7 @@ export const worldLinks = [
  {
   id:'ikokusen_order',
   category:'contact',
-  persons:[{"name": "徳川家斉", "qid": "Q439717", "baseId": null}, {"name": "会沢正志斎", "qid": "Q2090901", "baseId": null}, {"name": "水野忠邦（1842年の緩和）", "qid": "Q2975848", "baseId": "b0408"}],
+  persons:[{"name": "徳川家斉", "qid": "Q439717", "baseId": null}, {"name": "会沢正志斎", "qid": "Q2090901", "baseId": null}, {"name": "水野忠邦（1842年の緩和）", "qid": "Q2975848", "baseId": "b0408", "year": 1842}],
   label:'IKOKUSEN ORDER',
   startYear:1825,
   endYear:1825,

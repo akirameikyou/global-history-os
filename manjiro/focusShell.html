@@ -48,9 +48,33 @@
   .panel .sec{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding:14px 16px 6px}
   .panel .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px;color:var(--dim)}
 
-  /* ── 左上：WORLD EVENTS ── */
-  .left-panel{left:24px;top:104px;width:270px;max-height:34vh}
+  /* ── 左上：WORLD EVENTS と、その下の W-LINK（縦に並べる。下の端は JS でタイムラインの上に合わせる）── */
+  .left-col{position:absolute;left:24px;top:104px;width:270px;z-index:20;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 330px)}
+  .left-col>.panel{position:relative;left:auto;top:auto;flex:0 1 auto;min-height:0}
+  .left-panel{max-height:30vh}
   .left-panel .sec{color:var(--amber-soft)}
+  .wl-panel{min-height:96px!important}
+  .wl-panel .sec{color:#d9c9ff}
+  .wlp-cats{display:flex;gap:6px;padding:0 16px 8px;flex-wrap:wrap}
+  .wlc{display:inline-flex;align-items:center;gap:5px;background:rgba(7,14,24,.55);border:1px solid var(--cc);color:var(--ink);border-radius:4px;padding:2px 8px;font-size:10.5px;cursor:pointer;line-height:1.5}
+  .wlc::before{content:'';width:7px;height:7px;border-radius:2px;background:var(--cc)}
+  .wlc .n{font-family:var(--mono);font-size:9px;color:var(--dim)}
+  .wlc.off{border-style:dashed;color:var(--dim);opacity:.6}
+  .wlc.off::before{background:transparent;border:1px solid var(--cc)}
+  .wlc:hover{opacity:1;border-color:rgba(238,243,248,.6)}
+  .wl-sub{padding:5px 16px 3px;font-size:9.5px;letter-spacing:.06em;color:var(--dim);border-bottom:1px solid var(--rule)}
+  .wli{padding:6px 14px 7px;border-bottom:1px solid var(--rule);border-left:2px solid var(--ic);cursor:pointer;transition:.18s}
+  .wli:hover{background:rgba(255,255,255,.05)}
+  .wli-row{display:flex;gap:7px;align-items:baseline}
+  .wli .cat{font-size:9px;border:1px solid var(--cc);color:var(--cc);border-radius:3px;padding:0 4px;white-space:nowrap;line-height:1.45}
+  .wli .y{font-family:var(--mono);font-size:10.5px;color:var(--sub);white-space:nowrap}
+  .wli .d{font-size:9.5px;color:var(--dim);margin-left:auto;white-space:nowrap}
+  .wli .t{font-size:12px;line-height:1.5;margin-top:1px;color:rgba(238,243,248,.85)}
+  .wli.now{background:rgba(255,255,255,.055)}
+  .wli.now .t{color:var(--ink);font-weight:700}
+  .wli.now .y,.wli.now .d{color:var(--ink)}
+  .wli.sel{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px var(--ic)}
+  .wl-empty{padding:8px 16px 10px;font-size:10.5px;color:var(--dim);line-height:1.5}
   .ev{padding:9px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
   .ev:hover{background:rgba(230,148,69,.08)} .ev.sel{background:rgba(230,148,69,.12);border-left:2px solid var(--amber)}
   .ev-row{display:flex;gap:9px;align-items:baseline}
@@ -189,6 +213,11 @@
   .wl .ring{position:absolute;inset:0;border-radius:50%;border:1.5px dashed var(--wc);background:rgba(5,12,22,.3)}
   .wl .wl-t{position:absolute;left:16px;top:-2px;font-size:9.5px;letter-spacing:.06em;color:var(--wc);white-space:nowrap;text-shadow:0 0 4px #050c16}
   .wl:hover{opacity:1}
+  /* 選んだ W-LINK（左の一覧・年代バー・地球の印を押した時）。カメラは動かさず、印を少し明るくするだけ */
+  .wl.sel{opacity:1;z-index:2}
+  .wl.sel .ring{border-style:solid;border-width:2px;background:rgba(255,255,255,.14);box-shadow:0 0 0 2px rgba(5,12,22,.6),0 0 12px var(--wc)}
+  .wl.sel .wl-t{font-weight:700;color:#fff;text-shadow:0 0 4px #050c16,0 0 8px var(--wc)}
+  .wl.sel.off .ring{border-style:dashed}
   .obs .dia{position:absolute;left:3px;top:3px;width:8px;height:8px;transform:rotate(45deg);border:1.6px solid #ffffff;background:rgba(5,12,22,.35);box-shadow:0 0 6px rgba(255,255,255,.5)}
   .obs.bg{opacity:.35}
   .lg-dia{display:inline-block;width:8px;height:8px;transform:rotate(45deg);border:1.5px solid #fff;opacity:.75;margin:0 2px}
@@ -227,7 +256,7 @@
   .pg-off{display:inline-block;font-size:11px;color:var(--dim);border:1px dashed rgba(238,243,248,.2);border-radius:4px;padding:3px 9px;cursor:not-allowed}
   .pg-none{font-size:10.5px;color:var(--dim)}
   .wl-person{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 0;border-top:1px solid var(--rule);font-size:12px;white-space:normal}
-  .wl-person:first-of-type{border-top:0}
+  .dc-sec + .wl-person{border-top:0} /* 見出し（dc-sec も div）の直後の一人目。:first-of-type では効かなかった（監査 r4 L8） */
   .wl-person .nm{font-weight:700}
   .wl-person .qid{font-family:var(--mono);font-size:10.5px;color:#cbe6ff;text-decoration:none}
   .wl-person .qid:hover{text-decoration:underline}
@@ -267,7 +296,7 @@
     .title h1{font-size:15px;letter-spacing:.08em;text-indent:0}
     .title p{display:none}
     .attrib{left:12px;top:36px;font-size:8.5px;padding:1px 6px}
-    .left-panel{display:none!important}
+    .left-col,.left-panel,.wl-panel{display:none!important} /* World Events と W-LINK の枠はスマホでは出さない（W-LINK は年代バーの1段と地球の印で） */
     #spaceControls{top:8px;right:8px;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 150px)}
     .tgl{padding:7px 9px;font-size:10.5px}
     .chap-menu{width:min(280px,calc(100vw - 16px))}
@@ -312,10 +341,17 @@
   <p>HISTORY OS ・ FOCUS PERSON</p>
 </div>
 
-<!-- 左上：WORLD EVENTS -->
-<div class="panel left-panel" id="worldPanel">
-  <div class="sec">World Events<span class="secsub">この年の前後の世界</span></div>
-  <div id="worldList"></div>
+<!-- 左上：WORLD EVENTS と、その下の W-LINK -->
+<div class="left-col" id="leftCol">
+  <div class="panel left-panel" id="worldPanel">
+    <div class="sec">World Events<span class="secsub">この年の前後の世界</span></div>
+    <div id="worldList"></div>
+  </div>
+  <div class="panel wl-panel" id="wlPanel">
+    <div class="sec">W-LINK<span class="secsub">同時代の世界（この年と前後15年）</span></div>
+    <div class="wlp-cats" id="wlCats" role="group" aria-label="W-LINK の分類の出し入れ"></div>
+    <div id="wlList"></div>
+  </div>
 </div>
 
 <!-- 右：FOCUS PERSON -->
@@ -359,7 +395,7 @@
   </div>
   <button class="tgl" id="routeInfoBtn" type="button">航路について</button>
   <button class="tgl" id="followBtn" type="button" title="年月を送る・再生する時に、カメラが船を追います（既定はオフ）">追跡</button>
-  <button class="tgl on" id="wlinkBtn" type="button" title="W-LINK：同時代の世界の動き。タイムラインに期間の帯、地球にその年の場所を淡い印で出します（押すとカード。カメラは動きません）">W-LINK</button>
+  <button class="tgl on" id="wlinkBtn" type="button" title="W-LINK：同時代の世界の動き。タイムラインに分類ごとの期間の帯、地球にその年の場所を淡い印、左上に近い年の一覧を出します（押すとカード。カメラは動きません）。分類の出し入れは左上の札で">W-LINK</button>
   <button class="tgl" id="guideBtn" type="button" title="ガイド：緯線・経線（10°おき）、赤道（実線）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
 </div>
 
@@ -441,8 +477,8 @@ import { personLinks } from '../data/persons.js?v=20261109';
 import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceText, ymLabel, snapMonth, tOf, dateJa, DEFAULT_SPEED_KM_PER_DAY } from './track_engine.js?v=20261109e';
 import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261109h';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
-import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110c';
-import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments } from './play_steps.js?v=20261110b';
+import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
+import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks } from './play_steps.js?v=20261110d';
 
 // ---------- 定数 ----------
 // 年月の範囲：W-LINK（同時代の世界）は誕生前（1789〜）からあるので、その年まで下げる（5年単位に切り下げ、3年の余白）
@@ -532,10 +568,23 @@ const PG = { base: personGlobeBase(), avail: false };
 // ---------- 状態 ----------
 // 原則：t（年月カーソル）・vp（タイムラインの表示幅）・カメラは独立。描画はカメラに触れない。
 // auto＝自動鑑賞の状態（null＝通常）。auto.chapter がある間は、その章の航路・年譜の地点だけを描く（他の章は明度を下げるのでなく描かない）
-const State = { t: tOf(1841, 1), vp: { from: 1838, to: 1854 }, chapter: 'all', sel: { type: null, id: null }, plink: null, follow: false, playing: false, activePlace: null, wlink: true, guide: false, auto: null, yearStep: false };
+// wlCats＝W-LINK の分類ごとの出し入れ（左の枠の札。年代バーの段・地球の印・枠の一覧に同じく効く）。wlink＝右上の W-LINK（全体の出し入れ）
+const State = { t: tOf(1841, 1), vp: { from: 1838, to: 1854 }, chapter: 'all', sel: { type: null, id: null }, plink: null, follow: false, playing: false, activePlace: null, wlink: true,
+  wlCats: { whaling: true, contact: true, world: true }, guide: false, auto: null, yearStep: false };
 // W-LINK：期間と場所（worldLinks）に本文（WORLD_EXTRA）を重ねる
 const WL = worldLinks.map(l => ({ ...(WORLD_EXTRA[l.id] || {}), ...l, title: (WORLD_EXTRA[l.id] || {}).title || l.label }));
-const wlActive = t => { const y = Math.floor(t); return WL.filter(l => l.startYear <= y && y <= (l.endYear ?? l.startYear)); };
+// W-LINK の分類（data/manjiro_wlink.js の category）。年代バーの段の順もこの順。札の色は分類の色（帯・印は各件の色のまま）
+const WL_CATS = [
+  { id: 'whaling', ja: '捕鯨と海の道', short: '捕鯨', color: '#7cc7d6' },
+  { id: 'contact', ja: '日本への接近', short: '接近', color: '#e7a774' },
+  { id: 'world',   ja: '世界の動き',   short: '世界', color: '#b9b4ee' },
+];
+const wlCatOf = l => WL_CATS.some(c => c.id === l.category) ? l.category : 'world'; // 分類の無い件は「世界の動き」へ
+const wlCat = id => WL_CATS.find(c => c.id === id) || WL_CATS[WL_CATS.length - 1];
+const wlShown = l => State.wlink && State.wlCats[wlCatOf(l)] !== false;
+const wlInYear = (l, y) => l.startYear <= y && y <= (l.endYear ?? l.startYear);
+const wlActive = t => { const y = Math.floor(t); return WL.filter(l => wlShown(l) && wlInYear(l, y)); };
+const wlSelId = () => State.sel.type === 'wlink' ? State.sel.id : null;
 // sel＝年譜・世界の出来事の選択（強調だけ）／plink＝タイムラインに重ねる比較の人物（別に持つ。✕かもう一度で解除）
 const subs = []; const on = f => subs.push(f); const emit = () => subs.forEach(f => f(State));
 const isFg = tr => State.chapter === 'all' || tr.chapterId === State.chapter;
@@ -674,15 +723,22 @@ function obsObj(tr, o, idx, fg) {
 }
 // W-LINK の印（その年に重なる出来事の場所。航路とは別の色・淡く）
 const wlObjs = new Map();
-function wlObj(l) {
+// off＝この年に重ならないが選ばれている件（左の一覧から前後の年の件を押した時）。年を添えて、今の年の出来事と見分ける
+function wlObj(l, sel, off) {
   let o = wlObjs.get(l.id);
   if (!o) {
-    const el = mk('div', 'wl', '<span class="ring"></span><span class="wl-t">' + esc(l.placeShort || l.label) + '</span>');
+    const el = mk('div', 'wl', '<span class="ring"></span><span class="wl-t"></span>');
     el.style.setProperty('--wc', l.color || OS_COLORS.context);
     el.title = 'W-LINK：' + (l.title || l.label);
     el.addEventListener('pointerdown', e => e.stopPropagation());
-    el.addEventListener('click', e => { e.stopPropagation(); showWLinkCard(l, { x: e.clientX, y: e.clientY }); });
-    o = { key: 'wl|' + l.id, el, lat: l.lat, lng: l.lng }; wlObjs.set(l.id, o);
+    el.addEventListener('click', e => { e.stopPropagation(); selectWLink(l, { x: e.clientX, y: e.clientY }); });
+    o = { key: 'wl|' + l.id, el, lat: l.lat, lng: l.lng, st: '' }; wlObjs.set(l.id, o);
+  }
+  const st = (sel ? 1 : 0) + '|' + (off ? 1 : 0);
+  if (o.st !== st) {
+    o.st = st;
+    o.el.className = 'wl' + (sel ? ' sel' : '') + (off ? ' off' : '');
+    o.el.querySelector('.wl-t').textContent = (l.placeShort || l.label) + (off ? ' ' + wlYearText(l) : '');
   }
   return o;
 }
@@ -698,7 +754,12 @@ function renderWorld() { // 描画だけ。カメラは触らない
     r.path.forEach((seg, i) => { if (seg.routeStatus === 'control') return; arcs.push(arcObj(tr, i, seg, fg)); });
     if (r.state === 'sailing' && r.head) html.push(shipObj(tr, r.head, fg));
   });
-  if (State.wlink) wlActive(State.t).forEach(l => html.push(wlObj(l)));
+  { // W-LINK の印：この年に重なる件（分類の切り替えで絞る）。選んだ件は明るく。選んだ件がこの年に無ければ、年を添えて出す
+    const sid = wlSelId(), act = wlActive(State.t);
+    act.forEach(l => html.push(wlObj(l, l.id === sid, false)));
+    const sl = sid && WL.find(l => l.id === sid);
+    if (sl && wlShown(sl) && !act.includes(sl)) html.push(wlObj(sl, true, true));
+  }
   world.arcsData(arcs);
   // 地球の準備ができる前に HTML の印を置くと、three-globe の isBehindGlobe が落ちる（ウィンドウが隠れた状態の読み込みで再現）。準備後に置く。
   pendingHtml = html; if (globeReady) world.htmlElementsData(html);
@@ -724,18 +785,21 @@ function followShip() {
   world.controls().autoRotate = false;
   world.pointOfView({ lat: x.r.head.lat, lng: x.r.head.lng, altitude: pov.altitude }, Math.min(PLAY_MS, 600));
 }
-window.addEventListener('resize', () => { world.width(window.innerWidth).height(window.innerHeight); drawTL(); });
+window.addEventListener('resize', () => { world.width(window.innerWidth).height(window.innerHeight); drawTL(); layoutLeftCol(); });
 
 // ---------- 詳細カード（北斎 focusShell の showCard と同じ形）----------
 const detailCard = document.getElementById('detailCard');
 let cardCtx = null; // { kind:'ship'|'life'|'world'|'plink', id }
 function cardTopMin() { return innerWidth <= 640 ? 52 : 12; }
 function positionCard(src) {
+  detailCard.style.maxHeight = ''; // 自動鑑賞のカードで付けた高さの上限を外す（CSS の値に戻す）
   const c = detailCard, cw = c.offsetWidth || 340, ch = c.offsetHeight || 200, M = 12, W = innerWidth, Ht = innerHeight; let x, y;
   if (W <= 640) { c.style.left = '8px'; c.style.top = cardTopMin() + 'px'; return; }
   if (src && src.getBoundingClientRect) { const r = src.getBoundingClientRect(); x = r.right + M; if (x + cw > W - M) x = r.left - cw - M; y = r.top; }
   else if (src && typeof src.x === 'number') { x = src.x + M; y = src.y + M; }
-  else { x = 24; y = 120; }
+  else { const lr = leftColRight(); x = lr ? lr + M : 24; y = 120; } // 押した所が無い時（年代バーの印など）は、左上の枠の右へ
+  // 左上の枠（World Events・W-LINK）に重なるなら、枠の右か左の外へ（押した行の横に出す時は、もともと枠の外）
+  if (W > 640) { const lr = leftColRight(); if (lr && x < lr && x + cw > 24 && overlapsLeftCol({ l: x, t: y, r: x + cw, b: y + ch })) x = lr + M; }
   x = Math.max(M, Math.min(W - cw - M, x)); y = Math.max(cardTopMin(), Math.min(Ht - ch - M, y));
   c.style.left = x + 'px'; c.style.top = y + 'px';
 }
@@ -753,8 +817,23 @@ function showCard({ tag, title, sub, body, rel, action, accent, node }, src, opt
   const wasOpen = !detailCard.hidden;
   detailCard.hidden = false;
   if (!(opt.keepPos && wasOpen)) { detailCard.scrollTop = 0; positionCard(src); }
+  // 別のカードに替わったら、W-LINK の選択の表示（印の明るさ・一覧の強調）は外す
+  if (State.sel.type === 'wlink' && !(cardCtx && cardCtx.kind === 'wlink')) { State.sel = { type: null, id: null }; setTimeout(emit, 0); }
 }
-function closeCard() { detailCard.hidden = true; cardCtx = null; }
+function closeCard() {
+  const wasWl = cardCtx && cardCtx.kind === 'wlink';
+  detailCard.hidden = true; cardCtx = null;
+  if (wasWl && State.sel.type === 'wlink') setSel(null, null); // W-LINK のカードを閉じたら選択の表示も外す
+}
+// 左上の枠（World Events・W-LINK）の見えている四角。スマホでは出さないので空
+function leftColRects() {
+  if (innerWidth <= 640) return [];
+  return [document.getElementById('worldPanel'), document.getElementById('wlPanel')].filter(el => el && !el.hidden && el.offsetParent !== null)
+    .map(el => el.getBoundingClientRect()).filter(r => r.width > 0 && r.height > 0);
+}
+function leftColRight() { const rs = leftColRects(); return rs.length ? Math.max(...rs.map(r => r.right)) : 0; }
+const rectHit = (a, q) => a.l < q.right && a.r > q.left && a.t < q.bottom && a.b > q.top;
+function overlapsLeftCol(a) { return leftColRects().some(q => rectHit(a, q)); }
 document.getElementById('dcClose').onclick = closeCard;
 document.getElementById('dcClose').addEventListener('pointerdown', e => e.stopPropagation());
 (function () { // ヘッダーをつかんで動かす
@@ -864,7 +943,15 @@ function showWLinkCard(l, src, opt = {}) {
     node, accent: l.color || 'var(--c-world)',
     action: { label: '地点を見る', onClick: () => goToPlace({ lat: l.lat, lng: l.lng, text: l.placeShort || '', color: l.color, altitude: l.altitude || 1.6 }) } }, src, opt);
 }
-// W-LINK の「関わった人」：名前＋Wikidata（QID）。人物地球の基本人物（baseId）がある人は、W-LINK の始まりの年の人物地球へ（未公開なら淡い表示）
+// W-LINK を選ぶ（左の一覧・年代バーの帯・地球の印から）：カードを出し、印を明るく・一覧を強調。年月とカメラは変えない
+function selectWLink(l, src) {
+  if (!l) return;
+  const at = src && src.getBoundingClientRect ? frozen(src) : src; // 一覧は作り直されるので、押した行の位置を先に写す
+  setSel('wlink', l.id);
+  showWLinkCard(l, at);
+}
+// W-LINK の「関わった人」：名前＋Wikidata（QID）。人物地球の基本人物（baseId）がある人は、その人の年（persons の year。無ければ W-LINK の始まりの年）の人物地球へ（未公開なら淡い表示）
+const wlPersonYear = (p, l) => { const y = p.year ?? l.startYear; return Number.isFinite(+y) ? +y : +l.startYear; }; // 監査 r4 L6
 function wlPersonsNode(persons, l) {
   const box = mk('div');
   box.appendChild(mk('div', 'dc-sec', '関わった人'));
@@ -878,8 +965,9 @@ function wlPersonsNode(persons, l) {
     }
     if (p.baseId) {
       if (PG.avail) {
-        const a = mk('a', 'pg-link', '人物地球でその年を見る ↗'); a.target = '_blank'; a.rel = 'noopener';
-        a.href = personGlobeHref(p.baseId, +l.startYear, PG.base); a.title = (p.name || '') + ' ・ ' + l.startYear + '年';
+        const yr = wlPersonYear(p, l);
+        const a = mk('a', 'pg-link', esc('人物地球で' + yr + '年を見る ↗')); a.target = '_blank'; a.rel = 'noopener';
+        a.href = personGlobeHref(p.baseId, yr, PG.base); a.title = (p.name || '') + ' ・ ' + yr + '年';
         row.appendChild(a);
       } else { const s = mk('span', 'pg-off', '人物地球（未公開）'); s.title = '人物地球はまだ公開されていません'; row.appendChild(s); }
     }
@@ -981,6 +1069,7 @@ let lastNearId = null;
 on(() => {
   const nb = currentLife(State.t);
   if (nb && nb.id !== lastNearId) { lastNearId = nb.id; setTimeout(scrollNearIntoView, 0); } // 年月と年譜を連動：いまの出来事の行を見える所へ
+  else if (!nb && lastNearId !== null) { lastNearId = null; focusPanel.scrollTo({ top: 0 }); } // 生まれる前（年譜の出来事が無い年）は、名前の欄が見える先頭へ戻す
   lifeList.querySelectorAll('.chrono-item').forEach(r => {
     r.classList.toggle('near', !!nb && r.dataset.id === nb.id);
     r.classList.toggle('sel', State.sel.type === 'life' && r.dataset.id === State.sel.id);
@@ -1020,6 +1109,76 @@ function renderWorldList() {
   });
 }
 on(renderWorldList);
+
+// ---------- 左上：W-LINK の枠（World Events の下）----------
+// 今の年に重なる件を先頭に、前後 WL_NEAR_YEARS 年の近い件を年の順に（合わせて WL_LIST_MAX 件まで。少なければ近い順に3件まで足す）。
+// 押すとカード＋印を明るく（年月・カメラは変えない）。上の札で分類を出し入れ（年代バーの段・地球の印・この一覧に同じく効く）
+const WL_NEAR_YEARS = 15, WL_LIST_MAX = 8, WL_LIST_MIN = 3;
+const wlPanel = document.getElementById('wlPanel'), wlList = document.getElementById('wlList'), wlCatsBox = document.getElementById('wlCats');
+const wlDist = (l, y) => { const s = l.startYear, en = l.endYear ?? l.startYear; return (y >= s && y <= en) ? 0 : Math.min(Math.abs(y - s), Math.abs(y - en)); };
+function wlListItems(y) {
+  const all = WL.filter(wlShown).map(l => ({ l, d: wlDist(l, y) }));
+  const now = all.filter(x => x.d === 0).sort((a, b) => a.l.startYear - b.l.startYear);
+  const rest = all.filter(x => x.d > 0).sort((a, b) => a.d - b.d || a.l.startYear - b.l.startYear);
+  let near = rest.filter(x => x.d <= WL_NEAR_YEARS).slice(0, Math.max(0, WL_LIST_MAX - now.length));
+  if (now.length + near.length < WL_LIST_MIN) near = rest.slice(0, Math.max(near.length, WL_LIST_MIN - now.length));
+  near.sort((a, b) => a.l.startYear - b.l.startYear || a.d - b.d);
+  return { now, near };
+}
+function renderWLCats() {
+  wlCatsBox.innerHTML = '';
+  WL_CATS.forEach(c => {
+    const on = State.wlCats[c.id] !== false, n = WL.filter(l => wlCatOf(l) === c.id).length;
+    const b = mk('button', 'wlc' + (on ? '' : ' off'), esc(c.short) + '<span class="n">' + n + '</span>');
+    b.type = 'button'; b.dataset.cat = c.id; b.style.setProperty('--cc', c.color);
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.title = c.ja + '（' + n + '件）を' + (on ? '隠す' : '出す') + '：年代バーの段・地球の印・この一覧に効きます';
+    b.onclick = () => {
+      State.wlCats[c.id] = !on;
+      const sid = wlSelId(), sl = sid && WL.find(l => l.id === sid);
+      if (sl && !wlShown(sl)) State.sel = { type: null, id: null }; // 隠した分類の件を選んでいたら、選択の表示は外す（カードはそのまま）
+      emit();
+    };
+    wlCatsBox.appendChild(b);
+  });
+}
+let lastWLKey = '';
+function renderWLList() {
+  wlPanel.hidden = !State.wlink; // 右上の W-LINK（全体）を切ったら枠も出さない
+  const y = Math.floor(State.t), key = [State.wlink, y, wlSelId() || '', WL_CATS.map(c => State.wlCats[c.id] !== false ? 1 : 0).join('')].join('|');
+  if (key === lastWLKey) return; lastWLKey = key;
+  renderWLCats();
+  wlList.innerHTML = '';
+  if (!State.wlink) return;
+  if (!WL_CATS.some(c => State.wlCats[c.id] !== false)) { wlList.appendChild(mk('div', 'wl-empty', '分類がすべて隠れています。上の札を押すと出ます。')); return; }
+  const { now, near } = wlListItems(y), sid = wlSelId();
+  const row = ({ l, d }) => {
+    const c = wlCat(wlCatOf(l));
+    const r = mk('div', 'wli' + (d === 0 ? ' now' : '') + (l.id === sid ? ' sel' : ''));
+    r.style.setProperty('--ic', l.color || OS_COLORS.context); r.style.setProperty('--cc', c.color);
+    r.dataset.id = l.id;
+    r.innerHTML = '<div class="wli-row"><span class="cat" title="' + esc(c.ja) + '">' + esc(c.short) + '</span><span class="y">' + esc(wlYearText(l)) + '</span>' +
+      '<span class="d">' + (d === 0 ? 'この年' : d + '年' + (l.startYear > y ? '後' : '前')) + '</span></div><div class="t">' + esc(l.title) + '</div>';
+    r.title = c.ja + '：' + (l.title || '') + '（押すとカード。年月とカメラは変えません）';
+    r.onclick = () => selectWLink(l, r);
+    return r;
+  };
+  if (now.length) now.forEach(x => wlList.appendChild(row(x)));
+  else wlList.appendChild(mk('div', 'wl-sub', y + '年に重なる W-LINK はありません'));
+  if (near.length) {
+    const far = near.some(x => x.d > WL_NEAR_YEARS);
+    wlList.appendChild(mk('div', 'wl-sub', far ? '近い件（年の順）' : '前後' + WL_NEAR_YEARS + '年（年の順）'));
+    near.forEach(x => wlList.appendChild(row(x)));
+  }
+}
+on(renderWLList);
+// 左の列の下の端を、タイムラインの上に合わせる（タイムラインの高さは P-LINK・W-LINK で変わる）
+const leftCol = document.getElementById('leftCol');
+function layoutLeftCol() {
+  if (innerWidth <= 640) { leftCol.style.maxHeight = ''; return; }
+  const tlTop = document.getElementById('timelineBar').getBoundingClientRect().top;
+  leftCol.style.maxHeight = Math.max(150, tlTop - 104 - 14) + 'px';
+}
 
 // ---------- 右下：P-LINK ----------
 const plinkList = document.getElementById('plinkList'), plinkActive = document.getElementById('plinkActive');
@@ -1163,14 +1322,24 @@ document.getElementById('routeClose').onclick = () => { routePanel.hidden = true
 
 // ---------- タイムライン ----------
 const tl = document.getElementById('tl'); const SVGNS = 'http://www.w3.org/2000/svg';
-const LY = { life: 20, voy: 36, ev: 51, wd: 63, wl: 74, pl: 92 };
+// 段の高さ（y）。W-LINK は分類ごとに3段（スマホ ≤640px は1段）。3段にした分、上の段の間を詰めて、全体の高さは前（98px）とほぼ同じに
+const LY = { title: 11, life: 17, voy: 30, ev: 41, wd: 51, wlTop: 57 };
+function tlLayout(sp) {
+  const narrow = innerWidth <= 640;
+  const rows = !State.wlink ? [] : narrow ? [{ id: '*', label: 'W-LINK' }] : WL_CATS.map(c => ({ id: c.id, label: c.ja, cat: c }));
+  const rowH = narrow ? 9 : 8;
+  const wlBottom = rows.length ? LY.wlTop + rows.length * rowH : LY.wd + 6;
+  const pl = wlBottom + 14;
+  const gridBottom = sp ? pl + 6 : wlBottom + 4;
+  return { rows, rowH, wlBottom, pl, gridBottom, H: gridBottom + 13, rowY: k => LY.wlTop + rowH * k + rowH / 2 };
+}
 function tlW() { return tl.clientWidth || 700; }
 function xOf(t) { const v = State.vp; return (t - v.from) / (v.to - v.from) * tlW(); }
 function tAt(px) { const v = State.vp; return v.from + px / tlW() * (v.to - v.from); }
 function drawTL() {
   const W = tlW(), v = State.vp, span = v.to - v.from, cl = x => Math.max(0, Math.min(W, x));
   const sp = State.plink ? personLinks.find(p => p.id === State.plink) : null;
-  const H = sp ? 120 : 98, gridBottom = H - 13;
+  const L = tlLayout(sp), H = L.H, gridBottom = L.gridBottom;
   tl.style.height = H + 'px'; tl.setAttribute('viewBox', '0 0 ' + W + ' ' + H); tl.innerHTML = '';
   function add(tag, attrs, text, onDown) {
     const el = document.createElementNS(SVGNS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]);
@@ -1204,9 +1373,15 @@ function drawTL() {
   }
   // 万次郎 主バー
   add('line', { x1: cl(xOf(LIFE_BAR.birth)), y1: LY.life, x2: cl(xOf(LIFE_BAR.death + 1)), y2: LY.life, stroke: OS_COLORS.focus, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
-  add('text', { x: 2, y: 13, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, '万次郎 ' + LIFE_BAR.birth + '–' + LIFE_BAR.death);
+  add('text', { x: 2, y: LY.title, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, '万次郎 ' + LIFE_BAR.birth + '–' + LIFE_BAR.death);
   // レーン名
-  [['航海', LY.voy], ['年譜', LY.ev], ['世界', LY.wd]].concat(State.wlink ? [['W-LINK', LY.wl]] : []).forEach(([s, y]) => add('text', { x: 2, y: y + 3, fill: '#54657a', 'font-size': 8, 'font-family': 'sans-serif', 'pointer-events': 'none' }, s));
+  [['航海', LY.voy], ['年譜', LY.ev], ['世界', LY.wd]].forEach(([s, y]) => add('text', { x: 2, y: y + 3, fill: '#54657a', 'font-size': 8, 'font-family': 'sans-serif', 'pointer-events': 'none' }, s));
+  // W-LINK の段の地色と区切り（分類ごとに薄く色を付ける。隠した分類の段は地色だけ残して名前を淡く）
+  L.rows.forEach((row, k) => {
+    const y0 = LY.wlTop + L.rowH * k, col = row.cat ? row.cat.color : OS_COLORS.context;
+    add('rect', { x: 0, y: y0, width: W, height: L.rowH, fill: hexToRgba(col, row.cat && State.wlCats[row.id] === false ? 0.02 : 0.06), 'pointer-events': 'none' });
+    add('line', { x1: 0, y1: y0, x2: W, y2: y0, stroke: 'rgba(255,255,255,.07)', 'pointer-events': 'none' });
+  });
   // 航海の帯（tStart〜tEnd）と、記録の月の点
   TRACKS.forEach(tr => {
     if (tr.tStart == null) return;
@@ -1237,15 +1412,31 @@ function drawTL() {
     if (x1 >= -4 && x1 <= W + 4) add('circle', { cx: x1, cy: LY.wd, r: sel ? 4.4 : 3, fill: OS_COLORS.world, stroke: sel ? OS_COLORS.selRing : '#050c16', 'stroke-width': sel ? 1.4 : 1 }, null,
       () => { setSel('world', e.id); showWorldCard(e, null); });
   });
-  // W-LINK（同時代の世界）：期間の帯。押すとカード（年月・カメラは変えない）
-  if (State.wlink) WL.forEach(l => { const x1 = xOf(l.startYear), x2 = xOf((l.endYear ?? l.startYear) + 1); if (x2 < 0 || x1 > W) return;
-    add('rect', { x: cl(x1), y: LY.wl - 2.5, width: Math.max(3, cl(x2) - cl(x1)), height: 5, rx: 2, fill: hexToRgba(l.color || OS_COLORS.context, .45) }, null, () => showWLinkCard(l, null)); });
+  // W-LINK（同時代の世界）：期間の帯。分類ごとの段（スマホは1段）。帯の色は各件の色。押すとカード＋選択の表示（年月・カメラは変えない）
+  if (L.rows.length) {
+    const sid = wlSelId(), bh = L.rowH - 3;
+    WL.forEach(l => {
+      if (!wlShown(l)) return;
+      const k = L.rows.length === 1 ? 0 : L.rows.findIndex(r => r.id === wlCatOf(l)); if (k < 0) return;
+      const x1 = xOf(l.startYear), x2 = xOf((l.endYear ?? l.startYear) + 1); if (x2 < 0 || x1 > W) return;
+      const sel = l.id === sid, y = L.rowY(k);
+      const r = add('rect', { x: cl(x1), y: y - bh / 2, width: Math.max(3, cl(x2) - cl(x1)), height: bh, rx: 2, fill: hexToRgba(l.color || OS_COLORS.context, sel ? .9 : .5),
+        stroke: sel ? OS_COLORS.selRing : 'none', 'stroke-width': sel ? 1.2 : 0 }, null, () => selectWLink(l, null));
+      const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = wlCat(wlCatOf(l)).ja + '：' + (l.title || '') + '（' + (l.year || l.startYear) + '）'; r.appendChild(tt);
+    });
+    // 段の名（左に小さく。帯の上に縁取りで重ねる）
+    L.rows.forEach((row, k) => {
+      const off = row.cat && State.wlCats[row.id] === false;
+      add('text', { x: 2, y: L.rowY(k) + 2.6, fill: row.cat ? hexToRgba(row.cat.color, off ? .35 : .9) : '#8a9bb0', 'font-size': 7.5, 'font-family': 'sans-serif',
+        stroke: '#050c16', 'stroke-width': 2.2, 'paint-order': 'stroke', 'stroke-linejoin': 'round', 'pointer-events': 'none' }, row.label + (off ? '（非表示）' : ''));
+    });
+  }
   // P-LINK の生涯バー
   if (sp) {
-    add('line', { x1: cl(xOf(sp.birthYear)), y1: LY.pl, x2: cl(xOf(sp.deathYear + 1)), y2: LY.pl, stroke: OS_COLORS.relation, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
-    add('text', { x: 2, y: LY.pl - 7, fill: OS_COLORS.relation, 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, (sp.fullName || sp.label) + ' ' + sp.birthYear + '–' + sp.deathYear + (sp.relationType ? '　' + sp.relationType : ''));
+    add('line', { x1: cl(xOf(sp.birthYear)), y1: L.pl, x2: cl(xOf(sp.deathYear + 1)), y2: L.pl, stroke: OS_COLORS.relation, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
+    add('text', { x: 2, y: L.pl - 6, fill: OS_COLORS.relation, 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, (sp.fullName || sp.label) + ' ' + sp.birthYear + '–' + sp.deathYear + (sp.relationType ? '　' + sp.relationType : ''));
     (sp.connectionTrace || []).forEach(it => { const x = xOf(+it.year); if (x < -3 || x > W + 3) return;
-      add('circle', { cx: x, cy: LY.pl, r: 2.8, fill: OS_COLORS.relationBr, stroke: '#050c16', 'stroke-width': 1 }, null, () => setT(tOf(+it.year, 1))); });
+      add('circle', { cx: x, cy: L.pl, r: 2.8, fill: OS_COLORS.relationBr, stroke: '#050c16', 'stroke-width': 1 }, null, () => setT(tOf(+it.year, 1))); });
   }
   // カーソル
   const cx = xOf(State.t);
@@ -1253,6 +1444,7 @@ function drawTL() {
   add('polygon', { points: (cx - 4) + ',2 ' + (cx + 4) + ',2 ' + cx + ',9', fill: '#fff', 'pointer-events': 'none' });
 }
 on(drawTL);
+on(layoutLeftCol); // タイムラインの高さが決まった後に、左の列の下の端を合わせる
 // ドラッグ：カーソル付近＝カーソル、背景＝年代パン（動かさずに離したらその年月へ）
 let drag = null;
 const localX = e => e.clientX - tl.getBoundingClientRect().left;
@@ -1342,7 +1534,8 @@ const timelineBar = document.getElementById('timelineBar');
 const EV_ORDER = new Map(events.map((e, i) => [e.id, i]));
 const autoStops = cid => buildAutoStops(LIFE_PRIMARY, cid, EV_ORDER);
 // 自動鑑賞で回る区間（年代順）。範囲が他の章を丸ごと含む章（晩年 1864〜1898 は 欧州へ 1870〜1871 を含む）は、その前後で分ける（play_steps.js の autoSegments）
-const AUTO_SEGS = autoSegments(AUTO_CHAPTERS, CHAPTER_RANGE, TRACKS, autoStops);
+// 航路のある区間では、年だけの出来事のカードをその区間の航路を描き終えた後に出す（監査 r4 L7。play_steps.js の holdYearOnlyAfterTracks）
+const AUTO_SEGS = holdYearOnlyAfterTracks(autoSegments(AUTO_CHAPTERS, CHAPTER_RANGE, TRACKS, autoStops), LIFE, EV_ORDER);
 const segName = g => { const c = chapterById(g.chapterId); return { en: c.en + (g.part ? ' (' + g.part + ')' : ''), ja: (c.ja || '') + (g.part ? '（' + g.part + '）' : '') }; };
 const stopMs = e => clamp(AUTO.stopBaseMs + ((e.cardText || e.description || '').length + (e.title || '').length) / AUTO.stopCharsPerSec * 1000, AUTO.stopMinMs, AUTO.stopMaxMs);
 
@@ -1403,10 +1596,30 @@ function autoClear() { const A = State.auto; if (!A) return; clearTimeout(A.time
 function autoCloseCard() { if (cardCtx && cardCtx.auto) closeCard(); }
 
 // 表紙（章・まとめ）
+// PC：左上の枠（World Events・W-LINK）には重ねない。右の人物パネル・P-LINK にもなるべく重ねない（監査 r4 の指摘）。
+// 候補の順：画面の中央 → 左の枠と右のパネルの間 → 左の枠の右（右のパネルには重なってよい）→ 左の枠の下。候補ごとに幅を決めて実際の高さで確かめる
 function positionCover() {
   if (autoCover.hidden) return;
-  if (innerWidth <= 640) { const top = timelineBar.getBoundingClientRect().top; autoCover.style.top = Math.max(84, top - autoCover.offsetHeight - 10) + 'px'; }
-  else autoCover.style.top = '';
+  const st = autoCover.style;
+  if (innerWidth <= 640) { st.left = ''; st.width = ''; const top = timelineBar.getBoundingClientRect().top; st.top = Math.max(84, top - autoCover.offsetHeight - 10) + 'px'; return; }
+  const W = innerWidth, M = 12, TOP = 92, MINW = 300, base = Math.min(480, W * 0.86);
+  const lcs = leftColRects(), lr = lcs.length ? Math.max(...lcs.map(r => r.right)) : 0, lb = lcs.length ? Math.max(...lcs.map(r => r.bottom)) : 0;
+  const soft = [focusPanel, document.getElementById('plinkPanel')].filter(el => el && el.offsetParent !== null).map(el => el.getBoundingClientRect());
+  const rpl = focusPanel.offsetParent !== null ? focusPanel.getBoundingClientRect().left : W;
+  const tlTop = timelineBar.getBoundingClientRect().top;
+  const span = (a, b) => ({ w: Math.min(480, b - a), cx: (a + b) / 2 });
+  const cands = [{ cx: W / 2, w: base, top: TOP }];
+  if (lr) {
+    const g = span(lr + M, rpl - M); if (g.w >= MINW) cands.push({ ...g, top: TOP });
+    const h = span(lr + M, W - M); if (h.w >= MINW) cands.push({ ...h, top: TOP });
+    const u = span(24, Math.min(rpl, W) - M); if (u.w >= MINW) cands.push({ ...u, top: lb + M });
+  }
+  const tryAt = c => { st.width = c.w + 'px'; st.left = c.cx + 'px'; st.top = c.top + 'px'; const h = autoCover.offsetHeight;
+    const r = { l: c.cx - c.w / 2, r: c.cx + c.w / 2, t: c.top, b: c.top + h };
+    return { must: overlapsLeftCol(r) || r.b > tlTop - 4, soft: soft.some(q => rectHit(r, q)) }; };
+  let pick = null, second = null;
+  for (const c of cands) { const v = tryAt(c); if (!v.must && !v.soft) { pick = c; break; } if (!v.must && !second) second = c; }
+  tryAt(pick || second || cands[0]);
 }
 function showCover({ kicker, en, ja, yr, voy, line, actions }) {
   document.getElementById('acKicker').textContent = kicker || '';
@@ -1424,25 +1637,29 @@ const yrRange = (a, b) => Math.floor(a + 1e-9) === Math.floor(b + 1e-9) ? String
 
 // 年譜のカード：右パネル・P-LINK と重ならず、船と出来事の地点を隠さない所へ（スマホはタイムラインの上に下寄せ）
 function placeAutoCard(e) {
-  const c = detailCard, cw = c.offsetWidth || 360, ch = c.offsetHeight || 200, W = innerWidth, M = 12;
+  const c = detailCard, cw = c.offsetWidth || 360, W = innerWidth, M = 12;
   const tlTop = timelineBar.getBoundingClientRect().top;
-  if (W <= 640) { c.style.left = '8px'; c.style.top = Math.max(cardTopMin(), tlTop - ch - 8) + 'px'; return; }
+  if (W <= 640) { const h = c.offsetHeight || 200; c.style.left = '8px'; c.style.top = Math.max(cardTopMin(), tlTop - h - 8) + 'px'; return; }
+  c.style.maxHeight = Math.max(160, tlTop - 110 - M) + 'px'; // PC：カードの下の端がタイムラインに掛からないように（閉じる・通常のカードで外す）
+  const ch = c.offsetHeight || 200;
   const rects = [focusPanel, document.getElementById('plinkPanel')].filter(el => el && el.offsetParent !== null).map(el => el.getBoundingClientRect());
   const avoid = [];
   const sc = (lat, lng, alt) => { try { const p = world.getScreenCoords(lat, lng, alt); return p && isFinite(p.x) && isFinite(p.y) ? p : null; } catch (err) { return null; } };
   const head = autoShipHead(); if (head) avoid.push(sc(head.lat, head.lng, 0.012));
   if (e.lat != null && e.lng != null) avoid.push(sc(e.lat, e.lng, 0.011));
   const rightLimit = focusPanel.offsetParent !== null ? focusPanel.getBoundingClientRect().left - M : W - M;
+  // 左上の枠（World Events・W-LINK）には重ねない（監査 r4 の指摘）。左の端の候補は枠の右から
+  const lr = leftColRight(), x0 = lr ? lr + M : 24;
   const top = 110, bottom = Math.max(top, tlTop - ch - M);
-  const cands = [{ x: 24, y: top }, { x: 24, y: bottom }, { x: rightLimit - cw, y: top }, { x: (W - cw) / 2, y: top }, { x: rightLimit - cw, y: bottom }];
+  const cands = [{ x: x0, y: top }, { x: rightLimit - cw, y: top }, { x: (x0 + rightLimit - cw) / 2, y: top }, { x: x0, y: bottom }, { x: rightLimit - cw, y: bottom }, { x: 24, y: bottom }];
   const P = 34;
-  const ok = p => {
-    const r = { l: p.x, t: p.y, r: p.x + cw, b: p.y + ch };
-    if (r.l < M - 1 || r.r > W - M + 1) return false;
-    if (rects.some(q => r.l < q.right && r.r > q.left && r.t < q.bottom && r.b > q.top)) return false;
-    return !avoid.some(a => a && a.x > r.l - P && a.x < r.r + P && a.y > r.t - P && a.y < r.b + P);
-  };
-  const p = cands.find(ok) || cands[0];
+  const box = p => ({ l: p.x, t: p.y, r: p.x + cw, b: p.y + ch });
+  const inside = r => r.l >= M - 1 && r.r <= W - M + 1;
+  const noLeft = p => { const r = box(p); return inside(r) && !overlapsLeftCol(r); };
+  const noPanels = p => noLeft(p) && !rects.some(q => rectHit(box(p), q));
+  const ok = p => noPanels(p) && !avoid.some(a => { const r = box(p); return a && a.x > r.l - P && a.x < r.r + P && a.y > r.t - P && a.y < r.b + P; });
+  // 船・地点も避けられる所 → パネルに重ならない所 → 左の枠にだけは重ならない所（右のパネルの上に出る）→ 左の枠の右
+  const p = cands.find(ok) || cands.find(noPanels) || cands.find(noLeft) || { x: Math.min(x0, W - cw - M), y: top };
   c.style.left = clamp(p.x, M, W - cw - M) + 'px'; c.style.top = clamp(p.y, cardTopMin(), Math.max(cardTopMin(), innerHeight - ch - M)) + 'px';
 }
 function autoShipHead() {
@@ -1458,7 +1675,7 @@ function autoNextT(t, A) {
   const n = nextStep(A.tracks, t, Math.min(A.endT, s ? s.t : Infinity));
   // 出来事に着いた一歩の見出し：月の分かる出来事なら月も出す／年だけの出来事（その年の1月に置いたまま）なら「○年」だけ（航海中の1か月送りはそのまま）
   const atStop = s && Math.abs(n.t - s.t) < 1e-6;
-  const kind = !atStop || n.kind === 'month' ? n.kind : s.e.monthKnown ? (n.kind === 'year' ? 'align' : n.kind) : (!s.after && !s.moved ? 'year' : n.kind);
+  const kind = !atStop || n.kind === 'month' ? n.kind : s.e.monthKnown ? (n.kind === 'year' ? 'align' : n.kind) : (!s.after && !s.moved && !s.afterTracks ? 'year' : n.kind);
   return { t: n.t, kind, ms: kind === 'month' ? AUTO.monthMs : AUTO.yearMs };
 }
 
@@ -1500,11 +1717,14 @@ function autoStep() {
   setT(n.t, { auto: true, yearStep: n.kind === 'year' });
   autoSchedule(autoStep, n.ms);
 }
+// W-LINK の年：year の文字があればそれ、無ければ範囲（開始と終わりが違う時は「1789 — 1793」）
+function wlYearText(l) { return l.year || (l.endYear != null && l.endYear !== l.startYear ? l.startYear + ' — ' + l.endYear : String(l.startYear)); }
 function autoShowStop(s) {
   const A = State.auto; A.phase = 'stop';
   State.sel = { type: 'life', id: s.e.id }; emit(); // 年譜の行の強調（既存の連動）
   const mv = s.moved && s.moved.chapter;
   const note = s.after ? '自動鑑賞では、年譜の並び（起きた順）に合わせて「' + s.after.title + '」（' + ymLabel(s.after.t) + '）の後に出しています。この出来事の月は記録ではありません。'
+    : s.afterTracks ? '自動鑑賞では、この章の航路を描き終えた後（' + ymLabel(s.t) + '）に出しています。' + (Math.floor(s.t + 1e-9) !== Math.floor(s.e.t + 1e-9) ? '出来事の年は ' + String(s.e.year || Math.floor(s.e.t)) + 'で、' : '') + '年だけが分かる出来事で、月は記録ではありません（タイムラインの位置は変えていません）。'
     : mv ? '自動鑑賞では、「' + (mv.ja || mv.en) + '」の章の' + (s.moved.dir === 'after' ? '後' : '前') + 'に出しています（出来事の年は ' + String(s.e.year || '') + '。タイムラインの位置は変えていません）。' : '';
   showLifeCard(s.e, null, { auto: true, autoNote: note });
   placeAutoCard(s.e);
