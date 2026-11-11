@@ -509,13 +509,13 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
-import { events } from '../data/events.js?v=20261110a';
+import { events } from '../data/events.js?v=20261111b';
 import { personLinks } from '../data/persons.js?v=20261109';
 import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceText, ymLabel, snapMonth, tOf, dateJa, DEFAULT_SPEED_KM_PER_DAY } from './track_engine.js?v=20261109e';
-import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261109h';
+import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261111b';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
 import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
-import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261110h';
+import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261111b';
 
 // ---------- 定数 ----------
 // 年月の範囲：W-LINK（同時代の世界）は誕生前（1789〜）からあるので、その年まで下げる（5年単位に切り下げ、3年の余白）
@@ -1911,6 +1911,8 @@ function autoStep() {
 }
 // W-LINK の年：year の文字があればそれ、無ければ範囲（開始と終わりが違う時は「1789 — 1793」）
 function wlYearText(l) { return l.year || (l.endYear != null && l.endYear !== l.startYear ? l.startYear + ' — ' + l.endYear : String(l.startYear)); }
+// 月の分かる出来事でも、確かさが「記録」でないもの・注記で月を推論/仮定としているものは、記録の色を付けない（監査 r8 H1）
+function monthInferred(e) { return (e.historicalStatus && e.historicalStatus !== 'documented') || /年月も推論|月という月は推論|月は推論|と読む（推論）|年の読みは[^。]*推論|仮定した場合/.test(String(e.note || '')); }
 function autoShowStop(s) {
   const A = State.auto; A.phase = 'stop';
   State.sel = { type: 'life', id: s.e.id }; emit(); // 年譜の行の強調（既存の連動）
@@ -1918,7 +1920,7 @@ function autoShowStop(s) {
   const ym = dayLabel(s.t), yDiff = Math.floor(s.t + 1e-9) !== Math.floor(s.e.t + 1e-9);
   const yNote = yDiff ? '出来事の年（' + String(s.e.year || Math.floor(s.e.t)) + '）と、航路の時刻づけの年は揃っていません。' : '';
   // 月の分かる出来事を、航路の上で船がその場所にいる時刻に動かした時（play_steps.js の shipTimeFor。タイムラインの位置は変えない）
-  const shipNote = s.shipTime && s.shipTime.months ? '年譜の年月（' + ymLabel(s.e.t) + '）と、航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）は揃っていません。航路の上で船がこの場所にいる時刻に出しています（タイムラインの位置は変えていません）。' : '';
+  const shipNote = s.shipTime && s.shipTime.months ? '年譜の年月（' + ymLabel(s.e.t) + '）と、航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）は揃っていません。' + (s.shipTime.timing === 'anchor' ? '記録の時刻で船がこの場所にいる時に出しています' : '推測の航路の上で船がここにいる時刻に出しています') + '（タイムラインの位置は変えていません）。' : '';
   const joinNote = s.joined != null ? '（同じ月の近くの出来事とまとめて、' + dayLabel(s.t) + 'に出しています）' : '';
   const note = (shipNote ? shipNote : s.onTrack ? (s.onTrack.kind === 'start'
       ? '年だけが分かる出来事です。この航路の出発の推測の時刻（' + ym + '）に出しています。月は記録ではありません（タイムラインの位置は変えていません）。'
@@ -1929,9 +1931,10 @@ function autoShowStop(s) {
   // 確かさの一行（いちばん大事な一つ。推測を記録に見せないため必ず出す）。残りの注記は「注記・出典 ▸」に畳む
   const e = s.e, yearUnsure = e.approx === '年は確かでない';
   const cert = yearUnsure ? { text: '年は確かでありません（' + String(e.year || '') + '）。月も記録ではありません' }
-    : s.shipTime && s.shipTime.months ? { text: '年譜の月（' + ymLabel(e.t) + '）と航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）がずれています。船がこの場所にいる時刻に出しています' }
+    : s.shipTime && s.shipTime.months ? { text: '年譜の月（' + ymLabel(e.t) + '）と航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）がずれています。' + (s.shipTime.timing === 'anchor' ? '記録の時刻に合わせて出しています' : '推測の航路の上で船がここにいる時刻に出しています') }
     : !e.monthKnown ? { text: '月は記録ではありません（年だけの出来事' + (e.approx ? '・' + e.approx : '') + '）' + (s.onTrack && s.onTrack.kind === 'pass' ? '。航路の上で船がこの場所を通る推測の時刻に出しています' : '') }
-    : { text: '年月は年譜の記録です（' + String(e.year || '') + (e.approx ? '・' + e.approx : '') + '）' + (!isMonthStart(s.t) ? '。日は航路の推測（' + dayLabel(s.t) + '）' : ''), rec: true };
+    : monthInferred(e) ? { text: '年月は年譜（events.js）の値ですが、月は推論です（注記・出典を参照）' + (s.joined != null ? '。日は近くの出来事に合わせた表示' : '') }
+    : { text: '年月は年譜（events.js）の値です（' + String(e.year || '') + (e.approx ? '・' + e.approx : '') + '）' + (s.joined != null ? '。日は近くの出来事に合わせた表示' : s.dated ? '。日は本文の日付（' + dayLabel(s.t) + '）' : !isMonthStart(s.t) ? '。日は航路の推測（' + dayLabel(s.t) + '）' : ''), rec: true };
   showLifeCard(s.e, null, { auto: true, cert, autoNote: note, noTimeNote: !!s.onTrack }); // 航路の上に置いた時は、注記に年だけの旨を書くので重ねない
   autoFollow(); // 止まる所でも、船が離れていれば寄せる（カードを出している間、船が画面の外に残らないように）
   placeAutoCard(s.e);
@@ -1961,6 +1964,7 @@ function autoEnd() {
   autoClear(); cancelCamAnim(); hideCover(); autoCloseCard();
   State.auto = null; document.body.classList.remove('auto-on');
   State.chapter = 'all'; renderChapterBtn();
+  setT(Math.floor(State.t * 12 + 1e-6) / 12, { force: true }); // 月の途中の時刻を、その月の初めに丸める（監査 r8 L3・r9 低3d）
   emit(); // 通常の表示（全章）へ
   syncAutoCtl();
   resumeSpinAfter(4000); // 自転は数秒後に再開

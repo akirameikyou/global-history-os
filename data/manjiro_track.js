@@ -21,6 +21,8 @@ const COML = { title: 'whalinghistory.org CoML spoken データ（捕鯨船 Olym
 const WIKI_EN = { title: 'en.wikipedia「Nakahama Manjirō」（二次資料）', url: 'https://en.wikipedia.org/wiki/Nakahama_Manjir%C5%8D', kind: 'encyclopedia', accessed: '2026-11-09' };
 const JAWIKI_KANRIN = { title: 'ja.wikipedia「咸臨丸」（二次資料）', url: 'https://ja.wikipedia.org/wiki/%E5%92%B8%E8%87%A8%E4%B8%B8', kind: 'encyclopedia', accessed: '2026-11-09' };
 const JAWIKI_MANEN = { title: 'ja.wikipedia「万延」（二次資料）', url: 'https://ja.wikipedia.org/wiki/%E4%B8%87%E5%BB%B6', kind: 'encyclopedia', accessed: '2026-11-09' };
+const TOSA31 = { title: '土佐清水市『市史編さん便り』第31号（2023「万次郎人生の概観⑦」）', url: 'https://www.city.tosashimizu.kochi.jp/fs/4/5/6/7/3/3/_/hist_news_r5_31.pdf', kind: 'municipal_history', accessed: '2026-11-11' };
+const TOSA30 = { title: '土佐清水市『市史編さん便り』第30号（2023「万次郎人生の概観⑥」）', url: 'https://www.city.tosashimizu.kochi.jp/fs/4/5/6/7/3/4/_/hist_news_r5_30.pdf', kind: 'municipal_history', accessed: '2026-11-11' };
 const REPORTED_RESCUE = { title: 'Whitfield の日誌の引用とされる記述（Sea History 079 ほか。検索要約のみ・頁は未読＝二次資料）', url: null, kind: 'secondary', accessed: '2026-11-09' };
 
 export const trackMethod = {
@@ -101,6 +103,16 @@ export const voyageTimings = [
         note: '確かなのは、11月1日号の記事の時点で万次郎がホノルルにいたこと（DIRECT。記事に船名・到着日は無い）。E. Warwick 号との結びつきは推論。出航の12月17日（Sarah Boyd 号）は二次資料（Wikipedia）で、1851年1月9日号は出航済みであることだけを伝える。' },
       { ref: { event: 'manjiro_sarah_boyd_departure', label: 'Ryukyu Offshore' }, date: '1851-02-02', label: '琉球の沖でアドベンチャー号を降ろす', status: 'source_traced', evidence: 'REPORTED', sources: [WIKI_EN],
         note: 'en.wikipedia（この文には参照が付いていない）。The Friend 1851年1月9日号は、Sarah Boyd 号が上海へ向かい、琉球の近くで降ろす約束でアドベンチャー号を積んだことを伝える（日付は無い）。' },
+      // 2026-11-11 追加：琉球→薩摩→長崎（土佐清水市『市史編さん便り』第30号（2023「万次郎人生の概観⑥」）。旧暦の日付を国立天文台「暦象年表」の和暦の表で西暦に換算）
+      { ref: { event: 'manjiro_return_ryukyu', label: 'Odo Beach' }, date: '1851-02-03', label: '小渡浜に上陸（昼ごろ）', status: 'documented', evidence: 'DIRECT', sources: [TOSA30],
+        note: '嘉永4年1月3日。同号は「昼ごろ」と書く（年譜の本文の「朝」は出典を確かめていない）。西暦は換算。' },
+      { ref: { event: 'manjiro_return_ryukyu', label: 'Onaga Village, Takayasu House' }, date: '1851-02-03', depart: '1851-08-07', departStatus: 'recorded', label: '翁長村・高安家に預けられる（琉球王府・薩摩藩の取り調べ）', status: 'source_traced', evidence: 'DIRECT', sources: [TOSA30],
+        note: '同号は、番所・小禄を経て高安家に「夜中に到着」と書き、着いた日付そのものは書かない（上陸の日の夜とみられる）。嘉永4年7月11日に翁長を去り那覇へ（西暦8月7日、換算）。' },
+      { ref: { event: 'manjiro_satsuma', label: 'Naha Port' }, date: '1851-08-07', depart: '1851-08-14', departStatus: 'recorded', label: '那覇（8月14日の夜、山川港へ向けて出港）', status: 'documented', evidence: 'DIRECT', sources: [TOSA30], note: '嘉永4年7月11日に翁長から那覇へ、7月18日の夜に乗船・出港。西暦は換算。' },
+      { ref: { event: 'manjiro_satsuma', label: 'Yamakawa Port' }, date: '1851-08-26', depart: '1851-08-27', departStatus: 'recorded', label: '薩摩・山川港に着く（12日の航海）', status: 'documented', evidence: 'DIRECT', sources: [TOSA30], note: '嘉永4年7月30日着、8月1日に小船で鹿児島へ。西暦は換算。' },
+      { ref: { event: 'manjiro_satsuma', label: 'Kagoshima' }, date: '1851-08-27', depart: '1851-10-12', departStatus: 'recorded', label: '鹿児島に滞在（取り調べ。斉彬の聴取は伝承）', status: 'documented', evidence: 'DIRECT', sources: [TOSA30], note: '嘉永4年8月1日〜9月18日（西暦は換算）。同号は斉彬の聴取を「思われる」「伝えられている」と書く。' },
+      { ref: { event: 'manjiro_nagasaki', label: 'Nagasaki' }, date: '1851-10-23', depart: '1852-08-10', departStatus: 'recorded', label: '長崎（10月25日に上陸・揚り屋入り。1852年8月10日に土佐へ出立）', status: 'documented', evidence: 'DIRECT', sources: [TOSA30, TOSA31], note: '嘉永4年9月29日着、10月1日上陸、嘉永5年6月25日に土佐藩の派遣団と出立。鹿児島からの道筋は不明。西暦は換算。' },
+      { ref: { event: 'manjiro_tosa_departure', label: 'Kochi Castle Town' }, date: '1852-08-25', label: '高知城下に着く', status: 'documented', evidence: 'DIRECT', sources: [TOSA31], note: '嘉永5年7月11日。西暦は換算。市史31号の道筋は門司・下関→瀬戸内海→三津浜→松山・久万で、events.js の諫早・有明海・三田尻の点は資料に無い（推定のまま）。' },
     ],
     conflicts: [ { id: 'F7', resolved: true, text: '【2026-11-09 events.js を訂正済み：題を「サンフランシスコからホノルルへ」とし船名を外した（伝記のエリシア号は本文で未確認と注記）。年月1850年10月も推論と注記】訂正前の events.js は SF→ホノルルを ELYSIA・1850年8月とした。一次資料で確かなのは、10月10日に E. Warwick 号（Whiting 船長, SF から17日）がホノルルに入ったこと（入港の記録）と、11月1日までに万次郎がホノルルにいたこと。万次郎がどの船で来たかは確かめられていない（E. Warwick 号とするのは推論）。', sources: [FRIEND('1850年10月15日号', 1133), FRIEND('1850年11月1日号', 1134)] } ] },
 

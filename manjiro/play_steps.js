@@ -217,8 +217,19 @@ export const SHIP_TIME = { maxKm: 1000, maxMonths: 4, samePlaceKm: 50 };
  *     その時刻の月と年譜の月との差が maxMonths か月以内の時だけ（点がいくつかある時は差の小さい方、同じなら近い点）
  *   km は出来事の場所と点の距離、shipKm はその時刻の船の印と出来事の場所の距離、months はその時刻の月 − 年譜の月
  */
+// 本文（description）に書かれた日付：年譜の年月と同じ月の「M月D日」があれば、その時刻（無ければ null）
+export function textDate(e) {
+  const ym = String(e.year || '').match(/^(\d{4})\.(\d{1,2})/); if (!ym) return null;
+  const y = +ym[1], mo = +ym[2];
+  const re = /(\d{1,2})月(\d{1,2})日/g; let m;
+  const text = String(e.description || '');
+  while ((m = re.exec(text))) { if (+m[1] === mo && +m[2] >= 1 && +m[2] <= 31) return tOf(y, mo, +m[2]); }
+  return null;
+}
 export function shipTimeFor(e, tracks, opt = SHIP_TIME) {
   if (!e || !e.monthKnown || e.lat == null || e.lng == null) return null;
+  // 本文に日付（○月○日）まで書かれた出来事は、推測の航路の時刻へ動かさない（監査 r8 M1：リバプール「11月16日」が12月5日に出て、見出しと本文が食い違った）
+  if (/\d{1,2}月\d{1,2}日/.test(String(e.cardText || '') + String(e.description || ''))) return null;
   const trs = (tracks || []).filter(tr => tr.tStart != null && tr.points && tr.points.length);
   if (!trs.length || trs.some(tr => tr.eventIds && tr.eventIds[0] === e.id)) return null;
   const cands = [];
@@ -271,6 +282,10 @@ export function autoStops(life, cid, evOrder, tracks = []) {
     if (on) {
       t = on.t; onTrack = { t: on.t, kind: on.kind, how: on.how, track: on.track.key, point: on.point.label, km: Math.round(on.km) };
       if (!k || t > k.t) knownByYear.set(y, { id: e.id, title: e.title, t });
+    } else if (e.monthKnown && textDate(e) != null) {
+      t = textDate(e); // 本文の「○月○日」（年譜の月と同じ月の時だけ）をそのまま止まる時刻に（監査 r9 中4）
+      if (!k || t > k.t) knownByYear.set(y, { id: e.id, title: e.title, t });
+      return { e, t, after: null, onTrack: null, shipTime: null, dated: true, i };
     } else if (e.monthKnown) {
       const st = shipTimeFor(e, ctr);
       if (st) { t = st.t; shipTime = { t: st.t, track: st.track.key, point: st.point.label, km: Math.round(st.km), shipKm: Math.round(st.shipKm), months: st.months, timing: st.point.timing }; }
