@@ -1402,28 +1402,29 @@ transport:'walking',
 voyageId:'return_voyage_1851',
 chapterId:'return',
 arcVisible:false,
+note:'2026-11-11 道筋を土佐清水市『市史編さん便り』第31号に合わせて直した：嘉永5年6月25日（西暦1852年8月10日、国立天文台の表で換算）に土佐藩の派遣団と長崎を出立し、門司・下関から瀬戸内海を2日で三津浜へ、陸路で松山・久万を経て、7月11日（8月25日）に高知城下へ。長崎から門司・下関までの道筋は資料に無く推定（破線）。前の版の諫早・有明海・三田尻は同号に無いので外した。座標は概略。',
 
 routeType:'voyage',
-routeName:'RETURN ROUTE / NAGASAKI TO TOSA',
+routeName:'RETURN ROUTE / NAGASAKI — MOJI · SHIMONOSEKI — SETO INLAND SEA — MITSUHAMA — KOCHI',
 
 routePoints:[
-  {label:'Nagasaki', lat:32.75, lng:129.88, nodeType:'port', historicalStatus:'documented', transport:'walking'},
+  {label:'Nagasaki', lat:32.75, lng:129.88, nodeType:'port', historicalStatus:'documented', transport:'walking', segmentStatusToNext:'estimated'},
 
-  {label:'Isahaya', lat:32.84, lng:130.05, nodeType:'routeControl', historicalStatus:'documented', transport:'walking'},
+  {label:'North Kyushu (route unspecified)', lat:33.45, lng:130.45, nodeType:'routeControl', historicalStatus:'control', transport:'walking', segmentStatusToNext:'estimated'},
 
-  {label:'Ariake Sea Crossing', lat:32.95, lng:130.35, nodeType:'routeControl', historicalStatus:'estimated', transport:'boat'},
+  {label:'Moji / Shimonoseki', lat:33.95, lng:130.95, nodeType:'port', historicalStatus:'documented', transport:'boat'},
 
-  {label:'Moji', lat:33.95, lng:130.96, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+  {label:'Seto Inland Sea', lat:33.98, lng:131.80, nodeType:'routeControl', historicalStatus:'control', transport:'boat'},
 
-  {label:'Sanyodo Route', lat:34.25, lng:131.50, nodeType:'routeControl', historicalStatus:'control', transport:'walking'},
+  {label:'Iyo-nada', lat:33.90, lng:132.40, nodeType:'routeControl', historicalStatus:'control', transport:'boat'},
 
-  {label:'Mitajiri', lat:34.05, lng:131.57, nodeType:'port', historicalStatus:'estimated', transport:'boat'},
+  {label:'Mitsuhama', lat:33.86, lng:132.71, nodeType:'port', historicalStatus:'documented', transport:'walking'},
 
-  {label:'Mitsuhama', lat:33.87, lng:132.70, nodeType:'port', historicalStatus:'estimated', transport:'boat'},
+  {label:'Matsuyama', lat:33.84, lng:132.77, nodeType:'routeControl', historicalStatus:'documented', transport:'walking'},
 
-  {label:'Kuma Highlands', lat:33.65, lng:132.90, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+  {label:'Kuma', lat:33.65, lng:132.90, nodeType:'routeControl', historicalStatus:'documented', transport:'walking', segmentStatusToNext:'estimated'},
 
-  {label:'Tosa Border', lat:33.55, lng:133.10, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking'},
+  {label:'Tosa Border', lat:33.55, lng:133.10, nodeType:'routeControl', historicalStatus:'estimated', transport:'walking', segmentStatusToNext:'estimated'},
 
   {label:'Kochi Castle Town', lat:33.56, lng:133.53, nodeType:'interrogation', historicalStatus:'documented', transport:'walking'}
 ],
