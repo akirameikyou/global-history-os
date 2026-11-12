@@ -8,7 +8,9 @@
 <html lang="ja"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>中浜万次郎 Focus Shell</title>
+<title>History OS｜中浜万次郎 Focus</title>
+<meta name="description" content="中浜万次郎の航海を月ごとの船の位置として地球の上にたどる History OS の本体。表紙は manjiro/ から。">
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/manjiro/">
 <style>
   :root{
     --cyan:#66e0ff; --cyan-soft:#9becff;
@@ -362,6 +364,8 @@
 
   /* ===== スマホ（≤640px）：崩れない最低限 ===== */
   @media (max-width:1100px){ .legend{gap:12px;font-size:9.5px} }
+  /* 641〜1379px：凡例が一行に収まらず画面の右へはみ出していた（ページの幅が広がる）。はみ出す分は右端で薄く消す（2026-11-12 公開前の確かめ。全部を見せる並べ方は次の課題） */
+  @media (min-width:641px) and (max-width:1379px){ .legend{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)} }
   @media (max-width:640px){
     .title{left:12px;top:12px;transform:none;text-align:left}
     .title h1{font-size:15px;letter-spacing:.08em;text-indent:0}
@@ -560,17 +564,17 @@
 </div>
 
 <script type="module">
-import Globe from 'https://esm.sh/globe.gl';
-import { events } from '../data/events.js?v=20261112b';
+import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 公開に向けて版を固定（2026-11-12。部品の更新で画面が壊れないように。版は確かめた時点の最新）
+import { events } from '../data/events.js?v=20261112c';
 import { personLinks } from '../data/persons.js?v=20261109';
 import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceText, ymLabel, snapMonth, tOf, dateJa, DEFAULT_SPEED_KM_PER_DAY } from './track_engine.js?v=20261109e';
 import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261112c';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
 import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
 import { AUTO_LEAD, AUTO_LEAD_FULL_MAX } from '../data/manjiro_auto_lead.js?v=20261111a';
-import { WORLD_EXTRA_EVENTS } from '../data/manjiro_world_extra.js?v=20261112a';
+import { WORLD_EXTRA_EVENTS } from '../data/manjiro_world_extra.js?v=20261112b';
 import { LAND_LEGS } from '../data/manjiro_land_legs.js?v=20261112d';
-import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261112c';
+import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261112d';
 
 // ---------- 定数 ----------
 // 年月の範囲：W-LINK（同時代の世界）は誕生前（1789〜）からあるので、その年まで下げる（5年単位に切り下げ、3年の余白）
@@ -720,7 +724,7 @@ function setChapter(id) { State.chapter = id; renderChapterBtn(); emit(); }
 // ---------- 地球儀（globe.gl）----------
 const GLB_LABEL = { size: 0.42, dot: 0.16 };
 const world = Globe()(document.getElementById('globeViz'))
-  .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+  .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .width(window.innerWidth).height(window.innerHeight)
   .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng')

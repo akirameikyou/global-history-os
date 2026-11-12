@@ -248,7 +248,7 @@ export function shipTimeFor(e, tracks, opt = SHIP_TIME) {
   if (!same.length) return null;
   // 船がその月にそこにいる＝揃っている。その月の中で、船がそこにいる時刻（滞在の中ほどを月の中に収めたもの）に置く（months 0。注記は出さない）
   const al = same.filter(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS && (!dated || c.p.timing === 'anchor'))
-    .map(c => ({ c, x: Math.min(Math.max(shipAtPoint(c.p), e0), e1 - 1 / 365) })).filter(a => trackAt(a.c.tr, a.x).state === 'sailing')
+    .map(c => ({ c, x: Math.min(Math.max(dated ? c.p.t : shipAtPoint(c.p), e0), e1 - 1 / 365) })) // 本文に日付のある出来事は、記録の着いた日に（監査：SF 着 10/20 が滞在の中ほど 10/21 に出ていた）.filter(a => trackAt(a.c.tr, a.x).state === 'sailing')
     .sort((a, b) => a.c.km - b.c.km || a.x - b.x);
   if (al.length) { const a = al[0], r = trackAt(a.c.tr, a.x); return { t: a.x, track: a.c.tr, point: a.c.p, km: a.c.km, shipKm: r.head ? gcDistKm(r.head, e) : a.c.km, months: 0, aligned: true }; }
   if (dated) return null;
