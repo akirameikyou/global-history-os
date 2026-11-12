@@ -124,7 +124,10 @@ export function autoSegments(autoChapters, ranges, tracks, stopsOf) {
     if (pieces.length > 1) pieces = pieces.filter(p => p.endT >= p.startT - 1e-9);
     if (!pieces.length) pieces = [{ from: rg.from, to: rg.to, startT: monthFloor(rg.from), endT: monthCeil(rg.to), afterChapter: null, beforeChapter: null }];
     pieces.forEach(p => { p.stops = []; p.tracks = []; });
-    const nearest = t => { let best = pieces[0], bd = Infinity; pieces.forEach(p => { const d = t < p.startT ? p.startT - t : t > p.endT ? t - p.endT : 0; if (d < bd - 1e-9) { bd = d; best = p; } }); return best; };
+    // 含まれる章の期間（穴）の中に落ちる時刻は、穴の後の区間へ（その時刻には、含まれる章がもう始まっている。2026-11-12：「1871年」だけの卒中が、
+    // 欧州の旅の期間の中に落ち、近さの比べで旅の前の区間へ入って1870年9月に出ていた）
+    const inHole = t => { for (let k = 0; k + 1 < pieces.length; k++) if (t > pieces[k].endT + 1e-9 && t < pieces[k + 1].startT - 1e-9) return pieces[k + 1]; return null; };
+    const nearest = t => { const h = inHole(t); if (h) return h; let best = pieces[0], bd = Infinity; pieces.forEach(p => { const d = t < p.startT ? p.startT - t : t > p.endT ? t - p.endT : 0; if (d < bd - 1e-9) { bd = d; best = p; } }); return best; };
     stops.forEach(s => {
       const p = nearest(s.t);
       if (s.t < p.startT - 1e-9) { s = { ...s, t: p.startT, moved: { dir: 'after', chapter: p.afterChapter } }; }
@@ -229,9 +232,12 @@ export function textDate(e) {
 export function shipTimeFor(e, tracks, opt = SHIP_TIME) {
   if (!e || !e.monthKnown || e.lat == null || e.lng == null) return null;
   // 本文に日付（○月○日）まで書かれた出来事は、推測の航路の時刻へ動かさない（監査 r8 M1：リバプール「11月16日」が12月5日に出て、見出しと本文が食い違った）
-  if (/\d{1,2}月\d{1,2}日/.test(String(e.cardText || '') + String(e.description || ''))) return null;
+  // ただし、船がその場所にいる時刻が記録のアンカー（推測でない）の時は、その時刻へ合わせてよい（欧州へ：サンフランシスコ着 10月20日）
+  const dated = /\d{1,2}月\d{1,2}日/.test(String(e.cardText || '') + String(e.description || ''));
   const trs = (tracks || []).filter(tr => tr.tStart != null && tr.points && tr.points.length);
-  if (!trs.length || trs.some(tr => tr.eventIds && tr.eventIds[0] === e.id)) return null;
+  // 航海の始まりの出来事は動かさない。ただし出来事の場所が航海の出発点と違う時（欧州へ：出来事はサンフランシスコ、航海は横浜から）は、
+  // 船がその場所にいる時刻へ（2026-11-12 清水さん：カードが「San Francisco」なのに船はシカゴ付近で出ていた）
+  if (!trs.length || trs.some(tr => tr.eventIds && tr.eventIds[0] === e.id && tr.points[0] && gcDistKm(tr.points[0], e) <= opt.samePlaceKm)) return null;
   const cands = [];
   trs.forEach(tr => tr.points.forEach((p, i) => { if (p.t != null && p.lat != null && p.lng != null) { const km = gcDistKm(p, e); if (km <= opt.maxKm) cands.push({ tr, p, i, km }); } }));
   if (!cands.length) return null;
@@ -241,10 +247,11 @@ export function shipTimeFor(e, tracks, opt = SHIP_TIME) {
     .filter(c => e1 > monthFloor(c.tr.tStart) + EPS && e0 <= c.tr.tEnd + EPS); // 航路の期間に重なる月だけ
   if (!same.length) return null;
   // 船がその月にそこにいる＝揃っている。その月の中で、船がそこにいる時刻（滞在の中ほどを月の中に収めたもの）に置く（months 0。注記は出さない）
-  const al = same.filter(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS)
+  const al = same.filter(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS && (!dated || c.p.timing === 'anchor'))
     .map(c => ({ c, x: Math.min(Math.max(shipAtPoint(c.p), e0), e1 - 1 / 365) })).filter(a => trackAt(a.c.tr, a.x).state === 'sailing')
     .sort((a, b) => a.c.km - b.c.km || a.x - b.x);
   if (al.length) { const a = al[0], r = trackAt(a.c.tr, a.x); return { t: a.x, track: a.c.tr, point: a.c.p, km: a.c.km, shipKm: r.head ? gcDistKm(r.head, e) : a.c.km, months: 0, aligned: true }; }
+  if (dated) return null;
   if (same.some(c => c.p.t < e1 - EPS && (c.p.tDep ?? c.p.t) >= e0 - EPS)) return null;
   if (same.some(c => trackAt(c.tr, e0).state === 'gap')) return null; // 記録の無い空白（陸にいた期間）の中の出来事
   // 点ごとに：船がその点にいる時刻そのもの（船が出ている時・月の差が maxMonths 以内）
@@ -348,7 +355,8 @@ export function sameMonthStops(segs, joinKm = JOIN_KM) {
     let prev = null;
     const near = g.stops.map(s => {
       if (isMonthStart(s.t)) return s;
-      if (prev && mk(prev.t) === mk(s.t) && s.t > prev.t && prev.e.lat != null && s.e.lat != null && gcDistKm(prev.e, s.e) <= joinKm) { const j = { ...s, t: prev.t, joined: prev.t }; prev = j; return j; }
+      // 本文に日付のある止まる所（s.dated。例：ロンドン着 11月17日）は寄せない：その日に、線が伸びてから出す（2026-11-12 清水さん「ロンドンに線が伸びてからカードを」）
+      if (prev && !s.dated && mk(prev.t) === mk(s.t) && s.t > prev.t && prev.e.lat != null && s.e.lat != null && gcDistKm(prev.e, s.e) <= joinKm) { const j = { ...s, t: prev.t, joined: prev.t }; prev = j; return j; }
       prev = s; return s;
     });
     const firstExact = new Map(); // 月 → その月の最も早い月の途中の時刻

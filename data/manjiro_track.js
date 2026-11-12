@@ -23,6 +23,7 @@ const JAWIKI_KANRIN = { title: 'ja.wikipedia「咸臨丸」（二次資料）', 
 const JAWIKI_MANEN = { title: 'ja.wikipedia「万延」（二次資料）', url: 'https://ja.wikipedia.org/wiki/%E4%B8%87%E5%BB%B6', kind: 'encyclopedia', accessed: '2026-11-09' };
 const TOSA31 = { title: '土佐清水市『市史編さん便り』第31号（2023「万次郎人生の概観⑦」）', url: 'https://www.city.tosashimizu.kochi.jp/fs/4/5/6/7/3/3/_/hist_news_r5_31.pdf', kind: 'municipal_history', accessed: '2026-11-11' };
 const TOSA30 = { title: '土佐清水市『市史編さん便り』第30号（2023「万次郎人生の概観⑥」）', url: 'https://www.city.tosashimizu.kochi.jp/fs/4/5/6/7/3/4/_/hist_news_r5_30.pdf', kind: 'municipal_history', accessed: '2026-11-11' };
+const BIO_NAKAHAMA = { title: '中浜明『中浜万次郎の生涯』（富山房, 1970）277–279頁（年譜 events.js の本文による。原典の頁はαは未読＝二次資料扱い）', url: null, kind: 'biography', accessed: '2026-11-12' };
 const REPORTED_RESCUE = { title: 'Whitfield の日誌の引用とされる記述（Sea History 079 ほか。検索要約のみ・頁は未読＝二次資料）', url: null, kind: 'secondary', accessed: '2026-11-09' };
 
 export const trackMethod = {
@@ -126,4 +127,18 @@ export const voyageTimings = [
       { ref: { event: 'manjiro_kanrin', label: 'Uraga' }, date: '1860-06-23', label: '浦賀に投錨（翌日 横浜へ）', status: 'documented', evidence: 'DIRECT', sources: [TOSA35] },
     ],
     conflicts: [ { id: 'F8', resolved: true, text: '【2026-11-09 events.js を訂正済み：1860年2月10日（安政7年1月19日）浦賀出港、デーモン牧師との再会をホノルル寄港中（1860年5月）に】訂正前の events.js の「万延元年2月10日 品川を出港」は、西暦の日付（2月10日）に和暦の元号を付けた形。当時はまだ安政7年（万延への改元は安政7年3月18日＝1860年4月8日）。また西暦2月10日は浦賀を出た日で、品川を出たのは旧暦1月13日（ja.wikipedia, REPORTED）。', sources: [JAWIKI_MANEN, JAWIKI_KANRIN] } ] },
+  // ── 欧州へ 1870 ───────────────────────────
+  // 2026-11-12 清水さんの指摘「リバプールのカードの出る位置とタイミングがおかしい」：この航海にはアンカーが無く、年譜の「1870.11」（月だけ）で時刻が決まり、
+  // リバプール入港のカードが11月の初め（船は大西洋の真ん中）に出ていた。年譜の本文にある日付（中浜明『中浜万次郎の生涯』）をアンカーにする。
+  { key: 'europe_voyage_1870_1871', label: '欧州への旅（普仏戦争視察団）', ship: 'ミネソタ号（ニューヨーク→リバプール）ほか',
+    anchors: [
+      { ref: { event: 'manjiro_europe_outbound_1870', label: 'Yokohama' }, date: '1870-09-24', label: '横浜出帆（グレート・パブリック号）', status: 'source_traced', evidence: 'REPORTED', sources: [BIO_NAKAHAMA],
+        note: '原典は明治3年8月28日。西暦1870年9月24日は年譜（events.js の dateGregorianPrinted）にある印刷の換算で、αは暦の表で照合していない。これが無いと、ニューヨークの日付から逆算して8月の出帆になっていた。' },
+      // サンフランシスコ着・鉄道出発・ニューヨーク着は、年譜（manjiro_europe_outbound_1870）の cardText に書かれた日付（掲載書の記述）
+      { ref: { event: 'manjiro_europe_outbound_1870', label: 'San Francisco' }, date: '1870-10-20', depart: '1870-10-22', departStatus: 'reported', label: 'サンフランシスコ着（10月22日に鉄道で出発）', status: 'source_traced', evidence: 'REPORTED', sources: [BIO_NAKAHAMA] },
+      { ref: { event: 'manjiro_europe_outbound_1870', label: 'New York' }, date: '1870-10-28', depart: '1870-11-02', departStatus: 'reported', label: 'ニューヨーク着（10月30日にフェアヘーブンへ。11月2日にミネソタ号で出港）', status: 'source_traced', evidence: 'REPORTED', sources: [BIO_NAKAHAMA],
+        note: '出港日：原典は「十二月二日」と書くが、約二週間後の11月16日リバプール着・17日ロンドン着と両立しないため、年譜（events.js）は11月2日と読んでいる（推論。年譜の note）。' },
+      { ref: { event: 'manjiro_ny_departure_1870', label: 'Liverpool' }, date: '1870-11-16', label: 'リバプール入港', status: 'source_traced', evidence: 'REPORTED', sources: [BIO_NAKAHAMA] },
+      { ref: { event: 'manjiro_liverpool_1870', label: 'London' }, date: '1870-11-17', label: 'ロンドン着（リバプールから汽車で一晩）', status: 'source_traced', evidence: 'REPORTED', sources: [BIO_NAKAHAMA] },
+    ] },
 ];

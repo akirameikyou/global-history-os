@@ -49,12 +49,12 @@
   .panel .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px;color:var(--dim)}
 
   /* ── 左上：WORLD EVENTS と、その下の W-LINK（縦に並べる。下の端は JS でタイムラインの上に合わせる）── */
-  .left-col{position:absolute;left:24px;top:104px;width:270px;z-index:20;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 330px)}
+  .left-col{position:absolute;left:24px;top:104px;width:270px;z-index:20;display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 330px)}
   /* 2026-11-11 清水さん「ラベル部分は固定で内容だけ上に送れるほうがいい」：見出し（と W-LINK の分類の札）は動かさず、一覧（#worldList・#wlList）だけを送る。
-     枠の高さは JS（layoutLeftCol）で決める：W-LINK は見出し＋札＋3〜4件が送らずに見える高さ、World Events は残り */
+     枠の高さは JS（layoutLeftCol）で決める：使える高さを World Events : W-LINK = 1 : φ に固定（docs/manjiro_monthly/LAYOUT_PROPORTION_v0.1.md） */
   .left-col>.panel{position:relative;left:auto;top:auto;flex:0 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
   .left-col>.panel>.sec,.left-col .wlp-cats{flex:0 0 auto}
-  .left-col .lc-list{flex:1 1 auto;min-height:0;overflow:auto}
+  .left-col .lc-list{flex:1 1 auto;min-height:0;overflow:auto;scrollbar-gutter:stable} /* 送りのバーの幅を常に取っておく（出る・消えるで改行が変わらないように） */
   .lc-list::-webkit-scrollbar{width:6px} .lc-list::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
   .lc-list::-webkit-scrollbar-track{background:transparent}
   .left-panel .sec{color:var(--amber-soft)}
@@ -273,23 +273,21 @@
   .dcard .dc-more .dc-more-body{font-size:12px;line-height:1.75;color:rgba(238,243,248,.85);margin:4px 0 6px;white-space:pre-line}
   .dcard .dc-more .dc-act{margin-top:6px}
   .dcard.auto .dc-more>summary{font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;color:var(--cyan-soft);padding:4px 0 0}
+  /* 表示時間の線とカードの中の小さな一時停止は外した（2026-11-11 清水さん「読む時に目障り・視線を奪う」）。止める操作は年代バーの横の一時停止だけ。
+     カードの中には、一時停止中の時だけ「再開」を出す */
   .dc-play{display:flex;align-items:center;gap:8px;margin-top:9px}
-  .dc-play .bar{flex:1 1 auto;height:2px;background:rgba(255,255,255,.08);border-radius:1px;overflow:hidden}
-  .dc-play .bar i{display:block;height:100%;width:100%;background:rgba(102,224,255,.55);transform-origin:left center;animation:dcBar linear forwards}
-  @keyframes dcBar{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+  .dc-play:not(.paused){display:none}
   .dc-play button,.auto-resume{font-family:inherit;cursor:pointer;white-space:nowrap}
-  .dc-play .pz{background:transparent;border:1px solid rgba(238,243,248,.22);color:var(--sub);border-radius:4px;font-size:10px;padding:2px 8px}
-  .dc-play .pz:hover{color:var(--ink);border-color:rgba(238,243,248,.5)}
+  /* 確かさの小さな札（自動鑑賞のカードの年月の行の横）。黄色の一行は目立ちすぎるので、文は「詳しく」に移し、ここは破線の小さな札だけ（破線＝推定、凡例と同じ） */
+  .dc-sure{display:inline-block;margin-left:8px;padding:0 6px;border:1px dashed rgba(238,243,248,.3);border-radius:3px;font-family:var(--sans);font-size:10px;line-height:1.6;color:var(--sub);letter-spacing:.04em;vertical-align:1px}
   .auto-resume{display:block;width:100%;background:rgba(224,180,95,.2);border:1.5px solid var(--est);color:#ffe9bf;border-radius:6px;
     font-size:13px;font-weight:700;letter-spacing:.04em;padding:8px 12px;text-align:center;box-shadow:0 0 14px rgba(224,180,95,.25)}
   .auto-resume:hover{background:rgba(224,180,95,.32)}
   .dc-play{flex-wrap:wrap}
   .dc-play .auto-resume{flex:1 1 100%}
-  .dc-play.paused .pz{display:none}
-  .dc-play.paused .bar i{animation-play-state:paused;background:rgba(224,180,95,.6)}
   /* 一時停止中で、カードも表紙も出ていない時（航路を伸ばしている途中で止めた時）の札。位置はカードと同じ（tlYear のすぐ上） */
   #autoPausePill{position:fixed;z-index:76;width:auto}
-  /* 表紙もカードと同じ所（tlYear のすぐ上）に出す（視線が散らないように。PC。位置は JS の autoDock） */
+  /* .dock（表紙をカードと同じ所に出す形）は 2026-11-11 にやめ、表紙は上の中央に戻した（positionCover）。形だけ残す */
   .auto-cover.dock{transform:none;text-align:left;animation:coverInDock .6s ease-out;padding:13px 18px 13px}
   .auto-cover.dock .ac-act{justify-content:flex-start}
   @keyframes coverInDock{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
@@ -517,7 +515,7 @@
   <div><span class="tchip anchor" style="margin-left:0;margin-right:4px">二次資料</span>記録が二次資料だけ</div>
   <div><span style="display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px dashed #b58cff;margin-right:5px;vertical-align:-1px"></span>W-LINK（同時代の世界）</div>
   <div><span class="lg-dia"></span>航路から外れた記録の位置</div>
-  <div><svg viewBox="0 0 26 8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" stroke="#ffd95e" stroke-width="2"/></svg>黄＝陸路（鉄道）</div>
+  <div><svg viewBox="0 0 26 8" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" stroke="#ffd95e" stroke-width="2"/></svg>黄＝陸路（鉄道・馬車・徒歩）</div>
 </div>
 
 <!-- 自動鑑賞：章の表紙（まとめもこの形） -->
@@ -549,8 +547,6 @@
   <div class="dc-rel" id="dcRel" hidden></div>
   <button class="dc-act" id="dcAct" type="button" hidden></button>
   <div class="dc-play" id="dcPlay" hidden>
-    <span class="bar" title="このカードを出しておく残りの時間"><i id="dcBar"></i></span>
-    <button class="pz" id="dcPz" type="button" title="一時停止（Space）。カードを押しても止まります">❚❚ 一時停止</button>
     <button class="auto-resume" id="dcResume" type="button" hidden>⏸ 一時停止中 — ▶ 再開</button>
   </div>
 </div>
@@ -565,19 +561,27 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
-import { events } from '../data/events.js?v=20261111b';
+import { events } from '../data/events.js?v=20261112b';
 import { personLinks } from '../data/persons.js?v=20261109';
 import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceText, ymLabel, snapMonth, tOf, dateJa, DEFAULT_SPEED_KM_PER_DAY } from './track_engine.js?v=20261109e';
-import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261111b';
+import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261112c';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
 import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
-import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261111b';
+import { AUTO_LEAD, AUTO_LEAD_FULL_MAX } from '../data/manjiro_auto_lead.js?v=20261111a';
+import { WORLD_EXTRA_EVENTS } from '../data/manjiro_world_extra.js?v=20261112a';
+import { LAND_LEGS } from '../data/manjiro_land_legs.js?v=20261112d';
+import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261112c';
 
 // ---------- 定数 ----------
 // 年月の範囲：W-LINK（同時代の世界）は誕生前（1789〜）からあるので、その年まで下げる（5年単位に切り下げ、3年の余白）
 const RANGE = { min: Math.min(1820, Math.floor((Math.min(...worldLinks.map(l => +l.startYear).filter(Number.isFinite)) - 3) / 5) * 5), max: 1900 };
 const SPAN = { min: 1, max: RANGE.max - RANGE.min };
 const LIFE_BAR = { birth: 1827, death: 1898 };
+// 人生バーの終わり＝亡くなった日（年譜 manjiro_death の本文「1898年11月12日」）。2026-11-12 清水さん「死去のあとに人生バーが伸びているのはなぜか。理由がなければ死去まで」
+//（前は亡くなった年の終わり＝1899年1月まで描いていた）。
+// 始まり＝生まれた日：文政10年1月1日（清水さん 2026-11-12）。西暦1827年1月27日は換算（旧暦の元日＝この年の新月の日。αの換算で、暦の表との照合はまだ）
+const LIFE_START_T = tOf(1827, 1, 27);
+const LIFE_END_T = tOf(1898, 11, 12);
 // 手動の ▶ の速さ（1か月あたりのミリ秒）。速さの切り替えは外し、一定にした（2026-11-09 清水さん。生涯を追うのは「自動鑑賞」で）
 const PLAY_MS = 1500;
 // UI COLOR SYSTEM v1 の JS 写し（北斎 focusShell の OS_COLORS と同じ値。globe.gl の描画用）
@@ -647,7 +651,8 @@ const trackByKey = k => TRACKS.find(t => t.key === k) || null;
 const LIFE = lifeFromEvents(events, 1820);
 const LIFE_PRIMARY = LIFE.filter(e => e.timelineVisible !== false);
 const lifeById = id => LIFE.find(e => e.id === id) || null;
-const WORLD = events.filter(e => e.type === 'world');
+// 新装版だけの World Events（data/manjiro_world_extra.js。普仏戦争 2026-11-12）を、年譜の world に足して年の順に
+const WORLD = [...events.filter(e => e.type === 'world'), ...WORLD_EXTRA_EVENTS].sort((a, b) => a.startYear - b.startYear);
 const worldById = id => WORLD.find(e => e.id === id) || null;
 const realAnchors = tr => tr.anchors.filter(a => !a.fromEventData && a.status !== 'estimated');
 // 章の時間の範囲（年譜と航海から）
@@ -729,6 +734,16 @@ const world = Globe()(document.getElementById('globeViz'))
   .onLabelClick((l, ev) => { if (l && l.onClick) l.onClick(ev ? { x: ev.clientX, y: ev.clientY } : null); })
   .htmlElementsData([]).htmlLat('lat').htmlLng('lng').htmlAltitude(0.012).htmlElement(d => d.el);
 if (typeof world.htmlTransitionDuration === 'function') world.htmlTransitionDuration(0);
+// 低い高さ（陸路で寄せた時・町の章）では、地名の文字・線・点を高さに合わせて小さくする（地球の上の大きさで決まるので、寄ると画面いっぱいになる。
+// 金山で「San Francisco / California」が画面幅いっぱいに出た。2026-11-12）。高さ GLB_SCALE.at 以上は今まで通り
+const GLB_SCALE = { at: 0.65, min: 0.3, k: 1 };
+function applyGlobeScale(alt) {
+  const k = clamp(alt / GLB_SCALE.at, GLB_SCALE.min, 1); if (Math.abs(k - GLB_SCALE.k) < 0.08 && !(k === 1 && GLB_SCALE.k !== 1)) return;
+  GLB_SCALE.k = k;
+  world.labelSize(GLB_LABEL.size * k).labelDotRadius(GLB_LABEL.dot * k).pointRadius(d => d.r * k).arcStroke(d => d.stroke == null ? null : d.stroke * k).arcAltitude(d => d.alt == null ? null : d.alt * k); // 弧の高さも（寄ると輪のように見えた）
+  if (typeof world.pathStroke === 'function') world.pathStroke(0.6 * k);
+}
+if (typeof world.onZoom === 'function') world.onZoom(p => applyGlobeScale(p.altitude));
 world.pointOfView({ lat: 30, lng: 160, altitude: 2.15 }, 0); // sandbox と同じ初期の向き
 let globeReady = false, pendingHtml = [];
 const markGlobeReady = () => { if (globeReady) return; globeReady = true; world.htmlElementsData(pendingHtml); };
@@ -757,6 +772,32 @@ function arcObj(tr, i, seg, fg) {
   const k = tr.key + '|' + i + '|' + (fg ? 1 : 0);
   let o = arcCache.get(k); if (!o) { o = make(); arcCache.set(k, o); }
   return o;
+}
+// 陸と川の短い道（data/manjiro_land_legs.js）：to の出来事が出た時から描く。前の道より先には出さない（年だけの出来事が1月に置かれて、
+// サンフランシスコ着より前にサクラメントへの道が出ないように）。線の種類は航路と同じ確かさの約束（ARC_STYLE）
+const LEG_T = (() => { let prev = -Infinity; const m = new Map();
+  LAND_LEGS.forEach(l => { const a = lifeById(l.from), b = lifeById(l.to); if (!a || !b) return; prev = Math.max(prev, a.t, b.t); m.set(l.id, prev); });
+  return m; })();
+const legCache = new Map();
+function landLegArcs() {
+  const out = [];
+  LAND_LEGS.forEach(l => {
+    if (!LEG_T.has(l.id)) return;
+    const to = lifeById(l.to), from = lifeById(l.from);
+    const c = autoOnly(); if (c && !(to.autoChapter === c && from.autoChapter === c)) return; // 自動鑑賞中は、その章の道だけ
+    const tt = State.auto && AUTO_STOP_T.has(l.to) ? AUTO_STOP_T.get(l.to) : LEG_T.get(l.id);
+    if (tt > State.t + 1e-9) return;
+    const fg = State.chapter === 'all' || l.chapterId === State.chapter;
+    const k = l.id + '|' + (fg ? 1 : 0); let segs = legCache.get(k);
+    if (!segs) {
+      const st = ARC_STYLE[l.status] || ARC_STYLE.default, base = l.land ? RAIL_COLOR : OS_COLORS.focus;
+      segs = l.pts.slice(1).map((b, i) => { const a = l.pts[i]; return { sLat: a[0], sLng: a[1], eLat: b[0], eLng: b[1],
+        color: hexToRgba(base, st.alpha * (fg ? 1 : BG_ALPHA)), stroke: st.stroke * (fg ? 1 : BG_STROKE), dash: st.dash, gap: st.gap, alt: 0.004 }; });
+      legCache.set(k, segs);
+    }
+    segs.forEach(o => out.push(o));
+  });
+  return out;
 }
 // 船の印：航海ごとに一つの要素を持ち、位置と形だけ更新する
 const shipObjs = new Map();
@@ -797,7 +838,7 @@ function labelsNow() {
     if (!(e.startYear <= y && y <= (e.endYear ?? e.startYear))) return;
     const text = asciiLabel(e.placeName); if (!text) return;
     const sel = State.sel.type === 'world' && State.sel.id === e.id;
-    out.push({ lat: e.labelLat ?? e.lat, lng: e.labelLng ?? e.lng, text, color: sel ? OS_COLORS.worldBr : hexToRgba(OS_COLORS.world, 0.85),
+    out.push({ lat: e.lat, lng: e.lng, text, // labelLat/Lng は公開版（引いた地球で重ならないようにずらした位置）。寄ると海の上に出るので、ここでは本当の場所に color: sel ? OS_COLORS.worldBr : hexToRgba(OS_COLORS.world, 0.85),
       onClick: at => { setSel('world', e.id); showWorldCard(e, at); } });
   });
   const ap = State.activePlace; // 「地点を見る」で選んだ地点
@@ -850,6 +891,7 @@ function renderWorld() { // 描画だけ。カメラは触らない
     r.path.forEach((seg, i) => { if (seg.routeStatus === 'control') return; arcs.push(arcObj(tr, i, seg, fg)); });
     if (r.state === 'sailing' && r.head) html.push(shipObj(tr, r.head, fg));
   });
+  landLegArcs().forEach(o => arcs.push(o)); // 陸と川の短い道（金山・高知から中浜。航路に入っていない所）
   { // W-LINK の印：この年に重なる件（分類の切り替えで絞る）。選んだ件は明るく。選んだ件がこの年に無ければ、年を添えて出す
     const sid = wlSelId(), act = wlActive(State.t);
     act.forEach(l => html.push(wlObj(l, l.id === sid, false)));
@@ -1080,19 +1122,29 @@ function splitLead(text) {
   }
   return { head: s, rest: '' };
 }
-// 自動鑑賞のカードの下：確かさの一行（必ず見える所に。推測を記録に見せないため）→ 止まる時間の線と一時停止・再開 →
-// 「詳しく ▸」の畳み（本文の続き・注記・出典（自動鑑賞の注記・年月の注記・e.note）・資料・地点を見る）。開くと一時停止、閉じると再開
-const dcPlay = document.getElementById('dcPlay'), dcBar = document.getElementById('dcBar');
+// 自動鑑賞のカードに出す文（要点）。data/manjiro_auto_lead.js で選んだ文（原文のまま）→ 無ければ、cardText の無い短い本文は全文 → それ以外は最初の1文。
+// rest：「詳しく」に入れる本文。要点だけを抜き出した時は、本文の全文を「詳しく」に置く（前後の文脈ごと読めるように）
+function autoLead(e) {
+  const full = String(e.cardText || e.description || '').trim();
+  const sel = AUTO_LEAD[e.id];
+  if (sel) { const head = sel.lead.join(''); return { head, rest: head === full ? '' : full }; }
+  if (!e.cardText && full.length <= AUTO_LEAD_FULL_MAX) return { head: full, rest: '' };
+  return splitLead(full);
+}
+// 自動鑑賞のカードの下：一時停止中の「再開」→「詳しく ▸」の畳み（確かさの一文・本文の続き・注記・出典・資料・地点を見る）。開くと一時停止、閉じると再開。
+// 確かさ（2026-11-11 清水さん「黄色の文字が目立ちすぎる。詳細の方へ」）：文は「詳しく」の先頭へ移し、カードの年月の行の横には破線の小さな札（cert.tag）だけを残す。
+// 推測を記録に見せない原則は、この札で保つ（記録どおりの時は札を出さない）
+const dcPlay = document.getElementById('dcPlay');
 function autoLifeNode(e, cert, rest, more) {
   const box = mk('div');
-  box.appendChild(mk('div', 'dc-cert' + (cert.rec ? ' rec' : ''), esc(cert.text)));
   dcPlay.hidden = false; box.appendChild(dcPlay);
   const notes = more.filter(Boolean).concat(e.note ? [e.note] : []);
   const m = mediaNode(e), hasPlace = e.lat != null && e.lng != null;
-  if (rest || notes.length || m || hasPlace) {
+  {
     const d = mk('details', 'dc-more'); const sm = mk('summary', null, '詳しく ▸');
-    sm.title = '本文の続き・注記・出典（開いている間は一時停止）';
+    sm.title = '確かさ・本文の続き・注記・出典（開いている間は一時停止）';
     d.appendChild(sm);
+    d.appendChild(mk('div', 'dc-cert' + (cert.rec ? ' rec' : ''), esc(cert.text)));
     if (rest) d.appendChild(mk('div', 'dc-more-body', esc(rest)));
     if (notes.length) { d.appendChild(mk('div', 'dc-sec', '注記・出典')); notes.forEach(t => d.appendChild(mk('p', null, esc(t)))); }
     if (m) d.appendChild(m);
@@ -1112,9 +1164,10 @@ function showLifeCard(e, src, opt = {}) {
   const ch = chapterById(e.chapterId);
   const timeNote = e.monthKnown ? '年月は既存データ（events.js）の年月です。' : '年だけが分かっている出来事です。タイムラインでは' + ymLabel(e.t) + 'に置いています（月は記録ではありません）。';
   if (opt.auto && opt.cert) { // 自動鑑賞：題・年月と場所・本文の最初の1文・確かさの一行だけ。残りは「詳しく ▸」に畳む（通常の表示のカードは今のまま）
-    const lead = splitLead(e.cardText || e.description || '');
+    const lead = autoLead(e);
     showCard({ tag: 'LIFE / 年譜', title: e.title, sub: String(e.year || '') + (e.placeName ? ' ・ ' + e.placeName : ''),
       body: lead.head, node: autoLifeNode(e, opt.cert, lead.rest, [opt.autoNote, opt.noTimeNote ? '' : timeNote]), rel: '', accent: 'var(--c-focus)', auto: true, action: null }, src);
+    if (opt.cert.tag) { const t = mk('span', 'dc-sure', esc(opt.cert.tag)); t.title = opt.cert.text + '（詳しくは「詳しく ▸」）'; document.getElementById('dcSub').appendChild(t); }
     return;
   }
   showCard({ tag: 'LIFE / 年譜', title: e.title, sub: String(e.year || '') + (e.placeName ? ' ・ ' + e.placeName : '') + (ch && ch.id !== 'all' ? ' ・ ' + ch.en : ''),
@@ -1128,7 +1181,7 @@ function showWorldCard(e, src) {
   if (e.manjiroRelation) { node.appendChild(mk('div', 'dc-sec', '万次郎との関わり')); node.appendChild(mk('p', 'dc-para', esc(e.manjiroRelation))); }
   showCard({ tag: 'WORLD EVENT / 世界', title: e.title, sub: String(e.year || '') + (e.placeJa ? ' ・ ' + e.placeJa : ''), body: e.cardText || e.description || '',
     node, accent: 'var(--c-world)',
-    action: (e.lat != null && e.lng != null) ? { label: '地点を見る', onClick: () => goToPlace({ lat: e.labelLat ?? e.lat, lng: e.labelLng ?? e.lng, text: asciiLabel(e.placeName), color: OS_COLORS.worldBr, altitude: 1.5 }) } : null }, src);
+    action: (e.lat != null && e.lng != null) ? { label: '地点を見る', onClick: () => goToPlace({ lat: e.lat, lng: e.lng, text: asciiLabel(e.placeName), color: OS_COLORS.worldBr, altitude: 1.5 }) } : null }, src);
 }
 function showWLinkCard(l, src, opt = {}) {
   cardCtx = { kind: 'wlink', id: l.id };
@@ -1218,8 +1271,9 @@ if (fpPortrait.complete && fpPortrait.naturalWidth === 0) portraitFallback();
 const curLab = document.getElementById('curLab'), curVal = document.getElementById('curVal'), curKind = document.getElementById('curKind'), curNote = document.getElementById('curNote');
 function renderCurrent() {
   const t = State.t; curVal.onclick = null; curVal.classList.remove('click');
-  if (t < tOf(LIFE_BAR.birth, 1)) { curLab.textContent = '今の場所'; curVal.textContent = '—'; curKind.textContent = '（誕生前）'; curNote.textContent = ''; return; }
-  if (t >= tOf(LIFE_BAR.death + 1, 1)) { curLab.textContent = '今の場所'; curVal.textContent = '—'; curKind.textContent = '（没後）'; curNote.textContent = ''; return; }
+  // 誕生前かは月の単位で（1827年1月は誕生の月。年代バーは月の初めで止まるので、日で比べると誕生のカードで「誕生前」になる）
+  if (t < Math.floor(LIFE_START_T * 12 + 1e-6) / 12 - 1e-6) { curLab.textContent = '今の場所'; curVal.textContent = '—'; curKind.textContent = '（誕生前）'; curNote.textContent = ''; return; }
+  if (t > LIFE_END_T + 1e-6) { curLab.textContent = '今の場所'; curVal.textContent = '—'; curKind.textContent = '（没後）'; curNote.textContent = ''; return; }
   const s = sailingNow();
   if (s.length) {
     const x = s.find(v => isFg(v.tr)) || s[0], h = x.r.head;
@@ -1378,12 +1432,14 @@ function renderWLList() {
   }
 }
 on(renderWLList);
-// 左の列の下の端を、タイムラインの上（と左下の W-LINK ボタンの上）に合わせる（タイムラインの高さは P-LINK・W-LINK で変わる）
-// 枠の高さ（2026-11-11 清水さん「W-link枠を下げて、３つないし４つのイベントが送らずにみられる幅を確保したい」）：
-//   W-LINK＝見出し＋札＋一覧の4件目の下まで（入らなければ3件目まで）。World Events＝残り（見出し＋1行半は残す）。どちらも一覧だけが送られる
+// 左の列の下の端を、左下の W-LINK ボタンの上（年代バーが左の列の下まで来る幅ではタイムラインの上）に合わせる。どちらの枠も一覧だけが送られる
 const leftCol = document.getElementById('leftCol'), worldPanel = document.getElementById('worldPanel');
 const wlCorner = document.getElementById('wlCorner'), spaceControls = document.getElementById('spaceControls');
-const LC = { top: 104, gapBelow: 14, gap: 10, wlRows: 4, wlRowsMin: 3, worldRows4: 2, worldMinRows: 1.5 }; // W-LINK を4件にするのは World Events に2行残せる時。残せなければ3件（World Events は1行半まで）
+// 左の列（2026-11-11 清水さん「枠が年代でせり上がる」「W-LINK を切ると改行が変わる」「比率で美しく収める」）：
+// 高さは中身に関わらず、使える高さを World Events : W-LINK = 1 : φ（黄金比）に分けて固定する。W-LINK を切っても World Events の大きさは変えない。
+// 下の端は、年代バーが横に重ならない幅では左下の W-LINK ボタンの上まで（年代バーを中央に移して空いた所を使う）。重なる幅では年代バーの上まで。
+const PHI = 1.618034;
+const LC = { top: 104, gapBelow: 16, gap: 16 };
 // W-LINK ボタン：PC は左下の隅（凡例の上）。年代バーが左下まで来る幅では年代バーの上へ。スマホは右上の並び（ガイドの前）へ戻す
 function placeWlinkBtn(tlTop) {
   const btn = document.getElementById('wlinkBtn');
@@ -1398,28 +1454,13 @@ function layoutLeftCol() {
   const tlTop = document.getElementById('timelineBar').getBoundingClientRect().top;
   const br = placeWlinkBtn(tlTop);
   if (innerWidth <= 640) { leftCol.style.maxHeight = ''; worldPanel.style.height = ''; wlPanel.style.height = ''; return; }
-  const limit = Math.min(tlTop, br ? br.top : Infinity);
-  const avail = Math.max(150, limit - LC.top - LC.gapBelow);
+  const tb = document.getElementById('timelineBar').getBoundingClientRect(), lc = leftCol.getBoundingClientRect();
+  const tlUnder = tb.left < lc.right + 12; // 年代バーが左の列の下まで来る幅
+  const limit = Math.min(tlUnder ? tlTop : Infinity, br ? br.top : innerHeight - 40);
+  const avail = Math.max(150, Math.round(limit - LC.top - LC.gapBelow));
   leftCol.style.maxHeight = avail + 'px';
-  // 見出しの高さ（一覧の外）と、一覧を全部見せた時の高さ
-  const fixedH = (panel, list) => { const pr = panel.getBoundingClientRect(), lr = list.getBoundingClientRect(); return pr.height - lr.height; };
-  // 一覧の中身の高さ（scrollHeight は箱より短い時に箱の高さを返すので、最後の行の下の端で測る）
-  const contentH = list => { const last = list.lastElementChild; return last ? Math.ceil(last.getBoundingClientRect().bottom - (list.getBoundingClientRect().top - list.scrollTop)) : 0; };
-  const worldFixed = fixedH(worldPanel, worldList), worldNat = worldFixed + contentH(worldList);
-  if (wlPanel.hidden) { worldPanel.style.height = Math.min(worldNat, avail) + 'px'; return; }
-  const wlFixed = fixedH(wlPanel, wlList), wlAll = contentH(wlList), wlNat = wlFixed + wlAll;
-  // 一覧の n 件目（.wli）の下の端まで（間の小見出し wl-sub も含む）
-  const listTop = wlList.getBoundingClientRect().top - wlList.scrollTop;
-  const rows = [...wlList.querySelectorAll('.wli')];
-  const upTo = n => rows.length <= n ? wlAll : Math.ceil(rows[n - 1].getBoundingClientRect().bottom - listTop);
-  const ev0 = worldList.querySelector('.ev'), evH = ev0 ? ev0.getBoundingClientRect().height : 40;
-  const worldMin = Math.min(worldNat, worldFixed + evH * LC.worldMinRows), worldMin4 = Math.min(worldNat, worldFixed + evH * LC.worldRows4);
-  let wlH = Math.min(wlNat, wlFixed + upTo(LC.wlRows));
-  if (wlH + LC.gap + worldMin4 > avail) wlH = Math.min(wlNat, wlFixed + upTo(LC.wlRowsMin));
-  if (wlH + LC.gap + worldMin > avail) wlH = Math.max(Math.min(wlNat, 96), avail - LC.gap - worldMin);
-  const worldH = Math.max(0, Math.min(worldNat, avail - LC.gap - wlH));
-  wlH = Math.min(wlNat, avail - LC.gap - worldH); // World Events が短い時は、残りを W-LINK に回す
-  worldPanel.style.height = Math.round(worldH) + 'px'; wlPanel.style.height = Math.round(wlH) + 'px';
+  const worldH = Math.round((avail - LC.gap) / (1 + PHI)), wlH = avail - LC.gap - worldH; // 1 : φ
+  worldPanel.style.height = worldH + 'px'; wlPanel.style.height = wlH + 'px';
 }
 
 // ---------- 右下：P-LINK ----------
@@ -1617,7 +1658,7 @@ function drawTL() {
     }
   }
   // 万次郎 主バー
-  add('line', { x1: cl(xOf(LIFE_BAR.birth)), y1: LY.life, x2: cl(xOf(LIFE_BAR.death + 1)), y2: LY.life, stroke: OS_COLORS.focus, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
+  add('line', { x1: cl(xOf(LIFE_START_T)), y1: LY.life, x2: cl(xOf(LIFE_END_T)), y2: LY.life, stroke: OS_COLORS.focus, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
   add('text', { x: 2, y: LY.title, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, '万次郎 ' + LIFE_BAR.birth + '–' + LIFE_BAR.death);
   // レーン名：左に余白があれば年代バーの左の外に右寄せで（帯と重ならない）。無ければ今まで通り内側の左に小さく
   const gut = tlGutter();
@@ -1777,7 +1818,7 @@ playBtn.onclick = () => { if (State.playing) stopPlay(); else startPlay(); };
 // 利用者が地球を動かしたら以後は動かさない（進行は続ける。「章に合わせる」で戻る）。
 // 推測の印・二次資料の札・W-LINK・ガイドは、通常と同じ描き方のまま（自動鑑賞は「どの章を描くか」と「年月の進め方」だけを変える）。
 // 止まる時間（2026-11-11）：カードに出すのは題と本文の最初の1文だけなので、その文字数で決める（2秒＋文字数/15秒、4〜7秒。主な出来事も主でない出来事も同じ）
-const AUTO = { coverMs: 4000, monthMs: 900, yearMs: 600, camMs: 2800, stopBaseMs: 2000, stopCharsPerSec: 15, stopMinMs: 4000, stopMaxMs: 7000, followMs: 750,
+const AUTO = { coverMs: 4000, monthMs: 1300, yearMs: 600, camMs: 2800, stopBaseMs: 1500, stopCharsPerSec: 7, stopMinMs: 5000, stopMaxMs: 20000, followMs: 1400,
   cardW: 400 };
 // 章の表紙の一言（年譜 events.js の本文にあることだけで書く）
 const AUTO_LINE = {
@@ -1812,7 +1853,8 @@ const autoStops = cid => buildAutoStops(LIFE, cid, EV_ORDER, TRACKS);
 const AUTO_SEGS = sameMonthStops(holdYearOnlyAfterTracks(autoSegments(AUTO_CHAPTERS, CHAPTER_RANGE, TRACKS, autoStops), LIFE, EV_ORDER));
 const segName = g => { const c = chapterById(g.chapterId); return { en: c.en + (g.part ? ' (' + g.part + ')' : ''), ja: (c.ja || '') + (g.part ? '（' + g.part + '）' : '') }; };
 // 止まる時間：題＋本文の最初の1文の文字数から（2秒＋文字数/15秒、4〜7秒）。続きは「詳しく」を開けば止まって読める
-const stopMs = e => clamp(AUTO.stopBaseMs + ((e.title || '').length + splitLead(e.cardText || e.description || '').head.length) / AUTO.stopCharsPerSec * 1000, AUTO.stopMinMs, AUTO.stopMaxMs);
+// 出しておく時間＝見始めの 1.5 秒＋（題＋要点の字数）÷ 1秒7字（展示の文をゆっくり読む速さの目安。2026-11-11 清水さん。前は1秒15字で速すぎた）。5〜20秒
+const stopMs = e => clamp(AUTO.stopBaseMs + ((e.title || '').length + autoLead(e).head.length) / AUTO.stopCharsPerSec * 1000, AUTO.stopMinMs, AUTO.stopMaxMs);
 // 自動鑑賞で、出来事のカードを出す年月（e.id → 時刻）。地球の年譜の地点も、自動鑑賞中はこの年月から出す（年だけの出来事が、船が着く前に1月から出ないように）
 const AUTO_STOP_T = new Map(AUTO_SEGS.flatMap(g => g.stops.map(s => [s.e.id, s.t])));
 
@@ -1847,7 +1889,9 @@ function autoFlyTo(to, ms, kind = 'fit') { // 自動鑑賞だけの、ゆっく�
   const om = Math.acos(clamp(dot3(a, b), -1, 1)), so = Math.sin(om), t0 = performance.now();
   camTo = { ...to }; camEnd = t0 + ms;
   const frame = now => {
-    const k = clamp((now - t0) / ms, 0, 1), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    // 'glide'（航海中に毎月、船の後をついていく動き）は等速：次の月の動きへ止まらずにつながる。それ以外は始まりと終わりをなめらかに
+    // それ以外（章に合わせる・寄せ直す・高さを変える）は正弦の曲線：いちばん速い所が平均の約1.6倍に収まる（3次の曲線は3倍。通しの確認で毎秒50度の所があった）
+    const k = clamp((now - t0) / ms, 0, 1), e = kind === 'glide' ? k : (1 - Math.cos(Math.PI * k)) / 2;
     let u;
     if (so < 1e-3) u = [a[0] + (b[0] - a[0]) * e, a[1] + (b[1] - a[1]) * e, a[2] + (b[2] - a[2]) * e];
     else { const w1 = Math.sin((1 - e) * om) / so, w2 = Math.sin(e * om) / so; u = [a[0] * w1 + b[0] * w2, a[1] * w1 + b[1] * w2, a[2] * w1 + b[2] * w2]; }
@@ -1860,25 +1904,82 @@ function autoFlyTo(to, ms, kind = 'fit') { // 自動鑑賞だけの、ゆっく�
 }
 // 自動鑑賞の追跡（2026-11-10 清水さん「自動再生モードでの追跡が効かない。ジョン・ハウランド号がアメリカへ行くと見えなくなる」）。
 // 章の初めは、表紙の後にその章の最初の航路の出発点へ寄せる（autoChapterCam）。その後、航海中に船の先頭（その章の航路の船）が画面の中心から大きく離れたら
-// （play_steps.js の followNeeded：大圏で 35°、低い所から見る時は画面の短い方の半分の 6 割の所）、高さは保ったまま船の方へなめらかに寄せる（0.75秒）。
-// 寄せる先は船の今の位置。そこから次に大きく離れるまでは動かさない（月ごとに揺れない）。
+// （play_steps.js の followNeeded：大圏で 35°、低い所から見る時は画面の短い方の半分の 6 割の所）、高さは保ったまま船の方へなめらかに寄せる（1.4秒）。
+// これは年送り・止まる所の時だけ。航海中の月送りは、下の 'glide'（毎月、等速でついていく）。
 // 章に合わせる動きの途中・利用者が地球を動かした後（camFree。「章に合わせる」で戻る）・まとめでは追わない。通常の表示の「追跡」ボタンとは別（followShip は変えない）
-function autoFollow() {
-  // 章に合わせる動きの途中は待つ。前の「寄せる」動きの途中なら、今の船の位置へ寄せ直す（船が1か月で大きく動く所で、カメラが置いていかれないように）
-  const A = State.auto; if (!A || A.camFree || A.phase === 'summary' || (camAnim && camAnimKind !== 'follow')) return;
-  const head = autoShipHead(); if (!head) return;
+// 2026-11-11 清水さん「船を追う地球の回転が速く、帆船の進行という感じではない」「陸路など移動距離が短い所は、もう少しズームしても」：
+//   航海中の月送り（glideMs あり）は、離れてから跳ねて寄せるのでなく、毎月、その月の送りの時間をかけて等速で船の後をついていく（'glide'）。
+//   船が港にいる間（中心から GLIDE.deadDeg 以内）は動かさない。年送り・止まる所は今までどおり（大きく離れた時だけ、なめらかに寄せる）。
+//   高さ：これから ZOOM.aheadMonths か月の船の動く範囲が狭い（陸路・沿岸。ZOOM.nearKm 未満）のに動いている（ZOOM.moveKm 超）時は ZOOM.alt まで寄せ、
+//   範囲が広がったら章の高さ（A.baseAlt）へ戻す。高さを変えるのはその境目だけで、ZOOM.ms かけてゆっくり（画面が動きすぎないように）
+// 速さの上限：地球が回る速さは毎秒 GLIDE.degPerSec 度まで。船が1か月で大きく進む所（捕鯨の航海・1870年の太平洋と北米横断）は、
+//   動きの時間を延ばし、その月の送りもカメラが追い着くまで待つ（帆船の進む感じを保つ。通しの確認で毎秒100度を超える所があった）
+const GLIDE = { deadDeg: 1.5, degPerSec: 12, maxMs: 9000 };
+const camMsFor = (deg, minMs) => clamp(deg / GLIDE.degPerSec * 1000, minMs, GLIDE.maxMs);
+const angDeg = (a, b) => Math.acos(clamp(dot3(toVec(a.lat, a.lng), toVec(b.lat, b.lng)), -1, 1)) * 180 / Math.PI;
+// 寄せる所：陸の移動（徒歩・馬車・汽車・川の蒸気船）が先 ZOOM.aheadMonths か月にあり、動く範囲が ZOOM.nearKm 未満の時（琉球上陸〜長崎〜高知など）。
+//   一度寄せたら、範囲が広がるまで（洋上へ出るまで）その高さを保つ（港での滞在で寄ったり引いたりしない）。
+//   航路の無い陸路（ゴールドラッシュの蒸気船・馬車・金山、フェアヘーブン再訪）は、近い時期の止まる所の地点がまとまっていれば、その真ん中へ寄せる
+const ZOOM = { aheadMonths: 3, nearKm: 800, moveKm: 40, alt: 0.65, landMin: 0.18, ms: 2800, tol: 0.15 };
+const LAND = new Set(['walking', 'wagon', 'horse', 'rail', 'railway', 'train', 'steamship', 'river']);
+function autoShipAhead(A) {
+  const pts = []; let land = false;
+  for (let i = 0; i <= ZOOM.aheadMonths; i++) for (const tr of A.tracks) {
+    const r = trackAt(tr, State.t + i / 12); if (r.state !== 'sailing' || !r.head) continue;
+    pts.push(r.head); const seg = r.path[r.path.length - 1]; if (seg && LAND.has(seg.transport)) land = true;
+  }
+  let span = 0; pts.forEach(p => pts.forEach(q => { span = Math.max(span, angDeg(p, q) * Math.PI / 180 * 6371); }));
+  return pts.length >= 2 ? { span, land } : null;
+}
+function autoStopCluster(A, s) {
+  if (!s || s.e.lat == null || s.e.lng == null) return null;
+  // 航路の終点・寄港地そのもの（高知城下・サンフランシスコ着）では寄せない：航路の全体が見える高さのまま、陸へ移った次の止まる所から寄せる
+  if (A.tracks.some(tr => tr.points.some(p => p.lat != null && angDeg(p, s.e) * Math.PI / 180 * 6371 < 30))) return null;
+  // 近い時期（前後 ZOOM.aheadMonths か月）で、しかもこの止まる所から ZOOM.nearKm 以内の地点だけ（3か月前のバルパライソを含めて広がりすぎ、金山で寄らなかった。2026-11-12）
+  const pts = A.stops.filter(x => Math.abs(x.t - s.t) <= ZOOM.aheadMonths / 12 + 1e-6 && x.e.lat != null && x.e.lng != null && angDeg(x.e, s.e) * Math.PI / 180 * 6371 < ZOOM.nearKm).map(x => x.e);
+  if (pts.length < 2) return null;
+  const v = fitView(pts, { min: ZOOM.landMin }); if (!v) return null;
+  const spread = Math.max(...pts.map(p => angDeg(p, v) * Math.PI / 180 * 6371)) * 2;
+  return spread > ZOOM.moveKm && spread < ZOOM.nearKm ? v : null;
+}
+function autoFollow(opt = {}) {
+  // 章に合わせる動き・高さを変える動きの途中は待つ。前の「寄せる」「ついていく」動きの途中なら、今の船の位置へ寄せ直す。戻り値＝動きの時間（ms。動かなければ 0）
+  const A = State.auto; if (!A || A.camFree || A.phase === 'summary' || (camAnim && camAnimKind !== 'follow' && camAnimKind !== 'glide')) return 0;
   const pov = world.pointOfView(), cam = typeof world.camera === 'function' ? world.camera() : null;
-  if (!followNeeded(pov, head, (cam && cam.fov) || 50, innerWidth / Math.max(1, innerHeight))) return;
-  A.follows = (A.follows || 0) + 1;
-  autoFlyTo({ lat: head.lat, lng: head.lng, altitude: pov.altitude }, AUTO.followMs, 'follow');
+  const base = A.baseAlt != null ? A.baseAlt : pov.altitude, low = Math.min(base, ZOOM.alt);
+  const head = autoShipHead(), ah = head ? autoShipAhead(A) : null;
+  // 航路の無い陸路の出来事（船は港に着いたまま、または航路の外）：止まる所の地点がまとまっていれば、その真ん中へ寄せる
+  // 航路が先へ続いている間（長崎の滞在など、船が止まっていても）は使わない：長崎で 0.18 へ寄って 0.65 へ戻る、不要な寄り・引きが出た（2026-11-12）
+  if (!head || !ah) {
+    const c = autoStopCluster(A, opt.stop);
+    // 高さは、その地点の広がりが画面に収まる高さ（fitView）。0.65 では金山とサンフランシスコ（約150km）が重なって見えた（2026-11-12）。下限 ZOOM.landMin
+    const cAlt = c ? clamp(c.altitude, ZOOM.landMin, low) : low;
+    if (c && Math.abs(cAlt - pov.altitude) > ZOOM.tol * pov.altitude) { A.zoomed = true; A.zooms = (A.zooms || 0) + 1; const ms = camMsFor(angDeg(pov, c), ZOOM.ms); autoFlyTo({ lat: c.lat, lng: c.lng, altitude: cAlt }, ms, 'zoom'); return ms; }
+    if (!head || (A.zoomed && !ah)) return 0; // 寄せた後、船が先へ進まない間は、そのまま
+  }
+  if (A.zoomed && !(ah && ah.span < ZOOM.nearKm)) A.zoomed = false;
+  else if (!A.zoomed && ah && ah.land && ah.span > ZOOM.moveKm && ah.span < ZOOM.nearKm) A.zoomed = true;
+  const want = A.zoomed ? low : base;
+  if (Math.abs(want - pov.altitude) > ZOOM.tol * Math.max(want, pov.altitude)) { A.zooms = (A.zooms || 0) + 1; const ms = camMsFor(angDeg(pov, head), ZOOM.ms); autoFlyTo({ lat: head.lat, lng: head.lng, altitude: want }, ms, 'zoom'); return ms; }
+  const deg = angDeg(pov, head);
+  if (opt.glideMs) {
+    if (deg < GLIDE.deadDeg) return 0;
+    A.glides = (A.glides || 0) + 1; const ms = camMsFor(deg, opt.glideMs);
+    autoFlyTo({ lat: head.lat, lng: head.lng, altitude: pov.altitude }, ms, 'glide'); return ms;
+  }
+  if (!followNeeded(pov, head, (cam && cam.fov) || 50, innerWidth / Math.max(1, innerHeight))) return 0;
+  A.follows = (A.follows || 0) + 1; const ms = camMsFor(deg, AUTO.followMs);
+  autoFlyTo({ lat: head.lat, lng: head.lng, altitude: pov.altitude }, ms, 'follow'); return ms;
 }
 function autoCameraReleased() { const A = State.auto; if (!A) return; cancelCamAnim(); if (!A.camFree) { A.camFree = true; syncAutoCtl(); } }
 // 章の始まりのカメラ（2026-11-10 清水さん「自動再生で、章の変わり目に、日本の上に再ズームするのはなぜか？（フェアヘブン地点で次の章のタイトルをだすといいかと思う）」）。
 // 表紙は今いる場所の上で出し、表紙の後に、章全体へ引くのでなく、その章の最初の航路の出発点へ、今の高さのままなめらかに寄せる（そこから autoFollow が船を追う）。
 // 前の章の終わりと同じ所から出る時（フェアヘーブン→フランクリン号）は、ほとんど動かない。航路の無い区間（小笠原・晩年）は今の通り、出来事の地点が収まる向きと高さへ
 // 航路の無い章で、出来事の地点が狭い範囲（CAM.townKm 以内）にまとまる時は、町の点が見分けられる低さ（CAM.townAlt）へ（フェアヘーブン。2026-11-10）。
-// 航路のある章は、今の高さが CAM.voyMin より低ければ、追跡に適した高さ（CAM.voyAlt）へなめらかに戻す（フェアヘーブン→フランクリン号、晩年→欧州へ）
-const CAM = { townKm: 100, townAlt: 0.3, voyMin: 1.2, voyAlt: 1.6 };
+// 航路のある章は、いつも基本の高さ（CAM.voyAlt）から始める（町の章で寄った後も、航路の無い章で引いた後も、なめらかにそこへ戻す）
+// voyAlt：航海の章の基本の高さ。2026-11-12 清水さん「全体的に地球が引き気味」→ 漂流の章の始まり（地球が画面の高さいっぱい）を基本に、どの章も同じ高さから始める
+//（前は直前の高さを引き継ぎ、航路の無い章や表紙のあとで 1.6〜2 の引いた地球のまま進んでいた）
+const CAM = { townKm: 100, townAlt: 0.3, voyAlt: 1.0 };
 function noTrackView(seg) {
   const pts = chapterPoints(seg, []).filter(p => p && p.lat != null && p.lng != null); if (!pts.length) return null;
   const v = fitView(pts); if (!v) return null;
@@ -1888,13 +1989,16 @@ function noTrackView(seg) {
 function autoChapterCam() {
   const A = State.auto; if (!A || A.camFree || A.phase === 'summary') return;
   const trs = A.tracks.filter(tr => tr.tStart != null && tr.points && tr.points.length).sort((a, b) => a.tStart - b.tStart);
-  const p0 = trs.length ? trs[0].points.find(p => p.lat != null && p.lng != null) : null;
-  if (!p0) { const v = noTrackView(A.seg); A.chapterCam = { key: A.seg && A.seg.key, deg: null, alt: v && v.altitude }; autoFlyTo(v, AUTO.camMs); return; }
+  // 章の始まりに船がもう航海の途中にいれば（帰国の章：始まりの月に船はホノルル）、出発点でなく船の今の位置へ寄せる（出発点へ寄せてから船へ大きく振り直さない）
+  const h0 = autoShipHead();
+  const p0 = h0 || (trs.length ? trs[0].points.find(p => p.lat != null && p.lng != null) : null);
+  if (!p0) { const v = noTrackView(A.seg); A.chapterCam = { key: A.seg && A.seg.key, deg: null, alt: v && v.altitude }; A.baseAlt = v ? v.altitude : null; A.zoomed = false; autoFlyTo(v, AUTO.camMs); return; }
   const pov = world.pointOfView(), deg = Math.acos(clamp(dot3(toVec(pov.lat, pov.lng), toVec(p0.lat, p0.lng)), -1, 1)) * 180 / Math.PI;
-  const alt = pov.altitude < CAM.voyMin ? CAM.voyAlt : pov.altitude;
+  const alt = CAM.voyAlt;
+  A.baseAlt = alt; A.zoomed = false; // この章の高さ（短い陸路で寄せた後に戻る高さ）
   A.chapterCam = { key: A.seg && A.seg.key, deg, alt }; // 確かめ用：章の始まりで寄せた角度と高さ
   if (deg < 0.5 && Math.abs(alt - pov.altitude) < 1e-3) return;
-  autoFlyTo({ lat: p0.lat, lng: p0.lng, altitude: alt }, clamp(500 + deg * 40 + Math.abs(alt - pov.altitude) * 900, 700, AUTO.camMs));
+  autoFlyTo({ lat: p0.lat, lng: p0.lng, altitude: alt }, Math.max(clamp(500 + deg * 40 + Math.abs(alt - pov.altitude) * 900, 700, AUTO.camMs), camMsFor(deg, 700))); // 遠い時は毎秒12度まで
 }
 function autoFitNow() {
   const A = State.auto; if (!A || A.camFree) return;
@@ -1928,12 +2032,13 @@ function autoDock() {
   const altLeft = Math.max(left, Math.min(tb.right, right) - w); // 船の印を避ける時の、年代バーの右寄せ
   return { left: Math.round(left), w: Math.round(w), bottom, top: 96, altLeft: Math.round(altLeft) };
 }
-// 表紙（章・まとめ）：カードと同じ所に（視線が散らないように）
+// 表紙（章・まとめ）：地球の上部の中央に大きく（2026-11-11 清水さん「最初の地球の上部に大きく出る方が良かった」）。
+// 表紙は章ごとに一度の「場面の転換」なので、視線の入口（画面の上の中央）に出し、地球が新しい地域へ向きを変えるのと一緒に見せる。
+// 出来事のカードは中身なので、年月の数字のすぐ上（autoDock）に置き分ける。位置は CSS の .auto-cover（上の中央）のまま
 function positionCover() {
   if (autoCover.hidden) return;
-  const d = autoDock(), st = autoCover.style;
-  autoCover.classList.add('dock');
-  st.left = d.left + 'px'; st.width = Math.min(d.w, 440) + 'px'; st.top = 'auto'; st.bottom = d.bottom + 'px';
+  const st = autoCover.style;
+  autoCover.classList.remove('dock'); st.left = ''; st.width = ''; st.top = ''; st.bottom = '';
   refreshViewDy();
 }
 // 地球の中心を上へずらす量（px）：カードの置き場所が画面の中央に掛かる時だけ。中心がカード（ふつうの高さ VIEW.cardH）の上の端より VIEW.clear 上に来るように。
@@ -2022,7 +2127,7 @@ function autoAvoidShip() {
   if (head && !A.camFree && A.avoidKey !== key) {
     A.avoidKey = key; A.avoids = (A.avoids || 0) + 1;
     const alt = world.pointOfView().altitude;
-    autoFlyTo({ lat: liftedLat(head, alt), lng: head.lng, altitude: alt }, AUTO.followMs, 'follow'); return;
+    const lat = liftedLat(head, alt); autoFlyTo({ lat, lng: head.lng, altitude: alt }, camMsFor(angDeg(world.pointOfView(), { lat, lng: head.lng }), AUTO.followMs), 'follow'); return; // 遠い時は時間を延ばす（毎秒12度まで）
   }
   const d = autoDock(); if (d.altLeft !== d.left && parseFloat(detailCard.style.left) !== d.altLeft) { detailCard.style.left = d.altLeft + 'px'; A.slides = (A.slides || 0) + 1; }
 }
@@ -2034,6 +2139,20 @@ function autoShipHead() {
 
 // 進め方：航海中の月は1か月ずつ。航海の無い期間（記録の無い空白を含む）は1年ずつ、ただし次の出来事・航海の始まり・章の終わりは越えない
 // （play_steps.js の nextStep。その章の航路だけを見る）
+// 止まる所に着いた時、カメラが船（無ければ出来事の場所）から遠い時は、先にそこへ回してからカードを出す（2026-11-12 清水さん：欧州の章で、
+// 横浜を出た一歩で船がサンフランシスコに着き（同じ月の中）、カメラが日本の上にあるままカードが出て、そのあと太平洋を渡っていた）。一つの止まる所で一度だけ
+const CAM_WAIT = { deg: 20, minMs: 1200 };
+function autoCamWait(s) {
+  const A = State.auto; if (!A || A.camFree) return 0;
+  A.camWaited = A.camWaited || new Set(); if (A.camWaited.has(A.stopIx + '|' + s.e.id)) return 0;
+  const tgt = autoShipHead() || (s.e.lat != null && s.e.lng != null ? { lat: s.e.lat, lng: s.e.lng } : null); if (!tgt) return 0;
+  const pov = world.pointOfView(), from = camAnim && camTo ? camTo : pov, deg = angDeg(from, tgt);
+  if (deg < CAM_WAIT.deg) return 0;
+  A.camWaited.add(A.stopIx + '|' + s.e.id);
+  const ms = camMsFor(angDeg(pov, tgt), CAM_WAIT.minMs);
+  autoFlyTo({ lat: tgt.lat, lng: tgt.lng, altitude: from.altitude != null ? from.altitude : pov.altitude }, ms, 'follow'); // 高さは今（動いている途中なら行き先）のまま
+  return ms + 150;
+}
 function autoNextT(t, A) {
   const s = A.stops[A.stopIx];
   const n = nextStep(A.tracks, t, Math.min(A.endT, s ? s.t : Infinity));
@@ -2078,12 +2197,13 @@ function autoStep() {
   const A = State.auto; if (!A || A.paused) return;
   A.phase = 'run';
   const s = A.stops[A.stopIx];
-  if (s && s.t <= State.t + 1e-6) { autoShowStop(s); return; }
+  if (s && s.t <= State.t + 1e-6) { const w = autoCamWait(s); if (w) { autoSchedule(autoStep, w); return; } autoShowStop(s); return; }
   if (State.t >= A.endT - 1e-6) { autoChapter(A.idx + 1); return; }
   const n = autoNextT(State.t, A);
   setT(n.t, { auto: true, exact: true, yearStep: n.kind === 'year' });
-  autoFollow();
-  autoSchedule(autoStep, n.ms);
+  // 月送りは、その送りの時間で等速についていく（少し長めにして次の月へ途切れずにつなぐ）。船が大きく進んだ月は、カメラが追い着くまで次の月を待つ
+  const camMs = autoFollow(n.kind === 'month' ? { glideMs: n.ms + 120 } : {});
+  autoSchedule(autoStep, Math.max(n.ms, camMs - 120));
 }
 // W-LINK の年：year の文字があればそれ、無ければ範囲（開始と終わりが違う時は「1789 — 1793」）
 function wlYearText(l) { return l.year || (l.endYear != null && l.endYear !== l.startYear ? l.startYear + ' — ' + l.endYear : String(l.startYear)); }
@@ -2104,18 +2224,18 @@ function autoShowStop(s) {
     : s.after ? '自動鑑賞では、年譜の並び（起きた順）に合わせて「' + s.after.title + '」（' + ymLabel(s.after.t) + '）の後に出しています。この出来事の月は記録ではありません。'
     : s.afterTracks ? '自動鑑賞では、この章の航路を描き終えた後（' + ymLabel(s.t) + '）に出しています。' + (Math.floor(s.t + 1e-9) !== Math.floor(s.e.t + 1e-9) ? '出来事の年は ' + String(s.e.year || Math.floor(s.e.t)) + 'で、' : '') + '年だけが分かる出来事で、月は記録ではありません（タイムラインの位置は変えていません）。'
     : mv ? '自動鑑賞では、「' + (mv.ja || mv.en) + '」の章の' + (s.moved.dir === 'after' ? '後' : '前') + 'に出しています（出来事の年は ' + String(s.e.year || '') + '。タイムラインの位置は変えていません）。' : '') + joinNote;
-  // 確かさの一行（いちばん大事な一つ。推測を記録に見せないため必ず出す）。残りの注記は「注記・出典 ▸」に畳む
+  // 確かさ（推測を記録に見せないため必ず出す）：カードには札（tag）、文（text）は「詳しく ▸」の先頭。残りの注記も「詳しく」に畳む
   const e = s.e, yearUnsure = e.approx === '年は確かでない';
-  const cert = yearUnsure ? { text: '年は確かでありません（' + String(e.year || '') + '）。月も記録ではありません' }
-    : s.shipTime && s.shipTime.months ? { text: '年譜の月（' + ymLabel(e.t) + '）と航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）がずれています。' + (s.shipTime.timing === 'anchor' ? '記録の時刻に合わせて出しています' : '推測の航路の上で船がここにいる時刻に出しています') }
-    : !e.monthKnown ? { text: '月は記録ではありません（年だけの出来事' + (e.approx ? '・' + e.approx : '') + '）' + (s.onTrack && s.onTrack.kind === 'pass' ? '。航路の上で船がこの場所を通る推測の時刻に出しています' : '') }
-    : monthInferred(e) ? { text: '年月は年譜（events.js）の値ですが、月は推論です（注記・出典を参照）' + (s.joined != null ? '。日は近くの出来事に合わせた表示' : '') }
+  // tag：カードの年月の行の横に出す破線の小さな札（文は「詳しく」の中）。記録どおりの時（rec）は札を出さない
+  const cert = yearUnsure ? { tag: '年は不確か', text: '年は確かでありません（' + String(e.year || '') + '）。月も記録ではありません' }
+    : s.shipTime && s.shipTime.months ? { tag: s.shipTime.timing === 'anchor' ? '時刻は記録に合わせた' : '時刻は推測', text: '年譜の月（' + ymLabel(e.t) + '）と航路の' + (s.shipTime.timing === 'anchor' ? '記録の' : '推測の') + '時刻（' + dayLabel(s.shipTime.t) + '）がずれています。' + (s.shipTime.timing === 'anchor' ? '記録の時刻に合わせて出しています' : '推測の航路の上で船がここにいる時刻に出しています') }
+    : !e.monthKnown ? { tag: '年のみ・月は推測', text: '月は記録ではありません（年だけの出来事' + (e.approx ? '・' + e.approx : '') + '）' + (s.onTrack && s.onTrack.kind === 'pass' ? '。航路の上で船がこの場所を通る推測の時刻に出しています' : '') }
+    : monthInferred(e) ? { tag: '月は推論', text: '年月は年譜（events.js）の値ですが、月は推論です（注記・出典を参照）' + (s.joined != null ? '。日は近くの出来事に合わせた表示' : '') }
     : { text: '年月は年譜（events.js）の値です（' + String(e.year || '') + (e.approx ? '・' + e.approx : '') + '）' + (s.joined != null ? '。日は近くの出来事に合わせた表示' : s.dated ? '。日は本文の日付（' + dayLabel(s.t) + '）' : !isMonthStart(s.t) ? '。日は航路の推測（' + dayLabel(s.t) + '）' : ''), rec: true };
   showLifeCard(s.e, null, { auto: true, cert, autoNote: note, noTimeNote: !!s.onTrack }); // 航路の上に置いた時は、注記に年だけの旨を書くので重ねない
-  autoFollow(); // 止まる所でも、船が離れていれば寄せる（カードを出している間、船が画面の外に残らないように）
+  autoFollow({ stop: s }); // 止まる所でも、船が離れていれば寄せる（航路の無い陸路では、近い時期の止まる所の地点へ寄せる）（カードを出している間、船が画面の外に残らないように）
   placeAutoCard();
   const ms = stopMs(s.e);
-  dcBar.style.animation = 'none'; void dcBar.offsetWidth; dcBar.style.animation = ''; dcBar.style.animationDuration = ms + 'ms'; // 残りの時間の線
   afterFrames(autoAvoidShip); // 船の印がカードの下に入っていないか
   setTimeout(scrollNearIntoView, 0);
   syncAutoCtl();
@@ -2208,10 +2328,9 @@ function syncAutoCtl() {
 }
 autoBtn.onclick = autoStart;
 autoPauseBtn.onclick = () => { if (State.auto && State.auto.paused) autoResume(); else autoPause(); };
-// カード・表紙・札の「⏸ 一時停止中 — ▶ 再開」と、カードの「❚❚ 一時停止」
+// カード・表紙・札の「⏸ 一時停止中 — ▶ 再開」
 const dcResume = document.getElementById('dcResume'), acResume = document.getElementById('acResume'), autoPausePill = document.getElementById('autoPausePill');
 [dcResume, acResume, autoPausePill].forEach(b => { b.addEventListener('pointerdown', e => e.stopPropagation()); b.onclick = e => { e.stopPropagation(); autoResume(); }; });
-document.getElementById('dcPz').onclick = e => { e.stopPropagation(); autoPause(); };
 window.addEventListener('resize', () => { // 描く窓のずらし（setViewOffset）は画面の大きさごとに付け直す。自動鑑賞のカード・札も置き直す
   setViewDy(State.auto ? autoViewTarget() : 0);
   if (State.auto && cardCtx && cardCtx.auto && !detailCard.hidden) placeAutoCard();
@@ -2248,6 +2367,10 @@ personGlobeAvailable(PG.base).then(v => {
   if (cardCtx && cardCtx.kind === 'plink' && !detailCard.hidden) { const p = personLinks.find(x => x.id === cardCtx.id); if (p) showPersonCard(p, null, { keepPos: true }); }
   if (cardCtx && cardCtx.kind === 'wlink' && !detailCard.hidden) { const l = WL.find(x => x.id === cardCtx.id); if (l) showWLinkCard(l, null, { keepPos: true }); }
 });
+// 表紙（manjiro/index.html）の「自動鑑賞で観る」から ?auto=1 で開いた時：地球の準備ができてから自動鑑賞を始める（2026-11-12）
+if (new URLSearchParams(location.search).has('auto')) {
+  let n = 0; const iv = setInterval(() => { n++; if (globeReady || n > 100) { clearInterval(iv); setTimeout(() => { if (!State.auto) document.getElementById('autoBtn').click(); }, 600); } }, 100);
+}
 // 確かめ用（コンソール）：航路の組み立ての注意
 TRACKS.forEach(tr => { if (tr.warnings && tr.warnings.length) console.warn('[track]', tr.key, tr.warnings); });
 </script>

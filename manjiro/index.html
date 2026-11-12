@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>History OS｜中浜万次郎 Focus</title>
+<meta name="description" content="1841年の漂流から1898年まで。中浜万次郎の航海を月ごとの船の位置として地球の上にたどり、年譜と同時代の世界を重ねる History OS。" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="History OS｜中浜万次郎 Focus" />
+<meta property="og:description" content="1841年の漂流から1898年まで。中浜万次郎の航海を月ごとの船の位置として地球の上にたどり、年譜と同時代の世界を重ねる History OS。" />
+<meta property="og:site_name" content="History OS" />
+<meta property="og:locale" content="ja_JP" />
+<!--
+  中浜万次郎 Focus の表紙（2026-11-12、清水さん「北斎フォーカスと同じように表紙を。デザインはαに任せる」）。
+  骨組みは北斎版の表紙（hokusai/index.html）と同じ：上に名前、中央に題字と一文、入口、四つの案内（INTRO / HOW TO VIEW / METHOD / SOURCES）、
+  ENTER で本体（focusShell.html）を全画面の iframe で重ね、左上の「表紙へ戻る」で戻る。
+  万次郎版の意匠（11/12 清水さん「北斎版と似すぎ。文字組とボタン配置はそのまま、背景と言葉を変える」）：
+    背景＝海の青に、経線・緯線のガイド線だけ（10度ごと、30度ごとと赤道を少し濃く。正距円筒の平らな格子）。
+    言葉＝ジョン・ハウランド号に救われ船の名から John Mung と呼ばれたこと、船長との交流、捕鯨、海外の暮らし、時代の変わり目、波濤を越えた人。
+  入口は二つ：自動鑑賞で観る（展示向け。本体を ?auto=1 で開き、準備ができたら自動鑑賞を始める）／自分でたどる。
+-->
+<style>
+:root{
+  --bg:#0b2c48;
+  --ink:#edf3f6;
+  --focus:#66e0ff;
+  --land:#ffd95e;
+  --wlink:#b58cff;
+  --border:rgba(237,243,246,.14);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit}
+.app{
+  position:relative;width:100%;height:100%;isolation:isolate;
+  background:
+    radial-gradient(ellipse at 50% 46%,rgba(46,124,170,.32),transparent 62%),
+    linear-gradient(180deg,#0a2742 0%,#0c3050 48%,#0f3a5e 100%);
+}
+/* 背景：経線・緯線のガイド線だけ（線は script で 10度ごとに引く）。ゆっくり現れて、そのあとは止まる */
+.sea{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0;animation:fade 2.4s ease .2s forwards}
+.sea path{fill:none;stroke:rgba(190,228,246,.10);stroke-width:1;vector-effect:non-scaling-stroke}
+.sea path.eq{stroke:rgba(255,255,255,.30)}
+.sea path.trop{stroke:rgba(255,214,140,.26);stroke-dasharray:6 5}
+.sea path.dateline{stroke:rgba(200,180,255,.26);stroke-dasharray:6 5}
+.sea .limb{fill:none;stroke:rgba(190,228,246,.24);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.sea .glow{fill:url(#globeShade)}
+@keyframes fade{to{opacity:1}}
+.grain{
+  position:absolute;inset:0;pointer-events:none;opacity:.08;mix-blend-mode:soft-light;z-index:2;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+}
+.header{
+  position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));
+  left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(237,243,246,.52)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.88);letter-spacing:.29em}
+.edition{font-size:9px;letter-spacing:.17em;color:rgba(237,243,246,.30);padding-top:2px}
+.hero{
+  position:absolute;z-index:4;left:50%;top:46%;transform:translate(-50%,-50%);
+  width:min(88vw,880px);text-align:center;padding:28px;
+}
+.kicker{font-size:10px;letter-spacing:.36em;color:rgba(237,243,246,.47);margin-bottom:17px}
+h1{font-family:var(--serif);font-size:clamp(38px,5.1vw,72px);font-weight:500;line-height:1.06;margin:0 0 8px;text-shadow:0 2px 28px rgba(0,0,0,.5)}
+.title-text{display:inline-block;letter-spacing:.15em;margin-right:-.15em}
+.life{font-size:11px;letter-spacing:.27em;color:rgba(237,243,246,.61);margin-bottom:32px}
+.thesis{font-family:var(--serif);font-weight:500;font-size:clamp(21px,2.45vw,34px);line-height:1.55;margin:0 0 20px}
+.thesis-text{display:inline-block;letter-spacing:.09em;margin-right:-.09em}
+.jp-period{display:inline-block;width:.58em;overflow:visible;letter-spacing:0}
+.lead{
+  max-width:640px;margin:0 auto;color:rgba(237,243,246,.64);
+  font-family:var(--serif);font-size:clamp(12px,1.15vw,15px);line-height:1.95;letter-spacing:.055em;
+}
+.enter-wrap{margin-top:34px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.enter{
+  border:1px solid rgba(237,243,246,.25);background:rgba(4,13,22,.34);
+  color:#f7fbfd;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;
+  cursor:pointer;backdrop-filter:blur(9px);
+  transition:background .25s ease,border-color .25s ease,transform .25s ease;
+}
+.enter small{display:block;margin-top:5px;font-size:9px;letter-spacing:.12em;color:rgba(237,243,246,.48)}
+.enter .arw{display:inline-block;margin-left:13px;color:var(--focus);transition:transform .25s ease}
+.enter.primary{border-color:rgba(102,224,255,.42);background:rgba(20,72,104,.22)}
+.enter:hover,.enter:focus-visible{background:rgba(46,112,154,.16);border-color:rgba(102,224,255,.55);transform:translateY(-1px);outline:none}
+.enter:hover .arw{transform:translateX(4px)}
+
+.guide{
+  width:min(92vw,860px);margin:26px auto 0;display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid rgba(237,243,246,.10);border-bottom:1px solid rgba(237,243,246,.10);
+}
+.guide button{
+  appearance:none;border:0;border-right:1px solid rgba(237,243,246,.09);background:rgba(3,12,20,.18);
+  min-height:74px;color:var(--ink);padding:11px 15px 12px;text-align:left;cursor:pointer;
+}
+.guide button:last-child{border-right:0}
+.guide button:hover,.guide button:focus-visible{background:rgba(46,112,154,.12);outline:none}
+.g-num{display:block;font-size:8px;letter-spacing:.18em;color:rgba(102,224,255,.55);margin-bottom:6px}
+.g-title{display:block;font-size:10px;letter-spacing:.13em;color:rgba(237,243,246,.82);margin-bottom:5px}
+.g-copy{display:block;font-size:9px;line-height:1.45;letter-spacing:.04em;color:rgba(237,243,246,.42)}
+
+.foot{
+  position:absolute;z-index:4;left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  bottom:max(19px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;
+  font-size:8px;letter-spacing:.13em;color:rgba(237,243,246,.27)
+}
+
+dialog{
+  width:min(90vw,580px);border:1px solid var(--border);padding:0;
+  background:rgba(5,16,28,.96);color:var(--ink);
+  box-shadow:0 28px 90px rgba(0,0,0,.55);backdrop-filter:blur(16px);
+}
+dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
+.dlg{padding:28px 30px 30px;max-height:82vh;overflow-y:auto}
+.d-kicker{font-size:9px;letter-spacing:.22em;color:rgba(102,224,255,.66);margin-bottom:12px}
+.dlg h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em;margin:0 0 18px}
+.dlg p{font-size:12px;line-height:1.95;color:rgba(237,243,246,.69);margin:0 0 12px}
+.steps{display:grid;gap:10px;margin:14px 0 0}
+.step{border-top:1px solid rgba(237,243,246,.09);padding-top:10px;display:grid;grid-template-columns:76px 1fr;gap:10px;align-items:start}
+.step b{font-size:10px;color:rgba(102,224,255,.72);letter-spacing:.08em;font-weight:500;line-height:1.7}
+.step span{font-size:11px;line-height:1.75;color:rgba(237,243,246,.67)}
+.step strong{font-weight:500;color:rgba(237,243,246,.88)}
+.d-sub{font-size:9px;letter-spacing:.16em;color:rgba(237,243,246,.45);margin:22px 0 0}
+.d-sub+.steps{margin-top:8px}
+/* 本体のボタン名と印（focusShell と同じ色と形） */
+.btn-name{display:inline-block;border:1px solid rgba(237,243,246,.22);border-radius:5px;padding:1px 6px;font-size:10px;color:#eef3f8;letter-spacing:.04em;white-space:nowrap}
+.btn-name.auto{border-color:rgba(102,224,255,.5);color:var(--focus)}
+.btn-name.wl{border-color:rgba(181,140,255,.55);color:#d5c2ff}
+.mk{display:inline-flex;align-items:center;gap:6px}
+.mk svg{width:26px;height:8px;flex:none}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.dot.fill{background:var(--focus)}
+.dot.hollow{border:1.5px solid var(--focus)}
+.dot.wl{border:1.5px dashed var(--wlink)}
+.dia{display:inline-block;width:8px;height:8px;border:1.5px solid rgba(237,243,246,.8);transform:rotate(45deg);flex:none;margin:0 1px}
+.chip{display:inline-block;font-size:9px;border:1px solid rgba(237,243,246,.6);border-radius:3px;padding:0 4px;color:#eef3f8;flex:none}
+.close{margin-top:20px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+.dlg .fine{font-size:10px;line-height:1.8;color:rgba(237,243,246,.45);margin:16px 0 0}
+@supports not selector(::-webkit-scrollbar){.dlg{scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}}
+/* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則） */
+.dlg::-webkit-scrollbar{width:6px;background:transparent}
+.dlg::-webkit-scrollbar-track{background:transparent}
+.dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+.dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+
+/* ===== ENTER 先：本体を全画面 iframe で重ねる（北斎版と同じ） ===== */
+.os-frame{position:absolute;inset:0;z-index:10;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .6s ease;background:#050c16}
+.app.entered .os-frame{opacity:1;pointer-events:auto}
+.app.entered .hero,.app.entered .header,.app.entered .foot,.app.entered .sea{opacity:0;pointer-events:none;transition:opacity .25s ease}
+.os-back{
+  position:absolute;z-index:11;top:max(14px,env(safe-area-inset-top));left:clamp(14px,2vw,22px); /* 本体の左上は空いている（右下は凡例・P-LINK） */
+  display:none;align-items:center;
+  border:1px solid rgba(237,243,246,.22);background:rgba(4,13,22,.6);backdrop-filter:blur(8px);
+  color:rgba(237,243,246,.82);padding:7px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer;border-radius:6px;
+}
+.app.entered .os-back{display:inline-flex}
+.os-back:hover{border-color:rgba(102,224,255,.45);color:#fff}
+.os-loading{position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;color:rgba(237,243,246,.5);font-size:11px;letter-spacing:.22em;pointer-events:none}
+.app.entered.loading .os-loading{display:flex}
+
+@media (max-width:640px){
+  .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
+  .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
+  .hero{top:48%;width:100%;padding:18px}
+  .kicker{font-size:8px;margin-bottom:15px}
+  h1{font-size:40px}
+  .title-text{letter-spacing:.11em;margin-right:-.11em}
+  .life{font-size:9px;margin-bottom:26px}
+  .thesis{font-size:20px;margin-bottom:14px}
+  .lead{font-size:11px;line-height:1.85;max-width:330px}
+  .lead br{display:none} /* 狭い画面では行を流す（PC の三行の区切りで中途半端に折れないように） */
+  .enter-wrap{margin-top:24px;gap:8px}
+  .enter{font-size:9px;padding:11px 16px 11px 19px}
+  .guide{width:min(94vw,365px);margin-top:18px;grid-template-columns:repeat(2,1fr)}
+  .guide button{min-height:62px;padding:9px 8px 10px}
+  .guide button:nth-child(2){border-right:0}
+  .guide button:nth-child(-n+2){border-bottom:1px solid rgba(237,243,246,.09)}
+  .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
+  .foot{left:18px;right:18px;font-size:7px}.foot>span:last-child{display:none}
+  .step{grid-template-columns:62px 1fr}
+  .dlg{padding:24px 20px 24px}
+  .os-back{left:10px;top:calc(max(14px,env(safe-area-inset-top)) + 44px);padding:5px 10px} /* 本体の題字（左上）を隠さないよう、二段目の左（W-LINK・ガイドの段）へ */
+}
+@media (max-height:690px){
+  .hero{top:48%}
+  .lead{display:none}
+  .guide{margin-top:16px}
+  .guide button{min-height:60px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important}
+  .sea{animation:none;opacity:1}
+}
+</style>
+<!-- アクセス数（GoatCounter: Cookie なし・個人を特定しない。北斎版と同じ） -->
+<script data-goatcounter="https://historyos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- 背景：地球のガイド（経線・緯線・赤道）だけを球として。線は下の script で引く -->
+  <svg class="sea" id="graticule" viewBox="0 0 1800 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><radialGradient id="globeShade" cx="38%" cy="32%" r="75%">
+      <stop offset="0" stop-color="rgba(120,190,230,.10)"/><stop offset=".7" stop-color="rgba(40,110,160,.05)"/><stop offset="1" stop-color="rgba(5,20,40,.22)"/>
+    </radialGradient></defs>
+  </svg>
+  <div class="grain"></div>
+
+  <header class="header">
+    <div class="brand"><strong>HISTORY OS</strong>JOHN MANJIRO FOCUS</div>
+    <div class="edition">PREVIEW / COVER STUDY 01</div>
+  </header>
+
+  <main class="hero">
+    <div class="kicker">1827 — 1898</div>
+    <h1><span class="title-text">中浜万次郎</span></h1>
+    <div class="life">JOHN MANJIRO / CASTAWAY · WHALER · INTERPRETER</div>
+
+    <p class="thesis"><span class="thesis-text">波濤を越え、時代を渡る<span class="jp-period">。</span></span></p>
+
+    <p class="lead">嵐に流された少年を救ったのは、捕鯨船ジョン・ハウランド号。<br>
+      船の名から「ジョン・マン」と呼ばれ、船長の家に迎えられて学ぶ。<br>
+      捕鯨の海を渡り、十年ののち、開国へ向かう日本へ帰ってくる。</p>
+
+    <div class="enter-wrap">
+      <button class="enter primary" id="autoEnter" type="button">自動鑑賞で観る<span class="arw">▶</span><small>章ごとに、航路と出来事を順に</small></button>
+      <button class="enter" id="enterBtn" type="button">ENTER HISTORY OS<span class="arw">→</span><small>年代バーで自分でたどる</small></button>
+    </div>
+
+    <div class="guide" aria-label="入口ガイド">
+      <button data-dialog="intro" type="button"><span class="g-num">01 / INTRO</span><span class="g-title">この世界について</span><span class="g-copy">漂流から晩年まで、航海と生涯を地球の上で。</span></button>
+      <button data-dialog="view" type="button"><span class="g-num">02 / HOW TO VIEW</span><span class="g-title">見方</span><span class="g-copy">自動鑑賞・年代バー・W-LINK・印の読み方。</span></button>
+      <button data-dialog="method" type="button"><span class="g-num">03 / METHOD</span><span class="g-title">記録と推測</span><span class="g-copy">どこを通ったか、いつそこにいたかを分けて示す。</span></button>
+      <button data-dialog="sources" type="button"><span class="g-num">04 / SOURCES</span><span class="g-title">出典と資料</span><span class="g-copy">航海の手稿・新聞・捕鯨データ・郷土資料。</span></button>
+    </div>
+  </main>
+
+  <footer class="foot"><span>地球の画像：NASA Blue Marble</span><span>HISTORY OS / FOCUS PERSON</span></footer>
+
+  <iframe id="osFrame" class="os-frame" title="History OS / John Manjiro Focus" allow="fullscreen"></iframe>
+  <div class="os-loading" id="osLoading">地球を準備しています…</div>
+  <button class="os-back" id="backBtn" type="button" aria-label="表紙へ戻る">← 表紙へ</button>
+
+  <dialog id="intro"><div class="dlg">
+    <div class="d-kicker">01 / INTRO</div><h2>波濤を越え、時代を渡る</h2>
+    <p>History OS は、歴史を年表だけでなく、時間・場所・人物・同時代の世界を重ねて見るための試みです。</p>
+    <p>1841年、土佐の漁師の少年・万次郎は、漂流の末に鳥島で捕鯨船ジョン・ハウランド号に救われました。船の乗組員は、船の名から彼を John Mung（ジョン・マン）と呼び、のちの捕鯨船の乗組員名簿にもその名で記されています。今よく知られる「ジョン万次郎」という呼び名は、この名に由来します。</p>
+    <p>ホイットフィールド船長は万次郎をアメリカ・フェアヘーブンの家に迎え、万次郎はそこで学び、捕鯨船で世界の海を渡りました。帰国ののち、日本は開国へ向かい、万次郎は咸臨丸で再び太平洋を渡ります。船長との手紙のやりとりと再会は、その後も続きました。</p>
+    <p>中浜万次郎 Focus では、1841年の漂流から、捕鯨船での航海、アメリカ・フェアヘーブンでの暮らし、ゴールドラッシュ、琉球・薩摩・長崎を経た帰郷、咸臨丸、欧州への旅、晩年までを、地球の上に月ごとにたどります。</p>
+    <p>船は、記録のある日付の寄港をつないで、その月にいたと考えられる場所に置かれます。同じ時代に世界で何が起きていたか（捕鯨の広がり、日本への接近、世界の動き）も、同じ年代バーの上に重ねます。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="view"><div class="dlg">
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見方</h2>
+    <div class="d-sub">二つの入口</div>
+    <div class="steps">
+      <div class="step"><b>自動鑑賞</b><span><span class="btn-name auto">自動鑑賞 ▶</span> 章ごとに、その時代の航路が月ごとに伸び、年譜の出来事でカードを開いて止まります。止まる長さは文の長さで決まります。<strong>一時停止</strong>（Space）・<strong>次の章</strong>・<strong>終了</strong>（Esc）。最後に生涯の全航路を見渡します。展示で、操作せずに最後まで観るための入口です。</span></div>
+      <div class="step"><b>自分で</b><span>年代バーのカーソルをドラッグして年月を動かします。背景のドラッグで年代を動かし、背景を押すとその年月へ。<span class="btn-name">‹</span> <span class="btn-name">▶</span> <span class="btn-name">›</span> で1か月ずつ・再生、<span class="btn-name">＋</span> <span class="btn-name">－</span> で年代バーの拡大・縮小。</span></div>
+    </div>
+    <div class="d-sub">画面の各部（PC の配置。スマホでは上下に並びます）</div>
+    <div class="steps">
+      <div class="step"><b>右</b><span>今の場所と、人物年譜（LIFE）。年譜の出来事を押すと、その年月へ移ってカードが開きます。</span></div>
+      <div class="step"><b>左</b><span><strong>WORLD EVENTS</strong>：その年の前後の世界の出来事。<br><strong>W-LINK</strong>：同時代の世界（捕鯨・接近・世界の三つの分類）。札で分類を出し入れ、左下の <span class="btn-name wl">W-LINK</span> で全体を出し入れします。</span></div>
+      <div class="step"><b>右下</b><span><strong>P-LINK</strong>：万次郎と関わった人物。</span></div>
+      <div class="step"><b>右上</b><span><span class="btn-name">CHAPTER</span> 章を選ぶ／<span class="btn-name">航路について</span> 航路の作り方と出典／<span class="btn-name">追跡</span> 再生中にカメラが船を追う（既定はオフ）／<span class="btn-name">ガイド</span> 緯線・経線、赤道、回帰線、日付変更線。</span></div>
+    </div>
+    <div class="d-sub">地球の上の印</div>
+    <div class="steps">
+      <div class="step"><b class="mk"><svg viewBox="0 0 26 8"><line x1="1" y1="4" x2="25" y2="4" stroke="#66e0ff" stroke-width="2"/></svg></b><span><strong>実線</strong>：通ったことが記録にある航路。</span></div>
+      <div class="step"><b class="mk"><svg viewBox="0 0 26 8"><line x1="1" y1="4" x2="25" y2="4" stroke="#66e0ff" stroke-width="2" stroke-dasharray="5 3"/></svg></b><span><strong>破線</strong>：推定、または確かさの指定がない航路。</span></div>
+      <div class="step"><b class="mk"><svg viewBox="0 0 26 8"><line x1="1" y1="4" x2="25" y2="4" stroke="#ffd95e" stroke-width="2"/></svg></b><span><strong>黄</strong>：陸路（鉄道・馬車・徒歩）。</span></div>
+      <div class="step"><b class="mk"><i class="dot fill"></i><i class="dot hollow"></i></b><span><strong>船の印</strong>：● はその月の位置が記録にある、○ は推測。<span class="chip">二次資料</span> は、記録が二次資料だけのもの。</span></div>
+      <div class="step"><b class="mk"><i class="dia"></i></b><span><strong>航路から外れた記録の位置</strong>：他の船の日誌が書き留めた出会いなど、航路の点に結べない記録。</span></div>
+      <div class="step"><b class="mk"><i class="dot wl"></i></b><span><strong>W-LINK</strong>：その年に重なる同時代の出来事の場所。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="method"><div class="dlg">
+    <div class="d-kicker">03 / METHOD</div><h2>記録と推測を分ける</h2>
+    <p>万次郎の航海には、日付と場所が記録で分かる所と、分からない所があります。この画面は、その違いを混ぜないことを原則にしています。</p>
+    <div class="steps">
+      <div class="step"><b>二つの確かさ</b><span><strong>どこを通ったか</strong>は線の種類（実線・破線）で、<strong>いつそこにいたか</strong>は船の印（●・○）で、別々に示します。</span></div>
+      <div class="step"><b>月ごとの位置</b><span>日付の記録がある寄港の間は、港での滞在を差し引いたうえで、残りの日数を航路の距離に比例して割り振った推測です。船の速さの目安は、1830〜1860年の捕鯨船 1,008 航海の日ごとの位置から計算しています。</span></div>
+      <div class="step"><b>暦</b><span>旧暦の日付は、国立天文台の暦の表で西暦に換算しています。</span></div>
+      <div class="step"><b>食い違い</b><span>記録と年譜が食い違う所は、確かめられた方に合わせ、確かめきれない所は「伝わる」「未確認」と書きます。カードの「詳しく」に、確かさの注記があります。</span></div>
+      <div class="step"><b>陸の道</b><span>金山への道や、高知から中浜への道のように、道筋が書かれていない所は破線（推定）で描きます。</span></div>
+      <div class="step"><b>カードの文</b><span>自動鑑賞のカードの文は、年譜の本文から選んで抜き出したもので、書き足していません。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="sources"><div class="dlg">
+    <div class="d-kicker">04 / SOURCES</div><h2>出典と資料</h2>
+    <p>このサイトで使っている主な資料です。航路の日付ごとの出典は、本体の「航路について」に記載しています。</p>
+    <div class="steps">
+      <div class="step"><b>航海の記録</b><span>Dennis Wood『Abstracts of Whaling Voyages』（捕鯨航海の手稿の要約。Internet Archive）— ジョン・ハウランド号とフランクリン号の寄港と日付。</span></div>
+      <div class="step"><b>新聞</b><span>『The Friend』（ホノルル。ハワイ・ミッション・ハウスの公開資料）— 船の入港と、ホノルルの万次郎を伝える記事。</span></div>
+      <div class="step"><b>捕鯨データ</b><span>whalinghistory.org（American Offshore Whaling Logbook Data／CoML、CC BY 4.0）— 船の速さの目安と、他の船の日誌が記した出会い。</span></div>
+      <div class="step"><b>郷土資料</b><span>土佐清水市教育委員会『市史編さん便り』— フェアヘーブンでの暮らし、帰国の道筋（琉球・薩摩・長崎・土佐）、咸臨丸の日付など。</span></div>
+      <div class="step"><b>伝記</b><span>中浜明『中浜万次郎の生涯』（富山房, 1970）。</span></div>
+      <div class="step"><b>暦</b><span>国立天文台「暦象年表」（旧暦と西暦の換算）。</span></div>
+      <div class="step"><b>二次資料</b><span>Wikipedia（日本語・英語）など。二次資料にだけある事柄は、画面で「二次資料」と示します。</span></div>
+      <div class="step"><b>人物・地球</b><span>人物の照合に Wikidata。地球の画像は NASA Blue Marble。</span></div>
+    </div>
+    <p class="fine">各機関が本サイトを推薦・監修するものではありません。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+</div>
+
+<script>
+// 背景の地球：本体の地球と同じ「ガイド」（経線・緯線と赤道）だけを球として描く（正射図法）。
+// 中心は太平洋（経度 180 度）、少し北から見下ろす（緯度 22 度）。手前の半球の線だけを描き、裏側は描かない。
+(function drawGlobeGuide() {
+  const svg = document.getElementById('graticule');
+  const NS = 'http://www.w3.org/2000/svg';
+  const CX = 900, CY = 470, R = 400;           // viewBox 1800×900 の中の球の中心と半径
+  const LON0 = 180 * Math.PI / 180, LAT0 = 22 * Math.PI / 180;
+  const sin0 = Math.sin(LAT0), cos0 = Math.cos(LAT0);
+  const proj = (latD, lonD) => {
+    const la = latD * Math.PI / 180, dl = lonD * Math.PI / 180 - LON0;
+    const cosc = sin0 * Math.sin(la) + cos0 * Math.cos(la) * Math.cos(dl); // 0 未満は裏側
+    return [CX + R * Math.cos(la) * Math.sin(dl), CY - R * (cos0 * Math.sin(la) - sin0 * Math.cos(la) * Math.cos(dl)), cosc];
+  };
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; };
+  // 線を細かい点でたどり、手前にある区間だけを path にする
+  const line = (pts, cls) => {
+    let d = '', pen = false;
+    for (const [x, y, c] of pts) {
+      if (c >= 0) { d += (pen ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); pen = true; } else pen = false;
+    }
+    if (d) el('path', { d, class: cls });
+  };
+  el('circle', { cx: CX, cy: CY, r: R, class: 'glow' });
+  // 本体のガイドと同じ約束：緯線・経線 10 度おき、赤道（実線）、南北の回帰線（破線）、日付変更線（180 度・破線）
+  const meridian = lon => { const p = []; for (let lat = -90; lat <= 90; lat += 2) p.push(proj(lat, lon)); return p; };
+  const parallel = lat => { const p = []; for (let lon = -180; lon <= 180; lon += 2) p.push(proj(lat, lon)); return p; };
+  for (let lon = -170; lon < 180; lon += 10) line(meridian(lon), '');
+  for (let lat = -80; lat <= 80; lat += 10) if (lat) line(parallel(lat), '');
+  line(parallel(0), 'eq');
+  line(parallel(23.44), 'trop'); line(parallel(-23.44), 'trop');
+  line(meridian(180), 'dateline');
+  el('circle', { cx: CX, cy: CY, r: R, class: 'limb' });     // 球の縁
+  // 縦長の画面（スマホ）では、球の幅を画面の幅に合わせる（横長のままだと球の大半が切れる）
+  const fit = () => {
+    const portrait = innerWidth < innerHeight;
+    svg.setAttribute('viewBox', portrait ? `${CX - R - 24} ${CY - R - 24} ${2 * R + 48} ${2 * R + 48}` : '0 0 1800 900');
+    svg.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice');
+  };
+  fit(); addEventListener('resize', fit);
+})();
+const app = document.getElementById('app');
+const osFrame = document.getElementById('osFrame');
+const OS_URL = 'focusShell.html';
+function enter(auto) {
+  app.classList.add('entered', 'loading');
+  osFrame.addEventListener('load', () => setTimeout(() => app.classList.remove('loading'), 900), { once: true });
+  osFrame.src = OS_URL + (auto ? '?auto=1' : ''); // ここで初めて本体を読み込む（自動鑑賞は本体が地球の準備を待って始める）
+}
+document.getElementById('autoEnter').addEventListener('click', () => enter(true));
+document.getElementById('enterBtn').addEventListener('click', () => enter(false));
+document.getElementById('backBtn').addEventListener('click', () => {
+  app.classList.remove('entered', 'loading');
+  osFrame.removeAttribute('src'); // 戻ったら本体を解放（次は初めから）
+});
+document.querySelectorAll('[data-dialog]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.dialog).showModal()));
+document.querySelectorAll('.close').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+</script>
+</body>
+</html>
