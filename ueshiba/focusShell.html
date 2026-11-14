@@ -91,6 +91,7 @@
   .ev .t{font-size:12.5px;line-height:1.5;min-width:0}
   .ev .d{font-size:9.5px;color:var(--dim);margin-left:auto;white-space:nowrap;flex:0 0 auto}
   .ev.now .d{color:var(--amber-soft)}
+  .ev.now{background:rgba(230,148,69,.13)} /* この年に起きている出来事：オレンジの地色だけ（枠は付けない） */
 
   /* ── 右：FOCUS PERSON ── */
   .right-panel{right:24px;top:104px;width:340px;max-height:calc(100% - 330px)}
@@ -432,10 +433,10 @@
   .lg-term{color:var(--c-term);border-bottom:1px dotted rgba(183,156,255,.7)}
   /* NOW（北斎版と同じ札）と、いまの行事（金。行事カレンダーと同じ色） */
   :root{ --c-event:#e0c27a; --c-event-br:#f2dcaa; }
-  .now{background:rgba(36,27,18,.8);border:1px solid var(--amber);color:var(--amber-soft);border-radius:6px;height:26px;padding:0 10px;font-size:10.5px;cursor:pointer;white-space:nowrap;font-family:inherit}
-  .now.on{background:rgba(224,194,122,.22);border-color:var(--c-event);color:#fff3cf;box-shadow:0 0 12px rgba(224,194,122,.3)}
+  #nowBtn{background:rgba(36,27,18,.8);border:1px solid var(--amber);color:var(--amber-soft);border-radius:6px;height:26px;padding:0 10px;font-size:10.5px;cursor:pointer;white-space:nowrap;font-family:inherit}
+  #nowBtn.on{background:rgba(224,194,122,.22);border-color:var(--c-event);color:#fff3cf;box-shadow:0 0 12px rgba(224,194,122,.3)}
   .tl-ctrl button:disabled{opacity:.3;cursor:default}
-  .sp-panel.nowmode .sec{color:var(--c-event-br)}
+  .nowmode .sec{color:var(--c-event-br)}
   .evi{padding:6px 14px 7px;border-bottom:1px solid var(--rule);border-left:2px solid var(--c-event);cursor:pointer;transition:.18s}
   .evi:hover{background:rgba(224,194,122,.08)} .evi.sel{background:rgba(224,194,122,.16)}
   .evi.past{opacity:.5;border-left-style:dashed} .evi.cancelled .t{text-decoration:line-through}
@@ -469,7 +470,7 @@
 <!-- 左上：WORLD EVENTS と、その下の「海外への広がり」（万次郎版の W-LINK の位置） -->
 <div class="left-col" id="leftCol">
   <div class="panel left-panel" id="worldPanel">
-    <div class="sec">World Events<span class="secsub">この年の前後の世界</span></div>
+    <div class="sec" id="worldSec">World Events<span class="secsub">この年の前後の世界</span></div>
     <div id="worldList" class="lc-list"></div>
   </div>
   <div class="panel wl-panel sp-panel" id="wlPanel">
@@ -735,6 +736,9 @@ if (innerWidth <= 640) setFold(true);
 // ---------- 左上：WORLD EVENTS（この年の前後。万次郎版と同じ並べ方）----------
 const worldList = document.getElementById('worldList');
 on(() => {
+  if (State.now) return nowLists();
+  document.getElementById('worldPanel').classList.remove('nowmode');
+  document.getElementById('worldSec').innerHTML = 'World Events<span class="secsub">この年の前後の世界</span>';
   const y = State.y, dist = e => (y >= e.year && y <= (e.endYear || e.year)) ? 0 : Math.min(Math.abs(y - e.year), Math.abs(y - (e.endYear || e.year)));
   const all = WORLDS.map(e => ({ e, d: dist(e) })).sort((a, b) => a.d - b.d || a.e.year - b.e.year);
   let shown = all.filter(x => x.d <= 15); if (shown.length < 3) shown = all.slice(0, 3);
@@ -750,7 +754,7 @@ on(() => {
 // ---------- 左：海外への広がり（この年まで。新しい順）----------
 const spList = document.getElementById('spList');
 on(() => {
-  if (State.now) return nowList();
+  if (State.now) return;
   setSpSec(false);
   const y = State.y, list = SPREAD.filter(d => d.year <= y).reverse();
   spList.innerHTML = '';
@@ -944,26 +948,36 @@ function setNow(v) {
 }
 nowBtn.onclick = () => setNow(!State.now);
 function setSpSec(now) {
-  document.getElementById('wlPanel').classList.toggle('nowmode', now);
-  document.getElementById('spSec').innerHTML = now ? 'Events<span class="secsub">いまの行事（今日の前後）</span>' : 'Abroad<span class="secsub">海外への広がり（この年まで）</span>';
+  if (now) return;
+  document.getElementById('wlPanel').classList.remove('nowmode');
+  document.getElementById('spSec').innerHTML = 'Abroad<span class="secsub">海外への広がり（この年まで）</span>';
 }
-const calA = (label, ym) => '<a href="' + esc(CALENDAR_URL + (ym ? '?ym=' + ym : '')) + '" target="_blank" rel="noopener" style="color:#fff3cf">' + label + '</a>';
-function nowList() { // 左下の枠の意味を切り替える（北斎版の HOLDINGS と同じ：枠を増やさない）
-  setSpSec(true); spList.innerHTML = '';
-  if (EV_STATUS === 'loading') { spList.appendChild(mk('div', 'wl-empty', '行事を読み込んでいます…')); return; }
-  if (EV_STATUS === 'fail') { spList.appendChild(mk('div', 'wl-empty', '行事を読み込めませんでした。' + calA('行事カレンダー ↗'))); return; }
-  if (SHOW_SAMPLES) spList.appendChild(mk('div', 'ev-note', 'いま出ているのは調査見本の行事です（?samples=1）。公開の画面には出ません。'));
+const calA = label => '<a href="' + esc(CALENDAR_URL) + '" target="_blank" rel="noopener" style="color:#fff3cf">' + label + '</a>';
+// NOW の左：上の枠＝国内、下の枠＝海外（北斎版の HOLDINGS と同じく、枠は増やさずに意味を切り替える）。
+// これからの行事を日付の順に。この1か月に終わった行事は下に淡く
+function nowLists() {
+  const top = document.getElementById('worldPanel'), bot = document.getElementById('wlPanel');
+  top.classList.add('nowmode'); bot.classList.add('nowmode');
+  document.getElementById('worldSec').innerHTML = 'Japan<span class="secsub">国内の行事</span>';
+  document.getElementById('spSec').innerHTML = 'Overseas<span class="secsub">海外の行事</span>';
+  worldList.innerHTML = ''; spList.innerHTML = '';
+  if (EV_STATUS !== 'ok') { worldList.appendChild(mk('div', 'wl-empty', EV_STATUS === 'loading' ? '行事を読み込んでいます…' : '行事を読み込めませんでした。' + calA('行事カレンダー ↗'))); return; }
   const list = nowEvents();
-  if (!list.length) { spList.appendChild(mk('div', 'wl-empty', '公開できる行事はまだ載っていません' + (EV_HIDDEN ? '（確かめ中 ' + EV_HIDDEN + '件）' : '') + '。<br>' + calA('行事カレンダー ↗'))); return; }
-  const up = list.filter(e => !evPast(e)), past = list.filter(evPast);
+  if (!list.length) { worldList.appendChild(mk('div', 'wl-empty', '公開できる行事はまだ載っていません' + (EV_HIDDEN ? '（確かめ中 ' + EV_HIDDEN + '件）' : '') + '。' + calA('行事カレンダー ↗'))); return; }
+  fillEvents(worldList, list.filter(e => e.place.country === 'JP'));
+  fillEvents(spList, list.filter(e => e.place.country !== 'JP'));
+}
+function fillEvents(box, list) {
+  if (!list.length) { box.appendChild(mk('div', 'wl-empty', 'この期間の行事はありません。')); return; }
   const row = e => {
     const r = mk('div', 'evi' + (evPast(e) ? ' past' : '') + (e.event_state === 'cancelled' ? ' cancelled' : '') + (State.sel === 'evt:' + e.id ? ' sel' : ''),
       '<div><span class="d">' + esc(whenJa(e)) + '</span><span class="k">' + esc(TYPE_JA[e.type] || 'その他') + '</span></div><div class="t">' + esc(evTitle(e)) + '</div><div class="w">' + esc(placeJa(e)) + '</div>');
     r.onclick = () => { const src = frozen(r); State.sel = 'evt:' + e.id; emit(); openEvent(e.id, src); };
     return r;
   };
-  if (up.length) { spList.appendChild(mk('div', 'ev-sub', 'これからの行事 ' + up.length + '件')); up.forEach(e => spList.appendChild(row(e))); }
-  if (past.length) { spList.appendChild(mk('div', 'ev-sub', 'この1か月に終わった行事')); past.forEach(e => spList.appendChild(row(e))); }
+  const up = list.filter(e => !evPast(e)), past = list.filter(evPast);
+  up.forEach(e => box.appendChild(row(e)));
+  if (past.length) { box.appendChild(mk('div', 'ev-sub', '終わった行事')); past.forEach(e => box.appendChild(row(e))); }
 }
 function nowWorld() { // NOW の地球：いまの行事（金）を前に。合気会の海外組織の国・海外への広がり・生涯の拠点は淡く残す
   const out = [];
