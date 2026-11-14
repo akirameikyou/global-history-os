@@ -430,6 +430,27 @@
   .cal-short{display:none}
   .lg-dot.spread{background:var(--c-spread)} .lg-dot.net{background:rgba(238,243,248,.45)} .lg-dot.world{background:var(--c-world)}
   .lg-term{color:var(--c-term);border-bottom:1px dotted rgba(183,156,255,.7)}
+  /* NOW（北斎版と同じ札）と、いまの行事（金。行事カレンダーと同じ色） */
+  :root{ --c-event:#e0c27a; --c-event-br:#f2dcaa; }
+  .now{background:rgba(36,27,18,.8);border:1px solid var(--amber);color:var(--amber-soft);border-radius:6px;height:26px;padding:0 10px;font-size:10.5px;cursor:pointer;white-space:nowrap;font-family:inherit}
+  .now.on{background:rgba(224,194,122,.22);border-color:var(--c-event);color:#fff3cf;box-shadow:0 0 12px rgba(224,194,122,.3)}
+  .tl-ctrl button:disabled{opacity:.3;cursor:default}
+  .sp-panel.nowmode .sec{color:var(--c-event-br)}
+  .evi{padding:6px 14px 7px;border-bottom:1px solid var(--rule);border-left:2px solid var(--c-event);cursor:pointer;transition:.18s}
+  .evi:hover{background:rgba(224,194,122,.08)} .evi.sel{background:rgba(224,194,122,.16)}
+  .evi.past{opacity:.5;border-left-style:dashed} .evi.cancelled .t{text-decoration:line-through}
+  .evi .d{font-family:var(--mono);font-size:10.5px;color:var(--c-event-br);white-space:nowrap}
+  .evi .k{font-size:9px;border:1px solid var(--c-event);color:var(--c-event-br);border-radius:3px;padding:0 4px;white-space:nowrap;line-height:1.45;margin-left:6px}
+  .evi .t{font-size:12px;line-height:1.5;margin-top:1px;color:rgba(238,243,248,.88)}
+  .evi .w{font-size:10.5px;color:var(--dim)}
+  .ev-sub{padding:5px 16px 3px;font-size:9.5px;letter-spacing:.06em;color:var(--dim);border-bottom:1px solid var(--rule)}
+  .ev-note{padding:6px 16px 8px;font-size:10px;color:#e0b45f;line-height:1.5}
+  .lg-dot.event{background:var(--c-event)}
+  .dcard.k-event{border-left-color:var(--c-event)} .dcard.k-event .dc-tag{color:var(--c-event-br)}
+  .ev-links{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;white-space:normal}
+  .ev-links a{font-size:11px;color:#fff3cf;border:1px solid rgba(224,194,122,.55);border-radius:4px;padding:3px 9px;text-decoration:none;background:rgba(224,194,122,.1)}
+  .ev-links a:hover{background:rgba(224,194,122,.22)}
+  .ev-links a.main{font-weight:700;border-color:var(--c-event)}
   .dcard.k-world{border-left-color:var(--c-world)} .dcard.k-world .dc-tag{color:var(--c-world-br)}
   .dcard.k-spread{border-left-color:var(--c-spread)} .dcard.k-spread .dc-tag{color:var(--c-spread-br)}
   .dcard.k-term{border-left-color:var(--c-term)} .dcard.k-term .dc-tag{color:var(--c-term)}
@@ -452,7 +473,7 @@
     <div id="worldList" class="lc-list"></div>
   </div>
   <div class="panel wl-panel sp-panel" id="wlPanel">
-    <div class="sec">Abroad<span class="secsub">海外への広がり（この年まで）</span></div>
+    <div class="sec" id="spSec">Abroad<span class="secsub">海外への広がり（この年まで）</span></div>
     <div id="spList" class="lc-list"></div>
   </div>
 </div>
@@ -488,7 +509,7 @@
     <div class="chap-menu" id="chapMenu" hidden></div>
   </div>
   <button class="tgl" id="infoBtn" type="button">出典</button>
-  <a class="tgl" id="calLink" target="_blank" rel="noopener" title="いまの行事は、行事カレンダーへ"><span class="cal-long">いまの行事 ↗</span><span class="cal-short">行事 ↗</span></a>
+  <a class="tgl" id="calLink" target="_blank" rel="noopener" title="いまの行事は、行事カレンダーへ"><span class="cal-long">行事カレンダー ↗</span><span class="cal-short">行事 ↗</span></a>
 </div>
 
 <!-- 出典（万次郎版の「航路について」の位置） -->
@@ -509,6 +530,7 @@
       <button class="zoombtn" id="nextY" type="button" title="1年進む" aria-label="1年進む">›</button>
       <button class="zoombtn" id="zoomIn" type="button" title="拡大" aria-label="拡大">＋</button>
       <button class="zoombtn" id="zoomOut" type="button" title="縮小" aria-label="縮小">－</button>
+      <button class="now" id="nowBtn" type="button" aria-pressed="false" title="NOW：いまの行事（今日の前後）を地球と年代バーに出す。歴史の年はしまっておき、もう一度押すと戻る。カメラは動かしません">NOW / 現在</button>
     </div>
   </div>
   <svg id="tl"></svg>
@@ -522,6 +544,7 @@
   <div><span class="lg-dot spread"></span>海外への広がり（道場の設立・初の指導）</div>
   <div><span class="lg-dot world"></span>World Events（同時代の世界）</div>
   <div><span class="lg-dot net"></span>合気会の海外組織がある国（現在）</div>
+  <div><span class="lg-dot event"></span>いまの行事（NOW）</div>
   <div><span class="lg-term">紫の語</span>＝用語（押すと説明）</div>
 </div>
 
@@ -543,7 +566,7 @@ import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary
 import { ueshibaPlaces as PLACES } from '../data/ueshiba_places.js?v=20261114c';
 import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261114c';
 import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261114c';
-import { CALENDAR_URL } from '../data/ueshiba_config.js?v=20261114c';
+import { CALENDAR_URL, EVENTS_URL, ICS_DIR, NOW_WINDOW } from '../data/ueshiba_config.js?v=20261115a';
 
 // ---------- 定数（万次郎版と同じ約束）----------
 // 原則：年カーソル ≠ 年代バーの表示幅 ≠ カメラ。カメラを動かすのは「地点を見る」だけ（植芝版は自転もしない）。
@@ -581,10 +604,10 @@ const SPREAD = [...FOUND.map(d => ({ ...d, kind: 'found', key: 'found:' + d.id, 
 const WORLDS = [...WORLD].sort((a, b) => a.year - b.year);
 
 // ---------- 状態 ----------
-const State = { y: 1883, vp: { from: 1875, to: 1975 }, chapter: 'all', sel: null, playing: false };
+const State = { y: 1883, vp: { from: 1875, to: 1975 }, chapter: 'all', sel: null, playing: false, now: false };
 const subs = []; const on = f => subs.push(f); const emit = () => subs.forEach(f => f());
 function ensureVisible(y) { const v = State.vp, span = v.to - v.from; if (y >= v.from && y <= v.to) return; const from = clamp(y > v.to ? y - span * 0.25 : y - span * 0.75, RANGE.min, RANGE.max - span); State.vp = { from, to: from + span }; }
-function setY(y, opt = {}) { const ny = clamp(Math.round(y), RANGE.min, NOW_YEAR); if (ny === State.y && !opt.force) return; State.y = ny; if (!opt.noScroll) ensureVisible(ny); emit(); }
+function setY(y, opt = {}) { if (State.now) setNow(false); const ny = clamp(Math.round(y), RANGE.min, NOW_YEAR); if (ny === State.y && !opt.force) return; State.y = ny; if (!opt.noScroll) ensureVisible(ny); emit(); }
 function setSel(key) { State.sel = key; emit(); }
 
 // ---------- 地球儀 ----------
@@ -604,9 +627,11 @@ function keyObj(key) {
   if (k === 'found' || k === 'first') return SPREAD.find(d => d.key === key);
   if (k === 'net') return NETWORK.find(d => d.id === id);
   if (k === 'world') return WORLDS.find(d => d.id === id);
+  if (k === 'evt') { const e = EVENTS.find(x => x.id === id); return e && { ...e.place, title: evTitle(e) }; }
   return null;
 }
 function renderWorld() { // 描画だけ。カメラは触らない
+  if (State.now) return nowWorld();
   const y = State.y, out = [];
   if (y >= NOW_YEAR) NETWORK.forEach(d => out.push({ key: 'net:' + d.id, lat: d.lat, lng: d.lng, label: d.country, color: OS_COLORS.net, r: 0.15, alt: 0.006 }));
   WORLDS.filter(w => w.year <= y && y <= (w.endYear || w.year)).forEach(w => out.push({ key: 'world:' + w.id, lat: w.lat, lng: w.lng, label: w.year + ' ' + w.title, color: 'rgba(230,148,69,.9)', r: 0.3, alt: 0.01 }));
@@ -656,6 +681,7 @@ document.getElementById('dcClose').onclick = closeCard;
 })();
 const para = s => '<p class="dc-para">' + s + '</p>';
 function openFor(key, src) {
+  if (key.startsWith('evt:')) return openEvent(key.slice(4), src);
   const [k] = key.split(':'), o = keyObj(key); if (!o) return;
   if (k === 'life') showCard({ tag: 'LIFE / 生涯の拠点', title: o.title, sub: o.year + ' ・ ' + o.placeName, html: para(linkify(o.description, new Set())), look: key }, src);
   else if (k === 'world') showCard({ kind: 'world', tag: 'WORLD EVENT / 世界', title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: key }, src);
@@ -724,6 +750,8 @@ on(() => {
 // ---------- 左：海外への広がり（この年まで。新しい順）----------
 const spList = document.getElementById('spList');
 on(() => {
+  if (State.now) return nowList();
+  setSpSec(false);
   const y = State.y, list = SPREAD.filter(d => d.year <= y).reverse();
   spList.innerHTML = '';
   if (!list.length) { const n = SPREAD[0]; spList.appendChild(mk('div', 'wl-empty', 'まだありません。最初は ' + n.year + '年（' + esc(n.name) + '）。')); return; }
@@ -787,6 +815,7 @@ const xOf = t => { const v = State.vp; return (t - v.from) / (v.to - v.from) * t
 const tAt = px => { const v = State.vp; return v.from + px / tlW() * (v.to - v.from); };
 const tlGutter = () => innerWidth > 640 && tl.getBoundingClientRect().left >= 96;
 function drawTL() {
+  if (State.now) return drawNowTL();
   const W = tlW(), v = State.vp, span = v.to - v.from, cl = x => clamp(x, 0, W), H = LY.H, gb = LY.wd + 7;
   tl.style.height = H + 'px'; tl.setAttribute('viewBox', '0 0 ' + W + ' ' + H); tl.innerHTML = '';
   const add = (tag, a, text, onDown, title) => {
@@ -829,10 +858,10 @@ function drawTL() {
 on(drawTL);
 on(layoutLeftCol);
 const tlYear = document.getElementById('tlYear'), tlEra = document.getElementById('tlEra');
-on(() => { tlYear.textContent = State.y + '年'; const c = chapterOfYear(State.y); tlEra.textContent = (c ? c.ja : '') + (State.y >= NOW_YEAR ? '（現在）' : ''); });
+on(() => { if (State.now) { tlYear.textContent = 'NOW'; tlEra.textContent = todayJa() + '（いまの行事）'; return; } tlYear.textContent = State.y + '年'; const c = chapterOfYear(State.y); tlEra.textContent = (c ? c.ja : '') + (State.y >= NOW_YEAR ? '（現在）' : ''); });
 let drag = null;
 const localX = e => e.clientX - tl.getBoundingClientRect().left;
-tl.addEventListener('pointerdown', e => { const x = localX(e); drag = { mode: Math.abs(xOf(State.y + 0.5) - x) < 10 ? 'cursor' : 'pan', x, vp: { ...State.vp }, moved: false }; tl.setPointerCapture(e.pointerId); });
+tl.addEventListener('pointerdown', e => { if (State.now) return; const x = localX(e); drag = { mode: Math.abs(xOf(State.y + 0.5) - x) < 10 ? 'cursor' : 'pan', x, vp: { ...State.vp }, moved: false }; tl.setPointerCapture(e.pointerId); });
 tl.addEventListener('pointermove', e => {
   if (!drag) return; const x = localX(e); if (Math.abs(x - drag.x) > 3) drag.moved = true;
   if (drag.mode === 'cursor') { setY(Math.floor(tAt(x)), { noScroll: true }); return; }
@@ -861,6 +890,129 @@ playBtn.onclick = () => {
   State.playing = true; playBtn.textContent = '❚❚'; playBtn.classList.add('on');
   playTimer = setInterval(() => { setY(State.y + 1); if (State.y >= NOW_YEAR) stopPlay(); }, PLAY_MS);
 };
+
+// ---------- NOW：いまの行事（行事カレンダーと同じデータを読む）----------
+// 北斎版の NOW と同じ約束：NOW は「いま」へ時間の見方を切り替えるだけ。歴史の年（State.y）と年代バーの幅はしまっておき、
+// もう一度押すと戻る。カメラは動かさない（nowMode ≠ camera）。年を動かす操作（年譜の行・章の「年へ」など）をすると NOW は自動で解ける。
+// データ：行事カレンダー（aikido-history-os）の data/events.json。行事を入れるのはカレンダー側の1か所だけで、Focus は読むだけ。
+// 見本（sample: true）は公開の画面に出さない。確かめの時だけ ?samples=1。今日を変えて試す時は ?today=YYYY-MM-DD。
+const QS = new URLSearchParams(location.search);
+const SHOW_SAMPLES = QS.get('samples') === '1';
+const TYPE_JA = { embu: '演武会', seminar: '講習会', anniversary: '周年記念', training: '合宿・研修', exchange: '交流', ceremony: '奉納・祭典', other: 'その他' };
+const STATE_JA = { scheduled: '予定', changed: '変更あり', cancelled: '中止', ended: '終了' };
+const WD = ['日', '月', '火', '水', '木', '金', '土'];
+let EVENTS = [], EV_STATUS = 'loading', EV_HIDDEN = 0;
+const TODAY = /^\d{4}-\d{2}-\d{2}$/.test(QS.get('today') || '') ? new Date(QS.get('today') + 'T12:00:00') : new Date();
+const TODAY0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate());
+const tOfDate = d => d.getFullYear() + (d.getMonth() + (d.getDate() - 1) / 31) / 12; // 年代バーの位置（小数の年）
+const parseDay = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null; };
+const evTitle = e => e.title ? (e.title.lang === 'ja' ? e.title.orig : (e.title.i18n && e.title.i18n.ja) || e.title.orig) : e.id;
+const evStart = e => parseDay(e.start), evEnd = e => parseDay(e.end) || evStart(e);
+const evPast = e => evEnd(e) < TODAY0;
+const dayJa = d => d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + WD[d.getDay()] + '）';
+function todayJa() { return '今日 ' + dayJa(TODAY); }
+function whenJa(e) { // 開催地の時刻のまま
+  const a = evStart(e), b = evEnd(e), tm = /T(\d{2}:\d{2})/.exec(e.start || '');
+  let s = dayJa(a) + (tm ? ' ' + tm[1] : '');
+  if (b && +b !== +a) s += ' 〜 ' + (b.getFullYear() !== a.getFullYear() ? b.getFullYear() + '年' : '') + (b.getMonth() + 1) + '月' + b.getDate() + '日（' + WD[b.getDay()] + '）';
+  return s;
+}
+const placeJa = e => [e.place && e.place.name, e.place && e.place.city].filter(Boolean).join(' ・ ');
+function inWindow(e) {
+  const a = evStart(e); if (!a) return false;
+  const from = new Date(TODAY0); from.setDate(from.getDate() - NOW_WINDOW.pastDays);
+  const to = new Date(TODAY0); to.setMonth(to.getMonth() + NOW_WINDOW.aheadMonths);
+  return evEnd(e) >= from && a <= to;
+}
+fetch(EVENTS_URL).then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(j => {
+  const all = (j.events || []).filter(e => e.place && Number.isFinite(e.place.lat) && Number.isFinite(e.place.lng) && evStart(e));
+  EVENTS = all.filter(e => SHOW_SAMPLES || !e.sample).sort((a, b) => evStart(a) - evStart(b));
+  EV_HIDDEN = all.length - EVENTS.length; EV_STATUS = 'ok';
+}).catch(err => { console.warn('行事を読めませんでした', EVENTS_URL, err); EV_STATUS = 'fail'; }).finally(() => { if (State.now) emit(); });
+const nowEvents = () => EVENTS.filter(inWindow);
+
+const nowBtn = document.getElementById('nowBtn');
+let saved = null;
+function setNow(v) {
+  if (v === State.now) return;
+  State.now = v; nowBtn.classList.toggle('on', v); nowBtn.setAttribute('aria-pressed', String(v));
+  ['prevY', 'nextY', 'playBtn', 'zoomIn', 'zoomOut'].forEach(id => { document.getElementById(id).disabled = v; });
+  if (v) { stopPlay(); saved = { vp: { ...State.vp }, sel: State.sel }; State.sel = null; }
+  else if (saved) { State.vp = saved.vp; State.sel = saved.sel; saved = null; }
+  if (!detailCard.hidden) detailCard.hidden = true;
+  emit();
+}
+nowBtn.onclick = () => setNow(!State.now);
+function setSpSec(now) {
+  document.getElementById('wlPanel').classList.toggle('nowmode', now);
+  document.getElementById('spSec').innerHTML = now ? 'Events<span class="secsub">いまの行事（今日の前後）</span>' : 'Abroad<span class="secsub">海外への広がり（この年まで）</span>';
+}
+const calA = (label, ym) => '<a href="' + esc(CALENDAR_URL + (ym ? '?ym=' + ym : '')) + '" target="_blank" rel="noopener" style="color:#fff3cf">' + label + '</a>';
+function nowList() { // 左下の枠の意味を切り替える（北斎版の HOLDINGS と同じ：枠を増やさない）
+  setSpSec(true); spList.innerHTML = '';
+  if (EV_STATUS === 'loading') { spList.appendChild(mk('div', 'wl-empty', '行事を読み込んでいます…')); return; }
+  if (EV_STATUS === 'fail') { spList.appendChild(mk('div', 'wl-empty', '行事を読み込めませんでした。' + calA('行事カレンダー ↗'))); return; }
+  if (SHOW_SAMPLES) spList.appendChild(mk('div', 'ev-note', 'いま出ているのは調査見本の行事です（?samples=1）。公開の画面には出ません。'));
+  const list = nowEvents();
+  if (!list.length) { spList.appendChild(mk('div', 'wl-empty', '公開できる行事はまだ載っていません' + (EV_HIDDEN ? '（確かめ中 ' + EV_HIDDEN + '件）' : '') + '。<br>' + calA('行事カレンダー ↗'))); return; }
+  const up = list.filter(e => !evPast(e)), past = list.filter(evPast);
+  const row = e => {
+    const r = mk('div', 'evi' + (evPast(e) ? ' past' : '') + (e.event_state === 'cancelled' ? ' cancelled' : '') + (State.sel === 'evt:' + e.id ? ' sel' : ''),
+      '<div><span class="d">' + esc(whenJa(e)) + '</span><span class="k">' + esc(TYPE_JA[e.type] || 'その他') + '</span></div><div class="t">' + esc(evTitle(e)) + '</div><div class="w">' + esc(placeJa(e)) + '</div>');
+    r.onclick = () => { const src = frozen(r); State.sel = 'evt:' + e.id; emit(); openEvent(e.id, src); };
+    return r;
+  };
+  if (up.length) { spList.appendChild(mk('div', 'ev-sub', 'これからの行事 ' + up.length + '件')); up.forEach(e => spList.appendChild(row(e))); }
+  if (past.length) { spList.appendChild(mk('div', 'ev-sub', 'この1か月に終わった行事')); past.forEach(e => spList.appendChild(row(e))); }
+}
+function nowWorld() { // NOW の地球：いまの行事（金）を前に。合気会の海外組織の国・海外への広がり・生涯の拠点は淡く残す
+  const out = [];
+  NETWORK.forEach(d => out.push({ key: 'net:' + d.id, lat: d.lat, lng: d.lng, label: d.country, color: 'rgba(238,243,248,.3)', r: 0.14, alt: 0.006 }));
+  SPREAD.forEach(d => out.push({ key: d.key, lat: d.lat, lng: d.lng, label: d.year + ' ' + d.name, color: 'rgba(87,201,192,.35)', r: 0.2, alt: 0.008 }));
+  PLACES.forEach(p => out.push({ key: 'life:' + p.id, lat: p.lat, lng: p.lng, label: p.title, color: 'rgba(102,224,255,.45)', r: 0.26, alt: 0.009 }));
+  nowEvents().forEach(e => out.push({ key: 'evt:' + e.id, lat: e.place.lat, lng: e.place.lng, label: whenJa(e) + ' ' + evTitle(e), color: evPast(e) || e.event_state === 'cancelled' ? 'rgba(224,194,122,.45)' : '#e0c27a', r: 0.36, alt: 0.016 }));
+  const pts = out.map(p => p.key === State.sel ? { ...p, color: p.key.startsWith('evt') ? '#fff3cf' : OS_COLORS.focusBr, r: p.r * 1.6, alt: 0.035 } : p);
+  world.pointsData(pts);
+  const s = pts.find(p => p.key === State.sel);
+  world.ringsData(s ? [{ ...s, ring: 'rgba(242,220,170,' }] : []);
+}
+function openEvent(id, src) {
+  const e = EVENTS.find(x => x.id === id); if (!e) return;
+  const a = evStart(e), ym = a.getFullYear() + '-' + String(a.getMonth() + 1).padStart(2, '0');
+  const state = evPast(e) ? (e.held_confirmed ? '終了（開催を確認）' : '終了（開催は未確認）') : (STATE_JA[e.event_state] || '予定');
+  const links = '<div class="ev-links"><a class="main" href="' + esc(CALENDAR_URL + '?ym=' + ym) + '" target="_blank" rel="noopener">カレンダーで確認 ↗</a>' +
+    (e.url ? '<a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">公式の告知 ↗</a>' : '') +
+    (!evPast(e) ? '<a href="' + esc(ICS_DIR + e.id + '.ics') + '">予定に追加（.ics）</a>' : '') + '</div>';
+  const kv = [['日時', whenJa(e) + '（開催地の時刻）'], ['場所', placeJa(e)], ['主催', e.organizer && e.organizer.name], ['種類', TYPE_JA[e.type] || 'その他'], ['状態', state]]
+    .filter(x => x[1]).map(([k, v]) => '<div class="kv"><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join('');
+  showCard({ kind: 'event', tag: 'EVENT / いまの行事' + (e.sample ? '（見本）' : ''), title: evTitle(e), sub: whenJa(e), html: kv + links, look: 'evt:' + e.id }, src);
+}
+function drawNowTL() { // NOW の年代バー：今日の1か月前〜13か月先を月の目盛りで。行事は金の点（押すとカード。年もカメラも動かさない）
+  const W = tlW(), H = LY.H, yb = 36;
+  const t0 = tOfDate(TODAY), from = t0 - NOW_WINDOW.pastDays / 365, to = t0 + NOW_WINDOW.aheadMonths / 12;
+  const X = t => (t - from) / (to - from) * W;
+  tl.style.height = H + 'px'; tl.setAttribute('viewBox', '0 0 ' + W + ' ' + H); tl.innerHTML = '';
+  const add = (tag, a, text, onDown, title) => { const el = document.createElementNS(SVGNS, tag); for (const k in a) el.setAttribute(k, a[k]); if (text != null) el.textContent = text;
+    if (title) { const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = title; el.appendChild(tt); }
+    if (onDown) { el.style.cursor = 'pointer'; el.addEventListener('pointerdown', ev => { ev.stopPropagation(); ev.preventDefault(); onDown(ev); }); } else el.setAttribute('pointer-events', 'none');
+    tl.appendChild(el); return el; };
+  add('text', { x: 2, y: 11, fill: '#f2dcaa', 'font-size': 9, 'font-family': 'sans-serif' }, 'NOW ・ いまの行事（行事カレンダーと同じデータ）');
+  for (let k = Math.ceil(from * 12); k <= to * 12; k++) { const x = X(k / 12), mo = ((k % 12) + 12) % 12 + 1, yr = Math.floor(k / 12);
+    add('line', { x1: x, y1: 18, x2: x, y2: H - 14, stroke: mo === 1 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.07)' });
+    add('text', { x: x + 2, y: H - 3, fill: mo === 1 ? '#9db4c8' : '#6b7c90', 'font-size': 9, 'font-family': 'monospace' }, mo === 1 ? yr + '年' : mo + '月'); }
+  add('line', { x1: 0, y1: yb, x2: W, y2: yb, stroke: 'rgba(224,194,122,.25)', 'stroke-width': 2 });
+  const gut = tlGutter();
+  add('text', gut ? { x: -8, y: yb + 3.2, 'text-anchor': 'end', fill: '#c9b27a', 'font-size': 9, 'font-family': 'sans-serif' } : { x: 2, y: yb - 6, fill: '#8a7a55', 'font-size': 8, 'font-family': 'sans-serif' }, '行事');
+  const byDay = new Map(); nowEvents().forEach(e => { const k = e.start.slice(0, 10); if (!byDay.has(k)) byDay.set(k, []); byDay.get(k).push(e); });
+  byDay.forEach(list => list.forEach((e, j) => { const a = evStart(e), b = evEnd(e), x1 = X(tOfDate(a)) + (j - (list.length - 1) / 2) * 6, sel = State.sel === 'evt:' + e.id;
+    if (+b !== +a) add('line', { x1: X(tOfDate(a)), y1: yb, x2: X(tOfDate(b)) + 2, y2: yb, stroke: '#e0c27a', 'stroke-width': 3, 'stroke-opacity': .6 });
+    add('circle', { cx: x1, cy: yb, r: sel ? 5 : 3.6, fill: evPast(e) || e.event_state === 'cancelled' ? 'rgba(224,194,122,.45)' : '#e0c27a', stroke: sel ? '#fff' : '#050c16', 'stroke-width': sel ? 1.5 : 1 }, null,
+      () => { State.sel = 'evt:' + e.id; emit(); openEvent(e.id, null); }, whenJa(e) + ' ' + evTitle(e)); }));
+  const cx = X(t0); // 今日
+  add('line', { x1: cx, y1: 16, x2: cx, y2: H - 14, stroke: '#fff3cf', 'stroke-width': 1.4 });
+  add('polygon', { points: (cx - 4) + ',16 ' + (cx + 4) + ',16 ' + cx + ',23', fill: '#fff3cf' });
+  add('text', { x: cx + 5, y: 24, fill: '#fff3cf', 'font-size': 9, 'font-family': 'sans-serif' }, '今日');
+}
 
 emit();
 window.__ueshiba = { State, world }; // 確かめ用
