@@ -6,47 +6,30 @@
 <style>body{background:#050c16;color:#eef3f8;font-family:system-ui,sans-serif;padding:16px}.ok{color:#8fd6a8}.ng{color:#ff8a8a}</style>
 </head>
 <body>
-<h1>植芝盛平Focus の試験（life_steps.js と data/ueshiba_life.js）</h1>
+<h1>植芝盛平Focus の試験（データ）</h1>
 <pre id="out"></pre>
 <script type="module">
-import { UESHIBA as D } from '../data/ueshiba_life.js';
+import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js';
+import { ueshibaPlaces as PLACES } from '../data/ueshiba_places.js';
+import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js';
+import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js';
 import { CALENDAR_URL } from '../data/ueshiba_config.js';
-import { tOfDate, evTime, yearText, dayJa, lifeFromData, chapterOf, lastBefore, placeMarksUpTo, nextYear, prevYear, validate } from './life_steps.js';
 const out = document.getElementById('out'); let pass = 0, fail = 0;
 const eq = (name, a, b) => { const ok = JSON.stringify(a) === JSON.stringify(b); ok ? pass++ : fail++;
   out.innerHTML += `<span class="${ok ? 'ok' : 'ng'}">${ok ? 'OK' : 'NG'}</span> ${name}${ok ? '' : ` → ${JSON.stringify(a)} ≠ ${JSON.stringify(b)}`}\n`; };
 
-// 部品
-eq('evTime 年だけ', evTime({ year: 1931 }), 1931);
-eq('evTime 日付', evTime({ year: 1883, date: '1883-12-14' }), tOfDate(1883, 12, 14));
-eq('yearText 食い違い', yearText({ year: 1911, yearAlt: 1912 }), '1911 / 1912');
-eq('dayJa', dayJa({ date: '1969-04-26' }), '4月26日');
-eq('chapterOf 境目', chapterOf(1911, D.chapters).id, 'c2');
-eq('nextYear', nextYear(1883.95, 2015), 1884);
-eq('nextYear 年の初めから', nextYear(1931, 2015), 1932);
-eq('prevYear', prevYear(1883.95, 1880), 1883);
-eq('prevYear 年の初めから', prevYear(1931, 1880), 1930);
-const L = lifeFromData(D.events);
-eq('並びが年の順', L.every((e, i) => i === 0 || L[i - 1].t <= e.t), true);
-eq('lastBefore 1925 の生涯の場所', lastBefore(L, 1925, { kind: 'life', withPlace: true }).place, 'ayabe');
-eq('lastBefore 1911（北海道は1911年から）', lastBefore(L, 1911, { kind: 'life', withPlace: true }).id, 'h1911-hokkaido');
-eq('印：誕生前は無い', placeMarksUpTo(L, D.places, 1883.5).length, 0);
-eq('印：1931 までの場所', placeMarksUpTo(L, D.places, 1931).map(m => m.place).sort(), ['ayabe', 'shiba', 'shirataki', 'tanabe', 'wakamatsu']);
-eq('validate 出典なしを見つける', validate({ sources: {}, places: {}, events: [{ id: 'x', year: 1, status: 'confirmed', kind: 'life', sources: [], text: { ja: 'a' } }] }).length > 0, true);
-
-// データの決まり（清水さんの規則）
-eq('データが決まりを満たす', validate(D), []);
-const hk = D.events.find(e => e.id === 'h1911-hokkaido');
-eq('北海道は 1911 と 1912 の両方', [hk.status, hk.year, hk.yearAlt], ['split', 1911, 1912]);
-eq('1947 は本編に無い', D.events.some(e => e.year === 1947), false);
-eq('ハワイは本編に無い', D.events.some(e => /ハワイ/.test(e.text.ja)), false);
-eq('1947・1961ハワイは未確認にある', [D.unverified.some(u => u.year === 1947), D.unverified.some(u => u.year === 1961 && /ハワイ/.test(u.text.ja))], [true, true]);
-eq('未確認に場所・出典が無い', D.unverified.every(u => !u.place && !u.sources), true);
-const blob = JSON.stringify(D);
-eq('他の団体・流派の名が無い', ['養神館', '心身統一', '昭道館', '日本合気道協会', '富木', '岩間神信', 'Yoshinkan', 'Ki Society', 'Shodokan', 'Tomiki'].filter(w => blob.includes(w)), []);
-eq('メールアドレスが無い', /[\w.+-]+@[\w-]+\.[\w.]+/.test(blob), false);
-eq('件数（出来事・未確認・出典）', [D.events.length, D.unverified.length, Object.keys(D.sources).length], [31, 11, 4]);
+eq('年表は年の順', CHRONO.every((c, i) => i === 0 || CHRONO[i - 1].year <= c.year), true);
+eq('年表の場所はすべて地点にある', CHRONO.filter(c => c.eventId && !PLACES.some(p => p.id === c.eventId)).map(c => c.year), []);
+eq('地点に緯度経度がある', PLACES.every(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)), true);
+eq('海外の点に年と緯度経度がある', [...FOUND, ...FIRST].every(d => Number.isInteger(d.year) && Number.isFinite(d.lat)), true);
+eq('海外組織の国に緯度経度がある', NETWORK.every(d => Number.isFinite(d.lat) && Number.isFinite(d.lng)), true);
+eq('id が重ならない', new Set([...PLACES, ...FOUND, ...FIRST, ...NETWORK].map(d => d.id)).size, PLACES.length + FOUND.length + FIRST.length + NETWORK.length);
+eq('1967年の理事長は吉祥丸', /吉祥丸/.test(CHRONO.find(c => c.year === 1967).text), true);
+const blob = JSON.stringify([PERSON, CHRONO, GLOSSARY, PLACES, WORLD, NETWORK, FOUND, FIRST]);
+eq('他の団体・流派とその創始者の名が無い', ['養神館', '心身統一', '昭道館', '日本合気道協会', '富木', '岩間神信', '藤平', '塩田'].filter(w => blob.includes(w)), []);
+eq('メールアドレス・電話が無い', [/[\w.+-]+@[\w-]+\.[\w.]+/.test(blob), /\d{2,4}-\d{3,4}-\d{4}/.test(blob)], [false, false]);
 eq('カレンダーの URL は設定の1か所', typeof CALENDAR_URL, 'string');
+eq('件数（年表・地点・世界・設立・初到達・国）', [CHRONO.length, PLACES.length, WORLD.length, FOUND.length, FIRST.length, NETWORK.length], [27, 7, 8, 11, 10, 85]);
 
 out.innerHTML += `\n${pass} 件合格、${fail} 件不合格\n`;
 document.title = fail ? `NG ${fail}` : `OK ${pass}`;
