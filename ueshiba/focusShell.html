@@ -1,0 +1,888 @@
+<!doctype html>
+<!-- ueshiba/focusShell.html: 植芝盛平Focus（History OS）。万次郎版 manjiro/focusShell.html の文法
+     （フルスクリーン地球儀＋浮遊パネル＋中央下タイムライン＋浮遊カード）に、植芝盛平の生涯と合気会の歩みを載せる。
+     万次郎版の共通部品（play_steps.js・track_engine.js）は航路と月の送りの部品なので読まない。年の送りは ueshiba/life_steps.js。
+     原則：年カーソル ≠ 年代バーの表示幅 ≠ カメラ。カメラは「場所を見る」を押した時だけ動く（自転もしない）。
+     データ：data/ueshiba_life.js（出典＝合気会の公式ページ4つ、確認日 2026-11-14）。掲載は植芝盛平と合気会に限る。 -->
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>History OS｜植芝盛平 Focus</title>
+<meta name="description" content="植芝盛平の生涯と合気会の歩みを、出典付きの年譜と地球の上にたどる History OS の実験版（個人制作・合気会の公式サイトではありません）。">
+<style>
+  /* ↓ manjiro/focusShell.html の CSS をそのまま写した（同じ見た目の約束。使わない部品の規則も残っている） */
+  :root{
+    --cyan:#66e0ff; --cyan-soft:#9becff;
+    --amber:#E69445; --amber-soft:#f0b578;
+    --art:#c79bff;
+    /* UI COLOR SYSTEM v1（北斎 focusShell と同じ意味の色） */
+    --c-focus:#66e0ff;   --c-focus-br:#c8f4ff;   /* 本人・航路 */
+    --c-relation:#c79bff;--c-relation-br:#e0ccff;/* P-LINK 人物関係 */
+    --c-world:#E69445;   --c-world-br:#f0b578;   /* WORLD EVENTS */
+    --c-context:#8aa0b4;
+    --c-rail:#ffd95e;                            /* 陸路（鉄道）＝ sandbox と同じ */
+    --est:#e0b45f;                               /* 推測・留保の札 */
+    --bg:#050c16;
+    --panel:rgba(7,14,24,.62);
+    --rule:rgba(255,255,255,.09);
+    --ink:#eef3f8; --sub:#9db4c8; --dim:rgba(238,243,248,.42);
+    --sans:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic UI",Meiryo,sans-serif;
+    --serif:"Hiragino Mincho ProN","Yu Mincho",serif; --mono:"SFMono-Regular",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  #globeViz{position:fixed;inset:0;z-index:1}
+  [hidden]{display:none!important}
+  button{font-family:inherit}
+
+  /* ── タイトル（上中央）── */
+  .title{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none}
+  .title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.5em;text-indent:.5em}
+  .title p{margin:7px 0 0;font-size:10.5px;letter-spacing:.42em;color:var(--cyan-soft)}
+  .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
+
+  /* ── 浮遊パネル共通 ── */
+  .panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);
+    backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-radius:5px;overflow:auto}
+  .panel::-webkit-scrollbar{width:6px} .panel::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  .panel::-webkit-scrollbar-track{background:transparent}
+  .panel .sec{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding:14px 16px 6px}
+  .panel .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px;color:var(--dim)}
+
+  /* ── 左上：WORLD EVENTS と、その下の W-LINK（縦に並べる。下の端は JS でタイムラインの上に合わせる）── */
+  .left-col{position:absolute;left:24px;top:104px;width:270px;z-index:20;display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 330px)}
+  /* 2026-11-11 清水さん「ラベル部分は固定で内容だけ上に送れるほうがいい」：見出し（と W-LINK の分類の札）は動かさず、一覧（#worldList・#wlList）だけを送る。
+     枠の高さは JS（layoutLeftCol）で決める：使える高さを World Events : W-LINK = 1 : φ に固定（docs/manjiro_monthly/LAYOUT_PROPORTION_v0.1.md） */
+  .left-col>.panel{position:relative;left:auto;top:auto;flex:0 1 auto;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+  .left-col>.panel>.sec,.left-col .wlp-cats{flex:0 0 auto}
+  .left-col .lc-list{flex:1 1 auto;min-height:0;overflow:auto;scrollbar-gutter:stable} /* 送りのバーの幅を常に取っておく（出る・消えるで改行が変わらないように） */
+  .lc-list::-webkit-scrollbar{width:6px} .lc-list::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  .lc-list::-webkit-scrollbar-track{background:transparent}
+  .left-panel .sec{color:var(--amber-soft)}
+  .wl-panel .sec{color:#d9c9ff}
+  /* W-LINK が on の間は、枠の見出しの「W-LINK」を P-LINK と同じ系統の紫に（2026-11-11 清水さん。左下の W-LINK ボタンも on の間は紫） */
+  .wl-panel .wl-name{transition:color .2s}
+  .wl-panel.on .wl-name{color:var(--c-relation);font-weight:700}
+  .wlp-cats{display:flex;gap:6px;padding:0 16px 8px;flex-wrap:wrap}
+  .wlc{display:inline-flex;align-items:center;gap:5px;background:rgba(7,14,24,.55);border:1px solid var(--cc);color:var(--ink);border-radius:4px;padding:2px 8px;font-size:10.5px;cursor:pointer;line-height:1.5}
+  .wlc::before{content:'';width:7px;height:7px;border-radius:2px;background:var(--cc)}
+  .wlc .n{font-family:var(--mono);font-size:9px;color:var(--dim)}
+  .wlc.off{border-style:dashed;color:var(--dim);opacity:.6}
+  .wlc.off::before{background:transparent;border:1px solid var(--cc)}
+  .wlc:hover{opacity:1;border-color:rgba(238,243,248,.6)}
+  .wl-sub{padding:5px 16px 3px;font-size:9.5px;letter-spacing:.06em;color:var(--dim);border-bottom:1px solid var(--rule)}
+  .wli{padding:6px 14px 7px;border-bottom:1px solid var(--rule);border-left:2px solid var(--ic);cursor:pointer;transition:.18s}
+  .wli:hover{background:rgba(255,255,255,.05)}
+  .wli-row{display:flex;gap:7px;align-items:baseline}
+  .wli .cat{font-size:9px;border:1px solid var(--cc);color:var(--cc);border-radius:3px;padding:0 4px;white-space:nowrap;line-height:1.45}
+  .wli .y{font-family:var(--mono);font-size:10.5px;color:var(--sub);white-space:nowrap}
+  .wli .d{font-size:9.5px;color:var(--dim);margin-left:auto;white-space:nowrap}
+  .wli .t{font-size:12px;line-height:1.5;margin-top:1px;color:rgba(238,243,248,.85)}
+  .wli.now{background:rgba(255,255,255,.055)}
+  .wli.now .t{color:var(--ink);font-weight:700}
+  .wli.now .y,.wli.now .d{color:var(--ink)}
+  .wli.sel{background:rgba(255,255,255,.12);box-shadow:inset 0 0 0 1px var(--ic)}
+  .wl-empty{padding:8px 16px 10px;font-size:10.5px;color:var(--dim);line-height:1.5}
+  /* World Events の行は一行に詰める（年・題・何年前/後。W-LINK の枠に高さを回すため。2026-11-11） */
+  .ev{padding:7px 14px 7px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s}
+  .ev:hover{background:rgba(230,148,69,.08)} .ev.sel{background:rgba(230,148,69,.12);border-left:2px solid var(--amber)}
+  .ev-row{display:flex;gap:9px;align-items:baseline}
+  .ev .y{font-family:var(--mono);color:var(--amber-soft);flex:0 0 74px;font-size:11px}
+  .ev .t{font-size:12.5px;line-height:1.5;min-width:0}
+  .ev .d{font-size:9.5px;color:var(--dim);margin-left:auto;white-space:nowrap;flex:0 0 auto}
+  .ev.now .d{color:var(--amber-soft)}
+
+  /* ── 右：FOCUS PERSON ── */
+  .right-panel{right:24px;top:104px;width:340px;max-height:calc(100% - 330px)}
+  .fp-head{padding:13px 16px 8px}
+  .fp-kicker{font-size:10px;letter-spacing:.34em;color:var(--cyan-soft);display:flex;align-items:center}
+  .fp-fold{margin-left:auto;background:transparent;border:1px solid rgba(238,243,248,.25);border-radius:4px;color:var(--sub);font-size:9.5px;letter-spacing:.06em;padding:2px 7px;cursor:pointer}
+  .fp-fold:hover{color:var(--ink);border-color:rgba(238,243,248,.55)}
+  .fp-top{display:flex;gap:13px;margin-top:9px;align-items:flex-start}
+  .fp-portrait{flex:0 0 35%;max-width:116px;width:35%;height:auto;border:1px solid var(--rule);border-radius:6px;background:rgba(255,255,255,.03);display:block}
+  .fp-portrait.empty{aspect-ratio:3/4}
+  .fp-ident{flex:1 1 auto;min-width:0}
+  .fp-name{font-family:var(--serif);font-size:22px;font-weight:700;line-height:1.15;margin:0 0 2px;letter-spacing:.03em}
+  .fp-years{font-size:11.5px;color:var(--cyan);letter-spacing:.12em}
+  .fp-cur{margin-top:9px;padding-top:8px;border-top:1px solid var(--rule)}
+  .fp-cur .lab{font-size:9px;letter-spacing:.16em;color:var(--dim)}
+  .fp-cur .val{font-family:var(--serif);font-size:16px;font-weight:700;margin-top:2px;line-height:1.3;word-break:break-word}
+  .fp-cur .val.click{cursor:pointer;border-bottom:1px dotted rgba(102,224,255,.45)}
+  .fp-cur .kind{font-size:10.5px;color:var(--sub);margin-top:4px;line-height:1.5}
+  .fp-cur .note{font-size:9.5px;color:var(--dim);margin-top:2px;line-height:1.5}
+  .tchip{display:inline-block;font-family:var(--mono);font-size:9px;border-radius:3px;padding:0 5px;margin-left:5px;vertical-align:1px;border:1px solid currentColor}
+  .tchip.anchor{color:var(--c-focus-br)} .tchip.interp{color:var(--est);border-style:dashed}
+  .fp-lifehead{display:flex;align-items:baseline;gap:8px;padding-top:8px}
+  .fp-lifehead span{font-size:9px;letter-spacing:.1em;color:var(--dim);text-transform:none}
+  .chrono-item{padding:8px 16px;cursor:pointer;transition:.2s;border-bottom:1px solid var(--rule)}
+  .chrono-item:hover{background:rgba(102,224,255,.06)} .chrono-item.sel{background:rgba(102,224,255,.10)}
+  .chrono-item.near{box-shadow:inset 2px 0 0 var(--cyan-soft)}
+  .chrono-item.secondary{opacity:.72}
+  .chrono-year{font-family:var(--mono);font-size:12px;color:var(--cyan);font-weight:700}
+  .chrono-cert{font-size:9px;color:var(--est);margin-left:5px}
+  .chrono-text{font-size:12px;line-height:1.55;color:rgba(238,243,248,.85);margin-top:2px}
+
+  /* ── 右下：P-LINK ── */
+  #plinkPanel{right:24px;bottom:30px;width:340px;max-height:40vh}
+  .plink>summary{padding:12px 16px;font-size:11px;letter-spacing:.16em;color:var(--cyan);cursor:pointer;list-style:none}
+  .plink>summary::-webkit-details-marker{display:none}
+  .pl-item{padding:8px 16px;cursor:pointer;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;border-bottom:1px solid var(--rule);transition:.18s}
+  .pl-item:hover{background:rgba(199,155,255,.07)} .pl-item.sel{background:rgba(199,155,255,.13);border-left:2px solid var(--art)}
+  .pl-item .nm{font-size:12.5px}
+  .pl-item .rel{font-size:10px;color:var(--c-relation-br);margin-left:auto;white-space:nowrap}
+  .pl-item .yrs{font-family:var(--mono);font-size:9.5px;color:var(--dim);flex-basis:100%}
+  .pl-hint{padding:4px 16px 10px;font-size:10px;color:var(--dim);line-height:1.5}
+  .pl-active{margin-left:8px;font-size:10px;color:var(--art);letter-spacing:0}
+  .pl-active .x{margin-left:6px;cursor:pointer;border:1px solid rgba(199,155,255,.5);border-radius:4px;padding:0 5px;color:var(--art)}
+  /* P-LINK を開いている間は、右の人物パネルを短くして重ならないようにする（PC） */
+  @media (min-width:641px){ body.pl-open .right-panel{max-height:max(150px,calc(100% - 104px - 40vh - 30px - 14px))} }
+
+  /* ── 右上：CHAPTER・航路について・追跡 ── */
+  #spaceControls{position:absolute;top:24px;right:24px;z-index:35;display:flex;gap:8px;align-items:flex-start}
+  .tgl{background:rgba(7,14,24,.7);border:1px solid var(--rule);color:var(--sub);border-radius:8px;padding:6px 11px;font-size:11px;cursor:pointer;backdrop-filter:blur(6px);white-space:nowrap}
+  .tgl:hover{color:var(--ink)}
+  .tgl.on{color:var(--cyan);border-color:rgba(102,224,255,.5)}
+  /* 左下の隅：W-LINK ボタン（2026-11-11 清水さん「W-linkボタンを左下隅に移動して」）。凡例の一行の上に置く。
+     年代バーが左下まで来る幅（641〜1199px）では JS（layoutLeftCol）が年代バーの上へ上げる。スマホは右上の並びに戻す（placeWlinkBtn） */
+  .wl-corner{position:absolute;left:24px;bottom:30px;z-index:30}
+  #wlinkBtn.on{color:var(--c-relation-br);border-color:rgba(199,155,255,.7);background:rgba(199,155,255,.16)}
+  .chap-wrap{position:relative}
+  .chap-menu{position:absolute;right:0;top:calc(100% + 6px);width:260px;max-height:62vh;overflow:auto;z-index:36;
+    background:rgba(10,16,26,.96);border:1px solid var(--rule);border-radius:7px;box-shadow:0 14px 36px rgba(0,0,0,.5)}
+  .chap-menu::-webkit-scrollbar{width:6px} .chap-menu::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  .chap-item{display:flex;align-items:baseline;gap:8px;padding:8px 12px;border-bottom:1px solid var(--rule);cursor:pointer}
+  .chap-item:hover{background:rgba(102,224,255,.07)} .chap-item.on{background:rgba(102,224,255,.13);border-left:2px solid var(--cyan)}
+  .chap-item .en{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink)}
+  .chap-item .ja{font-size:11px;color:var(--sub)}
+  .chap-item .yr{font-family:var(--mono);font-size:9.5px;color:var(--dim);margin-left:auto;white-space:nowrap}
+  .chap-item .go{font-size:9.5px;color:#cbe6ff;border:1px solid rgba(124,179,255,.4);border-radius:3px;padding:0 5px;white-space:nowrap}
+  .chap-item .go:hover{background:rgba(124,179,255,.18)}
+
+  /* ── 航路について（浮遊パネル）── */
+  .route-panel{left:24px;top:104px;width:min(560px,calc(100vw - 48px));max-height:calc(100vh - 340px);z-index:50;background:rgba(10,16,26,.95)}
+  .route-panel .sec{color:var(--cyan-soft)}
+  .route-panel .x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer}
+  .ri-p{padding:0 16px;margin:4px 0 10px;font-size:12px;line-height:1.75;color:rgba(238,243,248,.88)}
+  .ri-p.sub{font-size:11px;color:var(--sub)}
+  .ri-p a{color:#cbe6ff;text-decoration:none} .ri-p a:hover{text-decoration:underline}
+  .ri-tr{border-top:1px solid var(--rule)}
+  .ri-tr>summary{padding:9px 16px;cursor:pointer;list-style:none;font-size:12px}
+  .ri-tr>summary::-webkit-details-marker{display:none}
+  .ri-tr>summary .yr{font-family:var(--mono);font-size:10px;color:var(--sub);margin-left:6px}
+  .ri-tr>summary .cnt{font-size:10px;color:var(--dim);margin-left:6px}
+  .ri-body{padding:0 16px 12px}
+  .ri-warn{font-size:10.5px;color:var(--est);margin:4px 0}
+  .ri-conf-h{font-size:10px;letter-spacing:.12em;color:var(--est);margin:10px 0 4px;padding-top:8px;border-top:1px dashed rgba(224,180,95,.35)}
+  .ri-conf{font-size:11px;line-height:1.65;color:rgba(238,243,248,.85);margin:0 0 6px;padding-left:8px;border-left:2px solid rgba(224,180,95,.5)}
+  .ri-conf a{color:#cbe6ff;text-decoration:none} .ri-conf a:hover{text-decoration:underline}
+  table.ri .an a{color:#cbe6ff;text-decoration:none} table.ri .an a:hover{text-decoration:underline}
+  .tchip.gap{color:var(--dim);border-style:dotted}
+  .ri-src{font-size:10.5px;color:var(--sub);margin:4px 0 8px;line-height:1.6}
+  .ri-src a{color:#cbe6ff;text-decoration:none} .ri-src a:hover{text-decoration:underline}
+  table.ri{width:100%;border-collapse:collapse;font-size:10.5px}
+  table.ri th{font-weight:400;color:var(--dim);text-align:left;padding:3px 4px;border-bottom:1px solid var(--rule);white-space:nowrap}
+  table.ri td{padding:3px 4px;border-bottom:1px solid rgba(255,255,255,.05);vertical-align:top;color:rgba(238,243,248,.85)}
+  table.ri td.m{font-family:var(--mono);white-space:nowrap}
+  table.ri tr{cursor:pointer} table.ri tr:hover td{background:rgba(102,224,255,.06)}
+  table.ri tr.cur td{background:rgba(102,224,255,.12)}
+  .ri-conf.done{opacity:.55}
+  table.ri .an{color:var(--sub);line-height:1.5}
+
+  /* ── 中央下：タイムライン ──
+     画面の中央（地球の中心の下）に置く（2026-11-10 清水さん「年代バーが左よりなのは理由がありますか？」。北斎版の名残りで右だけ空けていた）。
+     右下の P-LINK（right 24px・幅 340px）と 24px 空ける分（388px）を左右とも取り、残りをなるべく使う。左の列は下の端をタイムラインの上に合わせる（layoutLeftCol）ので重ならない */
+  #timelineBar{position:absolute;bottom:30px;left:388px;right:388px;max-width:1100px;margin:0 auto;z-index:30;user-select:none}
+  /* 狭い PC（641〜1199px）は、中央に置くと幅が足りないので、従来どおり P-LINK の左に置く */
+  @media (min-width:641px) and (max-width:1199px){ #timelineBar{left:24px;right:388px;max-width:820px} }
+  /* 幅 1379px までの PC は年代バーが 600px に足りないので、自動鑑賞の操作は記号だけにする（文字は title に。「章に合わせる」まで出ると見出しが年代バーからはみ出した） */
+  @media (min-width:641px) and (max-width:1379px){ .auto-ctl .lbl{display:none} }
+  .tl-head{display:flex;align-items:flex-end;gap:12px;margin-bottom:8px}
+  #tlYear{font-size:34px;color:var(--cyan-soft);letter-spacing:.04em;line-height:1;font-family:var(--serif);white-space:nowrap}
+  #tlEra{font-size:11px;color:var(--sub);letter-spacing:.06em;padding-bottom:5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .tl-ctrl{margin-left:auto;display:flex;align-items:center;gap:6px;padding-bottom:4px;flex:0 0 auto}
+  .zoombtn,.playbtn{background:rgba(7,14,24,.7);border:1px solid var(--rule);color:var(--ink);border-radius:6px;width:28px;height:26px;cursor:pointer;font-size:15px;line-height:1;padding:0}
+  .playbtn{width:34px;color:var(--cyan);border-color:rgba(102,224,255,.45);font-size:12px}
+  .playbtn.on{background:rgba(102,224,255,.18)}
+  .chrono-item.near{background:rgba(102,224,255,.07)}
+  .zoombtn:hover,.playbtn:hover{border-color:rgba(238,243,248,.4)}
+  .tl-hint{font-size:10px;color:var(--dim);letter-spacing:.03em;margin-top:2px}
+  #tl{width:100%;height:100px;display:block;cursor:ew-resize;touch-action:none;overflow:visible} /* 段の名を左の外（余白）に出す（PC で年代バーの左が空いている時） */
+
+  /* ── 凡例（最下部一列）── */
+  .legend{position:absolute;left:24px;right:24px;bottom:8px;z-index:25;display:flex;gap:22px;align-items:center;white-space:nowrap;font-size:10.5px;color:var(--dim);line-height:1.4;letter-spacing:.3px}
+  .legend>div{display:flex;align-items:center;gap:6px}
+  .legend svg{width:26px;height:8px;opacity:.75}
+  .lg-dot{display:inline-block;width:10px;height:10px;border-radius:50%;opacity:.8}
+  .lg-dot.fill{background:var(--c-focus-br)} .lg-dot.hollow{border:2px solid var(--c-focus-br)}
+
+  /* ── 船の印（地球儀の上の HTML 要素）── */
+  .ship{position:relative;width:14px;height:14px;pointer-events:auto;cursor:pointer}
+  .ship .dot{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(5,12,22,.75),0 0 10px rgba(102,224,255,.55)}
+  .ship.anchor .dot{background:var(--c-focus-br)}
+  .ship.interp .dot{border:2.5px solid var(--c-focus-br);background:transparent}
+  .ship .chip{position:absolute;left:18px;top:-1px;font-size:10px;line-height:1.3;color:var(--est);border:1px dashed var(--est);border-radius:3px;padding:0 4px;white-space:nowrap;
+    background:rgba(5,12,22,.6);text-shadow:0 1px 2px #000}
+  .ship.anchor .chip{display:none}
+  .ship.anchor.sec .chip{display:inline-block;color:var(--c-focus-br);border-style:solid}
+  .ship.bg{opacity:.35}
+  .ship.rail .dot{box-shadow:0 0 0 2px rgba(5,12,22,.75),0 0 10px rgba(255,217,94,.55)}
+  /* 航路から外れた記録の位置（◇）*/
+  .obs{position:relative;width:14px;height:14px;pointer-events:auto;cursor:pointer}
+  .wl{position:relative;width:12px;height:12px;pointer-events:auto;cursor:pointer;opacity:.75}
+  .wl .ring{position:absolute;inset:0;border-radius:50%;border:1.5px dashed var(--wc);background:rgba(5,12,22,.3)}
+  .wl .wl-t{position:absolute;left:16px;top:-2px;font-size:9.5px;letter-spacing:.06em;color:var(--wc);white-space:nowrap;text-shadow:0 0 4px #050c16}
+  .wl:hover{opacity:1}
+  /* 選んだ W-LINK（左の一覧・年代バー・地球の印を押した時）。カメラは動かさず、印を少し明るくするだけ */
+  .wl.sel{opacity:1;z-index:2}
+  .wl.sel .ring{border-style:solid;border-width:2px;background:rgba(255,255,255,.14);box-shadow:0 0 0 2px rgba(5,12,22,.6),0 0 12px var(--wc)}
+  .wl.sel .wl-t{font-weight:700;color:#fff;text-shadow:0 0 4px #050c16,0 0 8px var(--wc)}
+  .wl.sel.off .ring{border-style:dashed}
+  .obs .dia{position:absolute;left:3px;top:3px;width:8px;height:8px;transform:rotate(45deg);border:1.6px solid #ffffff;background:rgba(5,12,22,.35);box-shadow:0 0 6px rgba(255,255,255,.5)}
+  .obs.bg{opacity:.35}
+  .lg-dia{display:inline-block;width:8px;height:8px;transform:rotate(45deg);border:1.5px solid #fff;opacity:.75;margin:0 2px}
+
+  /* ── 詳細カード（北斎 focusShell と同じ形。PIN は持たない）── */
+  .dcard{position:fixed;left:24px;top:120px;width:min(360px,86vw);max-height:calc(100vh - 24px);overflow:auto;z-index:75;
+    background:rgba(10,16,26,.96);border:1px solid var(--rule);border-left:3px solid var(--c-focus);
+    border-radius:9px;box-shadow:0 18px 46px rgba(0,0,0,.5);padding:16px 18px 18px;animation:cardIn .16s ease-out}
+  .dcard::-webkit-scrollbar{width:6px} .dcard::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+  @keyframes cardIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .dcard .dc-head{cursor:move;user-select:none}
+  .dcard .dc-x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer;z-index:2}
+  .dcard .dc-tag{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;font-weight:700;padding-right:22px}
+  .dcard .dc-title{font-family:var(--serif);font-size:19px;font-weight:700;margin-top:6px;line-height:1.3}
+  .dcard .dc-sub{font-size:11px;color:var(--sub);margin-top:4px;letter-spacing:.04em}
+  .dcard .dc-body{font-size:12.5px;line-height:1.85;color:rgba(238,243,248,.9);margin-top:12px;white-space:pre-line}
+  .dcard .dc-body a{color:#cbe6ff;text-decoration:none} .dcard .dc-body a:hover{text-decoration:underline}
+  .dcard .dc-rel{font-size:11px;color:var(--dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);line-height:1.6;white-space:pre-line}
+  /* 自動鑑賞のカード：本文の下に「確かさ」を一行だけ。残りの注記・出典は畳む（2026-11-10 注記が積み重なって読みにくかった） */
+  .dcard .dc-cert{font-size:11.5px;line-height:1.6;margin-top:10px;padding:4px 9px;border-left:2px solid var(--est);color:#ffe2a8;background:rgba(224,180,95,.08);border-radius:0 3px 3px 0;white-space:normal}
+  .dcard .dc-cert.rec{border-left-color:var(--cyan-soft);color:#cbeefc;background:rgba(102,224,255,.06)}
+  .dcard .dc-more{margin-top:8px;white-space:normal}
+  .dcard .dc-more>summary{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--sub);cursor:pointer;list-style:none;padding:3px 0}
+  .dcard .dc-more>summary::-webkit-details-marker{display:none}
+  .dcard .dc-more>summary:hover{color:var(--ink)}
+  .dcard .dc-more p{font-size:11px;line-height:1.65;color:var(--dim);margin:4px 0 6px}
+  /* 自動鑑賞のカード（2026-11-11 清水さん）：年代バーの大きな年月（tlYear）のすぐ上に、題・年月と場所・本文の最初の1文・確かさの一行だけ。
+     残り（本文の続き・注記・出典・地点を見る）は「詳しく ▸」に畳む。一時停止中は「⏸ 一時停止中 — ▶ 再開」をはっきり出す */
+  .dcard.auto{padding:13px 16px 12px}
+  .dcard.auto .dc-tag{display:none}
+  .dcard.auto .dc-title{margin-top:0;padding-right:22px;font-size:18px}
+  .dcard.auto .dc-sub{font-family:var(--mono);color:var(--cyan-soft);font-size:11px}
+  .dcard.auto .dc-body{margin-top:8px;line-height:1.75}
+  .dcard.auto .dc-cert{margin-top:8px}
+  .dcard .dc-more .dc-more-body{font-size:12px;line-height:1.75;color:rgba(238,243,248,.85);margin:4px 0 6px;white-space:pre-line}
+  .dcard .dc-more .dc-act{margin-top:6px}
+  .dcard.auto .dc-more>summary{font-family:var(--sans);font-size:11.5px;letter-spacing:.06em;color:var(--cyan-soft);padding:4px 0 0}
+  /* 表示時間の線とカードの中の小さな一時停止は外した（2026-11-11 清水さん「読む時に目障り・視線を奪う」）。止める操作は年代バーの横の一時停止だけ。
+     カードの中には、一時停止中の時だけ「再開」を出す */
+  .dc-play{display:flex;align-items:center;gap:8px;margin-top:9px}
+  .dc-play:not(.paused){display:none}
+  .dc-play button,.auto-resume{font-family:inherit;cursor:pointer;white-space:nowrap}
+  /* 確かさの小さな札（自動鑑賞のカードの年月の行の横）。黄色の一行は目立ちすぎるので、文は「詳しく」に移し、ここは破線の小さな札だけ（破線＝推定、凡例と同じ） */
+  .dc-sure{display:inline-block;margin-left:8px;padding:0 6px;border:1px dashed rgba(238,243,248,.3);border-radius:3px;font-family:var(--sans);font-size:10px;line-height:1.6;color:var(--sub);letter-spacing:.04em;vertical-align:1px}
+  .auto-resume{display:block;width:100%;background:rgba(224,180,95,.2);border:1.5px solid var(--est);color:#ffe9bf;border-radius:6px;
+    font-size:13px;font-weight:700;letter-spacing:.04em;padding:8px 12px;text-align:center;box-shadow:0 0 14px rgba(224,180,95,.25)}
+  .auto-resume:hover{background:rgba(224,180,95,.32)}
+  .dc-play{flex-wrap:wrap}
+  .dc-play .auto-resume{flex:1 1 100%}
+  /* 一時停止中で、カードも表紙も出ていない時（航路を伸ばしている途中で止めた時）の札。位置はカードと同じ（tlYear のすぐ上） */
+  #autoPausePill{position:fixed;z-index:76;width:auto}
+  /* .dock（表紙をカードと同じ所に出す形）は 2026-11-11 にやめ、表紙は上の中央に戻した（positionCover）。形だけ残す */
+  .auto-cover.dock{transform:none;text-align:left;animation:coverInDock .6s ease-out;padding:13px 18px 13px}
+  .auto-cover.dock .ac-act{justify-content:flex-start}
+  @keyframes coverInDock{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .auto-cover .ac-pause{margin-top:10px;pointer-events:auto}
+  .dcard .dc-act{margin-top:12px;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:#cbe6ff;
+    background:rgba(124,179,255,.12);border:1px solid rgba(124,179,255,.4);border-radius:3px;padding:5px 10px;cursor:pointer}
+  .dcard .dc-act:hover{background:rgba(124,179,255,.22)}
+  .kv{display:flex;gap:10px;padding:4px 0;border-top:1px solid var(--rule);font-size:11.5px;line-height:1.6;white-space:normal}
+  .kv:first-child{border-top:0}
+  .kv .k{flex:0 0 72px;font-size:10px;color:var(--sub);padding-top:1px}
+  .kv .v{flex:1 1 auto;min-width:0}
+  .dc-sec{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;color:var(--sub);margin:12px 0 4px;padding-top:9px;border-top:1px solid var(--rule)}
+  .dc-para{white-space:normal;margin:0 0 6px}
+  .pl-portrait{float:right;width:64px;height:64px;border-radius:50%;object-fit:cover;border:1px solid var(--rule);margin:0 0 8px 10px}
+  .trace{white-space:normal;font-size:11.5px;line-height:1.6;margin:0 0 7px}
+  .trace .ty{font-family:var(--mono);color:var(--c-relation-br);margin-right:6px}
+  .trace .go{color:#cbe6ff;border-bottom:1px dotted rgba(203,230,255,.6);cursor:pointer}
+  .trace .dt{display:block;font-size:10.5px;color:var(--sub);margin-left:40px}
+  .pg-box{margin-top:12px;padding-top:10px;border-top:1px solid var(--rule);white-space:normal}
+  .pg-link{display:inline-block;font-size:11.5px;color:#cbe6ff;border:1px solid rgba(124,179,255,.45);border-radius:4px;padding:4px 10px;text-decoration:none}
+  .pg-link:hover{background:rgba(124,179,255,.16)}
+  .pg-off{display:inline-block;font-size:11px;color:var(--dim);border:1px dashed rgba(238,243,248,.2);border-radius:4px;padding:3px 9px;cursor:not-allowed}
+  .pg-none{font-size:10.5px;color:var(--dim)}
+  .wl-person{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:5px 0;border-top:1px solid var(--rule);font-size:12px;white-space:normal}
+  .dc-sec + .wl-person{border-top:0} /* 見出し（dc-sec も div）の直後の一人目。:first-of-type では効かなかった（監査 r4 L8） */
+  .wl-person .nm{font-weight:700}
+  .wl-person .qid{font-family:var(--mono);font-size:10.5px;color:#cbe6ff;text-decoration:none}
+  .wl-person .qid:hover{text-decoration:underline}
+  .wl-person .pg-link{font-size:10.5px;padding:2px 8px}
+  .wl-person .pg-off{font-size:10px;padding:1px 7px}
+  /* 年譜のカードの資料（e.media：手紙・画像。将来のため。今のデータには無い）と、その拡大 */
+  .dm-row{display:flex;flex-wrap:wrap;gap:8px;white-space:normal}
+  .dm-item{display:flex;flex-direction:column;align-items:center;width:84px;padding:3px;background:rgba(255,255,255,.04);border:1px solid var(--rule);border-radius:5px;color:var(--sub);cursor:zoom-in}
+  .dm-item:hover{border-color:rgba(124,179,255,.55)}
+  .dm-item img{display:block;width:76px;height:56px;object-fit:cover;border-radius:3px;background:#0b1522}
+  .dm-item.broken{cursor:default;opacity:.6}
+  .dm-cap{font-size:9.5px;line-height:1.3;margin-top:3px;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mbox{position:fixed;inset:0;z-index:120;background:rgba(3,8,14,.88);display:flex;align-items:center;justify-content:center;padding:16px}
+  .mbox[hidden]{display:none}
+  .mb-inner{position:relative;max-width:min(980px,96vw);max-height:94vh;display:flex;flex-direction:column;align-items:center}
+  .mb-inner img{display:block;max-width:100%;max-height:78vh;object-fit:contain;border-radius:4px;background:#0b1522}
+  .mb-inner img[hidden]{display:none}
+  .mb-cap{margin-top:8px;font-size:11.5px;line-height:1.6;color:var(--sub);text-align:center;white-space:normal}
+  .mb-cap a{color:#cbe6ff}
+  .mb-close{position:absolute;top:-10px;right:-10px;width:28px;height:28px;border-radius:50%;background:rgba(10,16,26,.96);border:1px solid var(--rule);color:var(--ink);cursor:pointer;font-size:13px}
+
+  /* ── 自動鑑賞（章の表紙・操作）── */
+  .autobtn{background:rgba(102,224,255,.2);border:1px solid rgba(102,224,255,.8);color:#e4f9ff;border-radius:6px;height:26px;cursor:pointer;
+    font-size:11.5px;font-weight:700;letter-spacing:.06em;padding:0 11px;white-space:nowrap;box-shadow:0 0 12px rgba(102,224,255,.28)}
+  .autobtn:hover{background:rgba(102,224,255,.32)}
+  .auto-ctl{display:flex;align-items:center;gap:5px}
+  .auto-ctl button{background:rgba(7,14,24,.78);border:1px solid rgba(102,224,255,.45);color:var(--ink);border-radius:6px;height:26px;cursor:pointer;font-size:11px;padding:0 9px;white-space:nowrap}
+  .auto-ctl button:hover{border-color:rgba(238,243,248,.6)}
+  .auto-ctl button:disabled{opacity:.38;cursor:default}
+  .auto-ctl button.paused{background:rgba(224,180,95,.18);border-color:var(--est);color:#ffe2a8}
+  .auto-ctl .prog{font-family:var(--mono);font-size:10px;color:var(--cyan-soft);white-space:nowrap;letter-spacing:.06em}
+  .tgl:disabled{opacity:.35;cursor:default}
+  .auto-cover{position:fixed;left:50%;top:92px;transform:translateX(-50%);width:min(480px,86vw);z-index:70;pointer-events:none;
+    background:rgba(8,14,24,.8);border:1px solid rgba(102,224,255,.26);border-top:3px solid var(--c-focus);border-radius:10px;
+    box-shadow:0 18px 46px rgba(0,0,0,.45);padding:15px 22px 15px;text-align:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:coverIn .6s ease-out}
+  @keyframes coverIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+  .ac-kicker{font-family:var(--mono);font-size:10px;letter-spacing:.3em;color:var(--cyan-soft)}
+  .ac-en{font-family:var(--mono);font-size:25px;letter-spacing:.16em;font-weight:700;margin-top:6px;color:#eaf9ff}
+  .ac-ja{font-family:var(--serif);font-size:17px;font-weight:700;margin-top:2px}
+  .ac-yr{font-family:var(--mono);font-size:13px;color:var(--cyan);margin-top:6px;letter-spacing:.1em}
+  .ac-voy{font-size:11px;color:var(--sub);margin-top:8px;line-height:1.6}
+  .ac-line{font-size:12.5px;line-height:1.75;margin-top:7px;color:rgba(238,243,248,.92)}
+  .ac-act{margin-top:12px;pointer-events:auto;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .ac-act button{background:rgba(124,179,255,.12);border:1px solid rgba(124,179,255,.45);color:#cbe6ff;border-radius:5px;padding:5px 12px;font-size:11.5px;cursor:pointer}
+  .ac-act button:hover{background:rgba(124,179,255,.24)}
+  body.auto-on .dcard{max-height:calc(100vh - 300px)}
+
+  /* ===== スマホ（≤640px）：崩れない最低限 ===== */
+  @media (max-width:1100px){ .legend{gap:12px;font-size:9.5px} }
+  /* 641〜1379px：凡例が一行に収まらず画面の右へはみ出していた（ページの幅が広がる）。はみ出す分は右端で薄く消す（2026-11-12 公開前の確かめ。全部を見せる並べ方は次の課題） */
+  @media (min-width:641px) and (max-width:1379px){ .legend{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent)} }
+  @media (max-width:640px){
+    .title{left:12px;top:12px;transform:none;text-align:left}
+    .title h1{font-size:15px;letter-spacing:.08em;text-indent:0}
+    .title p{display:none}
+    .attrib{left:12px;top:36px;font-size:8.5px;padding:1px 6px}
+    .left-col,.left-panel,.wl-panel{display:none!important} /* World Events と W-LINK の枠はスマホでは出さない（W-LINK は年代バーの1段と地球の印で） */
+    #spaceControls{top:8px;right:8px;gap:5px;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 150px)}
+    .tgl{padding:7px 9px;font-size:10.5px}
+    .chap-menu{width:min(280px,calc(100vw - 16px))}
+    .right-panel{top:84px;right:8px;left:8px;width:auto;max-height:calc(100dvh - 84px - 330px)}
+    .fp-portrait{width:72px;flex-basis:72px}
+    .fp-name{font-size:18px}
+    #plinkPanel{right:8px;left:8px;width:auto;bottom:240px;max-height:30vh}
+    body.fp-folded #plinkPanel{display:none}
+    body.fp-folded .fp-portrait{display:none}
+    .route-panel{left:8px;right:8px;top:84px;width:auto;max-height:calc(100dvh - 84px - 220px)}
+    #timelineBar{left:8px;right:8px;max-width:none;bottom:70px} /* 凡例（2〜3行）の上に置く */
+    .tl-head{margin-bottom:3px;gap:8px}
+    #tlYear{font-size:22px;text-shadow:0 1px 8px #000}
+    #tlEra,.tl-hint{display:none}
+    .zoombtn{width:34px;height:32px}
+    .playbtn{width:40px;height:32px}
+    .legend{left:8px;right:8px;bottom:4px;gap:4px 12px;flex-wrap:wrap;font-size:9px;white-space:normal}
+    .legend svg{width:18px}
+    .dcard{left:8px!important;width:calc(100vw - 16px);max-height:calc(100dvh - 60px)}
+    /* 自動鑑賞：表紙とカードは下寄せ・小さめ（位置は JS でタイムラインの上に置く）。操作は記号だけにして一行に収める */
+    .tl-head{flex-wrap:wrap}
+    .autobtn{height:32px;padding:0 10px}
+    .auto-ctl button{height:32px;padding:0 10px}
+    .auto-ctl .lbl{display:none}
+    .auto-cover{width:calc(100vw - 16px);padding:10px 14px 11px}
+    .ac-en{font-size:18px;margin-top:3px} .ac-ja{font-size:14px} .ac-yr{font-size:11.5px;margin-top:3px}
+    .ac-voy{font-size:10px;margin-top:4px;line-height:1.45} .ac-line{font-size:11.5px;line-height:1.6;margin-top:4px}
+    body.auto-on #plinkPanel{display:none}
+    body.auto-on .dcard{max-height:36dvh;padding:12px 14px 14px}
+    body.auto-on .dcard .dc-title{font-size:16px}
+    body.auto-on .dcard .dc-body{font-size:11.5px;line-height:1.65;margin-top:8px}
+  }
+  body.fp-folded .fp-body{display:none}
+  /* ===== 植芝盛平Focus だけの足し（上は manjiro/focusShell.html の CSS をそのまま写した） ===== */
+  /* 地の全体にもスクロールバーの白い背景を出さない */
+  html{scrollbar-color:rgba(102,224,255,.25) transparent}
+  ::-webkit-scrollbar{width:6px;height:6px;background:transparent} ::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px} ::-webkit-scrollbar-button{display:none}
+  :root{ --c-org:#e0c27a; --c-org-br:#f2dcaa; --c-unv:#8a97a6; }
+  .fp-top{gap:0}
+  .dcard .dc-title{font-size:16px;line-height:1.55} /* 題に本文を出す（出来事に短い題を作らない＝出典にない言い換えを足さない） */
+  .dcard .dc-body:empty{display:none}
+  .org-panel .sec{color:var(--c-org-br)}
+  .unv-panel .sec{color:#c3ccd6}
+  .oi{padding:7px 14px 7px 16px;border-bottom:1px solid var(--rule);cursor:pointer;transition:.18s;display:flex;gap:9px;align-items:baseline}
+  .oi:hover{background:rgba(224,194,122,.08)} .oi.sel{background:rgba(224,194,122,.14);border-left:2px solid var(--c-org)}
+  .oi.near{box-shadow:inset 2px 0 0 var(--c-org)}
+  .oi .y{font-family:var(--mono);color:var(--c-org-br);flex:0 0 40px;font-size:11px}
+  .oi .t{font-size:12px;line-height:1.5;min-width:0;color:rgba(238,243,248,.85)}
+  .oi.future{opacity:.45}
+  .ui{padding:6px 14px 6px 16px;border-bottom:1px solid var(--rule);cursor:pointer;display:flex;gap:8px;align-items:baseline}
+  .ui:hover{background:rgba(255,255,255,.05)} .ui.sel{background:rgba(255,255,255,.1)}
+  .ui .y{font-family:var(--mono);color:var(--c-unv);flex:0 0 36px;font-size:10.5px}
+  .ui .t{font-size:11.5px;line-height:1.5;color:var(--sub)}
+  .st{display:inline-block;font-size:9px;border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:1px;border:1px solid currentColor;font-family:var(--sans);letter-spacing:.04em;font-weight:400}
+  .st.confirmed{color:#8fd6a8} .st.split{color:var(--amber-soft);border-style:dashed} .st.partial{color:#a9b9ff;border-style:dashed} .st.unv{color:var(--c-unv);border-style:dotted}
+  .chrono-item .ylab{font-size:9.5px;color:var(--sub);margin-left:6px}
+  .chrono-item.future{opacity:.5}
+  .dc-split{border-left:2px solid var(--amber);padding:2px 0 2px 9px;margin:8px 0;white-space:normal}
+  .dc-split .h{font-size:10px;letter-spacing:.1em;color:var(--amber-soft)}
+  .dc-split p{font-size:11px;color:var(--sub);margin:2px 0 4px;line-height:1.6}
+  .dc-split ul{margin:0;padding-left:16px;font-size:11.5px;line-height:1.65}
+  .dc-src{white-space:normal;font-size:11px;line-height:1.7;margin:0;padding-left:16px}
+  .dc-src a{color:#cbe6ff;text-decoration:none} .dc-src a:hover{text-decoration:underline}
+  .dc-src .code{font-family:var(--mono);font-size:9.5px;color:var(--sub);margin-right:4px}
+  .dc-src .ck{color:var(--dim)}
+  a.tgl{text-decoration:none;display:inline-block}
+  a.tgl.cal{color:var(--c-org-br);border-color:rgba(224,194,122,.45)}
+  .cal-short{display:none}
+  @media (max-width:640px){ .cal-short{display:inline} }
+  .tgl.cal.off{color:var(--dim);border-style:dashed;cursor:default}
+  .info-panel{left:24px;top:104px;width:min(560px,calc(100vw - 48px));max-height:calc(100vh - 300px);z-index:50;background:rgba(10,16,26,.95)}
+  .info-panel .sec{color:var(--cyan-soft)}
+  .info-panel .x{position:absolute;top:8px;right:9px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer}
+  .info-panel ul{margin:2px 0 10px;padding:0 16px 0 32px;font-size:11.5px;line-height:1.7;color:rgba(238,243,248,.88)}
+  .info-panel ul a{color:#cbe6ff;text-decoration:none} .info-panel ul a:hover{text-decoration:underline}
+  .info-panel .ui{padding-left:16px}
+  .lg-ring{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px dotted var(--c-unv)}
+  @media (max-width:640px){
+    .info-panel{left:8px;right:8px;top:84px;width:auto;max-height:calc(100dvh - 84px - 220px)}
+    #spaceControls{max-width:calc(100vw - 130px)}
+    .cal-long{display:none}
+  }
+</style></head>
+<body>
+
+<div id="globeViz"></div>
+<div class="attrib">地球: NASA Blue Marble ／ 個人制作・合気会の公式サイトではありません</div>
+
+<div class="title">
+  <h1>植芝盛平</h1>
+  <p>HISTORY OS ・ FOCUS PERSON</p>
+</div>
+
+<!-- 左上：AIKIKAI（合気会の歩み）と、その下の UNVERIFIED（未確認）。万次郎版の WORLD EVENTS と W-LINK の位置 -->
+<div class="left-col" id="leftCol">
+  <div class="panel left-panel org-panel" id="orgPanel">
+    <div class="sec">Aikikai<span class="secsub">合気会の歩み（押すとその年へ）</span></div>
+    <div id="orgList" class="lc-list"></div>
+  </div>
+  <div class="panel wl-panel unv-panel" id="unvPanel">
+    <div class="sec">Unverified<span class="secsub">未確認（地球に出さない）</span></div>
+    <div id="unvList" class="lc-list"></div>
+  </div>
+</div>
+
+<!-- 右：FOCUS PERSON -->
+<div class="panel right-panel" id="focusPanel">
+  <div class="fp-head">
+    <div class="fp-kicker">HISTORY OS / FOCUS PERSON<button class="fp-fold" id="fpFold" type="button">畳む</button></div>
+    <div class="fp-top">
+      <div class="fp-ident">
+        <div class="fp-name">植芝盛平</div>
+        <div class="fp-years">1883 — 1969 ・ 合気道開祖</div>
+        <div class="fp-cur">
+          <div class="lab" id="curLab">今の場所</div>
+          <div class="val" id="curVal">—</div>
+          <div class="kind" id="curKind"></div>
+          <div class="note" id="curNote"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="fp-body">
+    <div class="sec fp-lifehead">LIFE<span>開祖の生涯（押すとその年へ。カメラは動きません）</span></div>
+    <div id="lifeList"></div>
+  </div>
+</div>
+
+<!-- 右上：章・出典について・行事カレンダー（片道リンク） -->
+<div id="spaceControls">
+  <div class="chap-wrap">
+    <button class="tgl" id="chapBtn" type="button">CHAPTER : 全体 ▾</button>
+    <div class="chap-menu" id="chapMenu" hidden></div>
+  </div>
+  <button class="tgl" id="infoBtn" type="button">出典について</button>
+  <a class="tgl cal" id="calLink" target="_blank" rel="noopener" title="いまの行事は、別のサイト「植芝盛平フォーカス／合氣道」の行事カレンダーへ（データは混ぜていません）"><span class="cal-long">いまの行事は行事カレンダーへ</span><span class="cal-short">行事</span> ↗</a>
+</div>
+
+<!-- 出典について（万次郎版の「航路について」の位置） -->
+<div class="panel info-panel" id="infoPanel" hidden>
+  <button class="x" id="infoClose" type="button" aria-label="閉じる">✕</button>
+  <div id="infoBody"></div>
+</div>
+
+<!-- 中央下：タイムライン -->
+<div id="timelineBar">
+  <div class="tl-head">
+    <div id="tlYear">1883年</div>
+    <div id="tlEra"></div>
+    <div class="tl-ctrl">
+      <button class="zoombtn" id="prevY" type="button" title="1年戻る" aria-label="1年戻る">‹</button>
+      <button class="playbtn" id="playBtn" type="button" title="再生（1年 1.2 秒で進む。カメラは動きません）" aria-label="再生">▶</button>
+      <button class="zoombtn" id="nextY" type="button" title="1年進む" aria-label="1年進む">›</button>
+      <button class="zoombtn" id="zoomIn" type="button" title="拡大" aria-label="拡大">＋</button>
+      <button class="zoombtn" id="zoomOut" type="button" title="縮小" aria-label="縮小">－</button>
+    </div>
+  </div>
+  <svg id="tl"></svg>
+  <div class="tl-hint">カーソル付近をドラッグ＝年を動かす ／ 背景をドラッグ＝年代を動かす ／ 背景を押す＝その年へ ／ ＋−＝拡大・縮小</div>
+</div>
+
+<!-- 凡例 -->
+<div class="legend" id="legend">
+  <div><span class="lg-dot fill"></span>開祖の生涯の出来事（出典あり）</div>
+  <div><span class="lg-dot" style="background:var(--c-org)"></span>合気会の歩み（出典あり）</div>
+  <div><svg viewBox="0 0 26 8" aria-hidden="true"><rect x="1" y="1" width="24" height="6" rx="2" fill="none" stroke="#f0b578" stroke-dasharray="3 2"/></svg>出典で年が食い違う（両方を示す）</div>
+  <div><span class="lg-ring"></span>未確認（出典で確かめられない。地球に出さない）</div>
+  <div>地球の印＝町のおおよその位置 ／ 地球が回るのは「場所を見る」の時だけ</div>
+</div>
+
+<!-- 詳細カード -->
+<div id="detailCard" class="dcard" hidden>
+  <button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button>
+  <div class="dc-head" id="dcHead">
+    <div class="dc-tag" id="dcTag"></div>
+    <div class="dc-title" id="dcTitle"></div>
+    <div class="dc-sub" id="dcSub"></div>
+  </div>
+  <div class="dc-body" id="dcBody"></div>
+  <div class="dc-rel" id="dcRel" hidden></div>
+  <button class="dc-act" id="dcAct" type="button" hidden></button>
+</div>
+
+<script type="module">
+import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
+import { UESHIBA as D } from '../data/ueshiba_life.js?v=20261114a';
+import { CALENDAR_URL } from '../data/ueshiba_config.js?v=20261114a';
+import { lifeFromData, yearText, dayJa, chapterOf, lastBefore, placeMarksUpTo, nextYear, prevYear, tOfDate } from './life_steps.js?v=20261114a';
+
+// ---------- 定数 ----------
+// 原則（万次郎版と同じ）：年カーソル ≠ 年代バーの表示幅 ≠ カメラ。年を送ってもカメラは動かさない。カメラを動かすのは「場所を見る」だけ。
+// 万次郎版と違い、地球の自転（autoRotate）もしない（清水さんの規則「カメラは押したときだけ動く」）。航路・追跡・自動鑑賞・W-LINK・P-LINK は持たない（§報告）。
+const RANGE = { min: 1880, max: 2015 };
+const SPAN = { min: 4, max: RANGE.max - RANGE.min };
+const LIFE_START_T = tOfDate(1883, 12, 14), LIFE_END_T = tOfDate(1969, 4, 26); // 合気会の沿革（HE・HJ）の生没の日付
+const PLAY_MS = 1200;
+const OS_COLORS = { focus: '#66e0ff', focusBr: '#c8f4ff', org: '#e0c27a', orgBr: '#f2dcaa', split: '#f0b578', unv: '#8a97a6', selRing: '#ffffff' };
+const STATUS_JA = { confirmed: '出典で確認', split: '出典で食い違い', partial: '一部未確認' };
+const KIND = { life: { tag: 'LIFE / 開祖の生涯', color: 'var(--c-focus)' }, org: { tag: 'AIKIKAI / 合気会の歩み', color: 'var(--c-org)' } };
+
+// ---------- 小道具 ----------
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+function mk(tag, cls, html) { const d = document.createElement(tag); if (cls) d.className = cls; if (html != null) d.innerHTML = html; return d; }
+const ja = o => (o && (o.ja ?? o)) || '';
+const asciiLabel = s => { const t = String(s || '').replace(/[^\x20-\x7E]/g, '').replace(/\(.*?\)/g, '').replace(/\s+/g, ' ').trim(); return t.length >= 2 ? t : ''; }; // globe.gl の文字は日本語が化ける（万次郎版と同じ）
+const stChip = st => '<span class="st ' + st + '">' + esc(st === 'unv' ? '未確認' : STATUS_JA[st]) + '</span>';
+const frozen = el => { const r = el.getBoundingClientRect(); return { getBoundingClientRect: () => r }; };
+
+// ---------- データ ----------
+const LIFE = lifeFromData(D.events);
+const byId = id => LIFE.find(e => e.id === id) || null;
+const CHAPTERS = [{ id: 'all', en: '全体', ja: '', from: RANGE.min, to: RANGE.max }, ...D.chapters.map(c => ({ ...c, en: ja(c.title), to: Math.min(c.to, RANGE.max) }))];
+const UNV = D.unverified.map((u, i) => ({ ...u, id: 'unv' + i }));
+
+// ---------- 状態 ----------
+const State = { t: LIFE_START_T, vp: { from: 1880, to: 1975 }, chapter: 'all', sel: { type: null, id: null }, playing: false, activePlace: null };
+const subs = []; const on = f => subs.push(f); const emit = () => subs.forEach(f => f(State));
+function ensureVisible(t) { const v = State.vp, span = v.to - v.from; if (t >= v.from && t <= v.to) return; let from = t > v.to ? t - span * 0.25 : t - span * 0.75; from = clamp(from, RANGE.min, RANGE.max - span); State.vp = { from, to: from + span }; }
+function setT(t, opt = {}) { const nt = clamp(t, RANGE.min, RANGE.max); if (Math.abs(nt - State.t) < 1e-9 && !opt.force) return; State.t = nt; if (!opt.noScroll) ensureVisible(nt); emit(); }
+function setSel(type, id) { State.sel = { type, id }; emit(); }
+const selEvent = () => State.sel.type === 'ev' ? byId(State.sel.id) : null;
+
+// ---------- 地球儀（globe.gl）----------
+const world = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
+  .backgroundColor('#050c16')
+  .width(window.innerWidth).height(window.innerHeight)
+  .pointsData([]).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude('alt').pointResolution(16).pointsTransitionDuration(0)
+  .pointLabel(d => '<div style="background:rgba(10,16,26,.92);border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:3px 8px;font-size:11px;color:#eef3f8">' + esc(d.name) + '</div>')
+  .onPointClick((d, ev) => { const e = byId(d.last); if (e) { setSel('ev', e.id); showEventCard(e, ev ? { x: ev.clientX, y: ev.clientY } : null); } }) // 印を押す＝選ぶだけ（カメラは動かさない）
+  .ringsData([]).ringLat('lat').ringLng('lng').ringColor(() => t => 'rgba(200,244,255,' + (1 - t) + ')').ringMaxRadius(2.4).ringPropagationSpeed(1.6).ringRepeatPeriod(1300)
+  .labelsData([]).labelLat('lat').labelLng('lng').labelText('text').labelColor('color').labelSize(0.42).labelDotRadius(0.16).labelResolution(2).labelsTransitionDuration(0);
+world.pointOfView({ lat: 37, lng: 138, altitude: 1.9 }, 0); // 最初の向き（日本）。以後は「場所を見る」の時だけ動く
+world.controls().autoRotate = false;
+window.addEventListener('resize', () => { world.width(window.innerWidth).height(window.innerHeight); drawTL(); layoutLeftCol(); });
+
+function renderWorld() { // 描画だけ。カメラは触らない
+  const se = selEvent(), selPlace = se && se.place;
+  const marks = placeMarksUpTo(LIFE, D.places, State.t);
+  // 選んだ出来事がまだ先の年でも、その場所は印を出して強める（選んだことが地球の上で分かるように）
+  if (selPlace && !marks.some(m => m.place === selPlace)) { const p = D.places[selPlace]; marks.push({ place: selPlace, lat: p.lat, lng: p.lng, ids: [se.id], kinds: new Set([se.kind]), last: se.id, ahead: true }); }
+  world.pointsData(marks.map(m => {
+    const sel = m.place === selPlace, life = m.kinds.has('life');
+    return { ...m, name: ja(D.places[m.place].name), last: sel ? se.id : m.last,
+      color: sel ? OS_COLORS.focusBr : (life ? 'rgba(102,224,255,.85)' : 'rgba(224,194,122,.85)'), r: sel ? 0.5 : 0.28, alt: sel ? 0.03 : 0.011 };
+  }));
+  world.ringsData(selPlace ? [D.places[selPlace]] : []);
+  const ap = State.activePlace;
+  world.labelsData(ap ? [{ lat: ap.lat, lng: ap.lng, text: ap.text, color: OS_COLORS.focusBr }] : []);
+}
+on(renderWorld);
+
+// カメラを動かすのはこれだけ（「場所を見る」）
+function goToPlace(placeId) {
+  const p = D.places[placeId]; if (!p) return;
+  State.activePlace = { lat: p.lat, lng: p.lng, text: asciiLabel(p.name.en) }; renderWorld();
+  world.pointOfView({ lat: p.lat, lng: p.lng, altitude: 0.9 }, 1000);
+}
+
+// ---------- 詳細カード（万次郎版の showCard と同じ形）----------
+const detailCard = document.getElementById('detailCard');
+function positionCard(src) {
+  const c = detailCard, cw = c.offsetWidth || 340, ch = c.offsetHeight || 200, M = 12, W = innerWidth, Ht = innerHeight; let x, y;
+  if (W <= 640) { c.style.left = '8px'; c.style.top = '52px'; return; }
+  if (src && src.getBoundingClientRect) { const r = src.getBoundingClientRect(); x = r.right + M; if (x + cw > W - M) x = r.left - cw - M; y = r.top; }
+  else if (src && typeof src.x === 'number') { x = src.x + M; y = src.y + M; }
+  else { const lc = document.getElementById('leftCol').getBoundingClientRect(); x = lc.width ? lc.right + M : 24; y = 120; }
+  x = Math.max(M, Math.min(W - cw - M, x)); y = Math.max(12, Math.min(Ht - ch - M, y));
+  c.style.left = x + 'px'; c.style.top = y + 'px';
+}
+function showCard({ tag, title, sub, body, node, rel, action, accent }, src) {
+  const ac = accent || 'var(--c-focus)';
+  detailCard.style.borderLeftColor = ac; document.getElementById('dcTag').style.color = ac;
+  document.getElementById('dcTag').textContent = tag || '';
+  document.getElementById('dcTitle').textContent = title || '';
+  document.getElementById('dcSub').innerHTML = sub || '';
+  const b = document.getElementById('dcBody'); b.textContent = body || ''; if (node) b.appendChild(node);
+  const relEl = document.getElementById('dcRel'); if (rel) { relEl.hidden = false; relEl.textContent = rel; } else relEl.hidden = true;
+  const act = document.getElementById('dcAct');
+  if (action) { act.hidden = false; act.textContent = action.label; act.onclick = e => { e.stopPropagation(); action.onClick(); }; } else { act.hidden = true; act.onclick = null; }
+  detailCard.hidden = false; detailCard.scrollTop = 0; positionCard(src);
+}
+function closeCard() { detailCard.hidden = true; if (State.sel.type) setSel(null, null); }
+document.getElementById('dcClose').onclick = closeCard;
+(function () { // ヘッダーをつかんで動かす（万次郎版と同じ）
+  const head = document.getElementById('dcHead'); let d = null;
+  head.addEventListener('pointerdown', e => { const r = detailCard.getBoundingClientRect(); d = { dx: e.clientX - r.left, dy: e.clientY - r.top }; head.setPointerCapture(e.pointerId); });
+  head.addEventListener('pointermove', e => { if (!d) return; detailCard.style.left = Math.max(4, Math.min(innerWidth - detailCard.offsetWidth - 4, e.clientX - d.dx)) + 'px'; detailCard.style.top = Math.max(4, Math.min(innerHeight - 60, e.clientY - d.dy)) + 'px'; });
+  const end = () => { d = null; }; head.addEventListener('pointerup', end); head.addEventListener('pointercancel', end);
+})();
+function srcNode(codes) {
+  const ul = mk('ul', 'dc-src');
+  codes.forEach(c => { const s = D.sources[c]; if (!s) return; ul.appendChild(mk('li', '', '<span class="code">' + esc(c) + '</span><a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(ja(s.title)) + ' ↗</a> <span class="ck">確認日 ' + esc(s.checked_on) + '</span>')); });
+  return ul;
+}
+function showEventCard(e, src) {
+  const node = mk('div');
+  if (e.status === 'split') {
+    const s = mk('div', 'dc-split'); s.appendChild(mk('div', 'h', '出典ごとの記載'));
+    s.appendChild(mk('p', '', '合気会の公式ページどうしで年が分かれています。どちらかに決めずに両方を示します。'));
+    const ul = mk('ul'); e.split.forEach(x => ul.appendChild(mk('li', '', '<b>' + esc(x.src.join('・')) + '</b> ' + esc(x.ja)))); s.appendChild(ul); node.appendChild(s);
+  }
+  if (e.note) { node.appendChild(mk('div', 'dc-sec', '注記')); node.appendChild(mk('p', 'dc-para', esc(ja(e.note)))); }
+  if (!e.place) node.appendChild(mk('p', 'dc-para', '<span style="color:var(--dim)">場所は出典に書かれていないため、地球には出していません。</span>'));
+  node.appendChild(mk('div', 'dc-sec', '出典')); node.appendChild(srcNode(e.sources));
+  const k = KIND[e.kind], ylab = e.yearLabel ? ja(e.yearLabel) + '（' + e.year + '年の項）' : yearText(e) + '年' + (dayJa(e) ? ' ' + dayJa(e) : '');
+  showCard({ tag: k.tag, title: ja(e.text), sub: esc(ylab + (e.place ? ' ・ ' + ja(D.places[e.place].name) : '')) + stChip(e.status),
+    body: '', node, accent: k.color, rel: e.date || e.yearLabel ? '' : '年だけが分かっている出来事です。年代バーではその年の初めに置いています。',
+    action: e.place ? { label: '場所を見る', onClick: () => goToPlace(e.place) } : null }, src);
+}
+function showUnvCard(u, src) {
+  const node = mk('div');
+  node.appendChild(mk('p', 'dc-para', '以前の試作（global-history-os の aikido_person.js）にあった記述です。今回の出典（合気会の公式ページ4つ）では確かめられませんでした。事実として扱わず、地球にも出していません。誤りと決めたわけではありません。資料が見つかったら本編へ移します。'));
+  showCard({ tag: 'UNVERIFIED / 未確認', title: ja(u.text), sub: esc(u.year + '年（試作の年。未確認）') + stChip('unv'), node, accent: 'var(--c-unv)' }, src);
+}
+
+// ---------- 右：FOCUS PERSON（今の場所）----------
+const curLab = document.getElementById('curLab'), curVal = document.getElementById('curVal'), curKind = document.getElementById('curKind'), curNote = document.getElementById('curNote');
+function renderCurrent() {
+  const t = State.t; curVal.onclick = null; curVal.classList.remove('click');
+  if (t < Math.floor(LIFE_START_T) - 1e-9) { curLab.textContent = '今の場所'; curVal.textContent = '—'; curKind.textContent = '（誕生前）'; curNote.textContent = ''; return; }
+  if (t > LIFE_END_T + 1e-9 && Math.floor(t) > 1969) {
+    const o = lastBefore(LIFE, t, { kind: 'org' });
+    curLab.textContent = '開祖ののち（合気会の歩み）'; curVal.textContent = o ? o.year + '年' : '—';
+    if (o) { curVal.classList.add('click'); curVal.onclick = () => { setSel('ev', o.id); showEventCard(o, curVal); }; }
+    curKind.textContent = o ? ja(o.text) : ''; curNote.textContent = '開祖は1969年4月26日に亡くなりました（合気会の沿革）。'; return;
+  }
+  const e = lastBefore(LIFE, t, { kind: 'life', withPlace: true });
+  curLab.textContent = '今の場所';
+  if (!e) { curVal.textContent = '—'; curKind.textContent = ''; curNote.textContent = ''; return; }
+  curVal.textContent = ja(D.places[e.place].name);
+  curVal.classList.add('click'); curVal.onclick = () => { setSel('ev', e.id); showEventCard(e, curVal); };
+  curKind.innerHTML = esc(yearText(e) + '年 ・ ' + ja(e.text).slice(0, 30) + (ja(e.text).length > 30 ? '…' : '')) + stChip(e.status);
+  curNote.textContent = 'この年までの、場所の分かる最後の出来事から。' + (e.status === 'split' ? '北海道への移住の年は出典で1911年と1912年に分かれます。' : '');
+}
+on(renderCurrent);
+
+// 年譜の行（LIFE＝右、AIKIKAI＝左上）。押すと、その年へ（年代バーと一覧が動く。カメラは動かさない）＋カード
+const lifeList = document.getElementById('lifeList'), orgList = document.getElementById('orgList'), focusPanel = document.getElementById('focusPanel');
+function rowClick(e, el) { State.sel = { type: 'ev', id: e.id }; setT(e.t, { force: true }); showEventCard(e, frozen(el)); }
+LIFE.forEach(e => {
+  if (e.kind === 'life') {
+    const d = mk('div', 'chrono-item'); d.dataset.id = e.id;
+    d.innerHTML = '<span class="chrono-year">' + esc(yearText(e)) + '</span>' + (e.yearLabel ? '<span class="ylab">' + esc(ja(e.yearLabel)) + '</span>' : '') + stChip(e.status) + '<div class="chrono-text">' + esc(ja(e.text)) + '</div>';
+    d.onclick = () => rowClick(e, d); lifeList.appendChild(d);
+  } else {
+    const d = mk('div', 'oi'); d.dataset.id = e.id;
+    d.innerHTML = '<span class="y">' + esc(yearText(e)) + '</span><span class="t">' + esc(ja(e.text)) + '</span>';
+    d.onclick = () => rowClick(e, d); orgList.appendChild(d);
+  }
+});
+const unvList = document.getElementById('unvList');
+UNV.forEach(u => { const d = mk('div', 'ui'); d.dataset.id = u.id; d.innerHTML = '<span class="y">' + u.year + '</span><span class="t">' + esc(ja(u.text)) + '</span>'; d.onclick = () => { setSel('unv', u.id); showUnvCard(u, frozen(d)); }; unvList.appendChild(d); });
+let lastNear = '';
+on(() => {
+  const nl = lastBefore(LIFE, State.t, { kind: 'life' }), no = lastBefore(LIFE, State.t, { kind: 'org' });
+  const sid = State.sel.type === 'ev' ? State.sel.id : null;
+  lifeList.querySelectorAll('.chrono-item').forEach(r => { const e = byId(r.dataset.id); r.classList.toggle('near', !!nl && nl.id === e.id); r.classList.toggle('sel', sid === e.id); r.classList.toggle('future', e.t > State.t + 1e-9); });
+  orgList.querySelectorAll('.oi').forEach(r => { const e = byId(r.dataset.id); r.classList.toggle('near', !!no && no.id === e.id); r.classList.toggle('sel', sid === e.id); r.classList.toggle('future', e.t > State.t + 1e-9); });
+  unvList.querySelectorAll('.ui').forEach(r => r.classList.toggle('sel', State.sel.type === 'unv' && State.sel.id === r.dataset.id));
+  const key = (nl ? nl.id : '') + '|' + (no ? no.id : '');
+  if (key !== lastNear) { lastNear = key; setTimeout(() => { scrollInto(focusPanel, nl && lifeList.querySelector('[data-id="' + nl.id + '"]')); scrollInto(orgList, no && orgList.querySelector('[data-id="' + no.id + '"]')); }, 0); }
+});
+function scrollInto(box, row) { // その枠だけを動かす（ページは動かさない）
+  if (!box || !row) return; const c = box.getBoundingClientRect(), b = row.getBoundingClientRect();
+  if (b.top < c.top + 30 || b.bottom > c.bottom) box.scrollTo({ top: box.scrollTop + (b.top - c.top) - c.height / 2 + b.height / 2, behavior: State.playing ? 'auto' : 'smooth' });
+}
+const fpFold = document.getElementById('fpFold');
+function setFold(v) { document.body.classList.toggle('fp-folded', v); fpFold.textContent = v ? '開く' : '畳む'; }
+fpFold.onclick = () => setFold(!document.body.classList.contains('fp-folded'));
+if (innerWidth <= 640) setFold(true);
+
+// 左の列：使える高さ（タイムラインの上まで）を AIKIKAI : UNVERIFIED = φ : 1 で分ける（万次郎版の layoutLeftCol と同じ考え）
+function layoutLeftCol() {
+  if (innerWidth <= 640) return;
+  const col = document.getElementById('leftCol'), tlTop = document.getElementById('timelineBar').getBoundingClientRect().top;
+  const avail = Math.max(160, Math.min(tlTop, innerHeight - 40) - 104 - 16 - 16);
+  col.style.maxHeight = avail + 'px';
+  const a = Math.round(avail * 1.618 / 2.618);
+  document.getElementById('orgPanel').style.maxHeight = a + 'px'; document.getElementById('unvPanel').style.maxHeight = (avail - a) + 'px';
+}
+
+// ---------- 章（CHAPTER）：選ぶと年代バーの表示幅だけを章に合わせる（年もカメラも変えない）----------
+const chapBtn = document.getElementById('chapBtn'), chapMenu = document.getElementById('chapMenu');
+function renderChapterBtn() { const c = CHAPTERS.find(c => c.id === State.chapter); chapBtn.textContent = 'CHAPTER : ' + (c && c.id !== 'all' ? c.en : '全体') + ' ▾'; chapBtn.classList.toggle('on', State.chapter !== 'all'); }
+function renderChapterMenu() {
+  chapMenu.innerHTML = '';
+  CHAPTERS.forEach(c => {
+    const d = mk('div', 'chap-item' + (c.id === State.chapter ? ' on' : ''), '<span class="ja" style="color:var(--ink)">' + esc(c.id === 'all' ? '全体' : c.en) + '</span><span class="yr">' + (c.id === 'all' ? '' : c.from + '–' + (c.to >= RANGE.max ? '' : c.to)) + '</span>');
+    d.onclick = () => {
+      State.chapter = c.id; chapMenu.hidden = true; renderChapterBtn();
+      const from = c.id === 'all' ? 1880 : Math.max(RANGE.min, c.from - 1), to = c.id === 'all' ? 1975 : Math.min(RANGE.max, Math.max(c.to + 2, from + SPAN.min));
+      State.vp = { from, to }; emit();
+    };
+    chapMenu.appendChild(d);
+  });
+}
+chapBtn.onclick = e => { e.stopPropagation(); if (chapMenu.hidden) renderChapterMenu(); chapMenu.hidden = !chapMenu.hidden; };
+document.addEventListener('click', e => { if (!chapMenu.hidden && !e.target.closest('.chap-wrap')) chapMenu.hidden = true; });
+
+// ---------- 出典について ----------
+const infoBtn = document.getElementById('infoBtn'), infoPanel = document.getElementById('infoPanel'), infoBody = document.getElementById('infoBody');
+function renderInfo() {
+  infoBody.innerHTML = '';
+  infoBody.appendChild(mk('div', 'sec', '出典について'));
+  infoBody.appendChild(mk('p', 'ri-p', 'すべての出来事は、合気会の公式ページ4つで確かめたものです（確認日 2026-11-14）。出典どうしで年が分かれるところは、どちらかに決めずに両方を示しています（例：北海道への移住 1911／1912）。掲載は植芝盛平と合気会（公益財団法人合気会）に限ります。'));
+  const ul = mk('ul'); Object.entries(D.sources).forEach(([c, s]) => ul.appendChild(mk('li', '', '<b>' + esc(c) + '</b> <a href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer">' + esc(ja(s.title)) + ' ↗</a>（確認日 ' + esc(s.checked_on) + '）'))); infoBody.appendChild(ul);
+  infoBody.appendChild(mk('div', 'sec', '数について'));
+  D.figures.forEach(f => { infoBody.appendChild(mk('p', 'ri-p', esc(ja(f.text)))); infoBody.appendChild(mk('p', 'ri-p sub', esc(ja(f.note)) + '（出典 ' + esc(f.sources.join('・')) + '）')); });
+  infoBody.appendChild(mk('div', 'sec', '未確認の項目（' + UNV.length + '件）'));
+  infoBody.appendChild(mk('p', 'ri-p sub', '以前の試作にあったが、今回の出典では確かめられなかった記述です。事実として扱わず、地球にも出していません。'));
+  UNV.forEach(u => { const d = mk('div', 'ui', '<span class="y">' + u.year + '</span><span class="t">' + esc(ja(u.text)) + '</span>'); d.onclick = () => { setSel('unv', u.id); showUnvCard(u, frozen(d)); }; infoBody.appendChild(d); });
+}
+infoBtn.onclick = () => { const open = infoPanel.hidden; if (open) renderInfo(); infoPanel.hidden = !open; infoBtn.classList.toggle('on', open); };
+document.getElementById('infoClose').onclick = () => { infoPanel.hidden = true; infoBtn.classList.remove('on'); };
+
+// ---------- 行事カレンダーへの片道リンク（URL は data/ueshiba_config.js の1か所）----------
+const calLink = document.getElementById('calLink');
+if (CALENDAR_URL) calLink.href = CALENDAR_URL;
+else { calLink.removeAttribute('href'); calLink.classList.add('off'); calLink.textContent = '行事カレンダー（準備中）'; }
+
+// ---------- タイムライン ----------
+const tl = document.getElementById('tl'); const SVGNS = 'http://www.w3.org/2000/svg';
+const LY = { title: 11, life: 17, ev: 31, org: 45, unv: 58, H: 76 };
+const tlW = () => tl.clientWidth || 700;
+const xOf = t => { const v = State.vp; return (t - v.from) / (v.to - v.from) * tlW(); };
+const tAt = px => { const v = State.vp; return v.from + px / tlW() * (v.to - v.from); };
+const TL_GUTTER = 70;
+const tlGutter = () => innerWidth > 640 && tl.getBoundingClientRect().left >= TL_GUTTER;
+function drawTL() {
+  const W = tlW(), v = State.vp, span = v.to - v.from, cl = x => Math.max(0, Math.min(W, x)), H = LY.H, gb = LY.unv + 7;
+  tl.style.height = H + 'px'; tl.setAttribute('viewBox', '0 0 ' + W + ' ' + H); tl.innerHTML = '';
+  const add = (tag, attrs, text, onDown, title) => {
+    const el = document.createElementNS(SVGNS, tag); for (const k in attrs) el.setAttribute(k, attrs[k]);
+    if (text != null) el.textContent = text;
+    if (title) { const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = title; el.appendChild(tt); }
+    if (onDown) { el.style.cursor = 'pointer'; el.addEventListener('pointerdown', ev => { ev.stopPropagation(); ev.preventDefault(); onDown(ev); }); }
+    tl.appendChild(el); return el;
+  };
+  const ch = CHAPTERS.find(c => c.id === State.chapter);
+  if (ch && ch.id !== 'all') { const x1 = cl(xOf(ch.from)), x2 = cl(xOf(ch.to + 1)); if (x2 > x1) add('rect', { x: x1, y: 4, width: x2 - x1, height: gb - 4, fill: 'rgba(102,224,255,.05)', 'pointer-events': 'none' }); }
+  const step = span > 60 ? 10 : span > 20 ? 5 : 1;
+  for (let yr = Math.ceil(v.from / step) * step; yr <= v.to + 1e-9; yr += step) {
+    const x = xOf(yr); add('line', { x1: x, y1: 8, x2: x, y2: gb, stroke: 'rgba(255,255,255,.07)', 'pointer-events': 'none' });
+    add('text', { x: x + 2, y: H - 3, fill: '#7d8ea2', 'font-size': 9, 'font-family': 'monospace', 'pointer-events': 'none' }, yr);
+  }
+  add('line', { x1: cl(xOf(LIFE_START_T)), y1: LY.life, x2: cl(xOf(LIFE_END_T)), y2: LY.life, stroke: OS_COLORS.focus, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55, 'pointer-events': 'none' });
+  add('text', { x: 2, y: LY.title, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }, '植芝盛平 1883–1969');
+  const gut = tlGutter();
+  [['生涯', LY.ev], ['合気会', LY.org], ['未確認', LY.unv]].forEach(([s, y]) => add('text', gut
+    ? { x: -8, y: y + 3.2, 'text-anchor': 'end', fill: '#8193a8', 'font-size': 9, 'font-family': 'sans-serif', 'pointer-events': 'none' }
+    : { x: 2, y: y + 3, fill: '#54657a', 'font-size': 8, 'font-family': 'sans-serif', 'pointer-events': 'none' }, s));
+  const sid = State.sel.type === 'ev' ? State.sel.id : null;
+  const pick = e => () => { State.sel = { type: 'ev', id: e.id }; setT(e.t, { force: true, noScroll: true }); showEventCard(e, null); };
+  LIFE.forEach(e => {
+    const y = e.kind === 'life' ? LY.ev : LY.org, sel = e.id === sid, col = e.kind === 'life' ? OS_COLORS.focus : OS_COLORS.org;
+    if (e.status === 'split') { // 食い違う年：二つの年をまたぐ破線の枠と、両方の年に点
+      const x1 = xOf(e.year), x2 = xOf(e.yearAlt + 1); if (x2 >= 0 && x1 <= W) add('rect', { x: cl(x1), y: y - 5, width: Math.max(4, cl(x2) - cl(x1)), height: 10, rx: 3, fill: 'rgba(240,181,120,.12)', stroke: OS_COLORS.split, 'stroke-dasharray': '3 2', 'stroke-width': 1 }, null, pick(e), yearText(e) + '年（出典で食い違い）');
+      [e.year, e.yearAlt].forEach(yy => { const x = xOf(yy); if (x < -4 || x > W + 4) return; add('circle', { cx: x, cy: y, r: sel ? 4.4 : 3, fill: col, stroke: sel ? OS_COLORS.selRing : '#050c16', 'stroke-width': sel ? 1.4 : 1 }, null, pick(e), yy + '年 ' + ja(e.text)); });
+      return;
+    }
+    const x = xOf(e.t); if (x < -4 || x > W + 4) return;
+    add('circle', { cx: x, cy: y, r: sel ? 4.6 : 3, fill: col, 'fill-opacity': e.status === 'partial' ? .55 : 1, stroke: sel ? OS_COLORS.selRing : '#050c16', 'stroke-width': sel ? 1.4 : 1 }, null, pick(e), yearText(e) + (e.yearLabel ? '（' + ja(e.yearLabel) + '）' : '') + ' ' + ja(e.text));
+  });
+  UNV.forEach(u => { const x = xOf(u.year); if (x < -4 || x > W + 4) return; const sel = State.sel.type === 'unv' && State.sel.id === u.id;
+    add('circle', { cx: x, cy: LY.unv, r: sel ? 4 : 2.8, fill: 'rgba(5,12,22,.6)', stroke: sel ? '#fff' : OS_COLORS.unv, 'stroke-width': 1.3, 'stroke-dasharray': '1.5 1.5' }, null, () => { setSel('unv', u.id); showUnvCard(u, null); }, u.year + '（未確認） ' + ja(u.text)); });
+  const cx = xOf(State.t);
+  add('line', { x1: cx, y1: 2, x2: cx, y2: gb, stroke: '#ffffff', 'stroke-width': 1.4, 'stroke-opacity': .85, 'pointer-events': 'none' });
+  add('polygon', { points: (cx - 4) + ',2 ' + (cx + 4) + ',2 ' + cx + ',9', fill: '#fff', 'pointer-events': 'none' });
+}
+on(drawTL);
+on(layoutLeftCol);
+const tlYear = document.getElementById('tlYear'), tlEra = document.getElementById('tlEra');
+on(() => { const y = Math.floor(State.t + 1e-9); tlYear.textContent = y + '年'; const c = chapterOf(y, D.chapters); tlEra.textContent = c ? ja(c.title) : ''; });
+let drag = null;
+const localX = e => e.clientX - tl.getBoundingClientRect().left;
+tl.addEventListener('pointerdown', e => { const x = localX(e); drag = { mode: Math.abs(xOf(State.t) - x) < 10 ? 'cursor' : 'pan', x, vp: { ...State.vp }, moved: false }; tl.setPointerCapture(e.pointerId); });
+tl.addEventListener('pointermove', e => {
+  if (!drag) return; const x = localX(e); if (Math.abs(x - drag.x) > 3) drag.moved = true;
+  if (drag.mode === 'cursor') { setT(Math.round(clamp(tAt(x), State.vp.from, State.vp.to)), { noScroll: true }); return; }
+  if (!drag.moved) return;
+  const span = drag.vp.to - drag.vp.from, from = clamp(drag.vp.from - (x - drag.x) / tlW() * span, RANGE.min, RANGE.max - span);
+  State.vp = { from, to: from + span }; drawTL();
+});
+function endDrag(e) { if (!drag) return; if (drag.mode === 'pan' && !drag.moved && e.type === 'pointerup') setT(Math.floor(clamp(tAt(localX(e)), State.vp.from, State.vp.to)), { noScroll: true }); drag = null; }
+tl.addEventListener('pointerup', endDrag); tl.addEventListener('pointercancel', endDrag);
+function zoom(f) { const v = State.vp, c = State.t, old = v.to - v.from, span = clamp(old * f, SPAN.min, SPAN.max), rel = clamp((c - v.from) / old, 0, 1), from = clamp(c - rel * span, RANGE.min, RANGE.max - span); State.vp = { from, to: from + span }; drawTL(); }
+document.getElementById('zoomIn').onclick = () => zoom(0.6);
+document.getElementById('zoomOut').onclick = () => zoom(1 / 0.6);
+document.getElementById('prevY').onclick = () => setT(prevYear(State.t, RANGE.min));
+document.getElementById('nextY').onclick = () => setT(nextYear(State.t, RANGE.max));
+document.addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea,select,[contenteditable]')) return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); setT(prevYear(State.t, RANGE.min)); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); setT(nextYear(State.t, RANGE.max)); }
+  else if (e.key === 'Escape') { closeCard(); chapMenu.hidden = true; infoPanel.hidden = true; infoBtn.classList.remove('on'); }
+});
+const playBtn = document.getElementById('playBtn'); let playTimer = null;
+function stopPlay() { clearInterval(playTimer); playTimer = null; State.playing = false; playBtn.textContent = '▶'; playBtn.classList.remove('on'); }
+function startPlay() {
+  if (State.t >= RANGE.max - 1e-9) return;
+  State.playing = true; playBtn.textContent = '❚❚'; playBtn.classList.add('on');
+  playTimer = setInterval(() => { const n = nextYear(State.t, RANGE.max); setT(n); if (n >= RANGE.max) stopPlay(); }, PLAY_MS);
+}
+playBtn.onclick = () => { if (State.playing) stopPlay(); else startPlay(); };
+
+// ?e=<id> で出来事を選んだ状態で開く（年は動く。カメラは動かさない）
+{ const q = new URLSearchParams(location.search).get('e'), e = q && byId(q); if (e) { State.sel = { type: 'ev', id: e.id }; State.t = e.t; ensureVisible(e.t); } }
+emit();
+{ const se = selEvent(); if (se) setTimeout(() => showEventCard(se, null), 300); }
+window.__ueshiba = { State, world }; // 確かめ用（カメラが動いていないかを試験で読む）
+</script>
+</body></html>
