@@ -635,12 +635,13 @@ function renderWorld() { // 描画だけ。カメラは触らない
   if (State.now) return nowWorld();
   const y = State.y, out = [];
   if (y >= NOW_YEAR) NETWORK.forEach(d => out.push({ key: 'net:' + d.id, lat: d.lat, lng: d.lng, label: d.country, color: OS_COLORS.net, r: 0.15, alt: 0.006 }));
-  WORLDS.filter(w => w.year <= y && y <= (w.endYear || w.year)).forEach(w => out.push({ key: 'world:' + w.id, lat: w.lat, lng: w.lng, label: w.year + ' ' + w.title, color: 'rgba(230,148,69,.9)', r: 0.3, alt: 0.01 }));
+  WORLDS.filter(w => w.year <= y && y <= (w.endYear || w.year) && Number.isFinite(w.lat)).forEach( // 場所を持たない出来事（世界的な流行）は地球に出さない
+w => out.push({ key: 'world:' + w.id, lat: w.lat, lng: w.lng, label: w.year + ' ' + w.title, color: 'rgba(230,148,69,.9)', r: 0.3, alt: 0.01 }));
   SPREAD.filter(d => d.year <= y).forEach(d => out.push({ key: d.key, lat: d.lat, lng: d.lng, label: d.year + ' ' + d.name, color: d.kind === 'found' ? OS_COLORS.spread : 'rgba(87,201,192,.55)', r: d.kind === 'found' ? 0.28 : 0.22, alt: 0.009 }));
   PLACES.filter(p => +p.year <= y).forEach(p => out.push({ key: 'life:' + p.id, lat: p.lat, lng: p.lng, label: p.title, color: OS_COLORS.focus, r: 0.34, alt: 0.012 }));
   // 選んだ点（まだ先の年でも、選んだことが分かるように出す）
   const so = State.sel && keyObj(State.sel);
-  if (so && !out.some(p => p.key === State.sel)) out.push({ key: State.sel, lat: so.lat, lng: so.lng, label: so.title || so.name || so.country, color: OS_COLORS.focus, r: 0.3, alt: 0.01 });
+  if (so && Number.isFinite(so.lat) && !out.some(p => p.key === State.sel)) out.push({ key: State.sel, lat: so.lat, lng: so.lng, label: so.title || so.name || so.country, color: OS_COLORS.focus, r: 0.3, alt: 0.01 });
   const pts = out.map(p => p.key === State.sel ? { ...p, color: p.key.startsWith('world') ? OS_COLORS.worldBr : p.key.startsWith('life') ? OS_COLORS.focusBr : OS_COLORS.spreadBr, r: p.r * 1.6, alt: 0.03 } : p);
   world.pointsData(pts);
   const s = pts.find(p => p.key === State.sel);
@@ -685,7 +686,7 @@ function openFor(key, src) {
   if (key.startsWith('evt:')) return openEvent(key.slice(4), src);
   const [k] = key.split(':'), o = keyObj(key); if (!o) return;
   if (k === 'life') showCard({ tag: 'LIFE / 生涯の拠点', title: o.title, sub: o.year + ' ・ ' + o.placeName, html: para(linkify(o.description, new Set())), look: key }, src);
-  else if (k === 'world') showCard({ kind: 'world', tag: 'WORLD EVENT / 世界', title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: key }, src);
+  else if (k === 'world') showCard({ kind: 'world', tag: 'WORLD EVENT / 世界', title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: Number.isFinite(o.lat) ? key : null }, src);
   else if (k === 'found') showCard({ kind: 'spread', tag: 'ABROAD / 道場の設立', title: o.country, sub: o.year + ' ・ ' + o.org + '（' + o.city + '）', html: para(esc(o.note || '')), look: key }, src);
   else if (k === 'first') showCard({ kind: 'spread', tag: 'ABROAD / 初の指導・訪問', title: o.region, sub: o.year + ' ・ ' + o.city, html: para(esc(o.note || '')), look: key }, src);
   else showCard({ kind: 'spread', tag: 'NETWORK / 合気会の海外組織', title: o.country, sub: o.city, html: para('合気会の海外組織がある国。点は代表の都市で、道場の所在地ではありません。'), look: key }, src);
