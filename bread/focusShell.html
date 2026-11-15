@@ -41,9 +41,11 @@
 
   .panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);
     backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-radius:5px;overflow:auto}
-  .panel::-webkit-scrollbar,.scroll::-webkit-scrollbar{width:6px}
-  .panel::-webkit-scrollbar-thumb,.scroll::-webkit-scrollbar-thumb{background:rgba(232,194,122,.28);border-radius:3px}
-  .panel::-webkit-scrollbar-track,.scroll::-webkit-scrollbar-track{background:transparent}
+  /* 送りのバー：背景（地・白い矢印ボタン）を付けない（OSシリーズの画面の規律）。どの枠・カードにも同じものを効かせる */
+  ::-webkit-scrollbar{width:6px;height:6px;background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(232,194,122,.28);border-radius:3px}
+  ::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+  ::-webkit-scrollbar-button{display:none;width:0;height:0}
   .sec{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding:13px 16px 6px}
   .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px}
 
