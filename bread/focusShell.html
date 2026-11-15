@@ -157,7 +157,14 @@
   /* ── 浮遊カード（出来事・系統ノード）── */
   .dcard{position:absolute;z-index:30;right:400px;top:96px;width:380px;max-height:calc(100% - 300px);overflow:auto;
     background:rgba(6,12,21,.86);border:1px solid rgba(232,194,122,.35);border-radius:6px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-  .dc-x{position:absolute;right:8px;top:8px;background:transparent;border:0;color:var(--sub);font-size:14px;cursor:pointer}
+  /* カードの上端の帯：つかんで動かす・✕で閉じる。中を送っても帯は上に残る（画像に✕が隠れないように） */
+  .dc-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 12px;
+    background:rgba(6,12,21,.92);border-bottom:1px solid var(--rule);cursor:grab;user-select:none;touch-action:none}
+  .dc-bar:active{cursor:grabbing}
+  .dc-grip{font-size:10px;letter-spacing:.12em;color:var(--dim)}
+  .dc-x{margin-left:auto;background:transparent;border:0;color:var(--sub);font-size:15px;line-height:1;padding:4px 6px;cursor:pointer}
+  .dc-x:hover{color:var(--ink)}
+  .dcard.moved{right:auto}
   .dc-head{padding:14px 18px 8px;border-bottom:1px solid var(--rule)}
   .dc-when{font-family:var(--mono);font-size:11px;color:var(--wheat-soft)}
   .dc-title{font-family:var(--serif);font-size:18px;font-weight:700;line-height:1.35;margin-top:3px;padding-right:18px}
@@ -245,7 +252,7 @@
 </div>
 
 <div id="detailCard" class="dcard" hidden>
-  <button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button>
+  <div class="dc-bar" id="dcBar" title="つかんで動かせます（二度押しで元の位置へ）"><span class="dc-grip">⠿ つかんで動かす</span><button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button></div>
   <div id="dcFig"></div>
   <div class="dc-head"><div class="dc-when" id="dcWhen"></div><div class="dc-title" id="dcTitle"></div><div class="dc-place" id="dcPlace"></div></div>
   <div class="dc-body" id="dcBody"></div>
@@ -498,6 +505,22 @@ function select(id) {
   $('detailCard').hidden = false;
   refresh();
 }
+/* カードを動かす：帯をつかんで移動。置いた位置は次のカードでも保つ。帯を二度押しで元の位置へ */
+(() => {
+  const card = $('detailCard'), bar = $('dcBar'); let d = null;
+  bar.addEventListener('pointerdown', ev => {
+    if (ev.target.closest('.dc-x') || innerWidth <= 760) return;
+    const r = card.getBoundingClientRect(); d = { dx: ev.clientX - r.left, dy: ev.clientY - r.top }; card.style.width = r.width + 'px';
+    bar.setPointerCapture(ev.pointerId); ev.preventDefault();
+  });
+  bar.addEventListener('pointermove', ev => {
+    if (!d) return;
+    const w = card.offsetWidth, x = Math.max(0, Math.min(innerWidth - w, ev.clientX - d.dx)), y = Math.max(0, Math.min(innerHeight - 60, ev.clientY - d.dy));
+    card.classList.add('moved'); card.style.left = x + 'px'; card.style.top = y + 'px';
+  });
+  bar.addEventListener('pointerup', () => { d = null; });
+  bar.addEventListener('dblclick', ev => { if (ev.target.closest('.dc-x')) return; card.classList.remove('moved'); card.style.left = ''; card.style.top = ''; card.style.width = ''; });
+})();
 $('dcClose').onclick = () => { S.sel = null; S.node = null; $('detailCard').hidden = true; refresh(); };
 
 /* ── 右パネル ── */
