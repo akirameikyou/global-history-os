@@ -433,6 +433,14 @@
   .cal-short{display:none}
   .lg-dot.spread{background:var(--c-spread)} .lg-dot.net{background:rgba(238,243,248,.45)} .lg-dot.world{background:var(--c-world)}
   .lg-term{color:var(--c-term);border-bottom:1px dotted rgba(183,156,255,.7)}
+  /* 左下：地球の画像と個人制作の注記（2行。左の枠の下に置く。位置は JS の layoutLeftCol が決める） */
+  .attrib2{top:auto;bottom:30px;width:270px;white-space:normal;line-height:1.55;padding:3px 8px;background:transparent;color:var(--dim)}
+  /* 右下：合氣道用品 龍王 のサイトへ（紋と名前だけ、控えめに） */
+  .ryuoh{position:absolute;right:24px;bottom:34px;z-index:25;display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--sub);font-family:var(--serif);font-size:13px;letter-spacing:.12em;opacity:.75;transition:opacity .2s}
+  .ryuoh:hover,.ryuoh:focus-visible{opacity:1;color:var(--ink);outline:none}
+  .ryuoh img{display:block;width:26px;height:26px}
+  .ryuoh small{font-family:var(--sans);font-size:9px;letter-spacing:.16em;color:var(--dim);margin-left:2px}
+  @media (max-width:640px){ .ryuoh{display:none} .attrib2{top:36px;bottom:auto;width:auto;max-width:calc(100vw - 150px);background:rgba(6,10,16,.6)} }
   /* 生涯の拠点の印：画面の上で一定の大きさ（寄るほど地点が正確に見える）。いまいる所＝明るく大きめ、去った所＝淡く小さく */
   .lm{position:relative;width:16px;height:16px;pointer-events:auto;cursor:pointer}
   .lm .d{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(102,224,255,.55);box-shadow:0 0 0 1.5px rgba(5,12,22,.7)}
@@ -474,7 +482,8 @@
 <body>
 
 <div id="globeViz"></div>
-<div class="attrib">地球: NASA Blue Marble ／ 個人制作・合気会の公式サイトではありません</div>
+<div class="attrib attrib2" id="attrib">地球: NASA Blue Marble<br>個人制作・合気会の公式サイトではありません</div>
+<a class="ryuoh" id="ryuohLink" href="https://akirameikyou.github.io/ryu-oh/" target="_blank" rel="noopener" title="合氣道用品 龍王（RYU-OH）の公式サイトへ"><img src="../assets/ryuoh_mark.png" alt="" width="26" height="26"><span>龍王 <small>RYU-OH</small></span></a>
 
 <div class="title">
   <h1>植芝盛平</h1>
@@ -578,12 +587,12 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
-import { aikidoPersonFocus as PERSON0, aikidoChronology as CHRONO0, aikidoGlossary as GLOSSARY0 } from '../data/ueshiba_person.js?v=20261115f';
-import { ueshibaPlaces as PLACES0, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115f';
-import { ueshibaWorld as WORLD0 } from '../data/ueshiba_world.js?v=20261115f';
-import { aikidoDojos as NETWORK0, aikidoDojoFoundings as FOUND0, aikidoFirstContacts as FIRST0 } from '../data/ueshiba_spread.js?v=20261115f';
-import { UI } from '../data/ueshiba_i18n.js?v=20261115f';
-import { EN } from '../data/ueshiba_en.js?v=20261115f';
+import { aikidoPersonFocus as PERSON0, aikidoChronology as CHRONO0, aikidoGlossary as GLOSSARY0 } from '../data/ueshiba_person.js?v=20261115g';
+import { ueshibaPlaces as PLACES0, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115g';
+import { ueshibaWorld as WORLD0 } from '../data/ueshiba_world.js?v=20261115g';
+import { aikidoDojos as NETWORK0, aikidoDojoFoundings as FOUND0, aikidoFirstContacts as FIRST0 } from '../data/ueshiba_spread.js?v=20261115g';
+import { UI } from '../data/ueshiba_i18n.js?v=20261115g';
+import { EN } from '../data/ueshiba_en.js?v=20261115g';
 
 // ---------- 言語（?lang=en で英語。無ければ日本語）----------
 // 画面の文言は data/ueshiba_i18n.js、データの英語は data/ueshiba_en.js。英語が無い所は日本語のまま出す。
@@ -870,8 +879,10 @@ const PHI = 1.618034;
 function layoutLeftCol() {
   if (innerWidth <= 640) return;
   const lc = document.getElementById('leftCol'), tb = document.getElementById('timelineBar').getBoundingClientRect(), r = lc.getBoundingClientRect();
+  const at = document.getElementById('attrib'), atH = at.offsetHeight + 8;
   const limit = tb.left < r.right + 12 ? tb.top : innerHeight - 40;
-  const avail = Math.max(150, Math.round(limit - 104 - 16)); lc.style.maxHeight = avail + 'px';
+  const avail = Math.max(150, Math.round(limit - 104 - 16 - atH)); lc.style.maxHeight = avail + 'px';
+  at.style.top = (104 + avail + 6) + 'px'; at.style.bottom = 'auto'; // 左の枠のすぐ下
   const wH = Math.round((avail - 16) / (1 + PHI));
   document.getElementById('worldPanel').style.height = wH + 'px'; document.getElementById('wlPanel').style.height = (avail - 16 - wH) + 'px';
 }
@@ -1139,7 +1150,7 @@ if (isEn) { const md = document.querySelector('meta[name="description"]'); if (m
 if (isEn) {
   const set = (sel, key, how = 'text') => document.querySelectorAll(sel).forEach(el => {
     const v = T(key); if (how === 'html') el.innerHTML = v; else if (how === 'title') { el.title = v; el.setAttribute('aria-label', v); } else if (how === 'aria') el.setAttribute('aria-label', v); else if (how === 'alt') el.alt = v; else el.textContent = v; });
-  set('.attrib', 'attrib'); set('.title h1', 'name'); document.querySelector('.title p').textContent = 'HISTORY OS · AIKIDO FOCUS'; set('.fp-name', 'name'); set('#fpPortrait', 'portraitAlt', 'alt');
+  set('#attrib', 'attrib', 'html'); document.getElementById('ryuohLink').title = 'RYU-OH (Aikido gear) — official site'; set('.title h1', 'name'); document.querySelector('.title p').textContent = 'HISTORY OS · AIKIDO FOCUS'; set('.fp-name', 'name'); set('#fpPortrait', 'portraitAlt', 'alt');
   set('#curLab', 'curLab'); set('.fp-lifehead', 'lifeHead', 'html'); set('#infoBtn', 'sources'); set('#infoPanel > .sec', 'sources');
   set('#calLink .cal-long', 'calLong'); set('#calLink .cal-short', 'calShort'); set('#calLink', 'calTitle', 'title');
   set('#infoClose', 'close', 'aria'); set('#dcClose', 'close', 'aria'); set('#dcAct', 'look');
