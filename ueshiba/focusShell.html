@@ -695,11 +695,16 @@ const MOVES = (() => { const out = []; let base = null;
     if (base && base !== s.place) out.push({ from: base, to: s.place, year: s.from });
     base = s.place; });
   return out; })();
+// 移動の線（2026-11-15 清水さん）：線は「どちらへ移ったか」を示す概念の線で、実際の道筋（汽車・船）ではないので目立たせない。
+// その年の移動だけを、細かい点線で出す（移ったあとの年には消す。万次郎版のように軌跡は残さない）。旅は行きの線だけ（戻った年には出さない）。
+// ハワイ・モンゴルのように画面の外へ行く移動でも、年表と合わせて行き先の方向が分かる。カメラは動かさない。
+// 見比べ用：?line=solid で細い実線（既定は細かい点線）
+const LINE_SOLID = new URLSearchParams(location.search).get('line') === 'solid';
 function moveArcs(y) {
-  const done = MOVES.filter(m => m.year <= y && y <= 1970); if (!done.length) return []; // 旅の帰りの線は、旅の翌年から
-  const last = done[done.length - 1];
-  return done.map(m => { const a = placeById(m.from), b = placeById(m.to); const latest = m === last && Math.floor(m.year) === y;
-    return { sLat: a.lat, sLng: a.lng, eLat: b.lat, eLng: b.lng, color: latest ? 'rgba(200,244,255,.9)' : 'rgba(102,224,255,.35)', stroke: latest ? 0.45 : 0.25, alt: 0.06, dash: latest ? 1 : 0.3, gap: latest ? 0 : 0.2 }; });
+  if (y > 1969) return [];
+  return MOVES.filter(m => Math.floor(m.year) === y && m.year === Math.floor(m.year)).map(m => { const a = placeById(m.from), b = placeById(m.to);
+    return { sLat: a.lat, sLng: a.lng, eLat: b.lat, eLng: b.lng, color: 'rgba(200,244,255,.75)', stroke: LINE_SOLID ? 0.18 : 0.28, alt: 0.08,
+      dash: LINE_SOLID ? 1 : 0.012, gap: LINE_SOLID ? 0 : 0.012 }; });
 }
 world.controls().autoRotate = false;
 document.getElementById('globeViz').addEventListener('contextmenu', e => e.stopPropagation(), true);
