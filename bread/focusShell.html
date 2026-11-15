@@ -85,6 +85,8 @@
   .item:hover{background:rgba(255,255,255,.05)}
   .item.sel{background:rgba(232,194,122,.10);border-left-color:var(--wheat)}
   .item.shade{opacity:.35}
+  .item.future{opacity:.38}
+  .item.now{box-shadow:inset 2px 0 0 var(--wheat-soft)}
   .item .y{font-family:var(--mono);font-size:10.5px;color:var(--wheat-soft)}
   .item .t{font-size:12.5px;line-height:1.5;margin-top:1px}
   .conf{display:inline-block;font-size:9px;border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:1px;border:1px solid currentColor;line-height:1.5}
@@ -111,12 +113,35 @@
   /* ── 下：年代バー ── */
   #timelineBar{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:20;width:min(1100px,calc(100vw - 48px));
     background:var(--panel);border:1px solid var(--rule);border-radius:5px;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:10px 12px 8px}
-  .tl-top{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
-  #tlChap{font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:.06em}
-  #tlScale{font-size:10.5px;color:var(--wheat-soft)}
-  .tl-hint{margin-left:auto;font-size:9.5px;color:var(--dim)}
-  #tl{display:block;width:100%;height:118px}
-  #tl .seg{cursor:pointer}
+  .tl-top{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  #tlYear{font-family:var(--serif);font-size:26px;color:var(--wheat-soft);letter-spacing:.03em;line-height:1;white-space:nowrap;min-width:150px}
+  .tl-btns{display:flex;gap:4px}
+  .zb{background:rgba(7,14,24,.7);border:1px solid var(--rule);color:var(--ink);border-radius:6px;width:28px;height:26px;cursor:pointer;font-size:15px;line-height:1;padding:0}
+  .zb:hover{border-color:rgba(232,194,122,.6)} .zb.play[aria-pressed="true"]{color:var(--wheat);border-color:var(--wheat)}
+  .tl-mid{min-width:0}
+  #tlChap{font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #tlScale{font-size:10px;color:var(--wheat-soft);margin-top:2px}
+  .tl-hint{margin-left:auto;font-size:9.5px;color:var(--dim);max-width:220px;line-height:1.5}
+  #tl{display:block;width:100%;height:118px;cursor:ew-resize;touch-action:none}
+  #tl .sname{cursor:pointer}
+  #tl .cur-line{stroke:var(--wheat);stroke-width:1.5}
+  #tl .cur-head{fill:var(--wheat)}
+  #tl .past{opacity:.45}
+  #tl .future{opacity:.16}
+  /* ── 地球の印（HTML）：波紋は使わない。点＝地点がはっきり／淡い破線の輪＝このあたり ── */
+  .gm{position:relative;pointer-events:auto;cursor:pointer;transform:translate(-50%,-50%);border-radius:50%}
+  .gm.site{width:9px;height:9px;background:var(--c);box-shadow:0 0 0 1.5px rgba(5,12,22,.85)}
+  .glabel{z-index:3}
+  .gm.site.range{background:rgba(5,12,22,.85);border:1.8px solid var(--c);width:10px;height:10px}
+  .gm.site.narrative{background:rgba(5,12,22,.85);border:1.8px dashed var(--c);width:10px;height:10px}
+  .gm.region{width:34px;height:34px;border:1.2px dashed var(--c);background:rgba(232,194,122,.06)}
+  .gm.region::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--c)}
+  .gm.past{opacity:.42} .gm.past.region{width:14px;height:14px;border-style:solid;background:transparent}
+  .gm.past.region::after{display:none}
+  .gm.now{z-index:2} .gm.now.site{width:13px;height:13px}
+  .gm.sel{box-shadow:0 0 0 2px #fff,0 0 12px rgba(255,255,255,.6)}
+  .gm.shade{opacity:.12}
+  .gm.wild{width:8px;height:8px;background:#8fd17a;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 1px rgba(5,12,22,.8)}
   #tl .seg rect.bg{fill:rgba(255,255,255,.025)}
   #tl .seg.cur rect.bg{fill:rgba(232,194,122,.08)}
   #tl .seg:hover rect.bg{fill:rgba(255,255,255,.06)}
@@ -214,7 +239,16 @@
 </div>
 
 <div id="timelineBar">
-  <div class="tl-top"><div id="tlChap">全体</div><div id="tlScale"></div><div class="tl-hint">章の帯を押すとその章へ。もう一度押すと全体へ。</div></div>
+  <div class="tl-top">
+    <div id="tlYear">—</div>
+    <div class="tl-btns">
+      <button class="zb" id="prevE" type="button" title="前の出来事へ" aria-label="前の出来事へ">‹</button>
+      <button class="zb play" id="playBtn" type="button" title="再生：出来事を一つずつたどる" aria-label="再生">▶</button>
+      <button class="zb" id="nextE" type="button" title="次の出来事へ" aria-label="次の出来事へ">›</button>
+    </div>
+    <div class="tl-mid"><div id="tlChap">全体</div><div id="tlScale"></div></div>
+    <div class="tl-hint">バーを左右になぞると時代が展開します。章の名を押すとその章を広げます。</div>
+  </div>
   <svg id="tl"></svg>
 </div>
 <div class="legend">
@@ -237,7 +271,7 @@ const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
 const KIND_JA = { peer_reviewed: '査読論文', primary: '一次資料', institution: '研究機関・公的機関', book: '書籍', press: '報道', secondary: '二次資料' };
 const CLOCK_JA = { grass: '草の時計', field: '畑の時計', bread: 'パンの時計' };
-const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null };
+const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false };
 
 /* ── 年の書き方 ── */
 function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
@@ -248,54 +282,64 @@ const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .atmosphereColor('#e8c27a').atmosphereAltitude(0.16)
-  .pointsMerge(false)
-  .pointLat(d => d.lat).pointLng(d => d.lng)
-  .pointAltitude(d => d.alt).pointRadius(d => d.r).pointColor(d => d.color)
-  .pointLabel(d => d.label).onPointClick(d => d.onClick && d.onClick())
-  .ringLat(d => d.lat).ringLng(d => d.lng).ringColor(d => () => d.color)
-  .ringMaxRadius(d => d.max).ringPropagationSpeed(0.6).ringRepeatPeriod(2400)
   .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1])
   .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
-  // 地名は HTML の文字で出す（labelsData の字形は英字のみで、日本語が「?」になるため。万次郎版と同じ方式）
-  .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(0.015).htmlElement(d => {
+  // 印と地名はすべて HTML で出す。
+  //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
+  //  ・印：波紋（ringsData）は「そこから広がった」ように見え、広がりのデータがないのに伝播を思わせるのでやめた。
+  //    地点がはっきりしているもの＝小さな点、地域の代表点＝淡い破線の輪（動かない）。確かさは塗り／輪／破線（年代バーと同じ）
+  .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(d => d.alt ?? 0.012).htmlElement(d => {
     const el = document.createElement('div');
-    el.className = 'glabel'; el.textContent = d.text;
-    el.style.color = d.color; el.style.fontSize = `${Math.round(10 + d.size * 6)}px`;
-    if (d.dot) el.classList.add('dot');
+    if (d.kind === 'label') {
+      el.className = 'glabel'; el.textContent = d.text;
+      el.style.color = d.color; el.style.fontSize = `${Math.round(10 + d.size * 6)}px`;
+      return el;
+    }
+    el.className = d.cls; el.style.setProperty('--c', d.color); el.title = d.title;
+    el.addEventListener('click', ev => { ev.stopPropagation(); d.onClick && d.onClick(); });
     return el;
   });
 world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0); // 肥沃な三日月地帯を正面に
+// 地球の準備が終わる前に HTML の印を渡すと three-globe の isBehindGlobe が落ちる（万次郎版と同じく準備完了を待つ）
+let globeReady = false;
+const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
+world.onGlobeReady(markGlobeReady);
+// 予備：準備の合図が来なくても、描画が進み始めたら置く（万次郎版と同じ）
+setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markGlobeReady)), 1000);
 world.controls().autoRotate = false;
 
 function lensColor(e) {
   if (S.lens) return LENS[S.lens].color;
   return e.confidence === 'narrative' ? '#d8b4f0' : (e.confidence === 'range' ? '#e0b45f' : '#e8c27a');
 }
-function lit(e) {
-  if (S.lens && !e.lenses.includes(S.lens)) return false;
-  if (S.chapter !== null && e.chapter !== S.chapter) return false;
-  return true;
+function lensOn(e) { return !S.lens || e.lenses.includes(S.lens); }
+/* 時間との関係：future＝カーソルより後（出さない）／now＝カーソルが出来事の幅の中か、直前の一目盛り以内／past＝それより前 */
+function timeState(e) {
+  if (e.when.from > S.year) return 'future';
+  const c = CHAPTERS.find(c => c.id === chapterAt(S.year));
+  return S.year <= e.when.to + c.tick ? 'now' : 'past';
 }
+function lit(e) { return lensOn(e) && timeState(e) !== 'future'; }
 function drawGlobe() {
-  const pts = [], rings = [], labels = [], paths = [];
+  const html = [], paths = [];
   for (const e of EVENTS) {
     if (e.place.lat == null) continue;
-    const on = lit(e), sel = S.sel === e.id;
-    const c = on ? lensColor(e) : 'rgba(238,246,248,0.12)';
-    pts.push({ lat: e.place.lat, lng: e.place.lng, alt: sel ? 0.06 : (on ? 0.02 : 0.004), r: sel ? 0.55 : (e.place.precision === 'region' ? 0.22 : 0.32),
-      color: sel ? '#ffffff' : c, label: `<b>${esc(e.title_ja)}</b><br>${esc(whenText(e))}`, onClick: () => select(e.id) });
-    if (on && e.place.precision === 'region') rings.push({ lat: e.place.lat, lng: e.place.lng, color: 'rgba(224,180,95,0.55)', max: 3.2 });
-    if (sel) labels.push({ lat: e.place.lat, lng: e.place.lng, text: e.title_ja, size: 0.8, color: '#ffffff', dot: 0 });
+    const ts = timeState(e), sel = S.sel === e.id;
+    if (ts === 'future' && !sel) continue;
+    const cls = ['gm', e.place.precision === 'region' ? 'region' : 'site', e.confidence, ts, sel ? 'sel' : '', lensOn(e) ? '' : 'shade'].join(' ');
+    html.push({ lat: e.place.lat, lng: e.place.lng, cls, color: lensColor(e), title: `${e.title_ja}（${whenText(e)}）`, onClick: () => select(e.id) });
+    if (sel || (ts === 'now' && lensOn(e) && S.playing)) html.push({ kind: 'label', lat: e.place.lat, lng: e.place.lng, alt: 0.02, text: e.title_ja, size: 0.7, color: '#ffffff' });
   }
   if (S.wild) {
     for (const n of NODES) {
       if (n.lat == null) continue;
       const tr = traceIds().includes(n.id), sel = S.node === n.id;
-      labels.push({ lat: n.lat, lng: n.lng, text: `${shortName(n)}（${n.genome}）`, size: sel || tr ? 0.75 : 0.55,
-        color: sel || tr ? '#c8f0b0' : 'rgba(143,209,122,0.85)', dot: 0.35 });
-      rings.push({ lat: n.lat, lng: n.lng, color: 'rgba(143,209,122,0.55)', max: sel || tr ? 5 : 3 });
+      html.push({ lat: n.lat, lng: n.lng, cls: 'gm wild', color: '#8fd17a', title: n.name, onClick: () => openNode(n.id, false) });
+      html.push({ kind: 'label', lat: n.lat, lng: n.lng, alt: 0.02, text: `${shortName(n)}（${n.genome}）`, size: sel || tr ? 0.7 : 0.45,
+        color: sel || tr ? '#c8f0b0' : 'rgba(143,209,122,0.9)' });
     }
   }
+  const labels = html; // 赤道の文字も同じ列へ
   if (S.grid) {
     for (let la = -60; la <= 60; la += 15) {
       const p = []; for (let lo = -180; lo <= 180; lo += 4) p.push([la, lo]);
@@ -305,9 +349,10 @@ function drawGlobe() {
       const p = []; for (let la = -80; la <= 80; la += 4) p.push([la, lo]);
       paths.push({ pts: p, color: 'rgba(238,246,248,0.14)', w: 0.3 });
     }
-    labels.push({ lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(232,194,122,0.9)', dot: 0 });
+    labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(232,194,122,0.9)' });
   }
-  world.pointsData(pts).ringsData(rings).htmlElementsData(labels).pathsData(paths);
+  world.pathsData(paths);
+  if (globeReady) world.htmlElementsData(labels);
 }
 
 /* ── 光源レンズ ── */
@@ -399,6 +444,7 @@ $('traceBtn').onclick = () => {
 function select(id) {
   const e = EVENTS.find(x => x.id === id); if (!e) return;
   S.sel = id; S.node = null;
+  S.year = e.when.from; // 選んだ出来事の年へカーソルを動かす（地球と一覧もその時点まで展開）
   $('dcWhen').innerHTML = `${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span><span style="margin-left:8px;color:var(--dim);font-family:var(--sans);font-size:10px">${CLOCK_JA[e.clock] || ''}</span>`;
   $('dcTitle').textContent = e.title_ja;
   $('dcPlace').textContent = e.place.name_ja + (e.place.precision === 'region' ? '（地域の代表点）' : '');
@@ -433,11 +479,11 @@ function drawRight() {
       const items = EVENTS.filter(e => e.chapter === c.id).sort((a, z) => a.when.from - z.when.from);
       if (!items.length) return '';
       return `<div class="chap-head"><div class="n">${c.id ? `第${c.id}章　` : ''}${esc(c.name)}</div><div class="s">${esc(c.sub)}</div></div>` +
-        items.map(e => `<div class="item ${S.sel === e.id ? 'sel' : ''} ${S.lens && !e.lenses.includes(S.lens) ? 'shade' : ''}" data-id="${e.id}">
+        items.map(e => `<div class="item ${S.sel === e.id ? 'sel' : ''} ${S.lens && !e.lenses.includes(S.lens) ? 'shade' : ''} ${timeState(e) === 'future' ? 'future' : ''} ${timeState(e) === 'now' ? 'now' : ''}" data-id="${e.id}">
           <div class="y">${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span></div><div class="t">${esc(e.title_ja)}</div></div>`).join('');
     }).join('') || '<div class="empty">この章の出来事はまだありません。</div>';
-    b.querySelectorAll('.item').forEach(x => x.onclick = () => select(x.dataset.id));
-    const s = b.querySelector('.item.sel'); if (s) s.scrollIntoView({ block: 'nearest' });
+    b.querySelectorAll('.item').forEach(x => x.onclick = () => { stopPlay(); select(x.dataset.id); });
+    const s = b.querySelector('.item.sel') || [...b.querySelectorAll('.item.now')].pop(); if (s) s.scrollIntoView({ block: 'nearest' });
   } else if (S.tab === 'leavens') {
     b.innerHTML = `<div class="empty">パンは何で膨らむのか。パン種と、そこで働く小さな生き物。</div>` + LEAVENS.map(v => `<div class="lv"><span class="nm">${esc(v.name_ja)}</span><span class="lvl">${esc(v.name_level)}</span>
       <p>${esc(v.what_ja)}</p><p style="color:var(--sub)">${esc(v.history_ja)}</p>${v.organisms ? `<div class="org">はたらく生き物：${esc(v.organisms)}</div>` : ''}
@@ -459,18 +505,36 @@ function drawRight() {
   }
 }
 
-/* ── 年代バー（章ごとに縮尺が違う） ── */
+/* ── 年代バー：章ごとに縮尺が違う帯を並べ、全体を一本のスライダーとしてなぞれる ──
+   原則：年カーソル（S.year）≠ 表示幅（S.chapter＝広げた章）≠ カメラ（再生と「地点を見る」の時だけ動く） */
+function chapterAt(y) { const c = CHAPTERS.find(c => c.from <= y && y < c.to); return c ? c.id : (y < CHAPTERS[0].from ? CHAPTERS[0].id : CHAPTERS[CHAPTERS.length - 1].id); }
+let TL = { segs: [], sw: 0, gap: 3 };
+function xOfYear(y) {
+  const i = TL.segs.findIndex(c => c.from <= y && y < c.to);
+  if (i < 0) return y < TL.segs[0].from ? 0 : TL.segs.length * (TL.sw + TL.gap) - TL.gap;
+  const c = TL.segs[i]; return i * (TL.sw + TL.gap) + (y - c.from) / (c.to - c.from) * TL.sw;
+}
+function yearAtX(x) {
+  const i = Math.max(0, Math.min(TL.segs.length - 1, Math.floor(x / (TL.sw + TL.gap))));
+  const c = TL.segs[i], f = Math.max(0, Math.min(1, (x - i * (TL.sw + TL.gap)) / TL.sw));
+  return Math.round(c.from + f * (c.to - c.from - 1));
+}
+function yearText(y) {
+  if (y < -3000) { const bp = 1950 - y; return bp >= 100000 ? `約${(bp / 10000).toFixed(0)}万年前` : `約${(Math.round(bp / 100) * 100).toLocaleString()}年前`; }
+  return y < 0 ? `紀元前${Math.abs(y).toLocaleString()}年` : `${y}年`;
+}
 function drawTimeline() {
   const svg = $('tl'), W = svg.clientWidth || 1000, H = 118, gap = 3;
   const segs = S.chapter === null ? CHAPTERS : CHAPTERS.filter(c => c.id === S.chapter);
   const sw = (W - gap * (segs.length - 1)) / segs.length;
+  TL = { segs, sw, gap };
   const lanes = { grass: 50, field: 72, bread: 94 };
   let h = '';
   segs.forEach((c, i) => {
     const x0 = i * (sw + gap), span = c.to - c.from;
     const X = y => x0 + Math.max(0, Math.min(1, (y - c.from) / span)) * sw;
-    h += `<g class="seg ${S.chapter === c.id ? 'cur' : ''}" data-c="${c.id}"><rect class="bg" x="${x0}" y="0" width="${sw}" height="${H}" rx="3"/>
-      <text class="sname" x="${x0 + 6}" y="14">${c.id ? c.id + ' ' : ''}${esc(c.name)}</text>
+    h += `<g class="seg ${chapterAt(S.year) === c.id ? 'cur' : ''}" data-c="${c.id}"><rect class="bg" x="${x0}" y="0" width="${sw}" height="${H}" rx="3"/>
+      <text class="sname" data-c="${c.id}" x="${x0 + 6}" y="14">${c.id ? c.id + ' ' : ''}${esc(c.name)}${S.chapter === c.id ? '　◂ 全体へ' : ''}</text>
       <text class="sscale" x="${x0 + 6}" y="27">1目盛り＝${esc(c.tickLabel)}</text>`;
     const first = Math.ceil(c.from / c.tick) * c.tick;
     const n = Math.floor((c.to - first) / c.tick);
@@ -483,25 +547,62 @@ function drawTimeline() {
     h += '</g>';
     if (i === 0 && sw > 160) Object.entries(lanes).forEach(([k, y]) => { h += `<text class="lane" x="${x0 + sw - 4}" y="${y - 6}" text-anchor="end">${CLOCK_JA[k]}</text>`; });
     for (const e of EVENTS.filter(e => e.chapter === c.id)) {
-      const a = X(e.when.from), b = X(e.when.to), y = lanes[e.clock] || 94, on = lit(e), sel = S.sel === e.id;
+      const a = X(e.when.from), b = X(e.when.to), y = lanes[e.clock] || 94, on = lensOn(e), sel = S.sel === e.id;
+      const ts = timeState(e);
       const col = on ? lensColor(e) : 'rgba(238,246,248,0.15)';
+      h += `<g class="${ts === 'future' ? 'future' : (ts === 'past' ? 'past' : '')}">`;
       if (b - a > 3) h += `<rect x="${a}" y="${y - 2}" width="${b - a}" height="4" rx="2" fill="${col}" opacity="${e.confidence === 'range' ? 0.35 : 0.55}"/>`;
       const cx = (a + b) / 2, r = sel ? 6 : 4.2;
       const st = e.confidence === 'confirmed' ? `fill="${col}" stroke="${sel ? '#fff' : 'none'}"` :
         `fill="rgba(5,12,22,.9)" stroke="${sel ? '#fff' : col}" stroke-width="1.6" ${e.confidence === 'narrative' ? 'stroke-dasharray="2 2"' : ''}`;
       const shape = e.clock === 'grass' ? `<path d="M${cx} ${y - r} L${cx + r} ${y + r * .8} L${cx - r} ${y + r * .8} Z" ${st}/>` :
         e.clock === 'field' ? `<rect x="${cx - r * .85}" y="${y - r * .85}" width="${r * 1.7}" height="${r * 1.7}" ${st}/>` : `<circle cx="${cx}" cy="${y}" r="${r}" ${st}/>`;
-      h += `<g class="mk" data-id="${e.id}"><title>${esc(e.title_ja)}（${esc(whenText(e))}）</title>${shape}</g>`;
+      h += `<g class="mk" data-id="${e.id}"><title>${esc(e.title_ja)}（${esc(whenText(e))}）</title>${shape}</g></g>`;
     }
   });
+  // 年カーソル
+  const cx = xOfYear(S.year);
+  h += `<line class="cur-line" x1="${cx}" x2="${cx}" y1="30" y2="${H - 12}"/><path class="cur-head" d="M${cx - 5} 30 L${cx + 5} 30 L${cx} 37 Z"/>`;
   svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
   svg.innerHTML = h;
-  svg.querySelectorAll('.mk').forEach(m => m.onclick = ev => { ev.stopPropagation(); select(m.dataset.id); });
-  svg.querySelectorAll('.seg').forEach(g => g.onclick = () => { const c = +g.dataset.c; S.chapter = S.chapter === c ? null : c; refresh(); });
-  const cur = S.chapter === null ? null : CHAPTERS.find(c => c.id === S.chapter);
-  $('tlChap').textContent = cur ? `${cur.id ? '第' + cur.id + '章　' : ''}${cur.name}　${cur.sub}` : '全体　野の草から、いまの一枚まで';
-  $('tlScale').textContent = cur ? `${yr(cur.from)}〜${yr(cur.to)}　1目盛り＝${cur.tickLabel}` : '章ごとに目盛りの幅が違います（各帯の「1目盛り」を見てください）';
+  svg.querySelectorAll('.mk').forEach(m => m.onclick = ev => { ev.stopPropagation(); stopPlay(); select(m.dataset.id, true); });
+  svg.querySelectorAll('.sname').forEach(t => t.onclick = ev => { ev.stopPropagation(); const c = +t.dataset.c; S.chapter = S.chapter === c ? null : c;
+    if (S.chapter !== null && chapterAt(S.year) !== c) S.year = CHAPTERS.find(x => x.id === c).from; refresh(); });
+  const cur = CHAPTERS.find(c => c.id === chapterAt(S.year));
+  $('tlYear').textContent = yearText(S.year);
+  $('tlChap').textContent = `${cur.id ? '第' + cur.id + '章　' : ''}${cur.name}　${cur.sub}`;
+  $('tlScale').textContent = S.chapter === null ? `この章は 1目盛り＝${cur.tickLabel}（章ごとに縮尺が違います）` : `${yr(cur.from)}〜${yr(cur.to)} を広げています　1目盛り＝${cur.tickLabel}`;
 }
+/* なぞる：バーの上で押したまま左右に動かすと年が進み、地球と一覧が展開する */
+(() => {
+  const svg = $('tl'); let drag = false;
+  const at = ev => { const r = svg.getBoundingClientRect(); return yearAtX((ev.clientX - r.left) * (svg.viewBox.baseVal.width / r.width)); };
+  svg.addEventListener('pointerdown', ev => { if (ev.target.closest('.mk,.sname')) return; drag = true; svg.setPointerCapture(ev.pointerId); stopPlay(); setYear(at(ev)); });
+  svg.addEventListener('pointermove', ev => { if (drag) setYear(at(ev)); });
+  svg.addEventListener('pointerup', () => { drag = false; });
+})();
+let raf = 0;
+function setYear(y) { S.year = y; cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { drawTimeline(); drawGlobe(); drawRight(); }); }
+
+/* 前・次・再生：出来事を年の順に一つずつ（再生中だけカメラがその地点へ寄る） */
+const ORDER = [...EVENTS].sort((a, b) => a.when.from - b.when.from || a.when.to - b.when.to);
+function stepTo(dir) {
+  const i = ORDER.findIndex(e => e.id === S.sel);
+  let j;
+  if (i >= 0) j = i + dir;
+  else j = dir > 0 ? ORDER.findIndex(e => e.when.from > S.year) : ORDER.map(e => e.when.from <= S.year).lastIndexOf(true);
+  if (j < 0 || j >= ORDER.length) return false;
+  select(ORDER[j].id, true);
+  const e = ORDER[j];
+  if (S.playing && e.place.lat != null) world.pointOfView({ lat: e.place.lat, lng: e.place.lng, altitude: 1.6 }, 1200);
+  return true;
+}
+let playTimer = 0;
+function stopPlay() { S.playing = false; clearTimeout(playTimer); $('playBtn').textContent = '▶'; $('playBtn').setAttribute('aria-pressed', 'false'); }
+function playNext() { if (!S.playing) return; if (!stepTo(1)) { stopPlay(); return; } playTimer = setTimeout(playNext, 4200); }
+$('playBtn').onclick = () => { if (S.playing) { stopPlay(); return; } S.playing = true; $('playBtn').textContent = '❚❚'; $('playBtn').setAttribute('aria-pressed', 'true'); playNext(); };
+$('prevE').onclick = () => { stopPlay(); stepTo(-1); };
+$('nextE').onclick = () => { stopPlay(); stepTo(1); };
 
 /* ── 層のボタン・出典 ── */
 $('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
@@ -525,6 +626,6 @@ $('infoBtn').onclick = () => {
 function refresh() { drawLenses(); drawLineage(); drawRight(); drawTimeline(); drawGlobe(); }
 window.addEventListener('resize', drawTimeline);
 refresh();
-window.__bread = { S, EVENTS, NODES, select, openNode }; // 確認用
+window.__bread = { S, EVENTS, NODES, select, openNode, world, drawGlobe, get ready() { return globeReady; } }; // 確認用
 </script>
 </body></html>
