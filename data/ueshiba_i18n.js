@@ -1,0 +1,73 @@
+// data/ueshiba_i18n.js — 合氣道Focus の画面の文言（日本語・英語）。データの英語は data/ueshiba_en.js。
+// 言語は URL の ?lang=en で英語（無ければ日本語）。行事カレンダー（i18n/ja.json・en.json）と同じ考え。
+export const UI = {
+  pageTitle: { ja: 'History OS｜合氣道 Focus（植芝盛平）', en: 'History OS | Aikido Focus (Morihei Ueshiba)' },
+  name: { ja: '植芝盛平', en: 'Morihei Ueshiba' },
+  attrib: { ja: '地球: NASA Blue Marble ／ 個人制作・合気会の公式サイトではありません', en: 'Globe: NASA Blue Marble / A personal project — not the official website of the Aikikai' },
+  worldSec: { ja: 'World Events<span class="secsub">この年の前後の世界</span>', en: 'World Events<span class="secsub">the world around this year</span>' },
+  spSec: { ja: 'Abroad<span class="secsub">海外への広がり（この年まで）</span>', en: 'Abroad<span class="secsub">Aikido spreading abroad (up to this year)</span>' },
+  jpSec: { ja: 'Japan<span class="secsub">国内の行事</span>', en: 'Japan<span class="secsub">events in Japan</span>' },
+  ovSec: { ja: 'Overseas<span class="secsub">海外の行事</span>', en: 'Overseas<span class="secsub">events abroad</span>' },
+  fold: { ja: '畳む', en: 'Fold' }, unfold: { ja: '開く', en: 'Open' },
+  portraitAlt: { ja: '植芝盛平 肖像', en: 'Portrait of Morihei Ueshiba' },
+  curLab: { ja: '今の場所', en: 'Where he is' },
+  lifeHead: { ja: 'LIFE<span>人物年譜（押すとその年へ）</span>', en: 'LIFE<span>chronology (click to go to that year)</span>' },
+  chapter: { ja: 'CHAPTER', en: 'CHAPTER' }, all: { ja: '全体', en: 'All' },
+  goYear: { ja: '年へ', en: 'Go' }, goYearTitle: { ja: 'この章の始まりの年へ（カメラは動かしません）', en: 'Go to the first year of this chapter (the globe does not move)' },
+  sources: { ja: '出典', en: 'Sources' },
+  calLong: { ja: '行事カレンダー ↗', en: 'Event calendar ↗' }, calShort: { ja: '行事 ↗', en: 'Events ↗' },
+  calTitle: { ja: 'いまの行事は、行事カレンダーへ', en: 'Current events: open the event calendar' },
+  langBtn: { ja: 'EN', en: '日本語' }, langTitle: { ja: 'English', en: '日本語で見る' },
+  close: { ja: '閉じる', en: 'Close' },
+  prevY: { ja: '1年戻る', en: 'Back one year' }, nextY: { ja: '1年進む', en: 'Forward one year' }, play: { ja: '再生（1年ずつ）', en: 'Play (one year at a time)' },
+  zoomIn: { ja: '拡大', en: 'Zoom in' }, zoomOut: { ja: '縮小', en: 'Zoom out' },
+  nowBtn: { ja: 'NOW / 現在', en: 'NOW' },
+  nowTitle: { ja: 'NOW：いまの行事（今日の前後）を地球と年代バーに出す。歴史の年はしまっておき、もう一度押すと戻る。カメラは動かしません', en: 'NOW: show current events (around today) on the globe and timeline. The historical year is kept and restored when you press again. The globe does not move.' },
+  hint: { ja: 'カーソル付近をドラッグ＝年を動かす ／ 背景をドラッグ＝年代を動かす ／ 背景を押す＝その年へ ／ ＋−＝拡大・縮小', en: 'Drag near the cursor = change the year / drag the background = scroll the years / click the background = go to that year / + − = zoom' },
+  lgLife: { ja: '生涯', en: 'Lifetime' }, lgPoint: { ja: '年譜・生涯の拠点', en: 'Chronology / places he lived' },
+  lgSpread: { ja: '海外への広がり（道場の設立・初の指導）', en: 'Spreading abroad (dojos founded, first teaching)' },
+  lgWorld: { ja: 'World Events（同時代の世界）', en: 'World Events (the world at the time)' },
+  lgNet: { ja: '合気会の海外組織がある国（現在）', en: 'Countries with Aikikai organizations (today)' },
+  lgEvent: { ja: 'いまの行事（NOW）', en: 'Current events (NOW)' },
+  lgTerm: { ja: '紫の語', en: 'Purple words' }, lgTermTail: { ja: '＝用語（押すと説明）', en: ' = terms (click for an explanation)' },
+  look: { ja: '地点を見る', en: 'Show on globe' },
+  tagLifePlace: { ja: 'LIFE / 生涯の拠点', en: 'LIFE / Place' }, tagLife: { ja: 'LIFE / 年譜', en: 'LIFE / Chronology' },
+  tagWorld: { ja: 'WORLD EVENT / 世界', en: 'WORLD EVENT' }, tagFound: { ja: 'ABROAD / 道場の設立', en: 'ABROAD / Dojo founded' },
+  tagFirst: { ja: 'ABROAD / 初の指導・訪問', en: 'ABROAD / First teaching or visit' }, tagNet: { ja: 'NETWORK / 合気会の海外組織', en: 'NETWORK / Aikikai organization abroad' },
+  tagTerm: { ja: 'TERM / 用語', en: 'TERM' }, tagEvent: { ja: 'EVENT / いまの行事', en: 'EVENT / Current event' }, sample: { ja: '（見本）', en: ' (sample)' },
+  netNote: { ja: '合気会の海外組織がある国。点は代表の都市で、道場の所在地ではありません。', en: 'A country with an Aikikai organization. The point is a representative city, not the location of a dojo.' },
+  secLife: { ja: 'この頃', en: 'At this time' }, secLand: { ja: '土地', en: 'Place' }, secEra: { ja: '時代と世界', en: 'The era and the world' },
+  beforeBirth: { ja: '（誕生前）', en: '(before his birth)' }, afterDeath: { ja: '（没後）', en: '(after his death)' },
+  here: { ja: '（いまいる所）', en: ' (where he is now)' },
+  thisYear: { ja: 'この年', en: 'this year' },
+  spEmpty: { ja: 'まだありません。最初は {y}年（{n}）。', en: 'None yet. The first is in {y} ({n}).' },
+  kFound: { ja: '設立', en: 'Founded' }, kFirst: { ja: '初の指導', en: 'First teaching' },
+  lane: { ja: ['年譜', '海外', '世界'], en: ['Life', 'Abroad', 'World'] },
+  laneEvent: { ja: '行事', en: 'Events' }, today: { ja: '今日', en: 'Today' },
+  nowBar: { ja: 'NOW ・ いまの行事（行事カレンダーと同じデータ）', en: 'NOW · current events (same data as the event calendar)' },
+  nowEra: { ja: '（いまの行事）', en: ' (current events)' }, present: { ja: '（現在）', en: ' (today)' },
+  evLoading: { ja: '行事を読み込んでいます…', en: 'Loading events…' }, evFail: { ja: '行事を読み込めませんでした。', en: 'Could not load the events. ' },
+  evNone: { ja: '公開できる行事はまだ載っていません', en: 'No events are published yet' }, evChecking: { ja: '（確かめ中 {n}件）', en: ' ({n} being checked)' },
+  evNoneHere: { ja: 'この期間の行事はありません。', en: 'No events in this period.' }, evPast: { ja: '終わった行事', en: 'Past events' },
+  calCheck: { ja: 'カレンダーで確認 ↗', en: 'See in the calendar ↗' }, official: { ja: '公式の告知 ↗', en: 'Official announcement ↗' }, addIcs: { ja: '予定に追加（.ics）', en: 'Add to calendar (.ics)' },
+  kvWhen: { ja: '日時', en: 'When' }, kvWhere: { ja: '場所', en: 'Where' }, kvOrg: { ja: '主催', en: 'Organizer' }, kvType: { ja: '種類', en: 'Type' }, kvState: { ja: '状態', en: 'Status' },
+  localTime: { ja: '（開催地の時刻）', en: ' (local time)' },
+  endedOk: { ja: '終了（開催を確認）', en: 'Ended (confirmed held)' }, endedNo: { ja: '終了（開催は未確認）', en: 'Ended (not confirmed held)' },
+  types: { ja: { embu: '演武会', seminar: '講習会', anniversary: '周年記念', training: '合宿・研修', exchange: '交流', ceremony: '奉納・祭典', other: 'その他' },
+           en: { embu: 'Demonstration', seminar: 'Seminar', anniversary: 'Anniversary', training: 'Training camp', exchange: 'Exchange', ceremony: 'Ceremony', other: 'Other' } },
+  states: { ja: { scheduled: '予定', changed: '変更あり', cancelled: '中止', ended: '終了' }, en: { scheduled: 'Scheduled', changed: 'Changed', cancelled: 'Cancelled', ended: 'Ended' } },
+  chapters: { ja: { tanabe: '田辺', hokkaido: '北海道', ayabe: '綾部・大本', tokyo: '東京・皇武館', iwama: '岩間・合気神社', aikikai: '合気会・本部道場', world: '開祖ののち・世界へ' },
+              en: { tanabe: 'Tanabe', hokkaido: 'Hokkaido', ayabe: 'Ayabe & Ōmoto', tokyo: 'Tokyo & Kobukan', iwama: 'Iwama & Aiki Shrine', aikikai: 'Aikikai & Hombu Dojo', world: 'After the Founder: the world' } },
+  sourcesHtml: {
+    ja: '<p class="ri-p">年譜は、以前の合氣道版で採用した「植芝盛平年譜」（年表写真）をもとに、ネットで照合したもの。カードの「この頃」は、ウィキペディア「植芝盛平」（日本語版・英語版、2026-11-15 確認）と合気会の沿革による。海外への広がりは『合気道のあゆみ』の周年の記述と各国の合気会の公式ページから。</p>' +
+      '<p class="ri-p sub"><a href="https://www.aikikai.or.jp/aikido/history/" target="_blank" rel="noopener">合気会「沿革」</a>・<a href="https://www.aikikai.or.jp/aikido/message/" target="_blank" rel="noopener">「道主挨拶」</a>（2026-11-14 確認）／<a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">合気会 海外組織一覧</a>（2026年7月時点。点は国の代表都市）</p>' +
+      '<div class="sec">資料で分かれるところ</div>' +
+      '<p class="ri-p sub">北海道への移住：合気会の沿革は1912年、道主挨拶の略歴は1911年（応募）とする。ここでは1912年。／1947年の改組：資料が見つからず、1948年2月9日の改組・認可に一つにした。／1961年のハワイ：「第1回演武大会」は確かめられず（第1回は1960年の東京・山野ホール）、ホノルル合気道場の落成に際しての渡布とした（Aikido Journal・ハワイの合気会の記念誌による）。／海外の道場の設立年には、周年の記述から逆算したものを含む。</p>' +
+      '<p class="ri-p sub">掲載は植芝盛平と合気会に限ります。個人制作で、合気会の公式サイトではありません。</p>',
+    en: '<p class="ri-p">The chronology is based on the "Chronology of Morihei Ueshiba" adopted in the earlier Aikido edition and checked online. "At this time" in the cards draws on Wikipedia "Morihei Ueshiba" (Japanese and English, checked 2026-11-15) and the Aikikai\'s history. Aikido abroad draws on anniversary records in "The Path of Aikido" and the official pages of Aikikai organizations in each country. The English text is a draft translation from the Japanese.</p>' +
+      '<p class="ri-p sub"><a href="https://aikikai.or.jp/eng/aikido/history/" target="_blank" rel="noopener">Aikikai — History</a> · <a href="https://aikikai.or.jp/eng/aikido/message/" target="_blank" rel="noopener">Message from Doshu</a> (checked 2026-11-14) / <a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">Aikikai — Overseas organizations</a> (as of July 2026; points are representative cities)</p>' +
+      '<div class="sec">Where the sources differ</div>' +
+      '<p class="ri-p sub">Move to Hokkaido: the Aikikai history gives 1912, the Doshu biography 1911 (application); 1912 is used here. / Reorganization in 1947: no source found; merged into the reorganization and approval of 9 February 1948. / Hawaii 1961: a "first demonstration" there could not be confirmed (the first All-Japan demonstration was at Yamano Hall, Tokyo, in 1960); described as a trip for the opening of the Honolulu Aiki Dojo (per Aikido Journal and a Hawaii Aikikai commemorative program). / Some founding years of dojos abroad are counted back from anniversaries.</p>' +
+      '<p class="ri-p sub">Coverage is limited to Morihei Ueshiba and the Aikikai. A personal project — not the official website of the Aikikai.</p>',
+  },
+};

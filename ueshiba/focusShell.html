@@ -8,6 +8,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>History OS｜合氣道 Focus（植芝盛平）</title>
+<link rel="alternate" hreflang="ja" href="focusShell.html">
+<link rel="alternate" hreflang="en" href="focusShell.html?lang=en">
 <meta name="description" content="植芝盛平の生涯と、合氣道が世界へ広がる歩みを、地球と年代バーでたどる History OS の合氣道 Focus（個人制作・合気会の公式サイトではありません）。">
 <style>
   /* ↓ manjiro/focusShell.html の CSS をそのまま写した（History OS の統一の見た目） */
@@ -522,6 +524,7 @@
     <div class="chap-menu" id="chapMenu" hidden></div>
   </div>
   <button class="tgl" id="infoBtn" type="button">出典</button>
+  <a class="tgl" id="langBtn" hreflang="en" title="English">EN</a>
   <a class="tgl" id="calLink" target="_blank" rel="noopener" title="いまの行事は、行事カレンダーへ"><span class="cal-long">行事カレンダー ↗</span><span class="cal-short">行事 ↗</span></a>
 </div>
 
@@ -575,10 +578,30 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
-import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js?v=20261115d';
-import { ueshibaPlaces as PLACES, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115d';
-import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261115d';
-import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261115d';
+import { aikidoPersonFocus as PERSON0, aikidoChronology as CHRONO0, aikidoGlossary as GLOSSARY0 } from '../data/ueshiba_person.js?v=20261115e';
+import { ueshibaPlaces as PLACES0, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115e';
+import { ueshibaWorld as WORLD0 } from '../data/ueshiba_world.js?v=20261115e';
+import { aikidoDojos as NETWORK0, aikidoDojoFoundings as FOUND0, aikidoFirstContacts as FIRST0 } from '../data/ueshiba_spread.js?v=20261115e';
+import { UI } from '../data/ueshiba_i18n.js?v=20261115e';
+import { EN } from '../data/ueshiba_en.js?v=20261115e';
+
+// ---------- 言語（?lang=en で英語。無ければ日本語）----------
+// 画面の文言は data/ueshiba_i18n.js、データの英語は data/ueshiba_en.js。英語が無い所は日本語のまま出す。
+const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ja';
+const isEn = LANG === 'en';
+const T = k => { const v = UI[k]; return v == null ? k : (v[LANG] ?? v.ja); };
+const fill = (str, o) => str.replace(/\{(\w+)\}/g, (_, k) => o[k]);
+const SEP = isEn ? ' · ' : ' ・ ';
+const par = x => isEn ? ' (' + x + ')' : '（' + x + '）';
+const PERSON = isEn ? { ...PERSON0, relation: EN.person.relation } : PERSON0;
+const CHRONO = isEn ? CHRONO0.map(c => { const e = EN.chrono[c.year]; return e ? { ...c, text: e.text, ageEn: e.age, card: { life: e.life, land: e.land, era: e.era } } : c; }) : CHRONO0;
+const PLACES = isEn ? PLACES0.map(p => EN.places[p.id] ? { ...p, ...EN.places[p.id] } : p) : PLACES0;
+const WORLD = isEn ? WORLD0.map(w => EN.world[w.id] ? { ...w, ...EN.world[w.id] } : w) : WORLD0;
+// 用語：英語では英語の名前（title の括弧より前）を本文の中で探す
+const GLOSSARY = isEn ? Object.fromEntries(Object.values(EN.glossary).map(g => [g.title.replace(/\s*\(.*\)$/, ''), { title: g.title, reading: '', text: g.text }])) : GLOSSARY0;
+const FOUND = isEn ? FOUND0.map(d => { const e = EN.spread[d.id]; return e ? { ...d, country: e.name, org: e.org || d.org, note: e.note } : d; }) : FOUND0;
+const FIRST = isEn ? FIRST0.map(d => { const e = EN.spread[d.id]; return e ? { ...d, region: e.name, note: e.note } : d; }) : FIRST0;
+const NETWORK = isEn ? NETWORK0.map(d => ({ ...d, country: EN.countries[d.country] || d.country })) : NETWORK0;
 import { CALENDAR_URL, EVENTS_URL, ICS_DIR, NOW_WINDOW } from '../data/ueshiba_config.js?v=20261115a';
 
 // ---------- 定数（万次郎版と同じ約束）----------
@@ -612,7 +635,8 @@ const placeById = id => PLACES.find(p => p.id === id) || null;
 const TERMS = Object.keys(GLOSSARY).sort((a, b) => b.length - a.length);
 const TERM_RE = TERMS.length ? new RegExp('(' + TERMS.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'g') : null;
 function linkify(text, seen) { const t = esc(text); return TERM_RE ? t.replace(TERM_RE, m => { if (seen.has(m)) return m; seen.add(m); return '<span class="term" data-term="' + esc(m) + '">' + m + '</span>'; }) : t; }
-const ageText = c => typeof c.age === 'number' ? c.age + '歳' : (c.age || '');
+const ageText = c => typeof c.age === 'number' ? (isEn ? 'age ' + c.age : c.age + '歳') : (isEn ? (c.ageEn || '') : (c.age || ''));
+const chapName = c => c && c.id !== 'all' ? UI.chapters[LANG][c.id] : '';
 const SPREAD = [...FOUND.map(d => ({ ...d, kind: 'found', key: 'found:' + d.id, name: d.country, sub: d.org })), ...FIRST.map(d => ({ ...d, kind: 'first', key: 'first:' + d.id, name: d.region, sub: d.city }))].sort((a, b) => a.year - b.year);
 const WORLDS = [...WORLD].sort((a, b) => a.year - b.year);
 
@@ -662,7 +686,7 @@ function lifeHtml(y, faintAll) {
   if (State.sel && State.sel.startsWith('life:')) seen.add(State.sel.slice(5)); // 選んだ拠点は、まだ先の年でも出す
   return [...seen].filter(id => placeById(id)).map(id => { const o = lmObj(id), p = placeById(id), now = !!cur && cur.place === id;
     o.el.className = 'lm' + (now ? ' now' : '') + (faintAll ? ' faint' : '') + (State.sel === 'life:' + id ? ' sel' : '');
-    o.el.title = p.title + (now ? '（いまいる所）' : ''); return o; });
+    o.el.title = p.title + (now ? T('here') : ''); return o; });
 }
 // 移動の順：滞在を年の順に。旅は「行って戻る」
 const MOVES = (() => { const out = []; let base = null;
@@ -678,6 +702,7 @@ function moveArcs(y) {
     return { sLat: a.lat, sLng: a.lng, eLat: b.lat, eLng: b.lng, color: latest ? 'rgba(200,244,255,.9)' : 'rgba(102,224,255,.35)', stroke: latest ? 0.45 : 0.25, alt: 0.06, dash: latest ? 1 : 0.3, gap: latest ? 0 : 0.2 }; });
 }
 world.controls().autoRotate = false;
+document.getElementById('globeViz').addEventListener('contextmenu', e => e.stopPropagation(), true);
 addEventListener('resize', () => { world.width(innerWidth).height(innerHeight); drawTL(); layoutLeftCol(); });
 function keyObj(key) {
   const [k, id] = String(key || '').split(':');
@@ -747,24 +772,24 @@ const para = s => '<p class="dc-para">' + s + '</p>';
 function openFor(key, src) {
   if (key.startsWith('evt:')) return openEvent(key.slice(4), src);
   const [k] = key.split(':'), o = keyObj(key); if (!o) return;
-  if (k === 'life') showCard({ tag: 'LIFE / 生涯の拠点', title: o.title, sub: o.year + ' ・ ' + o.placeName, html: para(linkify(o.description, new Set())), look: key }, src);
-  else if (k === 'world') showCard({ kind: 'world', tag: 'WORLD EVENT / 世界', title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: Number.isFinite(o.lat) ? key : null }, src);
-  else if (k === 'found') showCard({ kind: 'spread', tag: 'ABROAD / 道場の設立', title: o.country, sub: o.year + ' ・ ' + o.org + '（' + o.city + '）', html: para(esc(o.note || '')), look: key }, src);
-  else if (k === 'first') showCard({ kind: 'spread', tag: 'ABROAD / 初の指導・訪問', title: o.region, sub: o.year + ' ・ ' + o.city, html: para(esc(o.note || '')), look: key }, src);
-  else showCard({ kind: 'spread', tag: 'NETWORK / 合気会の海外組織', title: o.country, sub: o.city, html: para('合気会の海外組織がある国。点は代表の都市で、道場の所在地ではありません。'), look: key }, src);
+  if (k === 'life') showCard({ tag: T('tagLifePlace'), title: o.title, sub: o.year + SEP + o.placeName, html: para(linkify(o.description, new Set())), look: key }, src);
+  else if (k === 'world') showCard({ kind: 'world', tag: T('tagWorld'), title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: Number.isFinite(o.lat) ? key : null }, src);
+  else if (k === 'found') showCard({ kind: 'spread', tag: T('tagFound'), title: o.country, sub: o.year + SEP + o.org + par(o.city), html: para(esc(o.note || '')), look: key }, src);
+  else if (k === 'first') showCard({ kind: 'spread', tag: T('tagFirst'), title: o.region, sub: o.year + SEP + o.city, html: para(esc(o.note || '')), look: key }, src);
+  else showCard({ kind: 'spread', tag: T('tagNet'), title: o.country, sub: o.city, html: para(T('netNote')), look: key }, src);
 }
 function openChrono(c, src) {
   const key = c.eventId ? 'life:' + c.eventId : null, pl = c.eventId && placeById(c.eventId);
   State.sel = key;
-  showCard({ tag: 'LIFE / 年譜', title: c.year + '年' + (ageText(c) ? '（' + ageText(c) + '）' : ''), sub: pl ? pl.title + ' ・ ' + pl.placeName : '', html: para(linkify(c.text, new Set())) + cardMore(c.card), look: key }, src);
+  showCard({ tag: T('tagLife'), title: c.year + (isEn ? '' : '年') + (ageText(c) ? par(ageText(c)) : ''), sub: pl ? pl.title + SEP + pl.placeName : '', html: para(linkify(c.text, new Set())) + cardMore(c.card), look: key }, src);
 }
 // カードの厚み：この頃（人と暮らし）・土地・時代と世界（History OS の目線＝地球と時代）。見出しは小さく、本文は短い段落で
 function cardMore(cd) {
   if (!cd) return '';
   const sec = (h, t) => t ? '<div class="dc-sec">' + h + '</div>' + para(linkify(t, new Set())) : '';
-  return sec('この頃', cd.life) + sec('土地', cd.land) + sec('時代と世界', cd.era);
+  return sec(T('secLife'), cd.life) + sec(T('secLand'), cd.land) + sec(T('secEra'), cd.era);
 }
-function openTerm(t, src) { const g = GLOSSARY[t]; if (g) showCard({ kind: 'term', tag: 'TERM / 用語', title: g.title, sub: g.reading, html: para(esc(g.text)) }, src); }
+function openTerm(t, src) { const g = GLOSSARY[t]; if (g) showCard({ kind: 'term', tag: T('tagTerm'), title: g.title, sub: g.reading, html: para(esc(g.text)) }, src); }
 function bindTerms(scope) { scope.querySelectorAll('.term').forEach(el => el.onclick = e => { e.stopPropagation(); openTerm(el.dataset.term, el); }); }
 
 // ---------- 右：FOCUS PERSON ----------
@@ -775,12 +800,12 @@ document.getElementById('fpLead').innerHTML = linkify(PERSON.relation, seen);
 const curVal = document.getElementById('curVal'), curKind = document.getElementById('curKind');
 on(() => {
   const y = State.y; curVal.onclick = null; curVal.classList.remove('click');
-  if (y < 1883) { curVal.textContent = '—'; curKind.textContent = '（誕生前）'; return; }
-  if (y > 1969) { curVal.textContent = '—'; curKind.textContent = '（没後）'; return; }
+  if (y < 1883) { curVal.textContent = '—'; curKind.textContent = T('beforeBirth'); return; }
+  if (y > 1969) { curVal.textContent = '—'; curKind.textContent = T('afterDeath'); return; }
   const st = stayAt(y), last = st ? { eventId: st.place } : null;
   const pl = last && placeById(last.eventId); if (!pl) { curVal.textContent = '—'; curKind.textContent = ''; return; }
   curVal.textContent = pl.title; curVal.classList.add('click'); curVal.onclick = () => { setSel('life:' + pl.id); openFor('life:' + pl.id, curVal); };
-  curKind.textContent = pl.placeName + ' ・ ' + (st.trip ? st.from + '年の旅' : '滞在 ' + st.from + '–' + st.to);
+  curKind.textContent = pl.placeName + SEP + (st.trip ? (isEn ? 'journey, ' + st.from : st.from + '年の旅') : (isEn ? 'lived here ' : '滞在 ') + st.from + '–' + st.to);
 });
 const lifeList = document.getElementById('lifeList'), focusPanel = document.getElementById('focusPanel');
 CHRONO.forEach((c, i) => {
@@ -798,7 +823,7 @@ on(() => {
 });
 function scrollInto(box, row) { if (!box || !row) return; const c = box.getBoundingClientRect(), b = row.getBoundingClientRect(); if (b.top < c.top + 40 || b.bottom > c.bottom) box.scrollTo({ top: box.scrollTop + (b.top - c.top) - c.height / 2 + b.height / 2, behavior: State.playing ? 'auto' : 'smooth' }); }
 const fpFold = document.getElementById('fpFold');
-const setFold = v => { document.body.classList.toggle('fp-folded', v); fpFold.textContent = v ? '開く' : '畳む'; };
+const setFold = v => { document.body.classList.toggle('fp-folded', v); fpFold.textContent = v ? T('unfold') : T('fold'); };
 fpFold.onclick = () => setFold(!document.body.classList.contains('fp-folded'));
 if (innerWidth <= 640) setFold(true);
 
@@ -807,7 +832,7 @@ const worldList = document.getElementById('worldList');
 on(() => {
   if (State.now) return nowLists();
   document.getElementById('worldPanel').classList.remove('nowmode');
-  document.getElementById('worldSec').innerHTML = 'World Events<span class="secsub">この年の前後の世界</span>';
+  document.getElementById('worldSec').innerHTML = T('worldSec');
   const y = State.y, dist = e => (y >= e.year && y <= (e.endYear || e.year)) ? 0 : Math.min(Math.abs(y - e.year), Math.abs(y - (e.endYear || e.year)));
   const all = WORLDS.map(e => ({ e, d: dist(e) })).sort((a, b) => a.d - b.d || a.e.year - b.e.year);
   let shown = all.filter(x => x.d <= 15); if (shown.length < 3) shown = all.slice(0, 3);
@@ -815,7 +840,7 @@ on(() => {
   worldList.innerHTML = '';
   shown.forEach(({ e, d }) => {
     const r = mk('div', 'ev' + (d === 0 ? ' now' : '') + (State.sel === 'world:' + e.id ? ' sel' : ''),
-      '<div class="ev-row"><span class="y">' + e.year + (e.endYear ? '–' + String(e.endYear).slice(2) : '') + '</span><span class="t">' + esc(e.title) + '</span><span class="d">' + (d === 0 ? 'この年' : d + '年' + (e.year > y ? '後' : '前')) + '</span></div>');
+      '<div class="ev-row"><span class="y">' + e.year + (e.endYear ? '–' + String(e.endYear).slice(2) : '') + '</span><span class="t">' + esc(e.title) + '</span><span class="d">' + (d === 0 ? T('thisYear') : isEn ? (e.year > y ? 'in ' + d + ' yrs' : d + ' yrs ago') : d + '年' + (e.year > y ? '後' : '前')) + '</span></div>');
     r.onclick = () => { const src = frozen(r); setSel('world:' + e.id); openFor('world:' + e.id, src); };
     worldList.appendChild(r);
   });
@@ -827,10 +852,10 @@ on(() => {
   setSpSec(false);
   const y = State.y, list = SPREAD.filter(d => d.year <= y).reverse();
   spList.innerHTML = '';
-  if (!list.length) { const n = SPREAD[0]; spList.appendChild(mk('div', 'wl-empty', 'まだありません。最初は ' + n.year + '年（' + esc(n.name) + '）。')); return; }
+  if (!list.length) { const n = SPREAD[0]; spList.appendChild(mk('div', 'wl-empty', fill(T('spEmpty'), { y: n.year, n: esc(n.name) }))); return; }
   list.forEach(d => {
     const r = mk('div', 'spi' + (d.kind === 'first' ? ' first' : '') + (d.year === y ? ' now' : '') + (State.sel === d.key ? ' sel' : ''),
-      '<div class="spi-row"><span class="k">' + (d.kind === 'found' ? '設立' : '初の指導') + '</span><span class="y">' + d.year + '</span></div><div class="t">' + esc(d.name) + '<span style="color:var(--dim);font-size:10.5px"> ・ ' + esc(d.sub) + '</span></div>');
+      '<div class="spi-row"><span class="k">' + (d.kind === 'found' ? T('kFound') : T('kFirst')) + '</span><span class="y">' + d.year + '</span></div><div class="t">' + esc(d.name) + '<span style="color:var(--dim);font-size:10.5px">' + SEP + esc(d.sub) + '</span></div>');
     r.onclick = () => { const src = frozen(r); setSel(d.key); openFor(d.key, src); };
     spList.appendChild(r);
   });
@@ -849,12 +874,12 @@ function layoutLeftCol() {
 // ---------- 右上：CHAPTER（万次郎版と同じ形。年代バーの幅と帯だけ。カメラは動かさない）----------
 const chapBtn = document.getElementById('chapBtn'), chapMenu = document.getElementById('chapMenu');
 function vpFor(c) { const pad = Math.max(1, (c.to - c.from) * 0.1); let from = c.from - pad, to = c.to + pad; if (to - from < SPAN.min) { const m = (from + to) / 2; from = m - SPAN.min / 2; to = m + SPAN.min / 2; } from = clamp(from, RANGE.min, RANGE.max - (to - from)); State.vp = { from, to: from + (to - from) }; }
-function renderChapterBtn() { const c = chapterById(State.chapter); chapBtn.textContent = 'CHAPTER : ' + c.en + ' ▾'; chapBtn.classList.toggle('on', State.chapter !== 'all'); }
+function renderChapterBtn() { const c = chapterById(State.chapter); chapBtn.textContent = 'CHAPTER : ' + (c.id === 'all' ? T('all') : c.en) + ' ▾'; chapBtn.classList.toggle('on', State.chapter !== 'all'); }
 function renderChapterMenu() {
   chapMenu.innerHTML = '';
   CHAPTERS.forEach(c => {
-    const it = mk('div', 'chap-item' + (State.chapter === c.id ? ' on' : ''), '<span class="en">' + esc(c.en) + '</span>' + (c.ja ? '<span class="ja">' + esc(c.ja) + '</span>' : '') +
-      (c.from != null ? '<span class="yr">' + c.from + '–' + (c.to >= NOW_YEAR ? '' : c.to) + '</span><span class="go" title="この章の始まりの年へ（カメラは動かしません）">年へ</span>' : ''));
+    const it = mk('div', 'chap-item' + (State.chapter === c.id ? ' on' : ''), '<span class="en">' + esc(c.id === 'all' ? T('all') : c.en) + '</span>' + (chapName(c) ? '<span class="ja">' + esc(chapName(c)) + '</span>' : '') +
+      (c.from != null ? '<span class="yr">' + c.from + '–' + (c.to >= NOW_YEAR ? '' : c.to) + '</span><span class="go" title="' + T('goYearTitle') + '">' + T('goYear') + '</span>' : ''));
     it.onclick = ev => {
       State.chapter = c.id; renderChapterBtn(); chapMenu.hidden = true;
       if (c.id === 'all') { State.vp = { from: 1875, to: 1975 }; emit(); return; }
@@ -869,16 +894,12 @@ document.addEventListener('pointerdown', e => { if (!chapMenu.hidden && !e.targe
 
 // ---------- 出典（1か所）・行事カレンダー ----------
 const infoBtn = document.getElementById('infoBtn'), infoPanel = document.getElementById('infoPanel');
-document.getElementById('infoBody').innerHTML =
-  '<p class="ri-p">年譜は、以前の合氣道版で採用した「植芝盛平年譜」（年表写真）をもとに、ネットで照合したもの。カードの「この頃」は、ウィキペディア「植芝盛平」（日本語版・英語版、2026-11-15 確認）と合気会の沿革による。海外への広がりは『合気道のあゆみ』の周年の記述と各国の合気会の公式ページから。</p>' +
-  '<p class="ri-p sub"><a href="https://www.aikikai.or.jp/aikido/history/" target="_blank" rel="noopener">合気会「沿革」</a>・<a href="https://www.aikikai.or.jp/aikido/message/" target="_blank" rel="noopener">「道主挨拶」</a>（2026-11-14 確認）／<a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">合気会 海外組織一覧</a>（2026年7月時点。点は国の代表都市）</p>' +
-  '<div class="sec">資料で分かれるところ</div>' +
-  '<p class="ri-p sub">北海道への移住：合気会の沿革は1912年、道主挨拶の略歴は1911年（応募）とする。ここでは1912年。／1947年の改組：資料が見つからず、1948年2月9日の改組・認可に一つにした。／1961年のハワイ：「第1回演武大会」は確かめられず（第1回は1960年の東京・山野ホール）、ホノルル合気道場の落成に際しての渡布とした（Aikido Journal・ハワイの合気会の記念誌による）。／海外の道場の設立年には、周年の記述から逆算したものを含む。</p>' +
-  '<p class="ri-p sub">掲載は植芝盛平と合気会に限ります。個人制作で、合気会の公式サイトではありません。</p>';
+document.getElementById('infoBody').innerHTML = T('sourcesHtml');
 infoBtn.onclick = () => { infoPanel.hidden = !infoPanel.hidden; infoBtn.classList.toggle('on', !infoPanel.hidden); };
 document.getElementById('infoClose').onclick = () => { infoPanel.hidden = true; infoBtn.classList.remove('on'); };
 const calLink = document.getElementById('calLink');
-if (CALENDAR_URL) calLink.href = CALENDAR_URL; else calLink.hidden = true;
+const CAL_URL = isEn ? CALENDAR_URL.replace('/ja/', '/en/') : CALENDAR_URL;
+if (CAL_URL) calLink.href = CAL_URL; else calLink.hidden = true;
 
 // ---------- タイムライン（万次郎版と同じ描き方：題・生涯バー・段・目盛り・カーソル）----------
 const tl = document.getElementById('tl'), SVGNS = 'http://www.w3.org/2000/svg';
@@ -904,9 +925,9 @@ function drawTL() {
     add('line', { x1: x, y1: 8, x2: x, y2: gb, stroke: 'rgba(255,255,255,.07)' });
     add('text', { x: x + 2, y: H - 3, fill: '#7d8ea2', 'font-size': 9, 'font-family': 'monospace' }, yr); }
   add('line', { x1: cl(xOf(LIFE_BAR.from)), y1: LY.life, x2: cl(xOf(LIFE_BAR.to)), y2: LY.life, stroke: OS_COLORS.focus, 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-opacity': .55 });
-  add('text', { x: 2, y: LY.title, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif' }, '植芝盛平 1883–1969');
+  add('text', { x: 2, y: LY.title, fill: '#9becff', 'font-size': 9, 'font-family': 'sans-serif' }, T('name') + ' 1883–1969');
   const gut = tlGutter();
-  [['年譜', LY.ev], ['海外', LY.sp], ['世界', LY.wd]].forEach(([s, y]) => add('text', gut
+  [[UI.lane[LANG][0], LY.ev], [UI.lane[LANG][1], LY.sp], [UI.lane[LANG][2], LY.wd]].forEach(([s, y]) => add('text', gut
     ? { x: -8, y: y + 3.2, 'text-anchor': 'end', fill: '#8193a8', 'font-size': 9, 'font-family': 'sans-serif' }
     : { x: 2, y: y + 3, fill: '#54657a', 'font-size': 8, 'font-family': 'sans-serif' }, s));
   // 年譜（青）。同じ年の行は少しずらす
@@ -918,7 +939,7 @@ function drawTL() {
   // 海外（ティール。初の指導は中抜き）
   SPREAD.forEach(d => { const x = xOf(d.year + 0.5); if (x < -4 || x > W + 4) return; const sel = State.sel === d.key;
     add('circle', { cx: x, cy: LY.sp, r: sel ? 4 : 2.8, fill: d.kind === 'found' ? OS_COLORS.spread : 'rgba(5,12,22,.6)', stroke: sel ? OS_COLORS.selRing : OS_COLORS.spread, 'stroke-width': sel ? 1.4 : 1.2 }, null,
-      () => { setSel(d.key); openFor(d.key, null); }, d.year + ' ' + d.name + '（' + (d.kind === 'found' ? '設立' : '初の指導') + '）'); });
+      () => { setSel(d.key); openFor(d.key, null); }, d.year + ' ' + d.name + par(d.kind === 'found' ? T('kFound') : T('kFirst'))); });
   // 世界（オレンジ：期間の線＋始まりの点。万次郎版と同じ）
   WORLDS.forEach(e => { const x1 = xOf(e.year), x2 = xOf((e.endYear || e.year) + 1); if (x2 < 0 || x1 > W) return; const sel = State.sel === 'world:' + e.id;
     add('line', { x1: cl(x1), y1: LY.wd, x2: cl(x2), y2: LY.wd, stroke: OS_COLORS.world, 'stroke-width': 2, 'stroke-opacity': .45 });
@@ -931,7 +952,7 @@ function drawTL() {
 on(drawTL);
 on(layoutLeftCol);
 const tlYear = document.getElementById('tlYear'), tlEra = document.getElementById('tlEra');
-on(() => { if (State.now) { tlYear.textContent = 'NOW'; tlEra.textContent = todayJa() + '（いまの行事）'; return; } tlYear.textContent = State.y + '年'; const c = chapterOfYear(State.y); tlEra.textContent = (c ? c.ja : '') + (State.y >= NOW_YEAR ? '（現在）' : ''); });
+on(() => { if (State.now) { tlYear.textContent = 'NOW'; tlEra.textContent = todayJa() + T('nowEra'); return; } tlYear.textContent = State.y + (isEn ? '' : '年'); const c = chapterOfYear(State.y); tlEra.textContent = chapName(c) + (State.y >= NOW_YEAR ? T('present') : ''); });
 let drag = null;
 const localX = e => e.clientX - tl.getBoundingClientRect().left;
 tl.addEventListener('pointerdown', e => { if (State.now) return; const x = localX(e); drag = { mode: Math.abs(xOf(State.y + 0.5) - x) < 10 ? 'cursor' : 'pan', x, vp: { ...State.vp }, moved: false }; tl.setPointerCapture(e.pointerId); });
@@ -971,26 +992,28 @@ playBtn.onclick = () => {
 // 見本（sample: true）は公開の画面に出さない。確かめの時だけ ?samples=1。今日を変えて試す時は ?today=YYYY-MM-DD。
 const QS = new URLSearchParams(location.search);
 const SHOW_SAMPLES = QS.get('samples') === '1';
-const TYPE_JA = { embu: '演武会', seminar: '講習会', anniversary: '周年記念', training: '合宿・研修', exchange: '交流', ceremony: '奉納・祭典', other: 'その他' };
-const STATE_JA = { scheduled: '予定', changed: '変更あり', cancelled: '中止', ended: '終了' };
-const WD = ['日', '月', '火', '水', '木', '金', '土'];
+const TYPE_JA = UI.types[LANG];
+const STATE_JA = UI.states[LANG];
+const WD = isEn ? ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] : ['日', '月', '火', '水', '木', '金', '土'];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 let EVENTS = [], EV_STATUS = 'loading', EV_HIDDEN = 0;
 const TODAY = /^\d{4}-\d{2}-\d{2}$/.test(QS.get('today') || '') ? new Date(QS.get('today') + 'T12:00:00') : new Date();
 const TODAY0 = new Date(TODAY.getFullYear(), TODAY.getMonth(), TODAY.getDate());
 const tOfDate = d => d.getFullYear() + (d.getMonth() + (d.getDate() - 1) / 31) / 12; // 年代バーの位置（小数の年）
 const parseDay = s => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null; };
-const evTitle = e => e.title ? (e.title.lang === 'ja' ? e.title.orig : (e.title.i18n && e.title.i18n.ja) || e.title.orig) : e.id;
+const evTitle = e => !e.title ? e.id : isEn ? (e.title.lang === 'en' ? e.title.orig : (e.title.i18n && e.title.i18n.en) || e.title.orig) : (e.title.lang === 'ja' ? e.title.orig : (e.title.i18n && e.title.i18n.ja) || e.title.orig);
 const evStart = e => parseDay(e.start), evEnd = e => parseDay(e.end) || evStart(e);
 const evPast = e => evEnd(e) < TODAY0;
-const dayJa = d => d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + WD[d.getDay()] + '）';
-function todayJa() { return '今日 ' + dayJa(TODAY); }
+const dayJa = d => isEn ? WD[d.getDay()] + ' ' + d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear() : d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日（' + WD[d.getDay()] + '）';
+function todayJa() { return T('today') + ' ' + dayJa(TODAY); }
 function whenJa(e) { // 開催地の時刻のまま
   const a = evStart(e), b = evEnd(e), tm = /T(\d{2}:\d{2})/.exec(e.start || '');
   let s = dayJa(a) + (tm ? ' ' + tm[1] : '');
-  if (b && +b !== +a) s += ' 〜 ' + (b.getFullYear() !== a.getFullYear() ? b.getFullYear() + '年' : '') + (b.getMonth() + 1) + '月' + b.getDate() + '日（' + WD[b.getDay()] + '）';
+  if (b && +b !== +a) s += isEn ? ' – ' + dayJa(b) : ' 〜 ' + (b.getFullYear() !== a.getFullYear() ? b.getFullYear() + '年' : '') + (b.getMonth() + 1) + '月' + b.getDate() + '日（' + WD[b.getDay()] + '）';
   return s;
 }
-const placeJa = e => [e.place && e.place.name, e.place && e.place.city].filter(Boolean).join(' ・ ');
+const JP_CHARS = /[぀-ヿ一-鿿]/;
+const placeJa = e => [e.place && !(isEn && JP_CHARS.test(e.place.name || '')) && e.place.name, e.place && (isEn ? e.place.city_en || e.place.city : e.place.city)].filter(Boolean).join(SEP); // 英語では、日本語だけの会場名は出さず市町村の英語名だけ
 function inWindow(e) {
   const a = evStart(e); if (!a) return false;
   const from = new Date(TODAY0); from.setDate(from.getDate() - NOW_WINDOW.pastDays);
@@ -1019,34 +1042,34 @@ nowBtn.onclick = () => setNow(!State.now);
 function setSpSec(now) {
   if (now) return;
   document.getElementById('wlPanel').classList.remove('nowmode');
-  document.getElementById('spSec').innerHTML = 'Abroad<span class="secsub">海外への広がり（この年まで）</span>';
+  document.getElementById('spSec').innerHTML = T('spSec');
 }
-const calA = label => '<a href="' + esc(CALENDAR_URL) + '" target="_blank" rel="noopener" style="color:#fff3cf">' + label + '</a>';
+const calA = label => '<a href="' + esc(CAL_URL) + '" target="_blank" rel="noopener" style="color:#fff3cf">' + label + '</a>';
 // NOW の左：上の枠＝国内、下の枠＝海外（北斎版の HOLDINGS と同じく、枠は増やさずに意味を切り替える）。
 // これからの行事を日付の順に。この1か月に終わった行事は下に淡く
 function nowLists() {
   const top = document.getElementById('worldPanel'), bot = document.getElementById('wlPanel');
   top.classList.add('nowmode'); bot.classList.add('nowmode');
-  document.getElementById('worldSec').innerHTML = 'Japan<span class="secsub">国内の行事</span>';
-  document.getElementById('spSec').innerHTML = 'Overseas<span class="secsub">海外の行事</span>';
+  document.getElementById('worldSec').innerHTML = T('jpSec');
+  document.getElementById('spSec').innerHTML = T('ovSec');
   worldList.innerHTML = ''; spList.innerHTML = '';
-  if (EV_STATUS !== 'ok') { worldList.appendChild(mk('div', 'wl-empty', EV_STATUS === 'loading' ? '行事を読み込んでいます…' : '行事を読み込めませんでした。' + calA('行事カレンダー ↗'))); return; }
+  if (EV_STATUS !== 'ok') { worldList.appendChild(mk('div', 'wl-empty', EV_STATUS === 'loading' ? T('evLoading') : T('evFail') + calA(T('calLong')))); return; }
   const list = nowEvents();
-  if (!list.length) { worldList.appendChild(mk('div', 'wl-empty', '公開できる行事はまだ載っていません' + (EV_HIDDEN ? '（確かめ中 ' + EV_HIDDEN + '件）' : '') + '。' + calA('行事カレンダー ↗'))); return; }
+  if (!list.length) { worldList.appendChild(mk('div', 'wl-empty', T('evNone') + (EV_HIDDEN ? fill(T('evChecking'), { n: EV_HIDDEN }) : '') + (isEn ? '. ' : '。') + calA(T('calLong')))); return; }
   fillEvents(worldList, list.filter(e => e.place.country === 'JP'));
   fillEvents(spList, list.filter(e => e.place.country !== 'JP'));
 }
 function fillEvents(box, list) {
-  if (!list.length) { box.appendChild(mk('div', 'wl-empty', 'この期間の行事はありません。')); return; }
+  if (!list.length) { box.appendChild(mk('div', 'wl-empty', T('evNoneHere'))); return; }
   const row = e => {
     const r = mk('div', 'evi' + (evPast(e) ? ' past' : '') + (e.event_state === 'cancelled' ? ' cancelled' : '') + (State.sel === 'evt:' + e.id ? ' sel' : ''),
-      '<div><span class="d">' + esc(whenJa(e)) + '</span><span class="k">' + esc(TYPE_JA[e.type] || 'その他') + '</span></div><div class="t">' + esc(evTitle(e)) + '</div><div class="w">' + esc(placeJa(e)) + '</div>');
+      '<div><span class="d">' + esc(whenJa(e)) + '</span><span class="k">' + esc(TYPE_JA[e.type] || TYPE_JA.other) + '</span></div><div class="t">' + esc(evTitle(e)) + '</div><div class="w">' + esc(placeJa(e)) + '</div>');
     r.onclick = () => { const src = frozen(r); State.sel = 'evt:' + e.id; emit(); openEvent(e.id, src); };
     return r;
   };
   const up = list.filter(e => !evPast(e)), past = list.filter(evPast);
   up.forEach(e => box.appendChild(row(e)));
-  if (past.length) { box.appendChild(mk('div', 'ev-sub', '終わった行事')); past.forEach(e => box.appendChild(row(e))); }
+  if (past.length) { box.appendChild(mk('div', 'ev-sub', T('evPast'))); past.forEach(e => box.appendChild(row(e))); }
 }
 function nowWorld() { // NOW の地球：いまの行事（金）を前に。合気会の海外組織の国・海外への広がり・生涯の拠点は淡く残す
   const out = [];
@@ -1062,13 +1085,13 @@ function nowWorld() { // NOW の地球：いまの行事（金）を前に。合
 function openEvent(id, src) {
   const e = EVENTS.find(x => x.id === id); if (!e) return;
   const a = evStart(e), ym = a.getFullYear() + '-' + String(a.getMonth() + 1).padStart(2, '0');
-  const state = evPast(e) ? (e.held_confirmed ? '終了（開催を確認）' : '終了（開催は未確認）') : (STATE_JA[e.event_state] || '予定');
-  const links = '<div class="ev-links"><a class="main" href="' + esc(CALENDAR_URL + '?ym=' + ym) + '" target="_blank" rel="noopener">カレンダーで確認 ↗</a>' +
-    (e.url ? '<a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">公式の告知 ↗</a>' : '') +
-    (!evPast(e) ? '<a href="' + esc(ICS_DIR + e.id + '.ics') + '">予定に追加（.ics）</a>' : '') + '</div>';
-  const kv = [['日時', whenJa(e) + '（開催地の時刻）'], ['場所', placeJa(e)], ['主催', e.organizer && e.organizer.name], ['種類', TYPE_JA[e.type] || 'その他'], ['状態', state]]
+  const state = evPast(e) ? (e.held_confirmed ? T('endedOk') : T('endedNo')) : (STATE_JA[e.event_state] || STATE_JA.scheduled);
+  const links = '<div class="ev-links"><a class="main" href="' + esc(CAL_URL + '?ym=' + ym) + '" target="_blank" rel="noopener">' + T('calCheck') + '</a>' +
+    (e.url ? '<a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">' + T('official') + '</a>' : '') +
+    (!evPast(e) ? '<a href="' + esc(ICS_DIR + e.id + '.ics') + '">' + T('addIcs') + '</a>' : '') + '</div>';
+  const kv = [[T('kvWhen'), whenJa(e) + T('localTime')], [T('kvWhere'), placeJa(e)], [T('kvOrg'), e.organizer && e.organizer.name], [T('kvType'), TYPE_JA[e.type] || TYPE_JA.other], [T('kvState'), state]]
     .filter(x => x[1]).map(([k, v]) => '<div class="kv"><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join('');
-  showCard({ kind: 'event', tag: 'EVENT / いまの行事' + (e.sample ? '（見本）' : ''), title: evTitle(e), sub: whenJa(e), html: kv + links, look: 'evt:' + e.id }, src);
+  showCard({ kind: 'event', tag: T('tagEvent') + (e.sample ? T('sample') : ''), title: evTitle(e), sub: whenJa(e), html: kv + links, look: 'evt:' + e.id }, src);
 }
 function drawNowTL() { // NOW の年代バー：今日の1か月前〜13か月先を月の目盛りで。行事は金の点（押すとカード。年もカメラも動かさない）
   const W = tlW(), H = LY.H, yb = 36;
@@ -1079,13 +1102,13 @@ function drawNowTL() { // NOW の年代バー：今日の1か月前〜13か月�
     if (title) { const tt = document.createElementNS(SVGNS, 'title'); tt.textContent = title; el.appendChild(tt); }
     if (onDown) { el.style.cursor = 'pointer'; el.addEventListener('pointerdown', ev => { ev.stopPropagation(); ev.preventDefault(); onDown(ev); }); } else el.setAttribute('pointer-events', 'none');
     tl.appendChild(el); return el; };
-  add('text', { x: 2, y: 11, fill: '#f2dcaa', 'font-size': 9, 'font-family': 'sans-serif' }, 'NOW ・ いまの行事（行事カレンダーと同じデータ）');
+  add('text', { x: 2, y: 11, fill: '#f2dcaa', 'font-size': 9, 'font-family': 'sans-serif' }, T('nowBar'));
   for (let k = Math.ceil(from * 12); k <= to * 12; k++) { const x = X(k / 12), mo = ((k % 12) + 12) % 12 + 1, yr = Math.floor(k / 12);
     add('line', { x1: x, y1: 18, x2: x, y2: H - 14, stroke: mo === 1 ? 'rgba(255,255,255,.16)' : 'rgba(255,255,255,.07)' });
-    add('text', { x: x + 2, y: H - 3, fill: mo === 1 ? '#9db4c8' : '#6b7c90', 'font-size': 9, 'font-family': 'monospace' }, mo === 1 ? yr + '年' : mo + '月'); }
+    add('text', { x: x + 2, y: H - 3, fill: mo === 1 ? '#9db4c8' : '#6b7c90', 'font-size': 9, 'font-family': 'monospace' }, mo === 1 ? yr + (isEn ? '' : '年') : (isEn ? MON[mo - 1] : mo + '月')); }
   add('line', { x1: 0, y1: yb, x2: W, y2: yb, stroke: 'rgba(224,194,122,.25)', 'stroke-width': 2 });
   const gut = tlGutter();
-  add('text', gut ? { x: -8, y: yb + 3.2, 'text-anchor': 'end', fill: '#c9b27a', 'font-size': 9, 'font-family': 'sans-serif' } : { x: 2, y: yb - 6, fill: '#8a7a55', 'font-size': 8, 'font-family': 'sans-serif' }, '行事');
+  add('text', gut ? { x: -8, y: yb + 3.2, 'text-anchor': 'end', fill: '#c9b27a', 'font-size': 9, 'font-family': 'sans-serif' } : { x: 2, y: yb - 6, fill: '#8a7a55', 'font-size': 8, 'font-family': 'sans-serif' }, T('laneEvent'));
   const byDay = new Map(); nowEvents().forEach(e => { const k = e.start.slice(0, 10); if (!byDay.has(k)) byDay.set(k, []); byDay.get(k).push(e); });
   byDay.forEach(list => list.forEach((e, j) => { const a = evStart(e), b = evEnd(e), x1 = X(tOfDate(a)) + (j - (list.length - 1) / 2) * 6, sel = State.sel === 'evt:' + e.id;
     if (+b !== +a) add('line', { x1: X(tOfDate(a)), y1: yb, x2: X(tOfDate(b)) + 2, y2: yb, stroke: '#e0c27a', 'stroke-width': 3, 'stroke-opacity': .6 });
@@ -1094,8 +1117,35 @@ function drawNowTL() { // NOW の年代バー：今日の1か月前〜13か月�
   const cx = X(t0); // 今日
   add('line', { x1: cx, y1: 16, x2: cx, y2: H - 14, stroke: '#fff3cf', 'stroke-width': 1.4 });
   add('polygon', { points: (cx - 4) + ',16 ' + (cx + 4) + ',16 ' + cx + ',23', fill: '#fff3cf' });
-  add('text', { x: cx + 5, y: 24, fill: '#fff3cf', 'font-size': 9, 'font-family': 'sans-serif' }, '今日');
+  add('text', { x: cx + 5, y: 24, fill: '#fff3cf', 'font-size': 9, 'font-family': 'sans-serif' }, T('today'));
 }
+
+// ---------- 固定の文言（英語のときだけ差し替える。日本語は HTML に書いてある）と言語ボタン ----------
+document.documentElement.lang = LANG; document.title = T('pageTitle');
+{
+  const langBtn = document.getElementById('langBtn'), u = new URL(location.href);
+  if (isEn) u.searchParams.delete('lang'); else u.searchParams.set('lang', 'en');
+  langBtn.href = u.pathname + u.search; langBtn.textContent = T('langBtn'); langBtn.title = T('langTitle'); langBtn.hreflang = isEn ? 'ja' : 'en';
+}
+if (isEn) {
+  const set = (sel, key, how = 'text') => document.querySelectorAll(sel).forEach(el => {
+    const v = T(key); if (how === 'html') el.innerHTML = v; else if (how === 'title') { el.title = v; el.setAttribute('aria-label', v); } else if (how === 'aria') el.setAttribute('aria-label', v); else if (how === 'alt') el.alt = v; else el.textContent = v; });
+  set('.attrib', 'attrib'); set('.title h1', 'name'); document.querySelector('.title p').textContent = 'HISTORY OS · AIKIDO FOCUS'; set('.fp-name', 'name'); set('#fpPortrait', 'portraitAlt', 'alt');
+  set('#curLab', 'curLab'); set('.fp-lifehead', 'lifeHead', 'html'); set('#infoBtn', 'sources'); set('#infoPanel > .sec', 'sources');
+  set('#calLink .cal-long', 'calLong'); set('#calLink .cal-short', 'calShort'); set('#calLink', 'calTitle', 'title');
+  set('#infoClose', 'close', 'aria'); set('#dcClose', 'close', 'aria'); set('#dcAct', 'look');
+  set('#prevY', 'prevY', 'title'); set('#nextY', 'nextY', 'title'); set('#playBtn', 'play', 'title'); set('#zoomIn', 'zoomIn', 'title'); set('#zoomOut', 'zoomOut', 'title');
+  set('#nowBtn', 'nowBtn'); document.getElementById('nowBtn').title = T('nowTitle'); set('.tl-hint', 'hint');
+  if (!document.body.classList.contains('fp-folded')) fpFold.textContent = T('fold');
+  const lg = document.querySelectorAll('#legend > div'), keys = ['lgLife', 'lgPoint', 'lgSpread', 'lgWorld', 'lgNet', 'lgEvent'];
+  keys.forEach((k, i) => { const d = lg[i]; if (!d) return; const icon = d.firstElementChild; d.textContent = T(k); if (icon) d.prepend(icon); });
+  if (lg[6]) lg[6].innerHTML = '<span class="lg-term">' + T('lgTerm') + '</span>' + T('lgTermTail');
+  renderChapterBtn();
+}
+
+// スマホ：凡例の行数（言語で変わる）に合わせて、年代バーを凡例の上に置く
+function placeTimeline() { const tb = document.getElementById('timelineBar'); tb.style.bottom = innerWidth <= 640 ? (document.getElementById('legend').offsetHeight + 10) + 'px' : ''; }
+addEventListener('resize', placeTimeline); placeTimeline();
 
 emit();
 window.__ueshiba = { State, world }; // 確かめ用
