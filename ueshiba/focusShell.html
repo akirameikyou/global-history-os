@@ -431,6 +431,12 @@
   .cal-short{display:none}
   .lg-dot.spread{background:var(--c-spread)} .lg-dot.net{background:rgba(238,243,248,.45)} .lg-dot.world{background:var(--c-world)}
   .lg-term{color:var(--c-term);border-bottom:1px dotted rgba(183,156,255,.7)}
+  /* 生涯の拠点の印：画面の上で一定の大きさ（寄るほど地点が正確に見える）。いまいる所＝明るく大きめ、去った所＝淡く小さく */
+  .lm{position:relative;width:16px;height:16px;pointer-events:auto;cursor:pointer}
+  .lm .d{position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(102,224,255,.55);box-shadow:0 0 0 1.5px rgba(5,12,22,.7)}
+  .lm.now .d{width:10px;height:10px;margin:-5px 0 0 -5px;background:#c8f4ff;box-shadow:0 0 0 2px rgba(5,12,22,.75),0 0 10px rgba(102,224,255,.7)}
+  .lm.sel .d{box-shadow:0 0 0 2px #fff,0 0 12px rgba(200,244,255,.9)}
+  .lm.faint .d{background:rgba(102,224,255,.35)}
   /* NOW（北斎版と同じ札）と、いまの行事（金。行事カレンダーと同じ色） */
   :root{ --c-event:#e0c27a; --c-event-br:#f2dcaa; }
   #nowBtn{background:rgba(36,27,18,.8);border:1px solid var(--amber);color:var(--amber-soft);border-radius:6px;height:26px;padding:0 10px;font-size:10.5px;cursor:pointer;white-space:nowrap;font-family:inherit}
@@ -569,10 +575,10 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
-import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js?v=20261115b';
-import { ueshibaPlaces as PLACES } from '../data/ueshiba_places.js?v=20261115b';
-import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261115b';
-import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261115b';
+import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js?v=20261115c';
+import { ueshibaPlaces as PLACES, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115c';
+import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261115c';
+import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261115c';
 import { CALENDAR_URL, EVENTS_URL, ICS_DIR, NOW_WINDOW } from '../data/ueshiba_config.js?v=20261115a';
 
 // ---------- 定数（万次郎版と同じ約束）----------
@@ -621,11 +627,56 @@ function setSel(key) { State.sel = key; emit(); }
 const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16').width(innerWidth).height(innerHeight)
-  .pointsData([]).pointLat('lat').pointLng('lng').pointColor('color').pointRadius('r').pointAltitude('alt').pointResolution(16).pointsTransitionDuration(0)
+  .pointsData([]).pointLat('lat').pointLng('lng').pointColor('color').pointRadius(d => d.r * GLB.k).pointAltitude('alt').pointResolution(16).pointsTransitionDuration(0)
   .pointLabel(d => '<div style="background:rgba(10,16,26,.92);border:1px solid rgba(255,255,255,.12);border-radius:5px;padding:3px 8px;font-size:11px;color:#eef3f8">' + esc(d.label) + '</div>')
   .onPointClick((d, ev) => { setSel(d.key); openFor(d.key, ev ? { x: ev.clientX, y: ev.clientY } : null); }) // 押す＝選ぶだけ。カメラは動かさない
+  .arcsData([]).arcStartLat('sLat').arcStartLng('sLng').arcEndLat('eLat').arcEndLng('eLng').arcColor('color').arcStroke(d => d.stroke * GLB.k).arcAltitude('alt').arcDashLength('dash').arcDashGap('gap').arcDashAnimateTime(0).arcsTransitionDuration(0)
+  .htmlElementsData([]).htmlLat('lat').htmlLng('lng').htmlAltitude(0.004).htmlElement(d => d.el)
   .ringsData([]).ringLat('lat').ringLng('lng').ringColor(d => t => (d.ring || 'rgba(200,244,255,') + (1 - t) + ')').ringMaxRadius(2.4).ringPropagationSpeed(1.6).ringRepeatPeriod(1300);
 world.pointOfView({ lat: 37, lng: 138, altitude: 1.9 }, 0);
+// 寄ると点と線を小さくする（地球の上の大きさで描くので、寄ると点が町より大きくなる。万次郎版の applyGlobeScale と同じ考え）
+const GLB = { k: 1, at: 1.9, min: 0.35 };
+function applyGlobeScale(alt) {
+  const k = clamp(alt / GLB.at, GLB.min, 1); if (Math.abs(k - GLB.k) < 0.04) return;
+  GLB.k = k; world.pointRadius(d => d.r * GLB.k).arcStroke(d => d.stroke * GLB.k);
+}
+if (typeof world.onZoom === 'function') world.onZoom(p => applyGlobeScale(p.altitude));
+// 滞在と移動：その年にいる所（旅の年は旅先）・去った所・移動の線
+const stayAt = y => { const t = STAYS.find(s => s.trip && s.from <= y && y <= s.to); return t || STAYS.find(s => !s.trip && s.from <= y && y <= s.to) || null; };
+// 生涯の拠点：HTML の小さな印（画面の上で一定の大きさ）。地球の準備ができてから置く（万次郎版と同じ注意）
+let globeReady = false, pendingHtml = [];
+world.onGlobeReady(() => { globeReady = true; world.htmlElementsData(pendingHtml); });
+setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(() => { if (!globeReady) { globeReady = true; world.htmlElementsData(pendingHtml); } })), 1500);
+const lmCache = new Map();
+function lmObj(id) {
+  let o = lmCache.get(id); if (o) return o;
+  const p = placeById(id), el = mk('div', 'lm', '<span class="d"></span>');
+  el.addEventListener('pointerdown', e => e.stopPropagation());
+  el.addEventListener('click', e => { e.stopPropagation(); setSel('life:' + id); openFor('life:' + id, { x: e.clientX, y: e.clientY }); });
+  o = { id, lat: p.lat, lng: p.lng, el }; lmCache.set(id, o); return o;
+}
+function setLifeHtml(list) { pendingHtml = list; if (globeReady) world.htmlElementsData(list); }
+function lifeHtml(y, faintAll) {
+  const cur = !faintAll && y <= 1969 ? stayAt(y) : null, seen = new Set();
+  (faintAll ? STAYS : STAYS.filter(s => s.from <= y)).forEach(s => seen.add(s.place));
+  if (State.sel && State.sel.startsWith('life:')) seen.add(State.sel.slice(5)); // 選んだ拠点は、まだ先の年でも出す
+  return [...seen].filter(id => placeById(id)).map(id => { const o = lmObj(id), p = placeById(id), now = !!cur && cur.place === id;
+    o.el.className = 'lm' + (now ? ' now' : '') + (faintAll ? ' faint' : '') + (State.sel === 'life:' + id ? ' sel' : '');
+    o.el.title = p.title + (now ? '（いまいる所）' : ''); return o; });
+}
+// 移動の順：滞在を年の順に。旅は「行って戻る」
+const MOVES = (() => { const out = []; let base = null;
+  [...STAYS].sort((a, b) => a.from - b.from || (a.trip ? 1 : -1)).forEach(s => {
+    if (s.trip) { if (base) { out.push({ from: base, to: s.place, year: s.from }); out.push({ from: s.place, to: base, year: s.to + 0.5 }); } return; }
+    if (base && base !== s.place) out.push({ from: base, to: s.place, year: s.from });
+    base = s.place; });
+  return out; })();
+function moveArcs(y) {
+  const done = MOVES.filter(m => m.year <= y && y <= 1970); if (!done.length) return []; // 旅の帰りの線は、旅の翌年から
+  const last = done[done.length - 1];
+  return done.map(m => { const a = placeById(m.from), b = placeById(m.to); const latest = m === last && Math.floor(m.year) === y;
+    return { sLat: a.lat, sLng: a.lng, eLat: b.lat, eLng: b.lng, color: latest ? 'rgba(200,244,255,.9)' : 'rgba(102,224,255,.35)', stroke: latest ? 0.45 : 0.25, alt: 0.06, dash: latest ? 1 : 0.3, gap: latest ? 0 : 0.2 }; });
+}
 world.controls().autoRotate = false;
 addEventListener('resize', () => { world.width(innerWidth).height(innerHeight); drawTL(); layoutLeftCol(); });
 function keyObj(key) {
@@ -644,13 +695,14 @@ function renderWorld() { // 描画だけ。カメラは触らない
   WORLDS.filter(w => w.year <= y && y <= (w.endYear || w.year) && Number.isFinite(w.lat)).forEach( // 場所を持たない出来事（世界的な流行）は地球に出さない
 w => out.push({ key: 'world:' + w.id, lat: w.lat, lng: w.lng, label: w.year + ' ' + w.title, color: 'rgba(230,148,69,.9)', r: 0.3, alt: 0.01 }));
   SPREAD.filter(d => d.year <= y).forEach(d => out.push({ key: d.key, lat: d.lat, lng: d.lng, label: d.year + ' ' + d.name, color: d.kind === 'found' ? OS_COLORS.spread : 'rgba(87,201,192,.55)', r: d.kind === 'found' ? 0.28 : 0.22, alt: 0.009 }));
-  PLACES.filter(p => +p.year <= y).forEach(p => out.push({ key: 'life:' + p.id, lat: p.lat, lng: p.lng, label: p.title, color: OS_COLORS.focus, r: 0.34, alt: 0.012 }));
+  setLifeHtml(lifeHtml(y)); // 生涯の拠点：いまいる所は明るく、去った所は淡く（HTML の印）
   // 選んだ点（まだ先の年でも、選んだことが分かるように出す）
   const so = State.sel && keyObj(State.sel);
-  if (so && Number.isFinite(so.lat) && !out.some(p => p.key === State.sel)) out.push({ key: State.sel, lat: so.lat, lng: so.lng, label: so.title || so.name || so.country, color: OS_COLORS.focus, r: 0.3, alt: 0.01 });
+  if (so && Number.isFinite(so.lat) && !State.sel.startsWith('life:') && !out.some(p => p.key === State.sel)) out.push({ key: State.sel, lat: so.lat, lng: so.lng, label: so.title || so.name || so.country, color: OS_COLORS.focus, r: 0.3, alt: 0.01 });
   const pts = out.map(p => p.key === State.sel ? { ...p, color: p.key.startsWith('world') ? OS_COLORS.worldBr : p.key.startsWith('life') ? OS_COLORS.focusBr : OS_COLORS.spreadBr, r: p.r * 1.6, alt: 0.03 } : p);
   world.pointsData(pts);
-  const s = pts.find(p => p.key === State.sel);
+  world.arcsData(State.now ? [] : moveArcs(y));
+  const s = pts.find(p => p.key === State.sel) || (State.sel && State.sel.startsWith('life:') && so ? { key: State.sel, lat: so.lat, lng: so.lng } : null);
   world.ringsData(s ? [{ ...s, ring: s.key.startsWith('world') ? 'rgba(240,181,120,' : s.key.startsWith('life') ? 'rgba(200,244,255,' : 'rgba(158,232,225,' }] : []);
 }
 on(renderWorld);
@@ -725,10 +777,10 @@ on(() => {
   const y = State.y; curVal.onclick = null; curVal.classList.remove('click');
   if (y < 1883) { curVal.textContent = '—'; curKind.textContent = '（誕生前）'; return; }
   if (y > 1969) { curVal.textContent = '—'; curKind.textContent = '（没後）'; return; }
-  let last = null; CHRONO.forEach(c => { if (c.year <= y && c.eventId) last = c; });
+  const st = stayAt(y), last = st ? { eventId: st.place } : null;
   const pl = last && placeById(last.eventId); if (!pl) { curVal.textContent = '—'; curKind.textContent = ''; return; }
   curVal.textContent = pl.title; curVal.classList.add('click'); curVal.onclick = () => { setSel('life:' + pl.id); openFor('life:' + pl.id, curVal); };
-  curKind.textContent = pl.placeName;
+  curKind.textContent = pl.placeName + ' ・ ' + (st.trip ? st.from + '年の旅' : '滞在 ' + st.from + '–' + st.to);
 });
 const lifeList = document.getElementById('lifeList'), focusPanel = document.getElementById('focusPanel');
 CHRONO.forEach((c, i) => {
@@ -1000,7 +1052,7 @@ function nowWorld() { // NOW の地球：いまの行事（金）を前に。合
   const out = [];
   NETWORK.forEach(d => out.push({ key: 'net:' + d.id, lat: d.lat, lng: d.lng, label: d.country, color: 'rgba(238,243,248,.3)', r: 0.14, alt: 0.006 }));
   SPREAD.forEach(d => out.push({ key: d.key, lat: d.lat, lng: d.lng, label: d.year + ' ' + d.name, color: 'rgba(87,201,192,.35)', r: 0.2, alt: 0.008 }));
-  PLACES.forEach(p => out.push({ key: 'life:' + p.id, lat: p.lat, lng: p.lng, label: p.title, color: 'rgba(102,224,255,.45)', r: 0.26, alt: 0.009 }));
+  setLifeHtml(lifeHtml(State.y, true)); world.arcsData([]);
   nowEvents().forEach(e => out.push({ key: 'evt:' + e.id, lat: e.place.lat, lng: e.place.lng, label: whenJa(e) + ' ' + evTitle(e), color: evPast(e) || e.event_state === 'cancelled' ? 'rgba(224,194,122,.45)' : '#e0c27a', r: 0.36, alt: 0.016 }));
   const pts = out.map(p => p.key === State.sel ? { ...p, color: p.key.startsWith('evt') ? '#fff3cf' : OS_COLORS.focusBr, r: p.r * 1.6, alt: 0.035 } : p);
   world.pointsData(pts);
