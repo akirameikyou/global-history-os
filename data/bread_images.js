@@ -133,5 +133,65 @@ export const breadImages = [
   "license": "Public domain",
   "license_url": "",
   "page": "https://commons.wikimedia.org/wiki/File:Manjiro_Nakahama_circa_1880,_Millicent_Library_collection_(cropped).jpg"
+ },
+ {
+  "id": "gen_shubayqa",
+  "target": "ev_shubayqa",
+  "file": "img/gen_shubayqa.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "農耕以前の炉で、野生の穀物と塊茎の生地を平たく焼く",
+  "basis": "Arranz-Otaegui ほか「Archaeobotanical evidence reveals the origins of bread 14,400 years ago in northeastern Jordan」PNAS 2018",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-15",
+  "prompt_ja": ""
+ },
+ {
+  "id": "gen_shattering",
+  "target": "ev_cultivation",
+  "file": "img/gen_shattering.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "落ちる穂（野生型・左）と落ちない穂（栽培型・右）。円は穂軸の節の拡大",
+  "basis": "Fuller「Contrasting patterns in crop domestication and domestication rates」Annals of Botany 2007",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-15",
+  "prompt_ja": ""
+ },
+ {
+  "id": "gen_lineage",
+  "target": "bread_wheat",
+  "file": "img/gen_lineage.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "パン小麦ができるまで。A の草と、まだ見つかっていない B の草（点線）から野生エンマー、栽培エンマーにタルホコムギ（D）が加わってパン小麦",
+  "basis": "Levy & Feldman「Evolution and origin of bread wheat」Plant Cell 2022／Nature 2024 のパン小麦 D ゲノム研究",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-15",
+  "prompt_ja": ""
+ },
+ {
+  "id": "gen_egypt",
+  "target": "ev_egypt_breadbeer",
+  "file": "img/gen_egypt.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "古代エジプトの製パン（上）と醸造（下）の流れ",
+  "basis": "Samuel「Investigation of ancient Egyptian baking and brewing methods by correlative microscopy」Science 1996",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-15",
+  "prompt_ja": ""
+ },
+ {
+  "id": "gen_sakadane",
+  "target": "ev_anpan",
+  "file": "img/gen_sakadane.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "米と麹の酒種で小麦の生地を膨らませる。同じ麹から味噌・醤油へ",
+  "basis": "日本洋菓子協会連合会「日本洋菓子史」、木村屋の沿革（酒種を使ったあんパン）",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-15",
+  "prompt_ja": ""
  }
 ];

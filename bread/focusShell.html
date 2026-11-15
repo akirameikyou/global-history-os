@@ -279,7 +279,7 @@ import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_even
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261115a';
-import { breadImages as IMAGES } from '../data/bread_images.js?v=20261115b';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261115c';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -461,7 +461,9 @@ $('traceBtn').onclick = () => {
 function figHtml(target) {
   const im = IMAGES.filter(i => i.target === target);
   if (!im.length) return '';
-  const i = im.find(x => !x.generated) || im[0]; // 実物があれば実物を先に
+  return [...im].sort((a, b) => a.generated - b.generated).map(one).join(''); // 実物を先に、想像図はあとに
+}
+function one(i) {
   if (i.generated) return `<figure class="dc-fig gen"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}（想像図）" loading="lazy"><span class="gen-mark">想像図</span>
     <figcaption>想像図（生成画像）：${esc(i.caption_ja)}<br>基づいた資料：${esc(i.basis)}<br>制作：${esc(i.made_by)}（${esc(i.made_on)}）。実物の写真や当時の資料ではありません。</figcaption></figure>`;
   return `<figure class="dc-fig"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}" loading="lazy">
