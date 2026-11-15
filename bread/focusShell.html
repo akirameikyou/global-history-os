@@ -205,6 +205,7 @@
   .rs h4{margin:10px 0 3px;font-size:9.5px;letter-spacing:.16em;color:var(--dim);font-weight:400}
   .rs p{margin:0;font-size:11.5px;line-height:1.7;color:rgba(238,243,248,.88)}
   .rs ul{margin:0;padding-left:16px;font-size:11px;line-height:1.6}
+  .rs .faith{border-left:2px solid #d8b4f0;padding-left:10px;color:#ece0f6}
   .rs .note{font-size:10px;color:var(--est);margin-top:8px;line-height:1.55}
   /* 画像：実物は右下に作者・ライセンス。生成画像は必ず左上に「◇ 想像図」の印（実物と見分けるための決まった印） */
   .dc-fig{margin:0;position:relative;border-bottom:1px solid var(--rule);background:#03070d}
@@ -310,12 +311,12 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
-import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261115a';
+import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116c';
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
-import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261115a';
+import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
 import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116b';
-import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116b';
+import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116c';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -567,8 +568,11 @@ function select(id) {
     `<div>${e.lenses.map(l => `<span class="chip" style="--lc:${LENS[l]?.color}">${esc(LENS[l]?.name || l)}</span>`).join('')}</div>` +
     `<details class="research"><summary>研究の段 ▾　だれが、どんな証拠で、どこまで言えているか</summary><div class="rs">
       <h4>学問</h4><div>${e.field.map(f => `<span class="fld">${esc(FIELDS[f] || f)}</span>`).join('')}</div>
+      ${e.research.bible_ja ? `<h4>文献の記述</h4><p>${esc(e.research.bible_ja)}</p>` : ''}
       <h4>確かめられたこと</h4><p>${esc(e.research.fact_ja)}</p>
-      <h4>わかっていないこと</h4><p>${esc(e.research.unknown_ja)}</p>
+      ${e.research.inference_ja ? `<h4>推測</h4><p>${esc(e.research.inference_ja)}</p>` : ''}
+      <h4>わかっていないこと・学説が割れること</h4><p>${esc(e.research.unknown_ja)}</p>
+      ${e.research.faith_ja ? `<h4>信仰の言葉として</h4><p class="faith">${esc(e.research.faith_ja)}</p>` : ''}
       <h4>知られた年</h4><p>${e.known.year ? esc(e.known.year) + '年　' : ''}${esc(e.known.label)}</p>
       ${L && L.person_qid ? `<h4>人物年鑑</h4><p>${esc(L.person_ja)}（Wikidata ${esc(L.person_qid)}）</p>` : ''}
       <h4>出典</h4><ul>${e.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>（${esc(KIND_JA[s.kind] || s.kind)}・確認 ${esc(s.checked)}）</li>`).join('')}</ul>

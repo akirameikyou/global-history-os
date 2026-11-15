@@ -103,6 +103,7 @@ export const breadFields = {
  "genetics": "遺伝学・ゲノム",
  "geography": "地理・気候",
  "history": "歴史学",
+ "religion": "聖書学・宗教史",
  "microbiology": "微生物学",
  "food_science": "食品科学",
  "folklore": "民俗・食文化",

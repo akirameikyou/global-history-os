@@ -1486,6 +1486,87 @@ export const breadEvents = [
   ],
   "note": "",
   "links": null
+ },
+ {
+  "id": "ev_jesus_bread",
+  "type": "event",
+  "title_ja": "イエスの時代のパン（推測）",
+  "clock": "bread",
+  "when": {
+   "from": 20,
+   "to": 40,
+   "label": "1世紀前半（30年ごろ）"
+  },
+  "known": {
+   "year": null,
+   "label": "福音書（1世紀後半に書かれた）と、ローマ期ガリラヤの発掘・研究"
+  },
+  "confidence": "range",
+  "lenses": [
+   "table",
+   "mill",
+   "power"
+  ],
+  "field": [
+   "history",
+   "archaeology",
+   "religion"
+  ],
+  "place": {
+   "name_ja": "ガリラヤ湖西岸（ティベリア近郊のローマ期の村ナスル・エッディンを比較の例に）",
+   "lat": 32.79,
+   "lng": 35.53,
+   "precision": "region"
+  },
+  "kitchen_ja": "イエスが暮らした1世紀のガリラヤでは、小麦や大麦を家の石臼で挽き、平たいパンや厚みのあるパンを窯で焼いて、豆や野菜、魚と一緒に食べていたと考えられます。安い大麦のパンは、貧しい人々のパンでした。",
+  "research": {
+   "bible_ja": "福音書の記述（章節）：大麦のパン五つと魚二匹（ヨハネ6:9）、「日ごとのパン」の祈り（マタイ6:11、ルカ11:3）、パン種を粉に混ぜるたとえ（マタイ13:33）、二人の女が粉を挽く（マタイ24:41）、五千人の給食（マルコ6:35–44）、最後の晩餐でパンを取り裂く（マタイ26:26、マルコ14:22、ルカ22:19）。",
+   "fact_ja": "ローマ期パレスチナでは穀物とパンが食事の大きな部分を占め、貧しい人は大麦、豊かな人は細かく挽いた小麦のパンを食べたと古代の文献（ヨセフス、ミシュナ）と研究が伝える。ティベリア近郊のローマ期の村の発掘では、家ごとに窯や石臼が見つかり、粉挽きとパン焼きが家の中で行われていたことがうかがえる。",
+   "inference_ja": "推測：イエスと周りの人々の日常のパンは、小麦または大麦を挽いた粉の、平たい、または厚みのある素朴なパンで、前の生地の一部を種にして膨らませることもあったと考えられる（たとえ話のパン種と合う）。福音書の「大麦のパン」はその場面の記述で、いつも大麦だった証拠ではない。",
+   "unknown_ja": "イエス自身が食べたパンの穀物・発酵・焼き方は特定できない。古代の窯を今の「タブーン」と同じものと考えることには、考古学で注意が促されている。最後の晩餐のパンが種なしパンだったかは学説が割れる：共観福音書は過越の食事（種なしパンの祭り）として描くが、ヨハネ福音書の日付では過越の前になり、使われている語も一般の「パン（artos）」で「種なしパン（azymos）」ではない。",
+   "faith_ja": "「わたしが命のパンである」（ヨハネによる福音書6章35節、口語訳）。日々の命を支えるパンになぞらえて、イエスを命の源として表す信仰の言葉として読み継がれてきた。History OS はこの言葉の信仰としての内容を判定せず、パンと人の暮らしが深く結びついた言葉として紹介する。"
+  },
+  "sources": [
+   {
+    "title": "Gildas Hamel, Poverty and Charity in Roman Palestine, ch.1 Daily Bread (University of California Press 1990)",
+    "url": "https://bpb-us-e1.wpmucdn.com/sites.ucsc.edu/dist/9/20/files/2019/01/poverty-pn7ytx.pdf",
+    "kind": "book",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Naṣr ed-Din (Bet Ma‘on), near Tiberias: Village and City in Roman-Period Galilee（発掘報告）",
+    "url": "https://www.academia.edu/122720799/",
+    "kind": "primary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Susan Weingarten「What Did People Eat and Drink in Roman Palestine?」(Biblical Archaeology Society)",
+    "url": "https://www.biblicalarchaeology.org/daily/ancient-cultures/daily-life-and-practice/what-did-people-eat-and-drink-in-roman-palestine/",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "J. Ebeling「The tabun and its misidentification in the archaeological record」Levant (2015)",
+    "url": "https://doi.org/10.1080/00758914.2015.1108022",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Joel Marcus「Passover and Last Supper Revisited」New Testament Studies (2013)",
+    "url": "https://www.cambridge.org/core/journals/new-testament-studies/article/passover-and-last-supper-revisited/B7955FEA669F7DD71A36F008A2FE5144",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "ヨハネによる福音書 6章（BibleGateway, NRSVUE で章節を照合）",
+    "url": "https://www.biblegateway.com/passage/?search=John%206&version=NRSVUE",
+    "kind": "primary",
+    "checked": "2026-11-16"
+   }
+  ],
+  "note": "スタジオ検討002（GPT・Gemini・Codex・Meta、Claude Web は取り込み中）を α が照合してまとめた。聖句は、日本では著作権の保護期間が終わったとされる口語訳（1955年）から短く引いた。",
+  "links": null,
+  "chapter": 3
  }
 ];
 export const breadChecks = [

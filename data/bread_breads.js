@@ -312,7 +312,83 @@ export const breadKinds = [
   "method_ja": "小麦粉に全粒粉やライ麦を混ぜることが多く、自然種（ルヴァン）で長めに発酵させて大きく丸く焼く。酸味と厚い皮があり、日持ちがよい。",
   "legend_ja": "",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 800,
+    "to": 1500,
+    "label": "中世（8〜15世紀）",
+    "text_ja": "フランスの農村では農家が自分で穀物を挽いてパンを焼き、領主の共同窯（フール・バナル）なども使われた。家で焼く大きなパンが毎日の食事の中心だった。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "中世の農村のパン一般であり、今の「パン・ド・カンパーニュ」という製品と同じとは言えない。",
+    "source": {
+     "title": "Le Paysan et son outil. Essai d'histoire technique des céréales (France VIIIe-XVe siècle) (Persée)",
+     "url": "https://www.persee.fr/doc/efr_0000-0000_1992_mon_165_1",
+     "kind": "book",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1850,
+    "to": 1945,
+    "label": "19世紀半ば〜20世紀半ば",
+    "text_ja": "製粉の工業化と製パンの科学化で、白いパンが広く行き渡り、農村の家で焼くパンは減っていった。",
+    "kind": "material",
+    "confidence": "range",
+    "note_ja": "研究要旨による大きな流れ。地域差が大きい。",
+    "source": {
+     "title": "La fabrique du pain blanc (IRHIST",
+     "url": " Sorbonne Université)",
+     "kind": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
+     "checked": "academic_summary"
+    }
+   },
+   {
+    "from": 1932,
+    "to": 1932,
+    "label": "1932年",
+    "text_ja": "パリでピエール・ポワラーヌが店を開き、薪窯と自然種で焼く大きな丸いパン（ミッシュ）を売った。のちの「田舎風のパン」の代表的な姿の一つになった。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "店の沿革による。ポワラーヌのミッシュ＝すべてのカンパーニュではない。",
+    "source": {
+     "title": "Poilâne「Notre histoire」",
+     "url": "https://poilane.com/en/pages/notre-histoire",
+     "kind": "company_history",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1970,
+    "to": 1979,
+    "label": "1970年代",
+    "text_ja": "白く均一な工業的なパンが広がった後、「田舎風」を掲げるパンを見直す流れが始まったと報じられている。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "現在の店頭の「pain de campagne」の動き。農村で昔から食べたパン一般とは区別する。",
+    "source": {
+     "title": "Le Monde「La fièvre du pain」(2005)",
+     "url": "https://www.lemonde.fr/a-la-une/article/2005/12/12/la-fievre-du-pain_720275_40",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1993,
+    "to": 1993,
+    "label": "1993年",
+    "text_ja": "フランスの政令で「伝統的フランスパン」「自然種のパン（pain au levain）」などの名前を名乗るための製法の条件が定められた。",
+    "kind": "institution",
+    "confidence": "confirmed",
+    "note_ja": "法令が昔の味を作ったわけではない。名称の条件。",
+    "source": {
+     "title": "Décret n°93-1074 (Légifrance)",
+     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000727617/",
+     "kind": "law",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "The 5-minute essential guide to French bread?Atout France?",
@@ -325,6 +401,36 @@ export const breadKinds = [
     "url": "https://commons.wikimedia.org/wiki/File:Pain_de_campagne.jpg",
     "kind": "image_metadata",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "Le Paysan et son outil. Essai d'histoire technique des céréales (France VIIIe-XVe siècle) (Persée)",
+    "url": "https://www.persee.fr/doc/efr_0000-0000_1992_mon_165_1",
+    "kind": "book",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "La fabrique du pain blanc (IRHIST",
+    "url": " Sorbonne Université)",
+    "kind": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
+    "checked": "academic_summary"
+   },
+   {
+    "title": "Poilâne「Notre histoire」",
+    "url": "https://poilane.com/en/pages/notre-histoire",
+    "kind": "company_history",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Le Monde「La fièvre du pain」(2005)",
+    "url": "https://www.lemonde.fr/a-la-une/article/2005/12/12/la-fievre-du-pain_720275_40",
+    "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Décret n°93-1074 (Légifrance)",
+    "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000727617/",
+    "kind": "law",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
@@ -611,13 +717,56 @@ export const breadKinds = [
   "method_ja": "水分の多いやわらかい生地を、こねすぎずに長く発酵させ、のばして平たい形のまま焼く。大きな気泡と薄い皮が特徴。",
   "legend_ja": "",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 1982,
+    "to": 1982,
+    "label": "1982年",
+    "text_ja": "イタリアのアドリアで製粉業者アルナルド・カヴァッラーリが、フランスのバゲットに対抗するサンドイッチ用のパンとして「チャバッタ・ポレザーナ」を作った。",
+    "kind": "material",
+    "confidence": "range",
+    "note_ja": "本人のインタビューと地域誌による。主食化の節目ではなく、新しく作られたパン。商標の一次書類は未確認。",
+    "source": {
+     "title": "The Guardian「The secret life of ciabatta」(1999)",
+     "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1985,
+    "to": 1985,
+    "label": "1985年",
+    "text_ja": "英国のマークス＆スペンサーがチャバッタを売り出し、英国に広まった。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "報道による。",
+    "source": {
+     "title": "The Guardian「The secret life of ciabatta」(1999)",
+     "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "Ciabatta — Wikipedia (二次資料)",
     "url": "https://en.wikipedia.org/wiki/Ciabatta",
     "kind": "encyclopedia",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "The Guardian「The secret life of ciabatta」(1999)",
+    "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+    "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "The Guardian「The secret life of ciabatta」(1999)",
+    "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+    "kind": "press",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
@@ -650,13 +799,56 @@ export const breadKinds = [
   "method_ja": "油を使った発酵生地を平らに広げ、指で穴をあけて、オリーブ油や塩、ハーブをのせて焼く。",
   "legend_ja": "",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 1875,
+    "to": 1875,
+    "label": "1875年",
+    "text_ja": "リグーリアのレッコについて、地元史家の1875年の記述にチーズ入りの平たいパン「scribilita」の名が出てくる。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "イタリア官報に載った製品規格が地元史家の記述として引いている。古代ローマからの連続を示すものではない。",
+    "source": {
+     "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
+     "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
+     "kind": "government",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1880,
+    "to": 1899,
+    "label": "19世紀末",
+    "text_ja": "レッコのチーズ入りフォカッチャが、祝日の品から、パン屋や店で売られるものへと広がった。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "同じ規格書の地域史の記述。毎日の主食になったとまでは書かれていない。",
+    "source": {
+     "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
+     "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
+     "kind": "government",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "A ciascuno il suo… — Parco Archeologico di Ercolano",
     "url": "https://ercolano.cultura.gov.it/a-ciascuno-il-suo-mostra-alimentazione/",
     "kind": "government_museum",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
+    "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
+    "kind": "government",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
+    "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
+    "kind": "government",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
@@ -852,13 +1044,56 @@ export const breadKinds = [
   "method_ja": "全粒の小麦粉（アタ）と水をこね、発酵させずに薄い円にのばして、鉄板（タワ）で焼く。最後に直火にかざすと、ぷくっと膨らむ（プルカ）。",
   "legend_ja": "",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 1590,
+    "to": 1599,
+    "label": "16世紀末",
+    "text_ja": "ムガル帝国の『アイン・アクバリー』（アブル・ファズル）に chapati の語があるとよく紹介される。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "二次資料での紹介。本文の該当箇所は未確認。語の記録はパンの誕生ではない。",
+    "source": {
+     "title": "A'in-i Akbari (trans. Blochmann) Book 1 ch.23 The Imperial Kitchen",
+     "url": "https://franpritchett.com/00litlinks/abulfazl/ain_1_1_23.html",
+     "kind": "book",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1857,
+    "to": 1857,
+    "label": "1857年2月〜",
+    "text_ja": "北インドで、村から村へチャパティが手渡しで回される「チャパティ運動」が起き、英国の役人が注目した。目的はわからないまま、同じ年にインド大反乱が起きた。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "チャパティが毎日のパンとして村々にあったことを示す出来事。反乱の合図だったという証拠はない。",
+    "source": {
+     "title": "Smithsonian「Pass It On: The Secret That Preceded the Indian Rebellion of 1857」(Mike Dash)",
+     "url": "https://www.smithsonianmag.com/history/pass-it-on-the-secret-that-preceded-the-indian-rebellion-of-1857-105066360/",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "Chapaties and flat breads?University of Strathclyde thesis?",
     "url": "https://stax.strath.ac.uk/downloads/r494vk434?locale=en",
     "kind": "university_research",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "A'in-i Akbari (trans. Blochmann) Book 1 ch.23 The Imperial Kitchen",
+    "url": "https://franpritchett.com/00litlinks/abulfazl/ain_1_1_23.html",
+    "kind": "book",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Smithsonian「Pass It On: The Secret That Preceded the Indian Rebellion of 1857」(Mike Dash)",
+    "url": "https://www.smithsonianmag.com/history/pass-it-on-the-secret-that-preceded-the-indian-rebellion-of-1857-105066360/",
+    "kind": "press",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
@@ -967,13 +1202,77 @@ export const breadKinds = [
   "method_ja": "発酵生地をひも状にして結び目の形にし、南ドイツ風では焼く前にアルカリの液にくぐらせる。焼くと独特の茶色い皮と風味になる。",
   "legend_ja": "修道士発明譚は同時代の根拠を確認できない。",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 1030,
+    "to": 1199,
+    "label": "11〜12世紀",
+    "text_ja": "レーゲンスブルク（1030年ごろ）などの写本の絵に、プレッツェルに似た結び目の形のパンが描かれていると紹介される。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "絵の同定は研究機関の資料で確かめられていない。形が似ていても今の製品と同じとは言えない。",
+    "source": {
+     "title": "The Viking Age Compendium「Brezel/Pretzel」",
+     "url": "https://vikingage.org/index.php/Brezel/Pretzel",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1700,
+    "to": 1800,
+    "label": "18世紀ごろ",
+    "text_ja": "レーゲンスブルクのパン屋の跡から、焼けたプレッツェルのかけらが出土した。考古学者は1700〜1800年ごろのものとした。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "出土品の年代は考古学者の推定。主食になった時期を示すものではない。",
+    "source": {
+     "title": "Time「Archaeologists Find 250-Year-Old Pretzel in Germany」(2015)",
+     "url": "https://time.com/3743650/old-pretzel-found-germany/",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 2013,
+    "to": 2013,
+    "label": "2013年",
+    "text_ja": "「バイエルンのブレッツェル」が EU の地理的表示の申請として官報に載り、断食や祝いの日との結びつきなどが記された。",
+    "kind": "institution",
+    "confidence": "confirmed",
+    "note_ja": "公的な文書。毎日の主食とは書かれていない。",
+    "source": {
+     "title": "EUR-Lex OJ C 262 (2013)「Bayerische Breze」",
+     "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=oj:JOC_2013_262_R_0013_01",
+     "kind": "eu_regulatory",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "Pretzel — Wikipedia (二次資料)",
     "url": "https://en.wikipedia.org/wiki/Pretzel",
     "kind": "encyclopedia",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "The Viking Age Compendium「Brezel/Pretzel」",
+    "url": "https://vikingage.org/index.php/Brezel/Pretzel",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Time「Archaeologists Find 250-Year-Old Pretzel in Germany」(2015)",
+    "url": "https://time.com/3743650/old-pretzel-found-germany/",
+    "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "EUR-Lex OJ C 262 (2013)「Bayerische Breze」",
+    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=oj:JOC_2013_262_R_0013_01",
+    "kind": "eu_regulatory",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
