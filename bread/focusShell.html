@@ -141,6 +141,24 @@
   .gm.now{z-index:2} .gm.now.site{width:13px;height:13px}
   .gm.sel{box-shadow:0 0 0 2px #fff,0 0 12px rgba(255,255,255,.6)}
   .gm.shade{opacity:.12}
+  .gm.loaf{width:11px;height:8px;border-radius:5px 5px 2px 2px;background:var(--c);box-shadow:0 0 0 1.5px rgba(5,12,22,.85)}
+  /* パン図鑑 */
+  .zk-axis{display:flex;gap:4px;padding:10px 14px 6px;flex-wrap:wrap}
+  .zk-note{padding:0 16px 8px;font-size:10px;color:var(--dim);line-height:1.6}
+  table.zk{border-collapse:collapse;margin:0 10px 12px;font-size:10.5px}
+  table.zk th{color:var(--sub);font-weight:400;padding:4px 5px;text-align:left;vertical-align:top;white-space:nowrap}
+  table.zk thead th{font-size:9.5px;color:var(--dim)}
+  table.zk td{border-top:1px solid var(--rule);padding:4px 4px;vertical-align:top;min-width:46px}
+  .bchip{display:inline-block;margin:2px 3px 2px 0;padding:1px 6px;border-radius:9px;border:1px solid var(--gc);color:var(--ink);cursor:pointer;font-size:10.5px;line-height:1.6;white-space:nowrap}
+  .bchip:hover{background:rgba(255,255,255,.08)} .bchip.sel{background:rgba(232,194,122,.2);font-weight:700}
+  .bchip.later{opacity:.35;border-style:dashed}
+  .brow{padding:8px 16px;border-bottom:1px solid var(--rule);cursor:pointer;display:flex;gap:10px;align-items:center}
+  .brow:hover{background:rgba(255,255,255,.05)} .brow.later{opacity:.4}
+  .brow img{width:54px;height:40px;object-fit:cover;border-radius:3px;flex:0 0 auto;background:#03070d}
+  .brow .nm{font-size:12.5px;font-weight:700} .brow .sub{font-size:10px;color:var(--sub);margin-top:1px}
+  .fix6{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:11px;margin:8px 0 10px}
+  .fix6 dt{color:var(--dim);font-size:10px} .fix6 dd{margin:0}
+  .legend-box{font-size:11.5px;line-height:1.7;color:#d9c9ff;border-left:2px dashed #c79bff;padding:4px 0 4px 10px;margin:8px 0}
   .gm.wild{width:8px;height:8px;background:#8fd17a;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 1px rgba(5,12,22,.8)}
   #tl .seg rect.bg{fill:rgba(255,255,255,.025)}
   #tl .seg.cur rect.bg{fill:rgba(232,194,122,.08)}
@@ -227,6 +245,7 @@
     <div class="lens-note" id="lensNote">いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。</div>
     <div class="sec" style="padding-top:2px">層<span class="secsub">地球に重ねる</span></div>
     <div class="layers">
+      <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
       <button class="tgl" id="wildBtn" type="button" aria-pressed="false">野生種の自生域</button>
       <button class="tgl" id="gridBtn" type="button" aria-pressed="false">緯度経度の網</button>
     </div>
@@ -244,6 +263,7 @@
 <div class="panel right-panel" id="rightPanel">
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="events" aria-selected="true">年表</button>
+    <button class="tab" role="tab" data-tab="zukan" aria-selected="false">パン図鑑</button>
     <button class="tab" role="tab" data-tab="leavens" aria-selected="false">パン種</button>
     <button class="tab" role="tab" data-tab="narr" aria-selected="false">語り</button>
     <button class="tab" role="tab" data-tab="check" aria-selected="false">確かめる</button>
@@ -286,7 +306,8 @@ import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_even
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261115a';
-import { breadImages as IMAGES } from '../data/bread_images.js?v=20261115c';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116a';
+import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116a';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -294,7 +315,7 @@ const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
 const KIND_JA = { peer_reviewed: '査読論文', primary: '一次資料', institution: '研究機関・公的機関', book: '書籍', press: '報道', secondary: '二次資料' };
 const CLOCK_JA = { grass: '草の時計', field: '畑の時計', bread: 'パンの時計' };
-const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false };
+const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null };
 
 /* ── 年の書き方 ── */
 function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
@@ -352,6 +373,13 @@ function drawGlobe() {
     const cls = ['gm', e.place.precision === 'region' ? 'region' : 'site', e.confidence, ts, sel ? 'sel' : '', lensOn(e) ? '' : 'shade'].join(' ');
     html.push({ lat: e.place.lat, lng: e.place.lng, cls, color: lensColor(e), title: `${e.title_ja}（${whenText(e)}）`, onClick: () => select(e.id) });
     if (sel || (ts === 'now' && lensOn(e) && S.playing)) html.push({ kind: 'label', lat: e.place.lat, lng: e.place.lng, alt: 0.02, text: e.title_ja, size: 0.7, color: '#ffffff' });
+  }
+  if (S.breads) {  // パンの種類：記録のある年がカーソルより前のものだけ（その時代までにあったパン）
+    for (const b of BREADS) {
+      if (b.lat == null || !breadAvail(b)) continue;
+      html.push({ lat: b.lat, lng: b.lng, cls: `gm loaf ${S.bread === b.id ? 'sel' : ''}`, color: GRAIN_COLOR[b.grain] || '#f3dcae', title: `${b.name_ja}（${b.earliest.label}）`, onClick: () => openBread(b.id) });
+      if (S.bread === b.id || S.tab === 'zukan') html.push({ kind: 'label', lat: b.lat, lng: b.lng, alt: 0.02, text: b.name_ja, size: S.bread === b.id ? 0.7 : 0.4, color: S.bread === b.id ? '#ffffff' : 'rgba(243,220,174,.9)' });
+    }
   }
   if (S.wild) {
     for (const n of NODES) {
@@ -474,13 +502,47 @@ function one(i) {
   if (i.generated) return `<figure class="dc-fig gen"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}（想像図）" loading="lazy"><span class="gen-mark">想像図</span>
     <figcaption>想像図（生成画像）：${esc(i.caption_ja)}<br>基づいた資料：${esc(i.basis)}<br>制作：${esc(i.made_by)}（${esc(i.made_on)}）。実物の写真や当時の資料ではありません。</figcaption></figure>`;
   return `<figure class="dc-fig"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}" loading="lazy">
-    <figcaption>${esc(i.caption_ja)}<br>写真：${esc(i.artist)}／${esc(i.license)}　<a href="${esc(i.page)}" target="_blank" rel="noopener">元のページ ↗</a></figcaption></figure>`;
+    <figcaption>${esc(i.caption_ja)}<br>${i.kind === 'painting' ? '絵' : '写真'}：${esc(i.artist)}／${esc(i.license)}　<a href="${esc(i.page)}" target="_blank" rel="noopener">元のページ ↗</a></figcaption></figure>`;
 }
+
+/* ── パン図鑑のカード ── */
+/* 記録年が未確認（null）のパンは架空の年を置かず、第6章（いま＝1975年〜）から出す */
+function breadAvail(b) { return b.earliest.from == null ? S.year >= 1975 : b.earliest.from <= S.year; }
+const GRAIN_JA = { wheat: '小麦', rye: 'ライ麦', teff: 'テフ', mixed: '小麦ほか' };
+const GRAIN_COLOR = { wheat: '#f3dcae', rye: '#b98a5e', teff: '#9bc7a4', mixed: '#e8c27a' };
+function openBread(id) {
+  const b = BREADS.find(x => x.id === id); if (!b) return;
+  S.bread = id; S.sel = null; S.node = null;
+  if (!S.breads) { S.breads = true; $('breadBtn').setAttribute('aria-pressed', 'true'); }
+  $('dcFig').innerHTML = figHtml(b.id);
+  $('dcWhen').innerHTML = `記録：${esc(b.earliest.label)}<span class="conf ${b.confidence}">${CONF_JA[b.confidence] || ''}</span>`;
+  $('dcTitle').textContent = b.name_ja;
+  $('dcPlace').textContent = `${b.name_local ? b.name_local + '　' : ''}${b.region}`;
+  const rel = (b.related || []).map(r => { const e = EVENTS.find(x => x.id === r); if (e) return `<span class="ref" data-e="${r}">${esc(e.title_ja)} ▸</span>`;
+    const o = BREADS.find(x => x.id === r); return o ? `<span class="ref" data-b="${r}">${esc(o.name_ja)} ▸</span>` : ''; }).join('');
+  $('dcBody').innerHTML = `<p class="kitchen">${esc(b.kitchen_ja)}</p>
+    <dl class="fix6"><dt>植物の種</dt><dd>${esc(b.species)}</dd><dt>粉</dt><dd>${esc(b.flour)}</dd><dt>発酵</dt><dd>${esc(b.leaven)}</dd>
+      <dt>熱</dt><dd>${esc(b.heat)}</dd><dt>形</dt><dd>${esc(b.form)}</dd><dt>名前</dt><dd>${esc(b.name_ja)}（${esc(b.name_level_ja)}）</dd></dl>
+    <div class="rs"><h4>成り立ちと広がり</h4><p>${esc(b.history_ja)}</p><h4>製法の要点</h4><p>${esc(b.method_ja)}</p></div>
+    ${b.legend_ja ? `<div class="legend-box"><b>語り（起源譚）</b>　${esc(b.legend_ja)}</div>` : ''}
+    ${rel ? `<div class="refs" style="margin:6px 0">${rel}</div>` : ''}
+    <details class="research"><summary>研究の段 ▾　記録と出典</summary><div class="rs">
+      <h4>いちばん古い確かな記録</h4><p>${esc(b.earliest.label)}　${esc(b.earliest.evidence)}</p>
+      <h4>出典</h4><ul>${b.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>（${esc(KIND_JA[s.kind] || s.kind)}・確認 ${esc(s.checked)}）</li>`).join('')}</ul>
+      ${b.note ? `<div class="note">${esc(b.note)}</div>` : ''}</div></details>`;
+  $('dcBody').querySelectorAll('.ref[data-e]').forEach(x => x.onclick = () => select(x.dataset.e));
+  $('dcBody').querySelectorAll('.ref[data-b]').forEach(x => x.onclick = () => openBread(x.dataset.b));
+  const act = $('dcAct'); act.hidden = b.lat == null; act.textContent = '地点を見る';
+  act.onclick = () => world.pointOfView({ lat: b.lat, lng: b.lng, altitude: 1.2 }, 900);
+  $('detailCard').hidden = false;
+  refresh();
+}
+$('breadBtn').onclick = () => { S.breads = !S.breads; $('breadBtn').setAttribute('aria-pressed', String(S.breads)); drawGlobe(); };
 
 /* ── 出来事のカード ── */
 function select(id) {
   const e = EVENTS.find(x => x.id === id); if (!e) return;
-  S.sel = id; S.node = null;
+  S.sel = id; S.node = null; S.bread = null;
   S.year = e.when.from; // 選んだ出来事の年へカーソルを動かす（地球と一覧もその時点まで展開）
   $('dcWhen').innerHTML = `${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span><span style="margin-left:8px;color:var(--dim);font-family:var(--sans);font-size:10px">${CLOCK_JA[e.clock] || ''}</span>`;
   $('dcTitle').textContent = e.title_ja;
@@ -521,10 +583,10 @@ function select(id) {
   bar.addEventListener('pointerup', () => { d = null; });
   bar.addEventListener('dblclick', ev => { if (ev.target.closest('.dc-x')) return; card.classList.remove('moved'); card.style.left = ''; card.style.top = ''; card.style.width = ''; });
 })();
-$('dcClose').onclick = () => { S.sel = null; S.node = null; $('detailCard').hidden = true; refresh(); };
+$('dcClose').onclick = () => { S.sel = null; S.node = null; S.bread = null; $('detailCard').hidden = true; refresh(); };
 
 /* ── 右パネル ── */
-document.querySelectorAll('.tab').forEach(t => t.onclick = () => { S.tab = t.dataset.tab; document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); drawRight(); });
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => { S.tab = t.dataset.tab; if (S.tab === 'zukan' && !S.breads) { S.breads = true; $('breadBtn').setAttribute('aria-pressed', 'true'); drawGlobe(); } document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); drawRight(); });
 function drawRight() {
   const b = $('rpBody');
   if (S.tab === 'events') {
@@ -538,6 +600,24 @@ function drawRight() {
     }).join('') || '<div class="empty">この章の出来事はまだありません。</div>';
     b.querySelectorAll('.item').forEach(x => x.onclick = () => { stopPlay(); select(x.dataset.id); });
     const s = b.querySelector('.item.sel') || [...b.querySelectorAll('.item.now')].pop(); if (s) s.scrollIntoView({ block: 'nearest' });
+  } else if (S.tab === 'zukan') {
+    const avail = breadAvail;
+    const nAvail = BREADS.filter(avail).length;
+    let h = `<div class="zk-axis">${[['matrix', '製法×発酵'], ['era', '時代順'], ['region', '地域']].map(([k, t]) => `<button class="tgl" data-ax="${k}" aria-pressed="${S.zAxis === k}">${t}</button>`).join('')}</div>
+      <div class="zk-note">${yearText(S.year)}までに記録のあるパン：${nAvail} / ${BREADS.length} 種（薄い名前はまだ記録がない時代）。色は穀物：${Object.entries(GRAIN_JA).map(([k, v]) => `<span style="color:${GRAIN_COLOR[k]}">●</span>${v}`).join(' ')}</div>`;
+    const chip = b => `<span class="bchip ${S.bread === b.id ? 'sel' : ''} ${avail(b) ? '' : 'later'}" style="--gc:${GRAIN_COLOR[b.grain]}" data-b="${b.id}">${esc(b.name_ja)}</span>`;
+    if (S.zAxis === 'matrix') {
+      const H = [...new Set(BREADS.map(b => b.heat_group))], L = [...new Set(BREADS.map(b => b.leaven_group))];
+      h += `<table class="zk"><thead><tr><th>発酵＼熱</th>${H.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>` +
+        L.map(l => `<tr><th>${esc(l)}</th>${H.map(x => `<td>${BREADS.filter(b => b.leaven_group === l && b.heat_group === x).map(chip).join('')}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
+    } else {
+      const list = [...BREADS].sort(S.zAxis === 'era' ? (a, b) => (a.earliest.from ?? 9999) - (b.earliest.from ?? 9999) : (a, b) => a.region.localeCompare(b.region, 'ja'));
+      h += list.map(b => { const im = IMAGES.find(i => i.target === b.id && !i.generated);
+        return `<div class="brow ${avail(b) ? '' : 'later'}" data-b="${b.id}">${im ? `<img src="${esc(im.file)}" alt="" loading="lazy">` : '<img alt="">'}<div><div class="nm">${esc(b.name_ja)}</div><div class="sub">${esc(S.zAxis === 'era' ? b.earliest.label : b.region)}・${esc(b.leaven)}・${esc(b.heat)}</div></div></div>`; }).join('');
+    }
+    b.innerHTML = h;
+    b.querySelectorAll('[data-ax]').forEach(x => x.onclick = () => { S.zAxis = x.dataset.ax; drawRight(); });
+    b.querySelectorAll('[data-b]').forEach(x => x.onclick = () => openBread(x.dataset.b));
   } else if (S.tab === 'leavens') {
     b.innerHTML = `<div class="empty">パンは何で膨らむのか。パン種と、そこで働く小さな生き物。</div>` + LEAVENS.map(v => `<div class="lv"><span class="nm">${esc(v.name_ja)}</span><span class="lvl">${esc(v.name_level)}</span>
       <p>${esc(v.what_ja)}</p><p style="color:var(--sub)">${esc(v.history_ja)}</p>${v.organisms ? `<div class="org">はたらく生き物：${esc(v.organisms)}</div>` : ''}
