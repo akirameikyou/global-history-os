@@ -38,9 +38,13 @@ button,a{font:inherit}
 .sea path.eq{stroke:rgba(255,255,255,.26)}
 .sea .limb{fill:none;stroke:rgba(190,228,246,.22);stroke-width:1.2;vector-effect:non-scaling-stroke}
 .sea .glow{fill:url(#globeShade)}
-.sea .pt{fill:#c8f4ff}
-.sea .pt.past{fill:rgba(102,224,255,.55)}
-.sea .trail{fill:none;stroke:rgba(102,224,255,.35);stroke-width:1.2;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+.sea .pt{fill:rgba(102,224,255,.8)}
+.sea .trail{fill:none;stroke:rgba(102,224,255,.32);stroke-width:1;stroke-dasharray:3 4;vector-effect:non-scaling-stroke}
+/* 世界の道場：星のように。光の芯と、ぼかした輪 */
+.sea .star{fill:rgba(240,246,255,.9)}
+.sea .halo{fill:rgba(220,236,255,.28);filter:url(#soft)}
+.sea .jp{fill:rgba(236,244,255,.78)}
+.stars{opacity:0;animation:fade 3s ease 1.2s forwards}
 @keyframes fade{to{opacity:1}}
 .header{position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);display:flex;justify-content:space-between;align-items:flex-start}
 .brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(237,243,246,.52)}
@@ -55,6 +59,9 @@ html[lang="en"] .title-text{letter-spacing:.06em;margin-right:-.06em}
 .life{font-size:11px;letter-spacing:.27em;color:rgba(237,243,246,.61);margin-bottom:30px}
 .thesis{font-family:var(--serif);font-weight:500;font-size:clamp(19px,2.2vw,30px);line-height:1.65;margin:0 0 8px;letter-spacing:.09em}
 .doka-note{font-size:10px;letter-spacing:.14em;color:rgba(237,243,246,.42);margin:0 0 20px}
+.thesis rt{font-size:.38em;letter-spacing:.1em;color:rgba(237,243,246,.6)}
+/* 英語：ローマ字（発音）の下に、小さく意味の訳 */
+.doka-tr{font-family:var(--serif);font-size:clamp(12px,1.1vw,14px);line-height:1.7;letter-spacing:.04em;color:rgba(237,243,246,.62);margin:2px auto 6px;max-width:620px;font-style:italic}
 .lead{max-width:640px;margin:0 auto;color:rgba(237,243,246,.64);font-family:var(--serif);font-size:clamp(12px,1.15vw,15px);line-height:1.95;letter-spacing:.055em}
 .enter-wrap{margin-top:30px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
 .enter{border:1px solid rgba(237,243,246,.25);background:rgba(4,13,22,.34);color:#f7fbfd;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;cursor:pointer;backdrop-filter:blur(9px);transition:background .25s ease,border-color .25s ease,transform .25s ease}
@@ -135,7 +142,7 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
 <body>
 <div class="app" id="app">
   <svg class="sea" id="graticule" viewBox="0 0 1800 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-    <defs><radialGradient id="globeShade" cx="38%" cy="32%" r="75%">
+    <defs><filter id="soft" x="-2" y="-2" width="5" height="5"><feGaussianBlur stdDeviation="2.2"/></filter><radialGradient id="globeShade" cx="38%" cy="32%" r="75%">
       <stop offset="0" stop-color="rgba(120,190,230,.10)"/><stop offset=".7" stop-color="rgba(40,110,160,.05)"/><stop offset="1" stop-color="rgba(5,20,40,.22)"/>
     </radialGradient></defs>
   </svg>
@@ -150,8 +157,9 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
     <h1><span class="title-text" data-k="title">植芝盛平</span></h1>
     <div class="life">MORIHEI UESHIBA / FOUNDER OF AIKIDO</div>
 
-    <p class="thesis" data-k="doka">美しき この天地の 御姿は<br>主のつくりし 一家なりけり</p>
-    <p class="doka-note" data-k="dokaNote">— 開祖の道歌</p>
+    <p class="thesis" data-k="dokaHtml"><ruby>美<rt>うるわ</rt></ruby>しき この天地の 御姿は<br><ruby>主<rt>ぬし</rt></ruby>のつくりし 一家なりけり</p>
+    <p class="doka-tr" data-k="dokaTr" hidden></p>
+    <p class="doka-note" data-k="dokaNote">— 開祖の道歌（『合気神髄』189頁）</p>
 
     <p class="lead" data-k="lead">紀州・田辺に生まれ、北海道の原野、綾部、東京、岩間へ。<br>
       その歩みから合氣道が生まれ、道は海を越えて世界へ広がった。<br>
@@ -179,7 +187,7 @@ dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
   <dialog id="intro"><div class="dlg" data-k="introHtml">
     <div class="d-kicker">01 / INTRO</div><h2>天地を一家に</h2>
     <p>History OS は、歴史を年表だけでなく、時間・場所・人物・同時代の世界を重ねて見るための試みです。</p>
-    <p>植芝盛平（1883–1969）は、紀州・田辺に生まれ、武術の修行、北海道の開拓、綾部での精神の探求を経て、合氣道を生みました。開祖は、世界が仲良く一つの家族のようであることを祈り、道歌にこう詠んでいます。「美しき この天地の 御姿は 主のつくりし 一家なりけり」。</p>
+    <p>植芝盛平（1883–1969）は、紀州・田辺に生まれ、武術の修行、北海道の開拓、綾部での精神の探求を経て、合氣道を生みました。開祖は、世界が仲良く一つの家族のようであることを祈り、道歌にこう詠んでいます。「美（うるわ）しき この天地の 御姿は 主（ぬし）のつくりし 一家なりけり」（『合気神髄』189頁）。</p>
     <p>合氣道 Focus では、開祖の生涯の拠点と移動を地球の上にたどり、1950年代からの海外への広がり、同時代の世界の出来事を同じ年代バーに重ねます。NOW では、世界の合気会の道場・団体の、いまの行事を見ることができます。</p>
     <p>掲載は植芝盛平と合気会（公益財団法人合気会）に限ります。個人制作のファンサイトで、合気会の公式サイトではありません。</p>
     <button class="close" type="button">CLOSE</button>
@@ -229,8 +237,9 @@ const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 
 // 英語の文言（日本語は HTML に書いてある）
 const EN = {
   title: 'Morihei Ueshiba',
-  doka: 'Utsukushiki / kono ametsuchi no / misugata wa / shu no tsukurishi / ikka narikeri',
-  dokaNote: '“How beautiful, this form of heaven and earth — one family, made by the Creator.” — a poem (dōka) by the Founder',
+  dokaHtml: 'Uruwashiki / kono ametsuchi no / misugata wa<br>nushi no tsukurishi / ikka narikeri',
+  dokaTr: 'How beautiful, this form of heaven and earth — one family, made by the Creator.',
+  dokaNote: '— a poem (dōka) by the Founder (Aiki Shinzui, p. 189)',
   lead: 'Born in Tanabe, Kii, he lived on the plains of Hokkaido, in Ayabe, Tokyo and Iwama. From his path Aikido was born, and it crossed the seas to spread around the world. Today, practice continues in dojos everywhere.',
   enter: 'Follow the history', enterSub: 'his life and Aikido spreading abroad, on a timeline', now: 'Current events', nowSub: 'NOW: demonstrations and seminars of the Aikikai worldwide',
   g1t: 'About', g1c: 'The Founder\'s life and the spread of Aikido.', g2t: 'How to view', g2c: 'Timeline, NOW and the marks on the globe.',
@@ -268,14 +277,14 @@ if (LANG === 'en') {
   document.documentElement.lang = 'en';
   document.title = 'History OS | Aikido Focus (Morihei Ueshiba)';
   document.querySelector('meta[name="description"]').content = 'Aikido Focus in History OS: follow the life of Morihei Ueshiba, the spread of Aikido around the world and current events on a globe and timeline. A personal project — not the official website of the Aikikai.';
-  document.querySelectorAll('[data-k]').forEach(el => { const v = EN[el.dataset.k]; if (v == null) return; if (/Html$/.test(el.dataset.k)) el.innerHTML = v; else el.textContent = v; });
+  document.querySelectorAll('[data-k]').forEach(el => { const v = EN[el.dataset.k]; if (v == null) return; if (/Html$/.test(el.dataset.k)) el.innerHTML = v; else el.textContent = v; el.hidden = false; });
   const l = document.getElementById('langLink'); l.href = location.pathname; l.textContent = '日本語'; l.hreflang = 'ja';
   document.getElementById('backBtn').setAttribute('aria-label', 'Back to the cover');
 }
 // 背景の地球：本体の地球と同じガイド（経線・緯線と赤道）。日本を中心に。開祖の拠点を小さな点と破線で
 (function drawGlobeGuide() {
   const svg = document.getElementById('graticule'), NS = 'http://www.w3.org/2000/svg';
-  const CX = 900, CY = 470, R = 400, LON0 = 140 * Math.PI / 180, LAT0 = 30 * Math.PI / 180, sin0 = Math.sin(LAT0), cos0 = Math.cos(LAT0);
+  const CX = 900, CY = 470, R = 420, LON0 = 182 * Math.PI / 180, LAT0 = 4 * Math.PI / 180, sin0 = Math.sin(LAT0), cos0 = Math.cos(LAT0);
   const proj = (latD, lonD) => { const la = latD * Math.PI / 180, dl = lonD * Math.PI / 180 - LON0; const c = sin0 * Math.sin(la) + cos0 * Math.cos(la) * Math.cos(dl);
     return [CX + R * Math.cos(la) * Math.sin(dl), CY - R * (cos0 * Math.sin(la) - sin0 * Math.cos(la) * Math.cos(dl)), c]; };
   const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; };
@@ -286,11 +295,28 @@ if (LANG === 'en') {
   for (let lon = -170; lon < 180; lon += 10) line(meridian(lon), '');
   for (let lat = -80; lat <= 80; lat += 10) if (lat) line(parallel(lat), '');
   line(parallel(0), 'eq');
-  // 開祖の拠点（田辺→白滝→綾部→東京→岩間）を淡い破線で結ぶ。最後の岩間だけ明るく
+  // 開祖の足取り（田辺→白滝→綾部→東京→岩間）は、星と分けて細い水色の破線と小さな点で控えめに
   const P = [[33.748, 135.3633], [43.8774, 143.1435], [35.2937, 135.2606], [35.6991, 139.7144], [36.2942, 140.2813]];
   const trail = P.map(([a, b]) => proj(a, b)); let d = ''; trail.forEach(([x, y], i) => { d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); });
   el('path', { d, class: 'trail' });
-  trail.forEach(([x, y], i) => el('circle', { cx: x, cy: y, r: i === trail.length - 1 ? 4 : 2.6, class: 'pt' + (i === trail.length - 1 ? '' : ' past') }));
+  trail.forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 1.8, class: 'pt' }));
+  // 世界の道場を星のように（イメージ）：合気会の海外組織がある国の代表都市と、海外への広がりの点。
+  // 日本は都道府県庁の所在地のまわりに細かな点を散らし、点の集まりで日本の形が浮かぶように（実際の道場の位置ではない）
+  const g = document.createElementNS(NS, 'g'); g.setAttribute('class', 'stars'); svg.appendChild(g);
+  const star = (lat, lng, r, cls) => { const [x, y, c] = proj(lat, lng); if (c < 0.05) return;
+    if (cls === 'star') { const h = document.createElementNS(NS, 'circle'); h.setAttribute('cx', x); h.setAttribute('cy', y); h.setAttribute('r', r * 2.6); h.setAttribute('class', 'halo'); g.appendChild(h); }
+    const e = document.createElementNS(NS, 'circle'); e.setAttribute('cx', x.toFixed(1)); e.setAttribute('cy', y.toFixed(1)); e.setAttribute('r', r); e.setAttribute('class', cls); g.appendChild(e); };
+  const JP = [[43.06,141.35],[43.77,142.37],[41.77,140.73],[42.98,144.38],[42.92,143.20],[40.82,140.74],[39.70,141.15],[38.27,140.87],[39.72,140.10],[38.24,140.36],[37.75,140.47],[36.37,140.47],
+    [36.56,139.88],[36.39,139.06],[35.86,139.65],[35.61,140.12],[35.69,139.69],[35.44,139.64],[37.90,139.02],[36.70,137.21],[36.59,136.63],[36.07,136.22],[35.66,138.57],[36.65,138.18],
+    [35.39,136.72],[34.98,138.38],[35.18,136.91],[34.73,136.51],[35.00,135.87],[35.02,135.76],[34.69,135.50],[34.69,135.18],[34.69,135.83],[34.23,135.17],[35.50,134.24],[35.47,133.05],
+    [34.66,133.93],[34.40,132.46],[34.19,131.47],[34.07,134.56],[34.34,134.04],[33.84,132.77],[33.56,133.53],[33.61,130.42],[33.25,130.30],[32.74,129.87],[32.79,130.74],[33.24,131.61],
+    [31.91,131.42],[31.56,130.56],[26.21,127.68]];
+  let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647; // いつも同じ散らし方
+  JP.forEach(([a, b]) => { star(a, b, 1.3, 'jp'); for (let i = 0; i < 4; i++) star(a + (rnd() - .5) * .7, b + (rnd() - .5) * .7, 0.8 + rnd() * .5, 'jp'); });
+  import('../data/ueshiba_spread.js').then(m => {
+    m.aikidoDojos.filter(d => !/^dojo_jp/.test(d.id)).forEach(d => star(d.lat, d.lng, 1.5, 'star'));
+    [...m.aikidoDojoFoundings, ...m.aikidoFirstContacts].forEach(d => star(d.lat, d.lng, 1.2, 'star'));
+  }).catch(() => {});
   el('circle', { cx: CX, cy: CY, r: R, class: 'limb' });
   const fit = () => { const portrait = innerWidth < innerHeight; svg.setAttribute('viewBox', portrait ? `${CX - R - 24} ${CY - R - 24} ${2 * R + 48} ${2 * R + 48}` : '0 0 1800 900'); svg.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice'); };
   fit(); addEventListener('resize', fit);
