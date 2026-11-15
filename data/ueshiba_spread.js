@@ -120,7 +120,7 @@ export const aikidoDojos = [
 // ─────────────────────────────────────────────────────────────
 
 export const aikidoDojoFoundings = [
-  { id: 'found_hawaii', country: '米・ハワイ', org: 'ハワイ合気会', city: 'Honolulu', lat: 21.3069, lng: -157.8583, year: 1961, confidence: '◎', note: '開祖渡布・第1回演武大会(1961)。' },
+  { id: 'found_hawaii', country: '米・ハワイ', org: 'ハワイ合気会', city: 'Honolulu', lat: 21.3069, lng: -157.8583, year: 1961, confidence: '◎', note: '開祖渡布。本部道場・ホノルル合気道場の落成（1961年3月12日）。' },
   { id: 'found_la',     country: '米・西海岸', org: 'ロサンゼルス合気会', city: 'Los Angeles', lat: 34.0522, lng: -118.2437, year: 1962, confidence: '○', note: '25周年=1987 より逆算。' },
   { id: 'found_ny',     country: '米・東部', org: 'ニューヨーク合気会', city: 'New York', lat: 40.7128, lng: -74.006, year: 1964, confidence: '◎', note: '創立10周年=1974／山田嘉光1964年着(NY万博)。' },
   { id: 'found_fr',     country: 'フランス', org: '(田村信喜 渡仏)', city: 'Marseille', lat: 43.2965, lng: 5.3698, year: 1964, confidence: '◎', note: '田村信喜1964年マルセイユ着。渡仏25周年=1989。' },

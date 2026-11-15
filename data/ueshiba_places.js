@@ -68,7 +68,7 @@ export const ueshibaPlaces = [
     title: 'ハワイ',
     year: '1961',
     placeName: 'Honolulu, Hawaii',
-    description: '1961年、ハワイ合気会に招かれて渡布。開祖自身による海外普及の象徴的な訪問。',
+    description: '1961年、ハワイ合気会（Hawaii Aiki Kwai）の本部道場・ホノルル合気道場の落成に際して渡布し、ハワイ各地で演武と講習を行った。開祖にとって生涯ただ一度の米国への旅。',
     lat: 21.3069,
     lng: -157.8583,
   },

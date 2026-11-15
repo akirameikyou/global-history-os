@@ -29,7 +29,7 @@ const blob = JSON.stringify([PERSON, CHRONO, GLOSSARY, PLACES, WORLD, NETWORK, F
 eq('他の団体・流派とその創始者の名が無い', ['養神館', '心身統一', '昭道館', '日本合気道協会', '富木', '岩間神信', '藤平', '塩田'].filter(w => blob.includes(w)), []);
 eq('メールアドレス・電話が無い', [/[\w.+-]+@[\w-]+\.[\w.]+/.test(blob), /\d{2,4}-\d{3,4}-\d{4}/.test(blob)], [false, false]);
 eq('カレンダーの URL は設定の1か所', typeof CALENDAR_URL, 'string');
-eq('件数（年表・地点・世界・設立・初到達・国）', [CHRONO.length, PLACES.length, WORLD.length, FOUND.length, FIRST.length, NETWORK.length], [27, 7, 8, 11, 10, 85]);
+eq('件数（年表・地点・世界・設立・初到達・国）', [CHRONO.length, PLACES.length, WORLD.length, FOUND.length, FIRST.length, NETWORK.length], [26, 7, 8, 11, 10, 85]);
 
 out.innerHTML += `\n${pass} 件合格、${fail} 件不合格\n`;
 document.title = fail ? `NG ${fail}` : `OK ${pass}`;

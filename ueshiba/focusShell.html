@@ -569,10 +569,10 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
-import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js?v=20261114c';
-import { ueshibaPlaces as PLACES } from '../data/ueshiba_places.js?v=20261114c';
-import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261114c';
-import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261114c';
+import { aikidoPersonFocus as PERSON, aikidoChronology as CHRONO, aikidoGlossary as GLOSSARY } from '../data/ueshiba_person.js?v=20261115b';
+import { ueshibaPlaces as PLACES } from '../data/ueshiba_places.js?v=20261115b';
+import { ueshibaWorld as WORLD } from '../data/ueshiba_world.js?v=20261115b';
+import { aikidoDojos as NETWORK, aikidoDojoFoundings as FOUND, aikidoFirstContacts as FIRST } from '../data/ueshiba_spread.js?v=20261115b';
 import { CALENDAR_URL, EVENTS_URL, ICS_DIR, NOW_WINDOW } from '../data/ueshiba_config.js?v=20261115a';
 
 // ---------- 定数（万次郎版と同じ約束）----------
@@ -663,7 +663,11 @@ function goTo(key) { // カメラを動かすのはここだけ（「地点を�
 const detailCard = document.getElementById('detailCard');
 function leftColRight() { if (innerWidth <= 640) return 0; const r = document.getElementById('leftCol').getBoundingClientRect(); return r.width ? r.right : 0; }
 function positionCard(src) {
-  const c = detailCard, cw = c.offsetWidth || 340, ch = c.offsetHeight || 200, M = 12, W = innerWidth, Ht = innerHeight; let x, y;
+  const c = detailCard, M = 12, W = innerWidth;
+  // カードは年代バーの上で止める（重ならない）。長い時はカードの中で送る
+  const tbTop = document.getElementById('timelineBar').getBoundingClientRect().top, Ht = Math.min(innerHeight, tbTop - 4);
+  c.style.maxHeight = Math.max(220, Ht - (W <= 640 ? 52 : 12) - M) + 'px';
+  const cw = c.offsetWidth || 340, ch = c.offsetHeight || 200; let x, y;
   if (W <= 640) { c.style.left = '8px'; c.style.top = '52px'; return; }
   if (src && src.getBoundingClientRect) { const r = src.getBoundingClientRect(); x = r.right + M; if (x + cw > W - M) x = r.left - cw - M; y = r.top; }
   else if (src && typeof src.x === 'number') { x = src.x + M; y = src.y + M; }
@@ -700,7 +704,13 @@ function openFor(key, src) {
 function openChrono(c, src) {
   const key = c.eventId ? 'life:' + c.eventId : null, pl = c.eventId && placeById(c.eventId);
   State.sel = key;
-  showCard({ tag: 'LIFE / 年譜', title: c.year + '年' + (ageText(c) ? '（' + ageText(c) + '）' : ''), sub: pl ? pl.title + ' ・ ' + pl.placeName : '', html: para(linkify(c.text, new Set())), look: key }, src);
+  showCard({ tag: 'LIFE / 年譜', title: c.year + '年' + (ageText(c) ? '（' + ageText(c) + '）' : ''), sub: pl ? pl.title + ' ・ ' + pl.placeName : '', html: para(linkify(c.text, new Set())) + cardMore(c.card), look: key }, src);
+}
+// カードの厚み：この頃（人と暮らし）・土地・時代と世界（History OS の目線＝地球と時代）。見出しは小さく、本文は短い段落で
+function cardMore(cd) {
+  if (!cd) return '';
+  const sec = (h, t) => t ? '<div class="dc-sec">' + h + '</div>' + para(linkify(t, new Set())) : '';
+  return sec('この頃', cd.life) + sec('土地', cd.land) + sec('時代と世界', cd.era);
 }
 function openTerm(t, src) { const g = GLOSSARY[t]; if (g) showCard({ kind: 'term', tag: 'TERM / 用語', title: g.title, sub: g.reading, html: para(esc(g.text)) }, src); }
 function bindTerms(scope) { scope.querySelectorAll('.term').forEach(el => el.onclick = e => { e.stopPropagation(); openTerm(el.dataset.term, el); }); }
@@ -808,10 +818,10 @@ document.addEventListener('pointerdown', e => { if (!chapMenu.hidden && !e.targe
 // ---------- 出典（1か所）・行事カレンダー ----------
 const infoBtn = document.getElementById('infoBtn'), infoPanel = document.getElementById('infoPanel');
 document.getElementById('infoBody').innerHTML =
-  '<p class="ri-p">年譜は、以前の合氣道版で採用した「植芝盛平年譜」（年表写真）をもとに、ネットで照合したもの。海外への広がりは『合気道のあゆみ』の周年の記述と各国の合気会の公式ページから。</p>' +
+  '<p class="ri-p">年譜は、以前の合氣道版で採用した「植芝盛平年譜」（年表写真）をもとに、ネットで照合したもの。カードの「この頃」は、ウィキペディア「植芝盛平」（日本語版・英語版、2026-11-15 確認）と合気会の沿革による。海外への広がりは『合気道のあゆみ』の周年の記述と各国の合気会の公式ページから。</p>' +
   '<p class="ri-p sub"><a href="https://www.aikikai.or.jp/aikido/history/" target="_blank" rel="noopener">合気会「沿革」</a>・<a href="https://www.aikikai.or.jp/aikido/message/" target="_blank" rel="noopener">「道主挨拶」</a>（2026-11-14 確認）／<a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">合気会 海外組織一覧</a>（2026年7月時点。点は国の代表都市）</p>' +
   '<div class="sec">資料で分かれるところ</div>' +
-  '<p class="ri-p sub">北海道への移住：合気会の沿革は1912年、道主挨拶の略歴は1911年（応募）とする。ここでは1912年。／1947年の改組・1961年のハワイ訪問：合気会の年譜には見当たらない（以前の合氣道版のまま）。／海外の道場の設立年には、周年の記述から逆算したものを含む。</p>' +
+  '<p class="ri-p sub">北海道への移住：合気会の沿革は1912年、道主挨拶の略歴は1911年（応募）とする。ここでは1912年。／1947年の改組：資料が見つからず、1948年2月9日の改組・認可に一つにした。／1961年のハワイ：「第1回演武大会」は確かめられず（第1回は1960年の東京・山野ホール）、ホノルル合気道場の落成に際しての渡布とした（Aikido Journal・ハワイの合気会の記念誌による）。／海外の道場の設立年には、周年の記述から逆算したものを含む。</p>' +
   '<p class="ri-p sub">掲載は植芝盛平と合気会に限ります。個人制作で、合気会の公式サイトではありません。</p>';
 infoBtn.onclick = () => { infoPanel.hidden = !infoPanel.hidden; infoBtn.classList.toggle('on', !infoPanel.hidden); };
 document.getElementById('infoClose').onclick = () => { infoPanel.hidden = true; infoBtn.classList.remove('on'); };
