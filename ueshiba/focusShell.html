@@ -456,6 +456,12 @@
   .dcard.k-spread{border-left-color:var(--c-spread)} .dcard.k-spread .dc-tag{color:var(--c-spread-br)}
   .dcard.k-term{border-left-color:var(--c-term)} .dcard.k-term .dc-tag{color:var(--c-term)}
   @media (max-width:640px){ .cal-long{display:none} .cal-short{display:inline} .fp-lead{display:none} }
+  /* スマホの NOW：ふだんは出さない左の2枠（国内・海外の行事）を、右の人物の枠の代わりに上へ出す */
+  @media (max-width:640px){
+    body.now-on .left-col{display:flex!important;top:84px;left:8px;right:8px;width:auto;gap:8px;height:calc(100dvh - 84px - 250px);max-height:none!important}
+    body.now-on .left-col>.panel{display:flex!important;height:auto!important;flex:1 1 0;min-height:0}
+    body.now-on .right-panel{display:none}
+  }
 </style></head>
 <body>
 
@@ -940,7 +946,7 @@ const nowBtn = document.getElementById('nowBtn');
 let saved = null;
 function setNow(v) {
   if (v === State.now) return;
-  State.now = v; nowBtn.classList.toggle('on', v); nowBtn.setAttribute('aria-pressed', String(v));
+  State.now = v; nowBtn.classList.toggle('on', v); document.body.classList.toggle('now-on', v); nowBtn.setAttribute('aria-pressed', String(v));
   ['prevY', 'nextY', 'playBtn', 'zoomIn', 'zoomOut'].forEach(id => { document.getElementById(id).disabled = v; });
   if (v) { stopPlay(); saved = { vp: { ...State.vp }, sel: State.sel }; State.sel = null; }
   else if (saved) { State.vp = saved.vp; State.sel = saved.sel; saved = null; }
