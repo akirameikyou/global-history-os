@@ -28,6 +28,9 @@
   *{box-sizing:border-box}
   html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
   #globeViz{position:fixed;inset:0;z-index:1}
+  .glabel{pointer-events:none;white-space:nowrap;font-family:var(--sans);font-weight:700;letter-spacing:.04em;
+    transform:translate(-50%,-140%);text-shadow:0 0 3px #000,0 0 6px rgba(0,0,0,.85)}
+  .glabel.dot::after{content:'';position:absolute;left:50%;top:135%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
   [hidden]{display:none!important}
   button{font-family:inherit}
 
@@ -251,8 +254,14 @@ const world = Globe()(document.getElementById('globeViz'))
   .ringMaxRadius(d => d.max).ringPropagationSpeed(0.6).ringRepeatPeriod(2400)
   .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1])
   .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
-  .labelLat(d => d.lat).labelLng(d => d.lng).labelText(d => d.text).labelSize(d => d.size).labelColor(d => d.color)
-  .labelDotRadius(d => d.dot).labelResolution(2).labelAltitude(0.012);
+  // 地名は HTML の文字で出す（labelsData の字形は英字のみで、日本語が「?」になるため。万次郎版と同じ方式）
+  .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(0.015).htmlElement(d => {
+    const el = document.createElement('div');
+    el.className = 'glabel'; el.textContent = d.text;
+    el.style.color = d.color; el.style.fontSize = `${Math.round(10 + d.size * 6)}px`;
+    if (d.dot) el.classList.add('dot');
+    return el;
+  });
 world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0); // 肥沃な三日月地帯を正面に
 world.controls().autoRotate = false;
 
@@ -296,7 +305,7 @@ function drawGlobe() {
     }
     labels.push({ lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(232,194,122,0.9)', dot: 0 });
   }
-  world.pointsData(pts).ringsData(rings).labelsData(labels).pathsData(paths);
+  world.pointsData(pts).ringsData(rings).htmlElementsData(labels).pathsData(paths);
 }
 
 /* ── 光源レンズ ── */
