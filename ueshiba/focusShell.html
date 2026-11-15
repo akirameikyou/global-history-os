@@ -1152,6 +1152,7 @@ function placeTimeline() { const tb = document.getElementById('timelineBar'); tb
 addEventListener('resize', placeTimeline); placeTimeline();
 
 emit();
+if (new URLSearchParams(location.search).get('now') === '1') setNow(true); // 表紙の「いまの行事」から開いたとき
 window.__ueshiba = { State, world }; // 確かめ用
 </script>
 </body></html>

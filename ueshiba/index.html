@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>History OS｜合氣道 Focus（植芝盛平）</title>
+<meta name="description" content="植芝盛平の生涯と、合氣道が世界へ広がる歩み、そしていまの行事を、地球と年代バーでたどる History OS の合氣道 Focus（個人制作・合気会の公式サイトではありません）。" />
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/ueshiba/" />
+<link rel="alternate" hreflang="ja" href="index.html" />
+<link rel="alternate" hreflang="en" href="index.html?lang=en" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="History OS｜合氣道 Focus（植芝盛平）" />
+<meta property="og:site_name" content="History OS" />
+<!--
+  合氣道 Focus の表紙（2026-11-15）。骨組みは万次郎版・北斎版の表紙と同じ：上に名前、中央に題字と一文、入口、四つの案内
+  （INTRO / HOW TO VIEW / METHOD / SOURCES）。入口を押すと本体（focusShell.html）を全画面の iframe で重ね、左上の「表紙へ」で戻る。
+  合氣道版の意匠：背景は本体と同じ夜の青に、日本を中心にした経線・緯線だけ。題の一文は開祖の道歌。
+  入口は二つ：歴史をたどる（年代バー）／いまの行事（NOW で開く）。?lang=en で英語（本体にも lang を渡す）。
+-->
+<style>
+:root{
+  --bg:#050c16;
+  --ink:#edf3f6;
+  --focus:#66e0ff;
+  --spread:#57c9c0;
+  --event:#e0c27a;
+  --border:rgba(237,243,246,.14);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+button,a{font:inherit}
+.app{position:relative;width:100%;height:100%;isolation:isolate;
+  background:radial-gradient(ellipse at 50% 46%,rgba(40,90,140,.30),transparent 62%),linear-gradient(180deg,#040a14 0%,#06111f 50%,#081627 100%)}
+.sea{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;opacity:0;animation:fade 2.4s ease .2s forwards}
+.sea path{fill:none;stroke:rgba(190,228,246,.09);stroke-width:1;vector-effect:non-scaling-stroke}
+.sea path.eq{stroke:rgba(255,255,255,.26)}
+.sea .limb{fill:none;stroke:rgba(190,228,246,.22);stroke-width:1.2;vector-effect:non-scaling-stroke}
+.sea .glow{fill:url(#globeShade)}
+.sea .pt{fill:#c8f4ff}
+.sea .pt.past{fill:rgba(102,224,255,.55)}
+.sea .trail{fill:none;stroke:rgba(102,224,255,.35);stroke-width:1.2;stroke-dasharray:4 4;vector-effect:non-scaling-stroke}
+@keyframes fade{to{opacity:1}}
+.header{position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);display:flex;justify-content:space-between;align-items:flex-start}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(237,243,246,.52)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.88);letter-spacing:.29em}
+.lang{font-size:10px;letter-spacing:.14em;color:rgba(237,243,246,.7);text-decoration:none;border:1px solid rgba(237,243,246,.22);border-radius:5px;padding:4px 10px;background:rgba(4,13,22,.4)}
+.lang:hover{border-color:rgba(102,224,255,.5);color:#fff}
+.hero{position:absolute;z-index:4;left:50%;top:46%;transform:translate(-50%,-50%);width:min(88vw,880px);text-align:center;padding:28px}
+.kicker{font-size:10px;letter-spacing:.36em;color:rgba(237,243,246,.47);margin-bottom:17px}
+h1{font-family:var(--serif);font-size:clamp(38px,5.1vw,72px);font-weight:500;line-height:1.06;margin:0 0 8px;text-shadow:0 2px 28px rgba(0,0,0,.5)}
+.title-text{display:inline-block;letter-spacing:.15em;margin-right:-.15em}
+html[lang="en"] .title-text{letter-spacing:.06em;margin-right:-.06em}
+.life{font-size:11px;letter-spacing:.27em;color:rgba(237,243,246,.61);margin-bottom:30px}
+.thesis{font-family:var(--serif);font-weight:500;font-size:clamp(19px,2.2vw,30px);line-height:1.65;margin:0 0 8px;letter-spacing:.09em}
+.doka-note{font-size:10px;letter-spacing:.14em;color:rgba(237,243,246,.42);margin:0 0 20px}
+.lead{max-width:640px;margin:0 auto;color:rgba(237,243,246,.64);font-family:var(--serif);font-size:clamp(12px,1.15vw,15px);line-height:1.95;letter-spacing:.055em}
+.enter-wrap{margin-top:30px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.enter{border:1px solid rgba(237,243,246,.25);background:rgba(4,13,22,.34);color:#f7fbfd;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;cursor:pointer;backdrop-filter:blur(9px);transition:background .25s ease,border-color .25s ease,transform .25s ease}
+.enter small{display:block;margin-top:5px;font-size:9px;letter-spacing:.12em;color:rgba(237,243,246,.48)}
+.enter .arw{display:inline-block;margin-left:13px;color:var(--focus);transition:transform .25s ease}
+.enter.primary{border-color:rgba(102,224,255,.42);background:rgba(20,72,104,.22)}
+.enter.now .arw{color:var(--event)}
+.enter.now{border-color:rgba(224,194,122,.4)}
+.enter:hover,.enter:focus-visible{background:rgba(46,112,154,.16);border-color:rgba(102,224,255,.55);transform:translateY(-1px);outline:none}
+.enter:hover .arw{transform:translateX(4px)}
+.guide{width:min(92vw,860px);margin:26px auto 0;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(237,243,246,.10);border-bottom:1px solid rgba(237,243,246,.10)}
+.guide button{appearance:none;border:0;border-right:1px solid rgba(237,243,246,.09);background:rgba(3,12,20,.18);min-height:74px;color:var(--ink);padding:11px 15px 12px;text-align:left;cursor:pointer}
+.guide button:last-child{border-right:0}
+.guide button:hover,.guide button:focus-visible{background:rgba(46,112,154,.12);outline:none}
+.g-num{display:block;font-size:8px;letter-spacing:.18em;color:rgba(102,224,255,.55);margin-bottom:6px}
+.g-title{display:block;font-size:10px;letter-spacing:.13em;color:rgba(237,243,246,.82);margin-bottom:5px}
+.g-copy{display:block;font-size:9px;line-height:1.45;letter-spacing:.04em;color:rgba(237,243,246,.42)}
+.foot{position:absolute;z-index:4;left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);bottom:max(19px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;gap:12px;font-size:8px;letter-spacing:.13em;color:rgba(237,243,246,.32)}
+.foot a{color:rgba(237,243,246,.5)}
+dialog{width:min(90vw,580px);border:1px solid var(--border);padding:0;background:rgba(5,16,28,.96);color:var(--ink);box-shadow:0 28px 90px rgba(0,0,0,.55);backdrop-filter:blur(16px)}
+dialog::backdrop{background:rgba(0,4,8,.72);backdrop-filter:blur(4px)}
+.dlg{padding:28px 30px 30px;max-height:82vh;overflow-y:auto}
+.d-kicker{font-size:9px;letter-spacing:.22em;color:rgba(102,224,255,.66);margin-bottom:12px}
+.dlg h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em;margin:0 0 18px}
+.dlg p{font-size:12px;line-height:1.95;color:rgba(237,243,246,.69);margin:0 0 12px}
+.steps{display:grid;gap:10px;margin:14px 0 0}
+.step{border-top:1px solid rgba(237,243,246,.09);padding-top:10px;display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:start}
+.step b{font-size:10px;color:rgba(102,224,255,.72);letter-spacing:.08em;font-weight:500;line-height:1.7}
+.step span{font-size:11px;line-height:1.75;color:rgba(237,243,246,.67)}
+.step strong{font-weight:500;color:rgba(237,243,246,.88)}
+.step a{color:#cbe6ff}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;vertical-align:-1px;margin-right:4px}
+.dot.life{background:var(--focus)} .dot.spread{background:var(--spread)} .dot.world{background:#E69445} .dot.event{background:var(--event)} .dot.net{background:rgba(238,243,248,.45)}
+.close{margin-top:20px;border:1px solid var(--border);background:none;color:rgba(237,243,246,.70);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+.dlg .fine{font-size:10px;line-height:1.8;color:rgba(237,243,246,.45);margin:16px 0 0}
+/* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則） */
+.dlg{scrollbar-width:thin;scrollbar-color:rgba(102,224,255,.25) transparent}
+.dlg::-webkit-scrollbar{width:6px;background:transparent}
+.dlg::-webkit-scrollbar-track{background:transparent}
+.dlg::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px}
+.dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+.os-frame{position:absolute;inset:0;z-index:10;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .6s ease;background:#050c16}
+.app.entered .os-frame{opacity:1;pointer-events:auto}
+.app.entered .hero,.app.entered .header,.app.entered .foot,.app.entered .sea{opacity:0;pointer-events:none;transition:opacity .25s ease}
+.os-back{position:absolute;z-index:11;top:max(14px,env(safe-area-inset-top));left:clamp(14px,2vw,22px);display:none;align-items:center;border:1px solid rgba(237,243,246,.22);background:rgba(4,13,22,.6);backdrop-filter:blur(8px);color:rgba(237,243,246,.82);padding:7px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer;border-radius:6px}
+.app.entered .os-back{display:inline-flex}
+.os-back:hover{border-color:rgba(102,224,255,.45);color:#fff}
+.os-loading{position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;color:rgba(237,243,246,.5);font-size:11px;letter-spacing:.22em;pointer-events:none}
+.app.entered.loading .os-loading{display:flex}
+@media (max-width:640px){
+  .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
+  .brand{font-size:8px}.brand strong{font-size:9px}
+  .hero{top:48%;width:100%;padding:18px}
+  .kicker{font-size:8px;margin-bottom:15px}
+  h1{font-size:40px}
+  .life{font-size:9px;margin-bottom:22px}
+  .thesis{font-size:18px}
+  .lead{font-size:11px;line-height:1.85;max-width:330px}
+  .lead br{display:none}
+  .enter-wrap{margin-top:22px;gap:8px}
+  .enter{font-size:9px;padding:11px 16px 11px 19px}
+  .guide{width:min(94vw,365px);margin-top:18px;grid-template-columns:repeat(2,1fr)}
+  .guide button{min-height:62px;padding:9px 8px 10px}
+  .guide button:nth-child(2){border-right:0}
+  .guide button:nth-child(-n+2){border-bottom:1px solid rgba(237,243,246,.09)}
+  .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
+  .foot{left:18px;right:18px;font-size:7px;flex-direction:column;align-items:flex-start;gap:4px}
+  .step{grid-template-columns:66px 1fr}
+  .dlg{padding:24px 20px 24px}
+  .os-back{left:10px;top:calc(max(14px,env(safe-area-inset-top)) + 44px);padding:5px 10px}
+}
+@media (max-height:720px){ .hero{top:48%} .lead{display:none} .guide{margin-top:16px} .guide button{min-height:60px} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} .sea{animation:none;opacity:1} }
+</style>
+<!-- アクセス数（GoatCounter: Cookie なし・個人を特定しない。万次郎版・北斎版と同じ） -->
+<script data-goatcounter="https://historyos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <svg class="sea" id="graticule" viewBox="0 0 1800 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs><radialGradient id="globeShade" cx="38%" cy="32%" r="75%">
+      <stop offset="0" stop-color="rgba(120,190,230,.10)"/><stop offset=".7" stop-color="rgba(40,110,160,.05)"/><stop offset="1" stop-color="rgba(5,20,40,.22)"/>
+    </radialGradient></defs>
+  </svg>
+
+  <header class="header">
+    <div class="brand"><strong>HISTORY OS</strong>AIKIDO FOCUS — MORIHEI UESHIBA</div>
+    <a class="lang" id="langLink" href="?lang=en" hreflang="en">EN</a>
+  </header>
+
+  <main class="hero">
+    <div class="kicker">1883 — 1969</div>
+    <h1><span class="title-text" data-k="title">植芝盛平</span></h1>
+    <div class="life">MORIHEI UESHIBA / FOUNDER OF AIKIDO</div>
+
+    <p class="thesis" data-k="doka">美しき この天地の 御姿は<br>主のつくりし 一家なりけり</p>
+    <p class="doka-note" data-k="dokaNote">— 開祖の道歌</p>
+
+    <p class="lead" data-k="lead">紀州・田辺に生まれ、北海道の原野、綾部、東京、岩間へ。<br>
+      その歩みから合氣道が生まれ、道は海を越えて世界へ広がった。<br>
+      いまも世界の道場で、稽古が続いている。</p>
+
+    <div class="enter-wrap">
+      <button class="enter primary" id="enterBtn" type="button"><span data-k="enter">歴史をたどる</span><span class="arw">→</span><small data-k="enterSub">年代バーで、生涯と海外への広がりを</small></button>
+      <button class="enter now" id="nowEnter" type="button"><span data-k="now">いまの行事</span><span class="arw">●</span><small data-k="nowSub">NOW：世界の合気会の演武会・講習会</small></button>
+    </div>
+
+    <div class="guide" aria-label="入口ガイド">
+      <button data-dialog="intro" type="button"><span class="g-num">01 / INTRO</span><span class="g-title" data-k="g1t">この世界について</span><span class="g-copy" data-k="g1c">開祖の生涯と、合氣道が世界へ広がる歩み。</span></button>
+      <button data-dialog="view" type="button"><span class="g-num">02 / HOW TO VIEW</span><span class="g-title" data-k="g2t">見方</span><span class="g-copy" data-k="g2c">年代バー・NOW・地球の上の印。</span></button>
+      <button data-dialog="method" type="button"><span class="g-num">03 / METHOD</span><span class="g-title" data-k="g3t">資料の扱い</span><span class="g-copy" data-k="g3c">分かれる記述と、地点の確かさ。</span></button>
+      <button data-dialog="sources" type="button"><span class="g-num">04 / SOURCES</span><span class="g-title" data-k="g4t">出典と資料</span><span class="g-copy" data-k="g4c">合気会の沿革・百科事典・行事の告知。</span></button>
+    </div>
+  </main>
+
+  <footer class="foot"><span data-k="foot">個人制作のファンサイトです。合気会の公式サイトではありません。／地球の画像：NASA Blue Marble</span><span><a href="../focus/" data-k="toc">History OS の目次へ</a></span></footer>
+
+  <iframe id="osFrame" class="os-frame" title="History OS / Aikido Focus" allow="fullscreen"></iframe>
+  <div class="os-loading" id="osLoading" data-k="loading">地球を準備しています…</div>
+  <button class="os-back" id="backBtn" type="button" aria-label="表紙へ戻る" data-k="back">← 表紙へ</button>
+
+  <dialog id="intro"><div class="dlg" data-k="introHtml">
+    <div class="d-kicker">01 / INTRO</div><h2>天地を一家に</h2>
+    <p>History OS は、歴史を年表だけでなく、時間・場所・人物・同時代の世界を重ねて見るための試みです。</p>
+    <p>植芝盛平（1883–1969）は、紀州・田辺に生まれ、武術の修行、北海道の開拓、綾部での精神の探求を経て、合氣道を生みました。開祖は、世界が仲良く一つの家族のようであることを祈り、道歌にこう詠んでいます。「美しき この天地の 御姿は 主のつくりし 一家なりけり」。</p>
+    <p>合氣道 Focus では、開祖の生涯の拠点と移動を地球の上にたどり、1950年代からの海外への広がり、同時代の世界の出来事を同じ年代バーに重ねます。NOW では、世界の合気会の道場・団体の、いまの行事を見ることができます。</p>
+    <p>掲載は植芝盛平と合気会（公益財団法人合気会）に限ります。個人制作のファンサイトで、合気会の公式サイトではありません。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="view"><div class="dlg" data-k="viewHtml">
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見方</h2>
+    <div class="steps">
+      <div class="step"><b>年代バー</b><span>カーソルをドラッグして年を動かします。背景のドラッグで年代を動かし、背景を押すとその年へ。‹ ▶ › で1年ずつ・再生、＋ − で拡大・縮小。段は上から、年譜・海外・世界。</span></div>
+      <div class="step"><b>右</b><span>今の場所と、人物年譜（LIFE）。年譜の行を押すと、その年へ移ってカードが開きます。カードには「この頃」「土地」「時代と世界」。紫の語を押すと用語の説明。</span></div>
+      <div class="step"><b>左</b><span>World Events（この年の前後の世界）と、海外への広がり（この年まで）。</span></div>
+      <div class="step"><b>NOW</b><span>年代バーの <strong>NOW / 現在</strong> を押すと、いまの行事を地球と年代バー（月の目盛り）に出し、左の枠が国内・海外の行事に替わります。もう一度押すと元の年に戻ります。</span></div>
+      <div class="step"><b>地球</b><span><i class="dot life"></i>生涯の拠点（いまいる所は明るく、去った所は淡く。線は移動）<br><i class="dot spread"></i>海外への広がり <i class="dot world"></i>同時代の世界 <i class="dot net"></i>合気会の海外組織がある国（現在） <i class="dot event"></i>いまの行事</span></div>
+      <div class="step"><b>カメラ</b><span>地球が回るのは、カードの「地点を見る」を押したときだけです。年を送っても地球は動きません。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="method"><div class="dlg" data-k="methodHtml">
+    <div class="d-kicker">03 / METHOD</div><h2>資料の扱い</h2>
+    <div class="steps">
+      <div class="step"><b>分かれる記述</b><span>資料によって年が分かれる所は、本体の「出典」にまとめています（例：北海道への移住 1911／1912、1948年の合気会の認可）。確かめられなかった記述は外すか、確かめられた形に直しています（例：1947年の改組、1961年のハワイ訪問）。</span></div>
+      <div class="step"><b>地点</b><span>日本の拠点は、町や建物の位置に置いています（田辺は元町の町域、白滝は上白滝、綾部は大本本部、東京は芝白金と若松町の本部道場、岩間は合気神社）。生家そのものの位置は資料に見当たりません。海外の点は国や都市の代表の位置です。</span></div>
+      <div class="step"><b>時代と世界</b><span>カードの「時代と世界」は、同じ年のよく知られた出来事だけを書き、開祖との因果は書きません。世界的な流行病は、発生地の印を出しません。</span></div>
+      <div class="step"><b>行事</b><span>いまの行事は、行事カレンダーと同じデータを読みます。行事を入れるのはカレンダーの1か所だけです。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="sources"><div class="dlg" data-k="sourcesHtml">
+    <div class="d-kicker">04 / SOURCES</div><h2>出典と資料</h2>
+    <div class="steps">
+      <div class="step"><b>合気会</b><span><a href="https://www.aikikai.or.jp/aikido/history/" target="_blank" rel="noopener">沿革</a>・<a href="https://www.aikikai.or.jp/aikido/message/" target="_blank" rel="noopener">道主挨拶</a>・<a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">海外組織一覧</a>。</span></div>
+      <div class="step"><b>年譜</b><span>以前の合氣道版で採用した「植芝盛平年譜」（年表写真）を、ネットで照合したもの。</span></div>
+      <div class="step"><b>カード</b><span>ウィキペディア「植芝盛平」（日本語版・英語版）と合気会の沿革。</span></div>
+      <div class="step"><b>海外</b><span>『合気道のあゆみ』の周年の記述と、各国の合気会の公式ページ。設立年には周年から逆算したものを含みます。</span></div>
+      <div class="step"><b>行事</b><span>主催者の公式の告知（行事カレンダーのデータ）。</span></div>
+      <div class="step"><b>地図・地球</b><span>OpenStreetMap・国土地理院（地点の座標）。地球の画像は NASA Blue Marble。</span></div>
+    </div>
+    <p class="fine">各機関が本サイトを推薦・監修するものではありません。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+</div>
+
+<script>
+const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ja';
+// 英語の文言（日本語は HTML に書いてある）
+const EN = {
+  title: 'Morihei Ueshiba',
+  doka: 'Utsukushiki / kono ametsuchi no / misugata wa / shu no tsukurishi / ikka narikeri',
+  dokaNote: '“How beautiful, this form of heaven and earth — one family, made by the Creator.” — a poem (dōka) by the Founder',
+  lead: 'Born in Tanabe, Kii, he lived on the plains of Hokkaido, in Ayabe, Tokyo and Iwama. From his path Aikido was born, and it crossed the seas to spread around the world. Today, practice continues in dojos everywhere.',
+  enter: 'Follow the history', enterSub: 'his life and Aikido spreading abroad, on a timeline', now: 'Current events', nowSub: 'NOW: demonstrations and seminars of the Aikikai worldwide',
+  g1t: 'About', g1c: 'The Founder\'s life and the spread of Aikido.', g2t: 'How to view', g2c: 'Timeline, NOW and the marks on the globe.',
+  g3t: 'Method', g3c: 'Where sources differ, and how places are set.', g4t: 'Sources', g4c: 'Aikikai history, encyclopedias, event announcements.',
+  foot: 'A personal fan site — not the official website of the Aikikai. / Globe: NASA Blue Marble', toc: 'History OS contents', loading: 'Preparing the globe…', back: '← Cover',
+  introHtml: '<div class="d-kicker">01 / INTRO</div><h2>Heaven and earth as one family</h2>' +
+    '<p>History OS is an attempt to see history not only as a timeline, but by overlaying time, place, people and the world of the same era.</p>' +
+    '<p>Morihei Ueshiba (1883–1969) was born in Tanabe, Kii. Through martial training, pioneering in Hokkaido and spiritual searching in Ayabe, he created Aikido. The Founder prayed that the world might live in harmony like one family, and wrote in a poem: “How beautiful, this form of heaven and earth — one family, made by the Creator.”</p>' +
+    '<p>Aikido Focus follows the places where the Founder lived and the journeys between them on the globe, and overlays the spread of Aikido abroad from the 1950s and the events of the world on the same timeline. With NOW you can see current events of Aikikai dojos and groups around the world.</p>' +
+    '<p>Coverage is limited to Morihei Ueshiba and the Aikikai Foundation. This is a personal fan site, not the official website of the Aikikai.</p><button class="close" type="button">CLOSE</button>',
+  viewHtml: '<div class="d-kicker">02 / HOW TO VIEW</div><h2>How to view</h2><div class="steps">' +
+    '<div class="step"><b>Timeline</b><span>Drag the cursor to change the year. Drag the background to scroll the years; click the background to go to that year. ‹ ▶ › step and play one year at a time; + − zoom. The rows are Life, Abroad and World.</span></div>' +
+    '<div class="step"><b>Right</b><span>Where he is, and the chronology (LIFE). Click a line to go to that year and open its card, with “At this time”, “Place” and “The era and the world”. Click a purple word for an explanation.</span></div>' +
+    '<div class="step"><b>Left</b><span>World Events (the world around this year) and Aikido abroad (up to this year).</span></div>' +
+    '<div class="step"><b>NOW</b><span>Press <strong>NOW</strong> on the timeline to show current events on the globe and on a monthly timeline; the left panels switch to events in Japan and abroad. Press again to return to the year you were viewing.</span></div>' +
+    '<div class="step"><b>Globe</b><span><i class="dot life"></i>Places he lived (bright where he is, faint where he has left; lines are journeys)<br><i class="dot spread"></i>Aikido abroad <i class="dot world"></i>World events <i class="dot net"></i>Countries with Aikikai organizations (today) <i class="dot event"></i>Current events</span></div>' +
+    '<div class="step"><b>Camera</b><span>The globe only turns when you press “Show on globe” in a card. Changing the year does not move it.</span></div>' +
+    '</div><button class="close" type="button">CLOSE</button>',
+  methodHtml: '<div class="d-kicker">03 / METHOD</div><h2>Method</h2><div class="steps">' +
+    '<div class="step"><b>Differences</b><span>Where sources give different years, this is noted under “Sources” in the main view (e.g. the move to Hokkaido, 1911/1912; the approval of the Aikikai in 1948). Statements that could not be confirmed were removed or corrected (e.g. a reorganization in 1947, the 1961 visit to Hawaii).</span></div>' +
+    '<div class="step"><b>Places</b><span>Places in Japan are set at the town or building (Tanabe: Motomachi; Shirataki: Kami-Shirataki; Ayabe: Ōmoto headquarters; Tokyo: Shirogane and the Hombu Dojo in Wakamatsu-chō; Iwama: the Aiki Shrine). No source gives the exact birth house. Points abroad are representative locations of countries or cities.</span></div>' +
+    '<div class="step"><b>The era</b><span>“The era and the world” in the cards lists only well-known events of the same year and does not claim causes. Worldwide epidemics are not marked at a place of origin.</span></div>' +
+    '<div class="step"><b>Events</b><span>Current events come from the same data as the event calendar; each event is entered in one place only.</span></div>' +
+    '</div><button class="close" type="button">CLOSE</button>',
+  sourcesHtml: '<div class="d-kicker">04 / SOURCES</div><h2>Sources</h2><div class="steps">' +
+    '<div class="step"><b>Aikikai</b><span><a href="https://aikikai.or.jp/eng/aikido/history/" target="_blank" rel="noopener">History</a> · <a href="https://aikikai.or.jp/eng/aikido/message/" target="_blank" rel="noopener">Message from Doshu</a> · <a href="https://aikikai.or.jp/eng/about/overseasorganization/" target="_blank" rel="noopener">Overseas organizations</a>.</span></div>' +
+    '<div class="step"><b>Chronology</b><span>The “Chronology of Morihei Ueshiba” adopted in the earlier Aikido edition, checked online.</span></div>' +
+    '<div class="step"><b>Cards</b><span>Wikipedia “Morihei Ueshiba” (Japanese and English) and the Aikikai history. The English text is a draft translation from the Japanese.</span></div>' +
+    '<div class="step"><b>Abroad</b><span>Anniversary records in “The Path of Aikido” and official pages of Aikikai organizations; some founding years are counted back from anniversaries.</span></div>' +
+    '<div class="step"><b>Events</b><span>Official announcements by the organizers (event calendar data).</span></div>' +
+    '<div class="step"><b>Maps</b><span>OpenStreetMap and the Geospatial Information Authority of Japan (coordinates). Globe: NASA Blue Marble.</span></div>' +
+    '</div><p class="fine">No institution endorses or supervises this site.</p><button class="close" type="button">CLOSE</button>',
+};
+if (LANG === 'en') {
+  document.documentElement.lang = 'en';
+  document.title = 'History OS | Aikido Focus (Morihei Ueshiba)';
+  document.querySelector('meta[name="description"]').content = 'Aikido Focus in History OS: follow the life of Morihei Ueshiba, the spread of Aikido around the world and current events on a globe and timeline. A personal project — not the official website of the Aikikai.';
+  document.querySelectorAll('[data-k]').forEach(el => { const v = EN[el.dataset.k]; if (v == null) return; if (/Html$/.test(el.dataset.k)) el.innerHTML = v; else el.textContent = v; });
+  const l = document.getElementById('langLink'); l.href = location.pathname; l.textContent = '日本語'; l.hreflang = 'ja';
+  document.getElementById('backBtn').setAttribute('aria-label', 'Back to the cover');
+}
+// 背景の地球：本体の地球と同じガイド（経線・緯線と赤道）。日本を中心に。開祖の拠点を小さな点と破線で
+(function drawGlobeGuide() {
+  const svg = document.getElementById('graticule'), NS = 'http://www.w3.org/2000/svg';
+  const CX = 900, CY = 470, R = 400, LON0 = 140 * Math.PI / 180, LAT0 = 30 * Math.PI / 180, sin0 = Math.sin(LAT0), cos0 = Math.cos(LAT0);
+  const proj = (latD, lonD) => { const la = latD * Math.PI / 180, dl = lonD * Math.PI / 180 - LON0; const c = sin0 * Math.sin(la) + cos0 * Math.cos(la) * Math.cos(dl);
+    return [CX + R * Math.cos(la) * Math.sin(dl), CY - R * (cos0 * Math.sin(la) - sin0 * Math.cos(la) * Math.cos(dl)), c]; };
+  const el = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); svg.appendChild(e); return e; };
+  const line = (pts, cls) => { let d = '', pen = false; for (const [x, y, c] of pts) { if (c >= 0) { d += (pen ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); pen = true; } else pen = false; } if (d) el('path', { d, class: cls }); };
+  el('circle', { cx: CX, cy: CY, r: R, class: 'glow' });
+  const meridian = lon => { const p = []; for (let lat = -90; lat <= 90; lat += 2) p.push(proj(lat, lon)); return p; };
+  const parallel = lat => { const p = []; for (let lon = -180; lon <= 180; lon += 2) p.push(proj(lat, lon)); return p; };
+  for (let lon = -170; lon < 180; lon += 10) line(meridian(lon), '');
+  for (let lat = -80; lat <= 80; lat += 10) if (lat) line(parallel(lat), '');
+  line(parallel(0), 'eq');
+  // 開祖の拠点（田辺→白滝→綾部→東京→岩間）を淡い破線で結ぶ。最後の岩間だけ明るく
+  const P = [[33.748, 135.3633], [43.8774, 143.1435], [35.2937, 135.2606], [35.6991, 139.7144], [36.2942, 140.2813]];
+  const trail = P.map(([a, b]) => proj(a, b)); let d = ''; trail.forEach(([x, y], i) => { d += (i ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); });
+  el('path', { d, class: 'trail' });
+  trail.forEach(([x, y], i) => el('circle', { cx: x, cy: y, r: i === trail.length - 1 ? 4 : 2.6, class: 'pt' + (i === trail.length - 1 ? '' : ' past') }));
+  el('circle', { cx: CX, cy: CY, r: R, class: 'limb' });
+  const fit = () => { const portrait = innerWidth < innerHeight; svg.setAttribute('viewBox', portrait ? `${CX - R - 24} ${CY - R - 24} ${2 * R + 48} ${2 * R + 48}` : '0 0 1800 900'); svg.setAttribute('preserveAspectRatio', portrait ? 'xMidYMid meet' : 'xMidYMid slice'); };
+  fit(); addEventListener('resize', fit);
+})();
+const app = document.getElementById('app'), osFrame = document.getElementById('osFrame');
+function enter(now) {
+  app.classList.add('entered', 'loading');
+  osFrame.addEventListener('load', () => setTimeout(() => app.classList.remove('loading'), 900), { once: true });
+  const q = new URLSearchParams(); if (LANG === 'en') q.set('lang', 'en'); if (now) q.set('now', '1');
+  osFrame.src = 'focusShell.html' + (q.toString() ? '?' + q : ''); // ここで初めて本体を読み込む
+}
+document.getElementById('enterBtn').addEventListener('click', () => enter(false));
+document.getElementById('nowEnter').addEventListener('click', () => enter(true));
+document.getElementById('backBtn').addEventListener('click', () => { app.classList.remove('entered', 'loading'); osFrame.removeAttribute('src'); });
+document.querySelectorAll('[data-dialog]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.dialog).showModal()));
+document.addEventListener('click', e => { if (e.target.classList.contains('close')) e.target.closest('dialog').close(); });
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+</script>
+</body>
+</html>

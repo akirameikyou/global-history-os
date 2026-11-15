@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>History OS｜Focus の目次</title>
+<meta name="description" content="History OS の Focus（人物を軸に、時間・場所・同時代の世界を地球の上に重ねる画面）の目次。中浜万次郎・葛飾北斎・植芝盛平（合氣道）。" />
+<link rel="alternate" hreflang="ja" href="index.html" />
+<link rel="alternate" hreflang="en" href="index.html?lang=en" />
+<!--
+  History OS の Focus の目次（2026-11-15）。表紙（各 Focus の index.html）へ入る入口を並べるだけ。
+  見た目は各表紙と同じ夜の青と細い線。人物の Focus を足したら、下の FOCUSES に一行足す。
+  ルートの index.html（GLOBAL HISTORY MAP）はそのまま。ここからのリンクを置くかは別に決める。
+-->
+<style>
+:root{ --ink:#edf3f6; --focus:#66e0ff; --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif; --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif; }
+*{box-sizing:border-box}
+html{scrollbar-color:rgba(102,224,255,.25) transparent}
+::-webkit-scrollbar{width:6px;background:transparent} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:rgba(102,224,255,.25);border-radius:3px} ::-webkit-scrollbar-button{display:none}
+html,body{margin:0;min-height:100%;color:var(--ink);font-family:var(--sans);background:radial-gradient(ellipse at 50% 30%,rgba(40,90,140,.28),transparent 60%),linear-gradient(180deg,#040a14 0%,#06111f 55%,#081627 100%);background-attachment:fixed}
+a{color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) clamp(18px,3vw,40px) 40px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:46px}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(237,243,246,.52)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.88);letter-spacing:.29em}
+.lang{font-size:10px;letter-spacing:.14em;color:rgba(237,243,246,.7);text-decoration:none;border:1px solid rgba(237,243,246,.22);border-radius:5px;padding:4px 10px}
+.lang:hover{border-color:rgba(102,224,255,.5);color:#fff}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);letter-spacing:.12em;margin:0 0 10px}
+.lead{font-family:var(--serif);font-size:clamp(12px,1.2vw,15px);line-height:1.95;letter-spacing:.05em;color:rgba(237,243,246,.62);max-width:640px;margin:0 0 34px}
+.list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{display:block;text-decoration:none;border:1px solid rgba(237,243,246,.12);background:rgba(3,12,20,.35);padding:20px 20px 18px;transition:border-color .2s ease,background .2s ease,transform .2s ease}
+.card:hover,.card:focus-visible{border-color:rgba(102,224,255,.5);background:rgba(20,60,90,.22);transform:translateY(-1px);outline:none}
+.card .yrs{font-size:9px;letter-spacing:.3em;color:rgba(237,243,246,.45)}
+.card .nm{font-family:var(--serif);font-size:26px;font-weight:500;letter-spacing:.1em;margin:8px 0 2px}
+.card .en{font-size:9px;letter-spacing:.22em;color:var(--card,#66e0ff);margin-bottom:12px}
+.card .tx{font-size:12px;line-height:1.8;color:rgba(237,243,246,.64)}
+.card .go{display:inline-block;margin-top:12px;font-size:9px;letter-spacing:.2em;color:var(--card,#66e0ff)}
+.foot{margin-top:40px;font-size:9px;letter-spacing:.12em;color:rgba(237,243,246,.32);line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="brand"><strong>HISTORY OS</strong><span data-k="brand">FOCUS PERSON — 目次</span></div>
+    <a class="lang" id="langLink" href="?lang=en" hreflang="en">EN</a>
+  </div>
+  <h1 data-k="title">Focus の目次</h1>
+  <p class="lead" data-k="lead">一人の人物を軸に、時間・場所・同時代の世界を地球の上に重ねて見る画面です。どの Focus も、同じ並び（地球・年代バー・右の年譜・左の世界の出来事）で読めます。</p>
+  <div class="list" id="list"></div>
+  <p class="foot" data-k="foot">History OS は個人制作のサイトです。各 Focus の出典は、それぞれの表紙の SOURCES にあります。</p>
+</div>
+<script>
+const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ja';
+// Focus を足したらここに一行（href は表紙。英語の表紙が無い Focus は日本語の表紙へ）
+const FOCUSES = [
+  { href: '../manjiro/', yrs: '1827 — 1898', color: '#66e0ff', en: 'JOHN MANJIRO FOCUS', enLang: false,
+    ja: { nm: '中浜万次郎', tx: '漂流から捕鯨船、アメリカでの暮らし、開国、咸臨丸まで。航海を月ごとに地球の上でたどる。' },
+    e:  { nm: 'John Manjiro', tx: 'From castaway to whaler, life in America, the opening of Japan and the Kanrin Maru — his voyages month by month on the globe (Japanese only).' } },
+  { href: '../hokusai/', yrs: '1760 — 1849', color: '#f0b578', en: 'KATSUSHIKA HOKUSAI FOCUS', enLang: false,
+    ja: { nm: '葛飾北斎', tx: '富嶽三十六景の視点を地図の上に。描いた場所と、作品のいまの所蔵まで。' },
+    e:  { nm: 'Katsushika Hokusai', tx: 'The viewpoints of the Thirty-six Views of Mount Fuji on the map, and where the prints are held today (Japanese only).' } },
+  { href: '../ueshiba/', yrs: '1883 — 1969', color: '#57c9c0', en: 'AIKIDO FOCUS — MORIHEI UESHIBA', enLang: true,
+    ja: { nm: '植芝盛平', tx: '合氣道の開祖の生涯と、合氣道が世界へ広がる歩み。NOW で、世界の合気会のいまの行事も。' },
+    e:  { nm: 'Morihei Ueshiba', tx: 'The life of the Founder of Aikido and its spread around the world — and, with NOW, current events of the Aikikai worldwide.' } },
+];
+const EN = { brand: 'FOCUS PERSON — CONTENTS', title: 'Focus contents', lead: 'Each Focus takes one person as its axis and overlays time, place and the world of the era on a globe. Every Focus reads the same way: globe, timeline, chronology on the right, world events on the left.', foot: 'History OS is a personal project. Sources for each Focus are under SOURCES on its cover.' };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+if (LANG === 'en') {
+  document.documentElement.lang = 'en'; document.title = 'History OS | Focus contents';
+  document.querySelectorAll('[data-k]').forEach(el => { if (EN[el.dataset.k]) el.textContent = EN[el.dataset.k]; });
+  const l = document.getElementById('langLink'); l.href = location.pathname; l.textContent = '日本語'; l.hreflang = 'ja';
+}
+document.getElementById('list').innerHTML = FOCUSES.map(f => { const t = LANG === 'en' ? f.e : f.ja, href = f.href + (LANG === 'en' && f.enLang ? '?lang=en' : '');
+  return '<a class="card" style="--card:' + f.color + '" href="' + esc(href) + '"><div class="yrs">' + f.yrs + '</div><div class="nm">' + esc(t.nm) + '</div><div class="en">' + esc(f.en) + '</div><div class="tx">' + esc(t.tx) + '</div><span class="go">ENTER →</span></a>'; }).join('');
+</script>
+</body>
+</html>
