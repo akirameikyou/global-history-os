@@ -158,6 +158,14 @@
   .brow .nm{font-size:12.5px;font-weight:700} .brow .sub{font-size:10px;color:var(--sub);margin-top:1px}
   .fix6{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:11px;margin:8px 0 10px}
   .fix6 dt{color:var(--dim);font-size:10px} .fix6 dd{margin:0}
+  ol.ms{list-style:none;margin:4px 0 0;padding:0 0 0 12px;border-left:1px solid rgba(232,194,122,.35)}
+  ol.ms li{position:relative;padding:4px 0 7px;cursor:pointer;font-size:11.5px;line-height:1.6}
+  ol.ms li::before{content:'';position:absolute;left:-16px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--wheat)}
+  ol.ms li.later{opacity:.42} ol.ms li.later::before{background:transparent;border:1px solid var(--wheat)}
+  ol.ms li:hover{background:rgba(255,255,255,.04)}
+  .msy{font-family:var(--mono);font-size:10.5px;color:var(--wheat-soft)}
+  .msk{font-size:9px;color:var(--dim);margin-left:6px}
+  .msn{font-size:10px;color:var(--est);margin-top:1px}
   .legend-box{font-size:11.5px;line-height:1.7;color:#d9c9ff;border-left:2px dashed #c79bff;padding:4px 0 4px 10px;margin:8px 0}
   .gm.wild{width:8px;height:8px;background:#8fd17a;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 1px rgba(5,12,22,.8)}
   #tl .seg rect.bg{fill:rgba(255,255,255,.025)}
@@ -306,8 +314,8 @@ import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_even
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261115a';
-import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116a';
-import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116a';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116b';
+import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116b';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -508,6 +516,7 @@ function one(i) {
 /* ── パン図鑑のカード ── */
 /* 記録年が未確認（null）のパンは架空の年を置かず、第6章（いま＝1975年〜）から出す */
 function breadAvail(b) { return b.earliest.from == null ? S.year >= 1975 : b.earliest.from <= S.year; }
+const MS_KIND = { record: '記録', tool: '道具・焼き方', material: '材料', institution: '制度', spread: '広がり', japan: '日本' };
 const GRAIN_JA = { wheat: '小麦', rye: 'ライ麦', teff: 'テフ', mixed: '小麦ほか' };
 const GRAIN_COLOR = { wheat: '#f3dcae', rye: '#b98a5e', teff: '#9bc7a4', mixed: '#e8c27a' };
 function openBread(id) {
@@ -524,6 +533,9 @@ function openBread(id) {
     <dl class="fix6"><dt>植物の種</dt><dd>${esc(b.species)}</dd><dt>粉</dt><dd>${esc(b.flour)}</dd><dt>発酵</dt><dd>${esc(b.leaven)}</dd>
       <dt>熱</dt><dd>${esc(b.heat)}</dd><dt>形</dt><dd>${esc(b.form)}</dd><dt>名前</dt><dd>${esc(b.name_ja)}（${esc(b.name_level_ja)}）</dd></dl>
     <div class="rs"><h4>成り立ちと広がり</h4><p>${esc(b.history_ja)}</p><h4>製法の要点</h4><p>${esc(b.method_ja)}</p></div>
+    ${(b.milestones || []).length ? `<div class="rs"><h4>発展の歩み</h4><ol class="ms">${b.milestones.map(m => `<li class="${m.from > S.year ? 'later' : ''}" data-y="${m.from}">
+        <span class="msy">${esc(m.label)}</span><span class="conf ${m.confidence}">${CONF_JA[m.confidence] || ''}</span><span class="msk">${esc(MS_KIND[m.kind] || '')}</span>
+        <div>${esc(m.text_ja)}</div>${m.note_ja ? `<div class="msn">${esc(m.note_ja)}</div>` : ''}</li>`).join('')}</ol></div>` : ''}
     ${b.legend_ja ? `<div class="legend-box"><b>語り（起源譚）</b>　${esc(b.legend_ja)}</div>` : ''}
     ${rel ? `<div class="refs" style="margin:6px 0">${rel}</div>` : ''}
     <details class="research"><summary>研究の段 ▾　記録と出典</summary><div class="rs">
@@ -532,6 +544,7 @@ function openBread(id) {
       ${b.note ? `<div class="note">${esc(b.note)}</div>` : ''}</div></details>`;
   $('dcBody').querySelectorAll('.ref[data-e]').forEach(x => x.onclick = () => select(x.dataset.e));
   $('dcBody').querySelectorAll('.ref[data-b]').forEach(x => x.onclick = () => openBread(x.dataset.b));
+  $('dcBody').querySelectorAll('.ms li').forEach(x => x.onclick = () => { stopPlay(); setYear(+x.dataset.y); setTimeout(() => openBread(b.id), 30); });
   const act = $('dcAct'); act.hidden = b.lat == null; act.textContent = '地点を見る';
   act.onclick = () => world.pointOfView({ lat: b.lat, lng: b.lng, altitude: 1.2 }, 900);
   $('detailCard').hidden = false;

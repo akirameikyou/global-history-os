@@ -327,6 +327,18 @@ export const breadImages = [
   "page": "https://commons.wikimedia.org/wiki/File:Clara_Peeters_-_Still_Life_with_Cheeses,_Almonds_and_Pretzels.jpg"
  },
  {
+  "id": "b_mantou",
+  "target": "mantou",
+  "file": "img/b_mantou.jpg",
+  "generated": false,
+  "kind": "photo",
+  "caption_ja": "手作りの饅頭（具の入らない蒸しパン）",
+  "artist": "SoHome Jacaranda Lilau",
+  "license": "CC BY-SA 4.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Handmade_mantou.jpg"
+ },
+ {
   "id": "gen_shubayqa",
   "target": "ev_shubayqa",
   "file": "img/gen_shubayqa.jpg",
