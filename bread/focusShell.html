@@ -158,6 +158,10 @@
   .brow .nm{font-size:12.5px;font-weight:700} .brow .sub{font-size:10px;color:var(--sub);margin-top:1px}
   .fix6{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:11px;margin:8px 0 10px}
   .fix6 dt{color:var(--dim);font-size:10px} .fix6 dd{margin:0}
+  .brole{margin:-2px 0 8px;font-size:10.5px;line-height:1.6;color:var(--sub)}
+  .role{display:inline-block;font-size:9.5px;border-radius:3px;padding:0 6px;margin-right:6px;line-height:1.7;border:1px solid currentColor}
+  .role.staple{color:#f3dcae} .role.meal{color:#9bc7a4} .role.snack{color:#d8b4f0;border-style:dashed}
+  .yk{color:var(--sub)}
   ol.ms{list-style:none;margin:4px 0 0;padding:0 0 0 12px;border-left:1px solid rgba(232,194,122,.35)}
   ol.ms li{position:relative;padding:4px 0 7px;cursor:pointer;font-size:11.5px;line-height:1.6}
   ol.ms li::before{content:'';position:absolute;left:-16px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--wheat)}
@@ -311,12 +315,12 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
-import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116c';
+import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116d';
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
 import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116b';
-import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116c';
+import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116d';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -517,6 +521,7 @@ function one(i) {
 /* ── パン図鑑のカード ── */
 /* 記録年が未確認（null）のパンは架空の年を置かず、第6章（いま＝1975年〜）から出す */
 function breadAvail(b) { return b.earliest.from == null ? S.year >= 1975 : b.earliest.from <= S.year; }
+const ROLE_JA = { staple: '主食', meal: '食事のパン', snack: '軽食・祝いの日' };
 const MS_KIND = { record: '記録', tool: '道具・焼き方', material: '材料', institution: '制度', spread: '広がり', japan: '日本' };
 const GRAIN_JA = { wheat: '小麦', rye: 'ライ麦', teff: 'テフ', mixed: '小麦ほか' };
 const GRAIN_COLOR = { wheat: '#f3dcae', rye: '#b98a5e', teff: '#9bc7a4', mixed: '#e8c27a' };
@@ -531,6 +536,7 @@ function openBread(id) {
   const rel = (b.related || []).map(r => { const e = EVENTS.find(x => x.id === r); if (e) return `<span class="ref" data-e="${r}">${esc(e.title_ja)} ▸</span>`;
     const o = BREADS.find(x => x.id === r); return o ? `<span class="ref" data-b="${r}">${esc(o.name_ja)} ▸</span>` : ''; }).join('');
   $('dcBody').innerHTML = `<p class="kitchen">${esc(b.kitchen_ja)}</p>
+    <div class="brole"><span class="role ${b.role}">${ROLE_JA[b.role]}</span><span class="yk">分かる年：${esc(b.year_kind_ja)}</span></div>
     <dl class="fix6"><dt>植物の種</dt><dd>${esc(b.species)}</dd><dt>粉</dt><dd>${esc(b.flour)}</dd><dt>発酵</dt><dd>${esc(b.leaven)}</dd>
       <dt>熱</dt><dd>${esc(b.heat)}</dd><dt>形</dt><dd>${esc(b.form)}</dd><dt>名前</dt><dd>${esc(b.name_ja)}（${esc(b.name_level_ja)}）</dd></dl>
     <div class="rs"><h4>成り立ちと広がり</h4><p>${esc(b.history_ja)}</p><h4>製法の要点</h4><p>${esc(b.method_ja)}</p></div>
@@ -630,7 +636,7 @@ function drawRight() {
     } else {
       const list = [...BREADS].sort(S.zAxis === 'era' ? (a, b) => (a.earliest.from ?? 9999) - (b.earliest.from ?? 9999) : (a, b) => a.region.localeCompare(b.region, 'ja'));
       h += list.map(b => { const im = IMAGES.find(i => i.target === b.id && !i.generated);
-        return `<div class="brow ${avail(b) ? '' : 'later'}" data-b="${b.id}">${im ? `<img src="${esc(im.file)}" alt="" loading="lazy">` : '<img alt="">'}<div><div class="nm">${esc(b.name_ja)}</div><div class="sub">${esc(S.zAxis === 'era' ? b.earliest.label : b.region)}・${esc(b.leaven)}・${esc(b.heat)}</div></div></div>`; }).join('');
+        return `<div class="brow ${avail(b) ? '' : 'later'}" data-b="${b.id}">${im ? `<img src="${esc(im.file)}" alt="" loading="lazy">` : '<img alt="">'}<div><div class="nm">${esc(b.name_ja)}</div><div class="sub"><span class="role ${b.role}">${ROLE_JA[b.role]}</span> ${esc(S.zAxis === 'era' ? b.earliest.label : b.region)}・${esc(b.leaven)}</div></div></div>`; }).join('');
     }
     b.innerHTML = h;
     b.querySelectorAll('[data-ax]').forEach(x => x.onclick = () => { S.zAxis = x.dataset.ax; drawRight(); });

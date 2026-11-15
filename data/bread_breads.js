@@ -14,6 +14,8 @@ export const breadKinds = [
   "lat": 35.45,
   "lng": 139.64,
   "grain": "wheat",
+  "role": "meal",
+  "year_kind_ja": "店の沿革の年と、戦後の給食・工場の年。日本の食パンが生まれた年は確定していない。",
   "leaven_group": "イースト",
   "heat_group": "型で焼く",
   "name_level_ja": "製品名（日本）",
@@ -170,6 +172,8 @@ export const breadKinds = [
   "lat": 48.86,
   "lng": 2.35,
   "grain": "wheat",
+  "role": "staple",
+  "year_kind_ja": "重さの変化・政令・UNESCO 登録の年。生まれた年と考えた人はわからない。",
   "leaven_group": "イースト",
   "heat_group": "窯で焼く",
   "name_level_ja": "製品名（形）",
@@ -297,6 +301,8 @@ export const breadKinds = [
   "lat": 46.6,
   "lng": 2.4,
   "grain": "mixed",
+  "role": "meal",
+  "year_kind_ja": "業界の申し合わせ（1977）と法令の年。名前のいちばん古い記録は未確認で、法律での定義もない。",
   "leaven_group": "自然種",
   "heat_group": "窯で焼く",
   "name_level_ja": "様式名",
@@ -320,7 +326,7 @@ export const breadKinds = [
     "text_ja": "フランスの農村では農家が自分で穀物を挽いてパンを焼き、領主の共同窯（フール・バナル）なども使われた。家で焼く大きなパンが毎日の食事の中心だった。",
     "kind": "record",
     "confidence": "range",
-    "note_ja": "中世の農村のパン一般であり、今の「パン・ド・カンパーニュ」という製品と同じとは言えない。",
+    "note_ja": "中世の農村のパン一般であり、今の「パン・ド・カンパーニュ」という名前の製品と同じとは言えない。",
     "source": {
      "title": "Le Paysan et son outil. Essai d'histoire technique des céréales (France VIIIe-XVe siècle) (Persée)",
      "url": "https://www.persee.fr/doc/efr_0000-0000_1992_mon_165_1",
@@ -337,10 +343,25 @@ export const breadKinds = [
     "confidence": "range",
     "note_ja": "研究要旨による大きな流れ。地域差が大きい。",
     "source": {
-     "title": "La fabrique du pain blanc (IRHIST",
-     "url": " Sorbonne Université)",
-     "kind": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
-     "checked": "academic_summary"
+     "title": "La fabrique du pain blanc (IRHIST Sorbonne Université)",
+     "url": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
+     "kind": "academic_summary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1900,
+    "to": 2000,
+    "label": "1900年→2000年",
+    "text_ja": "フランスの一人あたりのパンの量は、1日約900gから約150gへ減った（1950年に約325g）。パンが「主食そのもの」でなくなっていく過程。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "大学のサイトが引く数値。もとの統計は業界団体系で、一次統計は未確認。",
+    "source": {
+     "title": "COMUE Université Bourgogne-Franche-Comté「Le pain une longue histoire d'innovations」",
+     "url": "https://www.ubfc.fr/en/le-pain-une-longue-histoire-dinnovations-techniques-et-sociales/",
+     "kind": "academic",
+     "checked": "2026-11-16"
     }
    },
    {
@@ -365,7 +386,7 @@ export const breadKinds = [
     "text_ja": "白く均一な工業的なパンが広がった後、「田舎風」を掲げるパンを見直す流れが始まったと報じられている。",
     "kind": "spread",
     "confidence": "range",
-    "note_ja": "現在の店頭の「pain de campagne」の動き。農村で昔から食べたパン一般とは区別する。",
+    "note_ja": "今の店頭の「pain de campagne」の動き。農村で昔から食べたパン一般とは区別する。",
     "source": {
      "title": "Le Monde「La fièvre du pain」(2005)",
      "url": "https://www.lemonde.fr/a-la-une/article/2005/12/12/la-fievre-du-pain_720275_40",
@@ -374,15 +395,30 @@ export const breadKinds = [
     }
    },
    {
+    "from": 1977,
+    "to": 1977,
+    "label": "1977年",
+    "text_ja": "フランスのパンの商慣行集で「パン・ド・カンパーニュ」が初めて文章で定められた（素朴さを感じさせるパン、ライ麦は任意、白くしすぎない、自然種を合わせて軽い酸味と日持ち）。",
+    "kind": "institution",
+    "confidence": "confirmed",
+    "note_ja": "法令ではなく業界の申し合わせ（商慣行集）。拘束力の性質は政令と違う。",
+    "source": {
+     "title": "INBP『Supplément Technique』1997（Recueil des usages concernant les pains en France を収録）",
+     "url": "https://www.metiers-alimentation.ac-versailles.fr/IMG/pdf/INBP_SupTechnique_1997.pdf",
+     "kind": "institution",
+     "checked": "2026-11-16"
+    }
+   },
+   {
     "from": 1993,
     "to": 1993,
     "label": "1993年",
-    "text_ja": "フランスの政令で「伝統的フランスパン」「自然種のパン（pain au levain）」などの名前を名乗るための製法の条件が定められた。",
+    "text_ja": "フランスの政令で「伝統的フランスパン」「自然種のパン（pain au levain）」などの名前の条件が定められた。「パン・ド・カンパーニュ」はこの政令から外され、今も法律での定義がない。",
     "kind": "institution",
     "confidence": "confirmed",
-    "note_ja": "法令が昔の味を作ったわけではない。名称の条件。",
+    "note_ja": "名前の輪郭があいまいなこと自体が、このパンの特徴。政令から外された経緯は歴史家カプランの書籍による。",
     "source": {
-     "title": "Décret n°93-1074 (Légifrance)",
+     "title": "Décret n°93-1074 (Légifrance) ／ S. L. Kaplan『Good Bread Is Back』Duke UP 2006",
      "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000727617/",
      "kind": "law",
      "checked": "2026-11-16"
@@ -409,10 +445,16 @@ export const breadKinds = [
     "checked": "2026-11-16"
    },
    {
-    "title": "La fabrique du pain blanc (IRHIST",
-    "url": " Sorbonne Université)",
-    "kind": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
-    "checked": "academic_summary"
+    "title": "La fabrique du pain blanc (IRHIST Sorbonne Université)",
+    "url": "https://irhist.sorbonne-universite.fr/sites/default/files/media/2026-05/Guesnon_JC%20IRHIST.pdf",
+    "kind": "academic_summary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "COMUE Université Bourgogne-Franche-Comté「Le pain une longue histoire d'innovations」",
+    "url": "https://www.ubfc.fr/en/le-pain-une-longue-histoire-dinnovations-techniques-et-sociales/",
+    "kind": "academic",
+    "checked": "2026-11-16"
    },
    {
     "title": "Poilâne「Notre histoire」",
@@ -427,7 +469,13 @@ export const breadKinds = [
     "checked": "2026-11-16"
    },
    {
-    "title": "Décret n°93-1074 (Légifrance)",
+    "title": "INBP『Supplément Technique』1997（Recueil des usages concernant les pains en France を収録）",
+    "url": "https://www.metiers-alimentation.ac-versailles.fr/IMG/pdf/INBP_SupTechnique_1997.pdf",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Décret n°93-1074 (Légifrance) ／ S. L. Kaplan『Good Bread Is Back』Duke UP 2006",
     "url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000000727617/",
     "kind": "law",
     "checked": "2026-11-16"
@@ -448,6 +496,8 @@ export const breadKinds = [
   "lat": 48.86,
   "lng": 2.35,
   "grain": "wheat",
+  "role": "snack",
+  "year_kind_ja": "パリの店の年（1830年代後半）。ウィーン包囲の話は後から語られたもの。",
   "leaven_group": "イースト（層）",
   "heat_group": "窯で焼く",
   "name_level_ja": "製品名（形）",
@@ -559,6 +609,8 @@ export const breadKinds = [
   "lat": 49.44,
   "lng": 1.1,
   "grain": "wheat",
+  "role": "snack",
+  "year_kind_ja": "語の記録の年（1404）。今の配合ができた年ではない。",
   "leaven_group": "イースト",
   "heat_group": "型で焼く",
   "name_level_ja": "製品名",
@@ -620,6 +672,8 @@ export const breadKinds = [
   "lat": 51.57,
   "lng": 7.61,
   "grain": "rye",
+  "role": "staple",
+  "year_kind_ja": "地域の製造の伝統の年（1570）と地理的表示の年。名前の初出とは別。",
   "leaven_group": "自然種",
   "heat_group": "型で焼く",
   "name_level_ja": "地域名・製品名",
@@ -702,6 +756,8 @@ export const breadKinds = [
   "lat": 45.23,
   "lng": 12.06,
   "grain": "wheat",
+  "role": "meal",
+  "year_kind_ja": "作られた年（当事者の証言、1982）と商標の年（諸説）。主食の歴史の外で新しく生まれたパン。",
   "leaven_group": "イースト",
   "heat_group": "窯で焼く",
   "name_level_ja": "製品名（形）",
@@ -721,11 +777,26 @@ export const breadKinds = [
    {
     "from": 1982,
     "to": 1982,
-    "label": "1982年",
-    "text_ja": "イタリアのアドリアで製粉業者アルナルド・カヴァッラーリが、フランスのバゲットに対抗するサンドイッチ用のパンとして「チャバッタ・ポレザーナ」を作った。",
+    "label": "1982年9月",
+    "text_ja": "イタリアのアドリアで製粉業者アルナルド・カヴァッラーリが職人たちと、水分の多い生地とビガ種（前日に仕込む種）のパンを形にし「チャバッタ・ポレザーナ」と名づけた。フランスのバゲットに対抗するサンドイッチ用のパンだった。",
     "kind": "material",
     "confidence": "range",
-    "note_ja": "本人のインタビューと地域誌による。主食化の節目ではなく、新しく作られたパン。商標の一次書類は未確認。",
+    "note_ja": "日付は当事者側の資料のみ。似た素朴なパンは各地に以前からあり、1982年は名前と製法を決めた年で、パンの型が生まれた年ではない。",
+    "source": {
+     "title": "The Guardian「The secret life of ciabatta」(1999) ／ Il Resto del Carlino (2013-04-10)",
+     "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+     "kind": "press",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1982,
+    "to": 1989,
+    "label": "1982／1983／1989年（諸説）",
+    "text_ja": "商標の登録年は資料によって1982年・1983年・1989年と食い違う。1989年説はカヴァッラーリ本人の発言。",
+    "kind": "institution",
+    "confidence": "range",
+    "note_ja": "年そのものが争われている。イタリア特許商標庁の原簿では未照合。",
     "source": {
      "title": "The Guardian「The secret life of ciabatta」(1999)",
      "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
@@ -735,12 +806,12 @@ export const breadKinds = [
    },
    {
     "from": 1985,
-    "to": 1985,
-    "label": "1985年",
-    "text_ja": "英国のマークス＆スペンサーがチャバッタを売り出し、英国に広まった。",
+    "to": 1999,
+    "label": "1985年〜1999年",
+    "text_ja": "英国では1985年にマークス＆スペンサーが売り出し、1999年までにカヴァッラーリの会社が11か国の製パン業者に製法を許諾した。世界のサンドイッチ売り場に広がった。",
     "kind": "spread",
     "confidence": "range",
-    "note_ja": "報道による。",
+    "note_ja": "報道による。11か国の内訳は未確認。",
     "source": {
      "title": "The Guardian「The secret life of ciabatta」(1999)",
      "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
@@ -755,6 +826,12 @@ export const breadKinds = [
     "url": "https://en.wikipedia.org/wiki/Ciabatta",
     "kind": "encyclopedia",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "The Guardian「The secret life of ciabatta」(1999) ／ Il Resto del Carlino (2013-04-10)",
+    "url": "https://www.theguardian.com/theguardian/1999/apr/30/features11.g24",
+    "kind": "press",
+    "checked": "2026-11-16"
    },
    {
     "title": "The Guardian「The secret life of ciabatta」(1999)",
@@ -784,6 +861,8 @@ export const breadKinds = [
   "lat": 44.41,
   "lng": 8.93,
   "grain": "wheat",
+  "role": "snack",
+  "year_kind_ja": "職人の目録の年（1392、引用のみ）と、製品規格・地理的表示の年。古代ローマからの連続は確かめられない。",
   "leaven_group": "イースト",
   "heat_group": "窯で焼く",
   "name_level_ja": "製品名",
@@ -801,6 +880,51 @@ export const breadKinds = [
   "related": [],
   "milestones": [
    {
+    "from": 1392,
+    "to": 1392,
+    "label": "1392年",
+    "text_ja": "ジェノヴァのパン職人の財産目録に「フォカッチャ用の大きな窯入れのへら」が記されていたとされる。型に入れず窯の床で焼くパンが、職人の道具とともに記録された。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "1866年の歴史書（ベルグラーノ）の引用を通してしか知られず、もとの目録は未確認。いまのところ年の付いたいちばん古い記録。",
+    "source": {
+     "title": "L. T. Belgrano『Della vita privata dei Genovesi』(1866) を引く記事（Città dell'Olio）",
+     "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1500,
+    "to": 1500,
+    "label": "1500年ごろ（語り）",
+    "text_ja": "ジェノヴァの司教が、婚礼や葬儀のミサの最中にフォカッチャを食べる習慣をやめさせようとした、と語られる。",
+    "kind": "record",
+    "confidence": "narrative",
+    "note_ja": "一次文書（教区の記録）は未確認。語られ始めた時期も不明。",
+    "source": {
+     "title": "Città dell'Olio ほかイタリア語メディア",
+     "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1800,
+    "to": 1899,
+    "label": "19世紀",
+    "text_ja": "塩水とオリーブ油を塗って指で穴をあける、今のジェノヴァ風フォカッチャにはっきり対応する作り方の記述が現れる。それ以前の「フォカッチャ」は油の少ない薄い平たいパンだったと見られる。",
+    "kind": "material",
+    "confidence": "range",
+    "note_ja": "イタリア語の食文化資料による評価。",
+    "source": {
+     "title": "Città dell'Olio「La focaccia alla genovese」",
+     "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
     "from": 1875,
     "to": 1875,
     "label": "1875年",
@@ -817,16 +941,31 @@ export const breadKinds = [
    },
    {
     "from": 1880,
-    "to": 1899,
-    "label": "19世紀末",
-    "text_ja": "レッコのチーズ入りフォカッチャが、祝日の品から、パン屋や店で売られるものへと広がった。",
+    "to": 1955,
+    "label": "19世紀末〜20世紀前半",
+    "text_ja": "レッコのチーズ入りフォカッチャが、諸聖人の日などの祝いの品から、店で売られるふだんの品へと広がった。1955年に最初のフォカッチャ祭り。",
     "kind": "spread",
     "confidence": "range",
-    "note_ja": "同じ規格書の地域史の記述。毎日の主食になったとまでは書かれていない。",
+    "note_ja": "公的な製品規格の「由来」の記述どうしで、広がった時期の書き方が違う（19世紀末のパン職人／20世紀前半の飲食店主）。どちらも由来譚の性格がある。",
     "source": {
      "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
      "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
      "kind": "government",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 2015,
+    "to": 2015,
+    "label": "2015年",
+    "text_ja": "EU の規則でレッコのチーズ入りフォカッチャが地理的表示（IGP）に登録され、作れる地域が4つの町に限られた。",
+    "kind": "institution",
+    "confidence": "confirmed",
+    "note_ja": "レッコのフォカッチャ（チーズ入り・発酵させない二枚重ね）とジェノヴァのフォカッチャ（発酵・指の穴）は別物。",
+    "source": {
+     "title": "Regolamento di esecuzione (UE) 2015/39 (EUR-Lex)",
+     "url": "https://eur-lex.europa.eu/legal-content/IT/TXT/HTML/?uri=CELEX:32015R0039",
+     "kind": "eu_regulatory",
      "checked": "2026-11-16"
     }
    }
@@ -839,6 +978,24 @@ export const breadKinds = [
     "checked": "2026-11-15"
    },
    {
+    "title": "L. T. Belgrano『Della vita privata dei Genovesi』(1866) を引く記事（Città dell'Olio）",
+    "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Città dell'Olio ほかイタリア語メディア",
+    "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Città dell'Olio「La focaccia alla genovese」",
+    "url": "https://www.cittadellolio.it/2016/11/23/la-focaccia-alla-genovese/",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
     "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
     "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
     "kind": "government",
@@ -848,6 +1005,12 @@ export const breadKinds = [
     "title": "Disciplinare「Focaccia di Recco col formaggio」(Gazzetta Ufficiale 2011)",
     "url": "https://www.gazzettaufficiale.it/eli/gu/2011/08/05/181/sg/pdf",
     "kind": "government",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Regolamento di esecuzione (UE) 2015/39 (EUR-Lex)",
+    "url": "https://eur-lex.europa.eu/legal-content/IT/TXT/HTML/?uri=CELEX:32015R0039",
+    "kind": "eu_regulatory",
     "checked": "2026-11-16"
    }
   ],
@@ -866,6 +1029,8 @@ export const breadKinds = [
   "lat": 33.7,
   "lng": 73.06,
   "grain": "wheat",
+  "role": "meal",
+  "year_kind_ja": "語の記録の年（14世紀）。今のタンドールのナンの成立年はわからない。",
   "leaven_group": "イースト・発酵種",
   "heat_group": "窯の壁に貼る",
   "name_level_ja": "地域の名前（「パン」の意味）",
@@ -929,6 +1094,8 @@ export const breadKinds = [
   "lat": 33.89,
   "lng": 35.5,
   "grain": "wheat",
+  "role": "staple",
+  "year_kind_ja": "語の年と、国の制度（補助金）の年。何億人もの主食なのに、パンそのものの成立年はわからない。",
   "leaven_group": "イースト",
   "heat_group": "窯で焼く",
   "name_level_ja": "地域の名前",
@@ -944,13 +1111,119 @@ export const breadKinds = [
   "method_ja": "発酵生地を薄い円にのばし、高温で短時間焼く。生地の中の水分が蒸気になって一気に膨らみ、中に空洞（ポケット）ができる。",
   "legend_ja": "",
   "related": [],
-  "milestones": [],
+  "milestones": [
+   {
+    "from": 1108,
+    "to": 1108,
+    "label": "1108年",
+    "text_ja": "中世ギリシャ語で「πίτα（ピタ）」の語が記された最古の用例とされる。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "英語の辞典（OED）を引く百科事典の記述。辞典本文は未確認。語の記録は今のポケット型のパンの記録ではない。",
+    "source": {
+     "title": "Wikipedia「Pita」（OED を引用）",
+     "url": "https://en.wikipedia.org/wiki/Pita",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1936,
+    "to": 1951,
+    "label": "1936年／1951年（諸説）",
+    "text_ja": "英語で「pita」という語が使われた最古の例は、資料によって1936年と1951年に分かれる。中東の平たいパンを「ピタ」と呼ぶのは20世紀の言い方。",
+    "kind": "record",
+    "confidence": "range",
+    "note_ja": "年そのものが争われている。アラビア語圏ではいまも「ホブズ（パン）」と呼ばれ、「ピタ」は外からの名前。",
+    "source": {
+     "title": "Wikipedia「Pita」（OED を引用）",
+     "url": "https://en.wikipedia.org/wiki/Pita",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1941,
+    "to": 1941,
+    "label": "1941年",
+    "text_ja": "第二次世界大戦の中でエジプトが食料の配給と補助金を始めた。以後、平たいパン「アイシュ・バラディ」は国が値段を保証する主食になった。",
+    "kind": "institution",
+    "confidence": "range",
+    "note_ja": "アイシュ・バラディはピタの仲間の平たいパン群の一つで、「ピタ」と同じ名前の製品ではない。 1941年の起点は複数の資料が一致するとの報告（Claude Web）。αは研究書の該当箇所を未確認。",
+    "source": {
+     "title": "Oday Kamal『Half-baked: The Other Side of Egypt's Baladi Bread Subsidy』(CIDOB 2015)",
+     "url": "https://www.cidob.org/en/publications/half-baked-other-side-egypts-baladi-bread-subsidy",
+     "kind": "academic",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1977,
+    "to": 1977,
+    "label": "1977年1月",
+    "text_ja": "エジプトでパンの補助金を減らすと発表された翌日、各地で「パン暴動」が起き、政府は撤回した。主食の値段が政治の限界線になった。",
+    "kind": "institution",
+    "confidence": "range",
+    "note_ja": "死者数などには諸説。",
+    "source": {
+     "title": "Wikipedia「1977 Egyptian bread riots」",
+     "url": "https://en.wikipedia.org/wiki/1977_Egyptian_bread_riots",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 2024,
+    "to": 2024,
+    "label": "2024年6月",
+    "text_ja": "エジプトで補助金つきの平たいパン（アイシュ・バラディ）の値段が、1989年以来はじめて4倍（1枚5→20ピアストル）に上がった。2023年には人口の約65%（約7300万人）がこの補助を受けていた。",
+    "kind": "institution",
+    "confidence": "confirmed",
+    "note_ja": "値上げ後も市場の値段よりずっと安い。",
+    "source": {
+     "title": "IFPRI/CGIAR「Egypt increases price of subsidized bread for the first time since 1989」(Jovanovic & Glauber 2024-08-07)",
+     "url": "https://www.ifpri.org/blog/egypt-increases-price-of-subsidized-bread-for-the-first-time-since-1989-implications-for-nutrition-and-food-security/",
+     "kind": "institution",
+     "checked": "2026-11-16"
+    }
+   }
+  ],
   "sources": [
    {
     "title": "The Large and Diverse Family of Mediterranean Flat Breads: A Database",
     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9368210/",
     "kind": "peer_reviewed",
     "checked": "2026-11-15"
+   },
+   {
+    "title": "Wikipedia「Pita」（OED を引用）",
+    "url": "https://en.wikipedia.org/wiki/Pita",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Wikipedia「Pita」（OED を引用）",
+    "url": "https://en.wikipedia.org/wiki/Pita",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Oday Kamal『Half-baked: The Other Side of Egypt's Baladi Bread Subsidy』(CIDOB 2015)",
+    "url": "https://www.cidob.org/en/publications/half-baked-other-side-egypts-baladi-bread-subsidy",
+    "kind": "academic",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Wikipedia「1977 Egyptian bread riots」",
+    "url": "https://en.wikipedia.org/wiki/1977_Egyptian_bread_riots",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "IFPRI/CGIAR「Egypt increases price of subsidized bread for the first time since 1989」(Jovanovic & Glauber 2024-08-07)",
+    "url": "https://www.ifpri.org/blog/egypt-increases-price-of-subsidized-bread-for-the-first-time-since-1989-implications-for-nutrition-and-food-security/",
+    "kind": "institution",
+    "checked": "2026-11-16"
    }
   ],
   "note": "製法の要点は α が一般的な製パンの説明で補った（分量のレシピは載せない）。"
@@ -968,6 +1241,8 @@ export const breadKinds = [
   "lat": 40.18,
   "lng": 44.51,
   "grain": "wheat",
+  "role": "staple",
+  "year_kind_ja": "UNESCO 登録の年（2014）だけ。パンの起源の年ではない。",
   "leaven_group": "無発酵・弱い発酵",
   "heat_group": "窯の壁に貼る",
   "name_level_ja": "地域の名前",
@@ -1029,6 +1304,8 @@ export const breadKinds = [
   "lat": 25.32,
   "lng": 83.01,
   "grain": "wheat",
+  "role": "staple",
+  "year_kind_ja": "語の記録（1590年ごろ）と、移民・品種改良の年。毎日の主食なのに、成立の年はわからない。",
   "leaven_group": "無発酵・弱い発酵",
   "heat_group": "鉄板・平板",
   "name_level_ja": "地域の名前",
@@ -1048,13 +1325,13 @@ export const breadKinds = [
    {
     "from": 1590,
     "to": 1599,
-    "label": "16世紀末",
-    "text_ja": "ムガル帝国の『アイン・アクバリー』（アブル・ファズル）に chapati の語があるとよく紹介される。",
+    "label": "1590年ごろ",
+    "text_ja": "ムガル帝国の記録『アイン・アクバリー』の「パンについて」に、鉄板で焼く薄いパンとして chapati の名が挙がる。確かめられる最古の記載。",
     "kind": "record",
-    "confidence": "range",
-    "note_ja": "二次資料での紹介。本文の該当箇所は未確認。語の記録はパンの誕生ではない。",
+    "confidence": "confirmed",
+    "note_ja": "宮廷の厨房の記述。今の家庭の全粒粉と鉄板のチャパティと同じものとは言えない。",
     "source": {
-     "title": "A'in-i Akbari (trans. Blochmann) Book 1 ch.23 The Imperial Kitchen",
+     "title": "Abu'l-Fazl『Ain-i-Akbari』Blochmann 英訳 (1873) Vol. I「Of Bread」",
      "url": "https://franpritchett.com/00litlinks/abulfazl/ain_1_1_23.html",
      "kind": "book",
      "checked": "2026-11-16"
@@ -1067,11 +1344,41 @@ export const breadKinds = [
     "text_ja": "北インドで、村から村へチャパティが手渡しで回される「チャパティ運動」が起き、英国の役人が注目した。目的はわからないまま、同じ年にインド大反乱が起きた。",
     "kind": "record",
     "confidence": "range",
-    "note_ja": "チャパティが毎日のパンとして村々にあったことを示す出来事。反乱の合図だったという証拠はない。",
+    "note_ja": "チャパティが村々のふだんのパンだったことを示す出来事。反乱の合図だったという証拠はない。",
     "source": {
      "title": "Smithsonian「Pass It On: The Secret That Preceded the Indian Rebellion of 1857」(Mike Dash)",
      "url": "https://www.smithsonianmag.com/history/pass-it-on-the-secret-that-preceded-the-indian-rebellion-of-1857-105066360/",
      "kind": "press",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1896,
+    "to": 1901,
+    "label": "1896〜1901年",
+    "text_ja": "ウガンダ鉄道の建設のためにインドから約3万2千人の労働者が東アフリカへ渡り、約6700人が残った。チャパティがケニア・ウガンダ・タンザニアの日常の食べ物になるきっかけの一つ。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "人数は鉄道の記録による。現地の主食になった年は特定できない。",
+    "source": {
+     "title": "Wikipedia「Indians in Kenya」",
+     "url": "https://en.wikipedia.org/wiki/Indians_in_Kenya",
+     "kind": "secondary",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1966,
+    "to": 1971,
+    "label": "1966〜1971年",
+    "text_ja": "インドが高収量品種の計画を始め、メキシコで改良された背の低い小麦の種子を大量に輸入した。小麦の生産は数年で大きく増え、小麦のチャパティが北インドを越えて広がる物質的な条件になった。",
+    "kind": "material",
+    "confidence": "confirmed",
+    "note_ja": "小麦の生産が増えたことと、チャパティが広がったことは同じではない（つなぎは推論）。農林10号の系譜につながる。",
+    "source": {
+     "title": "USDA-ARS「Fueling the Green Revolution」",
+     "url": "https://www.ars.usda.gov/oc/timeline/green/",
+     "kind": "institution",
      "checked": "2026-11-16"
     }
    }
@@ -1084,7 +1391,7 @@ export const breadKinds = [
     "checked": "2026-11-15"
    },
    {
-    "title": "A'in-i Akbari (trans. Blochmann) Book 1 ch.23 The Imperial Kitchen",
+    "title": "Abu'l-Fazl『Ain-i-Akbari』Blochmann 英訳 (1873) Vol. I「Of Bread」",
     "url": "https://franpritchett.com/00litlinks/abulfazl/ain_1_1_23.html",
     "kind": "book",
     "checked": "2026-11-16"
@@ -1093,6 +1400,18 @@ export const breadKinds = [
     "title": "Smithsonian「Pass It On: The Secret That Preceded the Indian Rebellion of 1857」(Mike Dash)",
     "url": "https://www.smithsonianmag.com/history/pass-it-on-the-secret-that-preceded-the-indian-rebellion-of-1857-105066360/",
     "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Wikipedia「Indians in Kenya」",
+    "url": "https://en.wikipedia.org/wiki/Indians_in_Kenya",
+    "kind": "secondary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "USDA-ARS「Fueling the Green Revolution」",
+    "url": "https://www.ars.usda.gov/oc/timeline/green/",
+    "kind": "institution",
     "checked": "2026-11-16"
    }
   ],
@@ -1111,6 +1430,8 @@ export const breadKinds = [
   "lat": 50.06,
   "lng": 19.94,
   "grain": "wheat",
+  "role": "meal",
+  "year_kind_ja": "規則に書かれた年（1610）と、移民で広がった時代。",
   "leaven_group": "イースト",
   "heat_group": "ゆでて焼く",
   "name_level_ja": "製品名（形）",
@@ -1187,6 +1508,8 @@ export const breadKinds = [
   "lat": 48.14,
   "lng": 11.58,
   "grain": "wheat",
+  "role": "snack",
+  "year_kind_ja": "語の年、写本の絵（原本は焼失）、出土品、地理的表示の年。主食ではなく、断食や祝いの日のパン。",
   "leaven_group": "イースト",
   "heat_group": "ゆでて焼く",
   "name_level_ja": "製品名（形）",
@@ -1204,17 +1527,62 @@ export const breadKinds = [
   "related": [],
   "milestones": [
    {
+    "from": 800,
+    "to": 899,
+    "label": "9世紀",
+    "text_ja": "古いドイツ語に「brezzita」の語が記され、ラテン語の「腕（bracchium）」に由来するとされる。",
+    "kind": "record",
+    "confidence": "confirmed",
+    "note_ja": "語があることは、今の形のプレッツェルがあったことを意味しない。",
+    "source": {
+     "title": "DWDS Etymologisches Wörterbuch「Brezel」",
+     "url": "https://www.dwds.de/wb/Brezel",
+     "kind": "institution",
+     "checked": "2026-11-16"
+    }
+   },
+   {
     "from": 1030,
     "to": 1199,
     "label": "11〜12世紀",
-    "text_ja": "レーゲンスブルク（1030年ごろ）などの写本の絵に、プレッツェルに似た結び目の形のパンが描かれていると紹介される。",
+    "text_ja": "レーゲンスブルク（1030年ごろ）の写本や、アルザスの『Hortus deliciarum』（12世紀後半）の絵に、結び目の形のパンが描かれていると紹介される。",
     "kind": "record",
     "confidence": "range",
-    "note_ja": "絵の同定は研究機関の資料で確かめられていない。形が似ていても今の製品と同じとは言えない。",
+    "note_ja": "『Hortus deliciarum』の原本は1870年のストラスブール包囲で焼け、19世紀の模写でしか見られない。形が似ていても今の製品と同じとは言えない。",
     "source": {
-     "title": "The Viking Age Compendium「Brezel/Pretzel」",
-     "url": "https://vikingage.org/index.php/Brezel/Pretzel",
-     "kind": "secondary",
+     "title": "University of Chicago Press『The Hortus Deliciarum of Herrad of Hohenbourg』",
+     "url": "https://press.uchicago.edu/ucp/books/book/distributed/H/bo56690668.html",
+     "kind": "book",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1300,
+    "to": 1350,
+    "label": "14世紀初め",
+    "text_ja": "プレッツェルがパン職人の組合の印（紋章）として使われるようになったとされる。",
+    "kind": "institution",
+    "confidence": "range",
+    "note_ja": "オーストリアの公的な伝統食品登録簿の記述。最初の年や都市は未確認。",
+    "source": {
+     "title": "オーストリア連邦農林省 伝統食品登録簿 221「Laugenbrezel」",
+     "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+     "kind": "government",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1477,
+    "to": 1477,
+    "label": "1477年（語り）",
+    "text_ja": "バート・ウーラハのパン職人が、死刑を言い渡され「日が三度差し通るパン」を作れば許すと言われて考えた、という伝説。",
+    "kind": "record",
+    "confidence": "narrative",
+    "note_ja": "公的登録簿も伝説として紹介している。語られ始めた時期は未確認。",
+    "source": {
+     "title": "オーストリア連邦農林省 伝統食品登録簿 221",
+     "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+     "kind": "government",
      "checked": "2026-11-16"
     }
    },
@@ -1234,16 +1602,46 @@ export const breadKinds = [
     }
    },
    {
-    "from": 2013,
-    "to": 2013,
-    "label": "2013年",
-    "text_ja": "「バイエルンのブレッツェル」が EU の地理的表示の申請として官報に載り、断食や祝いの日との結びつきなどが記された。",
+    "from": 1839,
+    "to": 1839,
+    "label": "1839年（語り）",
+    "text_ja": "ミュンヘンのパン職人が砂糖水と間違えて灰汁（アルカリ液）を塗り、茶色いラウゲンブレッツェルが生まれた、という話。",
+    "kind": "material",
+    "confidence": "narrative",
+    "note_ja": "公的登録簿も「別の話」として紹介。確定にできない。",
+    "source": {
+     "title": "オーストリア連邦農林省 伝統食品登録簿 221",
+     "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+     "kind": "government",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 1861,
+    "to": 1861,
+    "label": "1861年",
+    "text_ja": "米国ペンシルベニア州リティッツで、ジュリアス・スタージスがプレッツェル専門の商業工房を開いた。硬いプレッツェルが商品として広まる。",
+    "kind": "spread",
+    "confidence": "range",
+    "note_ja": "州の観光局と歴史建造物の登録による。レシピの由来は家族の伝承。",
+    "source": {
+     "title": "Visit PA「Pretzels and Pennsylvania」",
+     "url": "https://www.visitpa.com/blog/post/pretzels-and-pennsylvania-twisted-tale/",
+     "kind": "government",
+     "checked": "2026-11-16"
+    }
+   },
+   {
+    "from": 2014,
+    "to": 2014,
+    "label": "2014年",
+    "text_ja": "EU の規則で「バイエルンのブレッツェル」が地理的表示（PGI）に登録された（申請は2012年）。断食や祝いの日との結びつきも記された。",
     "kind": "institution",
     "confidence": "confirmed",
-    "note_ja": "公的な文書。毎日の主食とは書かれていない。",
+    "note_ja": "保護されたのは「バイエルンの」表示で、プレッツェル一般ではない。毎日の主食とは書かれていない。",
     "source": {
-     "title": "EUR-Lex OJ C 262 (2013)「Bayerische Breze」",
-     "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=oj:JOC_2013_262_R_0013_01",
+     "title": "EU eAmbrosia EUGI00000014277／Reg. (EU) No 161/2014",
+     "url": "https://ec.europa.eu/agriculture/eambrosia/geographical-indications-register/details/EUGI00000014277",
      "kind": "eu_regulatory",
      "checked": "2026-11-16"
     }
@@ -1257,9 +1655,27 @@ export const breadKinds = [
     "checked": "2026-11-15"
    },
    {
-    "title": "The Viking Age Compendium「Brezel/Pretzel」",
-    "url": "https://vikingage.org/index.php/Brezel/Pretzel",
-    "kind": "secondary",
+    "title": "DWDS Etymologisches Wörterbuch「Brezel」",
+    "url": "https://www.dwds.de/wb/Brezel",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "University of Chicago Press『The Hortus Deliciarum of Herrad of Hohenbourg』",
+    "url": "https://press.uchicago.edu/ucp/books/book/distributed/H/bo56690668.html",
+    "kind": "book",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "オーストリア連邦農林省 伝統食品登録簿 221「Laugenbrezel」",
+    "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+    "kind": "government",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "オーストリア連邦農林省 伝統食品登録簿 221",
+    "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+    "kind": "government",
     "checked": "2026-11-16"
    },
    {
@@ -1269,8 +1685,20 @@ export const breadKinds = [
     "checked": "2026-11-16"
    },
    {
-    "title": "EUR-Lex OJ C 262 (2013)「Bayerische Breze」",
-    "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=oj:JOC_2013_262_R_0013_01",
+    "title": "オーストリア連邦農林省 伝統食品登録簿 221",
+    "url": "https://www.bmluk.gv.at/themen/lebensmittel/trad-lebensmittel/backerzeugnisse/laugenbrezel_gebaeck.html",
+    "kind": "government",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Visit PA「Pretzels and Pennsylvania」",
+    "url": "https://www.visitpa.com/blog/post/pretzels-and-pennsylvania-twisted-tale/",
+    "kind": "government",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "EU eAmbrosia EUGI00000014277／Reg. (EU) No 161/2014",
+    "url": "https://ec.europa.eu/agriculture/eambrosia/geographical-indications-register/details/EUGI00000014277",
     "kind": "eu_regulatory",
     "checked": "2026-11-16"
    }
@@ -1290,6 +1718,8 @@ export const breadKinds = [
   "lat": 34.34,
   "lng": 108.94,
   "grain": "wheat",
+  "role": "staple",
+  "year_kind_ja": "「饅頭」の語の記録。昔の「饅頭」は具入りの食べ物で、今の具のない饅頭とは意味が違う。",
   "leaven_group": "イースト・発酵種",
   "heat_group": "蒸す",
   "name_level_ja": "製品名",
@@ -1374,6 +1804,8 @@ export const breadKinds = [
   "lat": 9.03,
   "lng": 38.74,
   "grain": "teff",
+  "role": "staple",
+  "year_kind_ja": "考古学の道具（焼き皿に似た土器）と、研究者の仮説の年代。",
   "leaven_group": "自然種",
   "heat_group": "鉄板・平板",
   "name_level_ja": "地域の名前",

@@ -1518,12 +1518,12 @@ export const breadEvents = [
    "lng": 35.53,
    "precision": "region"
   },
-  "kitchen_ja": "イエスが暮らした1世紀のガリラヤでは、小麦や大麦を家の石臼で挽き、平たいパンや厚みのあるパンを窯で焼いて、豆や野菜、魚と一緒に食べていたと考えられます。安い大麦のパンは、貧しい人々のパンでした。",
+  "kitchen_ja": "イエスが暮らした1世紀のガリラヤでは、小麦や大麦を家の石臼で挽き、土の窯で丸く平たいパンを焼いて、手で裂いて分け、豆や野菜、魚と一緒に食べていたと考えられます。大麦は小麦の半分から3分の1の値段で、貧しい人々のパンでした。",
   "research": {
    "bible_ja": "福音書の記述（章節）：大麦のパン五つと魚二匹（ヨハネ6:9）、「日ごとのパン」の祈り（マタイ6:11、ルカ11:3）、パン種を粉に混ぜるたとえ（マタイ13:33）、二人の女が粉を挽く（マタイ24:41）、五千人の給食（マルコ6:35–44）、最後の晩餐でパンを取り裂く（マタイ26:26、マルコ14:22、ルカ22:19）。",
-   "fact_ja": "ローマ期パレスチナでは穀物とパンが食事の大きな部分を占め、貧しい人は大麦、豊かな人は細かく挽いた小麦のパンを食べたと古代の文献（ヨセフス、ミシュナ）と研究が伝える。ティベリア近郊のローマ期の村の発掘では、家ごとに窯や石臼が見つかり、粉挽きとパン焼きが家の中で行われていたことがうかがえる。",
+   "fact_ja": "ローマ期パレスチナでは穀物とパンが食事の大きな部分を占めた。値段は小麦1に対して大麦はおよそ半分〜3分の1で（列王記下7:1、ヨハネの黙示録6:6、ヨセフス『ユダヤ戦記』5巻）、貧しい人は大麦、豊かな人は小麦のパンを食べたと古代の文献と研究が伝える（どれも飢饉や包囲の場面の記述で、ふだんの割合はわからない）。粉は家で玄武岩の石臼で挽いた：67年に壊され再建されなかったガムラの発掘では玄武岩の挽き石が数十点見つかっている。ティベリア近郊のローマ期の村でも、家ごとに窯と石臼が見つかる。前の生地を残して種にする発酵パンがふつうだった（レビ記23:17、パン種のたとえ）。1世紀のガリラヤ・ユダヤでパンそのものが炭になって出た例は確認されていない。",
    "inference_ja": "推測：イエスと周りの人々の日常のパンは、小麦または大麦を挽いた粉の、平たい、または厚みのある素朴なパンで、前の生地の一部を種にして膨らませることもあったと考えられる（たとえ話のパン種と合う）。福音書の「大麦のパン」はその場面の記述で、いつも大麦だった証拠ではない。",
-   "unknown_ja": "イエス自身が食べたパンの穀物・発酵・焼き方は特定できない。古代の窯を今の「タブーン」と同じものと考えることには、考古学で注意が促されている。最後の晩餐のパンが種なしパンだったかは学説が割れる：共観福音書は過越の食事（種なしパンの祭り）として描くが、ヨハネ福音書の日付では過越の前になり、使われている語も一般の「パン（artos）」で「種なしパン（azymos）」ではない。",
+   "unknown_ja": "イエス自身が食べたパンの穀物・発酵・焼き方は特定できない。発掘報告で家の窯を「タブーン」と呼ぶ習慣は、内側の壁に生地を貼って焼く「タンヌール」型の誤った呼び名かもしれないと指摘されている。最後の晩餐のパンが種なしパンだったかは学説が割れる：共観福音書は過越の食事として描き（マルコ14:12）、その夜は種入りのパンは手に入らない。一方ヨハネ福音書は十字架を「過越の準備の日」に置き（19:14）、晩餐は過越の食事ではないことになる。四福音書もパウロも一般の「パン（artos）」を使い「種なしパン（azymos）」を使わないが、artos は種なしパンを含むこともあり、言葉だけでは決まらない。このパンの違いは11世紀に東西の教会の論争（アジマ論争）にもなった。",
    "faith_ja": "「わたしが命のパンである」（ヨハネによる福音書6章35節、口語訳）。日々の命を支えるパンになぞらえて、イエスを命の源として表す信仰の言葉として読み継がれてきた。History OS はこの言葉の信仰としての内容を判定せず、パンと人の暮らしが深く結びついた言葉として紹介する。"
   },
   "sources": [
@@ -1546,12 +1546,6 @@ export const breadEvents = [
     "checked": "2026-11-16"
    },
    {
-    "title": "J. Ebeling「The tabun and its misidentification in the archaeological record」Levant (2015)",
-    "url": "https://doi.org/10.1080/00758914.2015.1108022",
-    "kind": "peer_reviewed",
-    "checked": "2026-11-16"
-   },
-   {
     "title": "Joel Marcus「Passover and Last Supper Revisited」New Testament Studies (2013)",
     "url": "https://www.cambridge.org/core/journals/new-testament-studies/article/passover-and-last-supper-revisited/B7955FEA669F7DD71A36F008A2FE5144",
     "kind": "peer_reviewed",
@@ -1562,9 +1556,27 @@ export const breadEvents = [
     "url": "https://www.biblegateway.com/passage/?search=John%206&version=NRSVUE",
     "kind": "primary",
     "checked": "2026-11-16"
+   },
+   {
+    "title": "J. Ebeling & L. Rogel「The tabun and its misidentification in the archaeological record」Levant 47(3) (2015)",
+    "url": "https://doi.org/10.1080/00758914.2015.1108022",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "R. Frankel & D. Syon「Mills and Querns」Gamla 発掘報告（Israel Antiquities Authority）",
+    "url": "https://publications.iaa.org.il/cgi/viewcontent.cgi?filename=4&article=1015&context=iaareports",
+    "kind": "primary",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "J. Klawans「Was Jesus' Last Supper a Seder?」(Biblical Archaeology Society)",
+    "url": "https://www.biblicalarchaeology.org/daily/people-cultures-in-the-bible/jesus-historical-jesus/was-jesus-last-supper-a-seder/",
+    "kind": "institution",
+    "checked": "2026-11-16"
    }
   ],
-  "note": "スタジオ検討002（GPT・Gemini・Codex・Meta、Claude Web は取り込み中）を α が照合してまとめた。聖句は、日本では著作権の保護期間が終わったとされる口語訳（1955年）から短く引いた。",
+  "note": "スタジオ検討002（GPT・Gemini・Codex・Meta・Claude Web の5者）を α が出典で照合してまとめた。聖句は、日本では著作権の保護期間が終わったとされる口語訳（1955年）から短く引いた。",
   "links": null,
   "chapter": 3
  }
