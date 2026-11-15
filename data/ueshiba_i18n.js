@@ -3,6 +3,7 @@
 export const UI = {
   pageTitle: { ja: 'History OS｜合氣道 Focus（植芝盛平）', en: 'History OS | Aikido Focus (Morihei Ueshiba)' },
   name: { ja: '植芝盛平', en: 'Morihei Ueshiba' },
+  metaDesc: { ja: '植芝盛平の生涯と、合氣道が世界へ広がる歩みを、地球と年代バーでたどる History OS の合氣道 Focus（個人制作・合気会の公式サイトではありません）。', en: 'Aikido Focus in History OS: follow the life of Morihei Ueshiba and the spread of Aikido around the world on a globe and timeline. A personal project — not the official website of the Aikikai.' },
   attrib: { ja: '地球: NASA Blue Marble ／ 個人制作・合気会の公式サイトではありません', en: 'Globe: NASA Blue Marble / A personal project — not the official website of the Aikikai' },
   worldSec: { ja: 'World Events<span class="secsub">この年の前後の世界</span>', en: 'World Events<span class="secsub">the world around this year</span>' },
   spSec: { ja: 'Abroad<span class="secsub">海外への広がり（この年まで）</span>', en: 'Abroad<span class="secsub">Aikido spreading abroad (up to this year)</span>' },

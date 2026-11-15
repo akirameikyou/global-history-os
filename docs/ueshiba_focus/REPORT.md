@@ -99,4 +99,15 @@
 - 英語の文は α が日本語から訳した下書き。表記は合気会の英語版ページに合わせた（Aikikai Foundation, Hombu Dojo, Doshu, Kobukan）。英語を母語とする人の確認はまだ。人名のうち読みが確かでないもの（村重有利、李清楠）は漢字のまま。
 - 地球の上でも右クリックのメニューが出るようにした（ブラウザの翻訳を呼べる）。
 - スマホでは、凡例の行数（言語で変わる）に合わせて年代バーを凡例の上に置く。
-- 確かめ：英語で画面に残る日本語は「日本語」ボタンだけ（年を送る・カード・用語・NOW・章のメニューまで）。日本語の表示は変わらない。375px で横のはみ出しなし。コンソールのエラーなし。
+- 確かめ：英語で画面に残る日本語は「日本語」ボタンだけ（年を送る・カード・用語・NOW の一覧・章のメニューまで）。※ Codex 監査で、NOW の行事カードの主催者名と、英語の題が無い行事が日本語で残ることを指摘された（v0.10 で主催者名を直した）。日本語の表示は変わらない。375px で横のはみ出しなし。コンソールのエラーなし。
+
+## v0.10（2026-11-15）：英語モードの Codex 監査の指摘を直す
+監査の返事：docs/ueshiba_focus/AUDIT_EN_CODEX_001.md（PARTIALLY CONFIRMED、中4・低2）。
+- 1（中）1920年のカード：移住の年を入れた（In 1921 he moved to Ayabe…）。
+- 2（中）1948年に認可した省：直していない。英語は日本語（合気会の日本語の沿革・ウィキペディア）に合わせて Ministry of Education のまま。合気会の英語版ページは Ministry of Health and Welfare と書いている。清水さんの判断待ち。
+- 3（中）英語モードに残る日本語：NOW の行事カードの主催者名を英語に（合気会 → Aikikai Foundation、英語名が無く日本語だけの主催者名は英語では出さない）。英語の題が無い行事は原文の題を出す（いまの見本は全件に英語の題がある）。
+- 4（中）1969年：合気会の英語版の表記に合わせた（Senior Fifth Rank (Sho-goi)、Order of the Sacred Treasure, Gold Rays with Neck Ribbon）。カードには「then called the Third Class」と添えた。
+- 5（低）人名を「名・姓」の順にそろえた（合気会の英語版の本文 Morihei Ueshiba と同じ。Sōkaku Takeda、Onisaburō Deguchi、Isamu Takeshita、Jigorō Kanō など19名）。用語の名前も同じ順。
+- 6（低）硬い英語を直した（1924年 "freed after the Japanese consulate negotiated on their behalf" など5か所）。
+- 監査のほかの指摘：英語のページの説明文（meta description）を英語にした。
+- 確かめ：英語で、年譜のカード・NOW の19件の行事カードまで開いて、残る日本語は読みが不確かな人名「李清楠」（意図して漢字のまま）だけ。日本語の表示は変わらない。コンソールのエラーなし。

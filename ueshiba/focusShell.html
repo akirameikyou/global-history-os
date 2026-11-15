@@ -578,12 +578,12 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 万次郎版と同じ固定版
-import { aikidoPersonFocus as PERSON0, aikidoChronology as CHRONO0, aikidoGlossary as GLOSSARY0 } from '../data/ueshiba_person.js?v=20261115e';
-import { ueshibaPlaces as PLACES0, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115e';
-import { ueshibaWorld as WORLD0 } from '../data/ueshiba_world.js?v=20261115e';
-import { aikidoDojos as NETWORK0, aikidoDojoFoundings as FOUND0, aikidoFirstContacts as FIRST0 } from '../data/ueshiba_spread.js?v=20261115e';
-import { UI } from '../data/ueshiba_i18n.js?v=20261115e';
-import { EN } from '../data/ueshiba_en.js?v=20261115e';
+import { aikidoPersonFocus as PERSON0, aikidoChronology as CHRONO0, aikidoGlossary as GLOSSARY0 } from '../data/ueshiba_person.js?v=20261115f';
+import { ueshibaPlaces as PLACES0, ueshibaStays as STAYS } from '../data/ueshiba_places.js?v=20261115f';
+import { ueshibaWorld as WORLD0 } from '../data/ueshiba_world.js?v=20261115f';
+import { aikidoDojos as NETWORK0, aikidoDojoFoundings as FOUND0, aikidoFirstContacts as FIRST0 } from '../data/ueshiba_spread.js?v=20261115f';
+import { UI } from '../data/ueshiba_i18n.js?v=20261115f';
+import { EN } from '../data/ueshiba_en.js?v=20261115f';
 
 // ---------- 言語（?lang=en で英語。無ければ日本語）----------
 // 画面の文言は data/ueshiba_i18n.js、データの英語は data/ueshiba_en.js。英語が無い所は日本語のまま出す。
@@ -1012,6 +1012,9 @@ function whenJa(e) { // 開催地の時刻のまま
   if (b && +b !== +a) s += isEn ? ' – ' + dayJa(b) : ' 〜 ' + (b.getFullYear() !== a.getFullYear() ? b.getFullYear() + '年' : '') + (b.getMonth() + 1) + '月' + b.getDate() + '日（' + WD[b.getDay()] + '）';
   return s;
 }
+// 主催者名：英語では、英語の名前があればそれを、日本語だけの名前は出さない（合気会は合気会の英語名に）
+const ORG_EN = { '公益財団法人合気会': 'Aikikai Foundation', '合気会': 'Aikikai Foundation' };
+const orgName = e => { const n = e.organizer && (isEn ? (e.organizer.name_en || ORG_EN[e.organizer.name] || e.organizer.name) : e.organizer.name); return isEn && JP_CHARS.test(n || '') ? '' : n; };
 const JP_CHARS = /[぀-ヿ一-鿿]/;
 const placeJa = e => [e.place && !(isEn && JP_CHARS.test(e.place.name || '')) && e.place.name, e.place && (isEn ? e.place.city_en || e.place.city : e.place.city)].filter(Boolean).join(SEP); // 英語では、日本語だけの会場名は出さず市町村の英語名だけ
 function inWindow(e) {
@@ -1089,7 +1092,7 @@ function openEvent(id, src) {
   const links = '<div class="ev-links"><a class="main" href="' + esc(CAL_URL + '?ym=' + ym) + '" target="_blank" rel="noopener">' + T('calCheck') + '</a>' +
     (e.url ? '<a href="' + esc(e.url) + '" target="_blank" rel="noopener noreferrer">' + T('official') + '</a>' : '') +
     (!evPast(e) ? '<a href="' + esc(ICS_DIR + e.id + '.ics') + '">' + T('addIcs') + '</a>' : '') + '</div>';
-  const kv = [[T('kvWhen'), whenJa(e) + T('localTime')], [T('kvWhere'), placeJa(e)], [T('kvOrg'), e.organizer && e.organizer.name], [T('kvType'), TYPE_JA[e.type] || TYPE_JA.other], [T('kvState'), state]]
+  const kv = [[T('kvWhen'), whenJa(e) + T('localTime')], [T('kvWhere'), placeJa(e)], [T('kvOrg'), orgName(e)], [T('kvType'), TYPE_JA[e.type] || TYPE_JA.other], [T('kvState'), state]]
     .filter(x => x[1]).map(([k, v]) => '<div class="kv"><div class="k">' + k + '</div><div class="v">' + esc(v) + '</div></div>').join('');
   showCard({ kind: 'event', tag: T('tagEvent') + (e.sample ? T('sample') : ''), title: evTitle(e), sub: whenJa(e), html: kv + links, look: 'evt:' + e.id }, src);
 }
@@ -1122,6 +1125,7 @@ function drawNowTL() { // NOW の年代バー：今日の1か月前〜13か月�
 
 // ---------- 固定の文言（英語のときだけ差し替える。日本語は HTML に書いてある）と言語ボタン ----------
 document.documentElement.lang = LANG; document.title = T('pageTitle');
+if (isEn) { const md = document.querySelector('meta[name="description"]'); if (md) md.content = T('metaDesc'); }
 {
   const langBtn = document.getElementById('langBtn'), u = new URL(location.href);
   if (isEn) u.searchParams.delete('lang'); else u.searchParams.set('lang', 'en');
