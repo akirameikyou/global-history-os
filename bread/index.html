@@ -67,7 +67,9 @@ button{font:inherit}
 .kicker{font-size:10px;letter-spacing:.36em;color:rgba(246,239,228,.55);margin-bottom:17px}
 h1{font-family:var(--serif);font-size:clamp(40px,5.4vw,76px);font-weight:500;line-height:1.06;margin:0 0 8px;text-shadow:0 2px 30px rgba(0,0,0,.7)}
 .title-text{display:inline-block;letter-spacing:.2em;margin-right:-.2em}
-.life{font-size:11px;letter-spacing:.27em;color:rgba(243,220,174,.78);margin-bottom:30px}
+.title-text .to{font-size:.62em;letter-spacing:.12em;margin:0 .02em;vertical-align:.08em}
+.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:clamp(15px,1.6vw,22px);letter-spacing:.12em;color:rgba(243,220,174,.88);margin:2px 0 24px;text-shadow:0 2px 16px rgba(0,0,0,.8)}
+.motto{margin-top:22px;font-family:var(--serif);font-weight:600;font-size:clamp(11px,1.05vw,14px);letter-spacing:.36em;color:rgba(246,239,228,.82);text-shadow:0 2px 14px rgba(0,0,0,.9)}
 .thesis{font-family:var(--serif);font-weight:500;font-size:clamp(20px,2.35vw,32px);line-height:1.55;margin:0 0 18px;text-shadow:0 2px 20px rgba(0,0,0,.75)}
 .thesis-text{display:inline-block;letter-spacing:.09em;margin-right:-.09em}
 .lead{
@@ -160,7 +162,8 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
   .kicker{font-size:8px;margin-bottom:14px}
   h1{font-size:42px}
   .title-text{letter-spacing:.14em;margin-right:-.14em}
-  .life{font-size:8.5px;margin-bottom:22px}
+  .life{font-size:14px;margin-bottom:18px}
+  .motto{font-size:9px;letter-spacing:.24em;margin-top:14px}
   .thesis{font-size:17px;margin-bottom:12px}
   .thesis-text{letter-spacing:.04em;margin-right:-.04em}
   .lead{font-size:11px;line-height:1.85;max-width:330px}
@@ -201,8 +204,8 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
 
   <main class="hero">
     <div class="kicker">約14,400年前 — いま</div>
-    <h1><span class="title-text">小麦とパン</span></h1>
-    <div class="life">GRASS · FLOUR · FIRE · YEAST</div>
+    <h1><span class="title-text">小麦<span class="to">と</span>パン</span></h1>
+    <div class="life">Wheat and Bread Focus</div>
 
     <p class="thesis"><span class="thesis-text">一枚のパンから、一万年前の野の草へ。</span></p>
 
@@ -221,6 +224,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
       <button data-dialog="method" type="button"><span class="g-num">03 / METHOD</span><span class="g-title">確かさと想像図</span><span class="g-copy">確定・幅・語りを分け、生成画像には印を。</span></button>
       <button data-dialog="sources" type="button"><span class="g-num">04 / SOURCES</span><span class="g-title">出典と資料</span><span class="g-copy">論文・発掘報告・公的機関・各国の資料。</span></button>
     </div>
+    <div class="motto">GRASS · FLOUR · FIRE · YEAST</div>
   </main>
 
   <footer class="foot"><span>地球の画像：NASA Blue Marble ／ 写真：Wikimedia Commons（各カードに作者とライセンス）</span><span>HISTORY OS / THEME FOCUS</span></footer>
