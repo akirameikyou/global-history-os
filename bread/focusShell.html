@@ -359,7 +359,7 @@ const world = Globe()(document.getElementById('globeViz'))
   .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => `rgba(255,150,40,${[0.26, 0.34, 0.44][d.ring]})`)
   .polygonSideColor(() => 'rgba(0,0,0,0)').polygonStrokeColor(() => 'rgba(0,0,0,0)')
   .polygonAltitude(d => 0.006 + d.ring * 0.0015).polygonsTransitionDuration(0)
-  .polygonLabel(d => `<div style="font:12px/1.5 sans-serif;color:#fff;background:rgba(5,12,22,.85);padding:4px 8px;border-radius:4px">${d.name_ja}（${d.label}）<br>${d.stage_ja}</div>`)
+  // 面の吹き出し（polygonLabel）は付けない：面の上の印にはブラウザの吹き出し（title）が出るので、二重になる。地域名は地球に字で出してある
   .onPolygonClick(d => select(d.basis[0]))
   // 印と地名はすべて HTML で出す。
   //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
