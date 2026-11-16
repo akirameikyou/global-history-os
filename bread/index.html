@@ -72,7 +72,7 @@ button{font:inherit}
    題 T ／ 「と」T÷√φ（0.786T：小さくし過ぎない）／ 一文 T÷φ²（0.382T）／ 副題 T÷φ³（0.236T）／ 上の小見出し T÷φ⁴（0.146T）
    間：小見出し→題 0.382T、題→副題 0.236T、副題→一文 0.618T。副題の幅は題の幅÷φ になるよう字間を合わせる（実測で確かめる）。
    かな（パン）は漢字（小麦）より字面が小さく見えるので、1.08 倍にして目で同じ大きさにそろえる。字詰めは palt（約物・かなの詰め）。 */
-.hero{--T:clamp(40px,min(5.2vw,7.4vh),74px)} /* 11/16 清水さん「ほんの少し小さく」：約0.93倍。低い画面では高さでも縮める */
+.hero{--T:clamp(42px,min(5.4vw,11.4vh),108px)} /* 見本の割合：題の幅≒画面の幅の約29%（1900×915 で T≒104）。低い画面では高さで縮める */
 .kicker{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:max(11px,calc(var(--T) * .2));letter-spacing:.14em;margin-right:-.14em;color:rgba(246,239,228,.68);margin-bottom:calc(var(--T) * .236);text-shadow:0 1px 10px rgba(0,0,0,.85)} /* 年代の一行（英語）。題との間 0.236T */
 h1{font-family:var(--serif);font-size:var(--T);font-weight:500;line-height:1;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.7)}
 .title-text{display:inline-block;letter-spacing:.14em;margin-right:-.069em;font-feature-settings:"palt"} /* 最後の字（パン 1.15em × 字間 .06em）の字間だけを打ち消して、目で見た中心を画面の中心に */
@@ -169,7 +169,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
   .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
   .cover{background-size:auto,auto 52%;background-position:center,58% 100%} /* 縦長ではパン全体を下半分に（大陸の形が見えるように） */
   .hero{width:100%;padding:110px 18px 56px}
-  .hero{--T:40px}
+  .hero{--T:44px}
   .kicker{font-size:10px}
   /* h1 は --T に従う */
   .title-text{letter-spacing:.1em;margin-right:-.069em}
