@@ -292,7 +292,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
 </div>
 
 <script type="module">
-import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116e';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116f';
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 document.getElementById('genlist').innerHTML = IMAGES.filter(i => i.generated).map(i =>
   `<figure><img src="${esc(i.file)}" alt="" loading="lazy"><figcaption><span class="gen">◇ 想像図</span> ${esc(i.caption_ja)}</figcaption></figure>`).join('');

@@ -65,7 +65,7 @@ export const breadImages = [
  {
   "id": "tauschii",
   "target": "tauschii",
-  "file": "img/tauschii.png",
+  "file": "img/tauschii.jpg",
   "generated": false,
   "kind": "plant",
   "caption_ja": "タルホコムギ（Aegilops tauschii）。パン小麦の D ゲノムの親",
