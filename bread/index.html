@@ -42,7 +42,7 @@ button{font:inherit}
 .cover{
   position:absolute;inset:0;z-index:1; /* フェードは付けない（動きが止まる環境で背景が透明のまま残らないように） */
   background:
-    linear-gradient(180deg,rgba(13,9,5,.80) 0%,rgba(13,9,5,.55) 34%,rgba(13,9,5,.18) 62%,rgba(13,9,5,.55) 100%),
+    linear-gradient(180deg,rgba(13,9,5,.80) 0%,rgba(13,9,5,.55) 34%,rgba(13,9,5,.42) 50%,rgba(13,9,5,.16) 66%,rgba(13,9,5,.55) 100%), /* 説明文の所（高さの42〜52%）だけ少し影を延ばす */
     url("cover.jpg") center 62%/cover no-repeat;
 }
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -61,11 +61,12 @@ button{font:inherit}
 .brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.29em}
 .edition{font-size:9px;letter-spacing:.17em;color:rgba(246,239,228,.34);padding-top:2px}
 .hero{
-  /* 見出しと下の帯のあいだの空きの中で縦に中央へ（画面が低くても上が切れない）。上の余白を下より広くして、少し下に置く */
+  /* 上から順に置く（中央寄せにすると、題の大きさを変えるたびに説明文がパンの明るい所へ下がる）。
+     見本の位置：年代の行≒高さの10%、説明文≒41〜50%（パンの上の影の所）。画面が低くても上は切れない */
   position:absolute;z-index:4;left:50%;top:0;bottom:0;transform:translateX(-50%);
   width:min(88vw,880px);text-align:center;
-  display:flex;flex-direction:column;justify-content:center;align-items:center;
-  padding:clamp(96px,15vh,150px) 28px clamp(48px,7vh,72px);
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+  padding:clamp(48px,5.5vh,80px) 28px 48px;
 }
 .hero>*{flex:none}
 /* ── 題字の組み：題の大きさ T を基準に、黄金比 φ（1.618）の段で大きさと間を決める ──
@@ -78,7 +79,7 @@ h1{font-family:var(--serif);font-size:var(--T);font-weight:500;line-height:1;mar
 .title-text{display:inline-block;letter-spacing:.14em;margin-right:-.069em;font-feature-settings:"palt"} /* 最後の字（パン 1.15em × 字間 .06em）の字間だけを打ち消して、目で見た中心を画面の中心に */
 .title-text .kana{font-size:1.15em;letter-spacing:.06em;vertical-align:-.02em} /* 実測：明朝のカタカナは字面の高さが漢字の約2/3、面積で約1/1.4。面積の平方根（約1.18）を目安に、見本に合わせて 1.15 */
 .title-text .to{font-size:.86em;letter-spacing:.1em;margin:0 .02em 0 .04em;vertical-align:.03em} /* 「と」は字面がもともと小さい（漢字の約0.75）ので 0.86 で見た目は約0.65 */
-.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:calc(var(--T) * .236);letter-spacing:.16em;margin:calc(var(--T) * .18) 0 calc(var(--T) * .618) .16em;color:rgba(243,220,174,.9);text-shadow:0 2px 16px rgba(0,0,0,.8)}
+.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:calc(var(--T) * .236);letter-spacing:.16em;margin:calc(var(--T) * .18) 0 calc(var(--T) * .382) .16em;color:rgba(243,220,174,.9);text-shadow:0 2px 16px rgba(0,0,0,.8)}
 .motto{margin-top:22px;font-family:var(--serif);font-weight:600;font-size:clamp(11px,1.05vw,14px);letter-spacing:.36em;color:rgba(246,239,228,.82);text-shadow:0 2px 14px rgba(0,0,0,.9)}
 .thesis{font-family:var(--serif);font-weight:500;font-size:calc(var(--T) * .382);line-height:1.55;margin:0 0 calc(var(--T) * .236);text-shadow:0 2px 20px rgba(0,0,0,.75);font-feature-settings:"palt"}
 .thesis-text{display:inline-block;letter-spacing:.09em;margin-right:-.09em}
@@ -168,7 +169,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
   .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
   .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
   .cover{background-size:auto,auto 52%;background-position:center,58% 100%} /* 縦長ではパン全体を下半分に（大陸の形が見えるように） */
-  .hero{width:100%;padding:110px 18px 56px}
+  .hero{width:100%;padding:110px 18px 56px;justify-content:center} /* スマホは前のまま */
   .hero{--T:44px}
   .kicker{font-size:10px}
   /* h1 は --T に従う */
