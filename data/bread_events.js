@@ -2067,6 +2067,312 @@ export const breadEvents = [
   ],
   "m11": true,
   "chapter": 5
+ },
+ {
+  "id": "ev_fayum_granaries",
+  "type": "event",
+  "title_ja": "ファイユームの穀物の穴蔵（エジプト）",
+  "clock": "field",
+  "when": {
+   "from": -4600,
+   "to": -4300,
+   "label": "前4450年ごろ（放射性炭素年代）"
+  },
+  "known": {
+   "year": null,
+   "label": "1920年代の発掘、2004年からの再調査"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "power"
+  ],
+  "field": [
+   "archaeology",
+   "archaeobotany"
+  ],
+  "place": {
+   "name_ja": "ファイユーム北岸（コム・K の北の尾根）",
+   "lat": 29.55,
+   "lng": 30.65,
+   "precision": "region"
+  },
+  "kitchen_ja": "エジプトの湖のほとりで、かごで内張りした穀物の穴蔵がいくつも見つかり、中にエンマー小麦と大麦が乾いたまま残っていました。エジプトで栽培された穀物の早い証拠です。",
+  "research": {
+   "fact_ja": "ケイトン＝トンプソンとガードナーが1920年代に、コム・K の北の尾根で、かごで内張りした穀物の穴蔵を見つけた。中には乾燥したエンマー小麦と六条の皮麦が残り、エジプトの栽培穀物の最も早い証拠としてよく引かれる。放射性炭素年代は前4450年ごろ。2004年からの再調査（URU ファイユーム計画、2008年の UCLA とフローニンゲン大学の発掘）でも、栽培された小麦と大麦、家畜の骨が見つかった。",
+   "unknown_ja": "穴蔵がふだんの食料の蓄えか、非常用か、次の年の種もみかは議論がある。穀物は集落の中ではなく、離れた尾根の穴蔵から出た。"
+  },
+  "sources": [
+   {
+    "title": "Wendrich ほか「The Desert Fayum at 80: revisiting a Neolithic farming community in Egypt」Antiquity (2016)",
+    "url": "https://www.cambridge.org/core/journals/antiquity/article/desert-fayum-at-80-revisiting-a-neolithic-farming-community-in-egypt/B19CE2EC3A4E35B170CA45A8FF146769",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "ScienceDaily「Team uncovers Egypt’s earliest agricultural settlement」(2008)",
+    "url": "https://www.sciencedaily.com/releases/2008/02/080212131300.htm",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_ur3_bread_rations",
+  "type": "event",
+  "title_ja": "ウル第三王朝の配給：大麦とパンとビール",
+  "clock": "bread",
+  "when": {
+   "from": -2112,
+   "to": -2004,
+   "label": "前2112〜前2004年ごろ（ウル第三王朝）"
+  },
+  "known": {
+   "year": null,
+   "label": "楔形文字の行政文書"
+  },
+  "confidence": "confirmed",
+  "lenses": [
+   "power",
+   "table",
+   "mill"
+  ],
+  "field": [
+   "history"
+  ],
+  "place": {
+   "name_ja": "南メソポタミア（ウル第三王朝の領域）",
+   "lat": 31.3,
+   "lng": 45.6,
+   "precision": "region"
+  },
+  "kitchen_ja": "4000年前のメソポタミアでは、国が働く人に毎月大麦を配り、ときには大麦の代わりにパンや粉を渡しました。使いの者にパンとビールと油と玉ねぎを配った記録の粘土板も残っています。",
+  "research": {
+   "fact_ja": "ウル第三王朝の行政文書では、基本の支払いは毎月の大麦と年ごとの羊毛で、大麦の代わりにパン・粉・エンマー小麦が渡されることもあった。メトロポリタン美術館の粘土板（イッビ・シン王の1年）は、使者へのビール・パン・油・玉ねぎの配給を記録している。",
+   "unknown_ja": "文書の食べ物の言葉の多くは、どの食べ物に当たるか確かでなく、議論がある。「メソポタミアにはパンが300種あった」という話は、α の調べた範囲では出典が見つからなかった（2026-11-16）ので載せない。年代は中年代法による。"
+  },
+  "sources": [
+   {
+    "title": "Metropolitan Museum of Art「Cuneiform tablet: record of rations of beer, bread, oil, and onions for messengers」",
+    "url": "https://www.metmuseum.org/art/collection/search/327069",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Ellison「Diet in Mesopotamia: the evidence of the barley ration texts (c. 3000–1400 B.C.)」Iraq (1981)",
+    "url": "https://core-prod.cambridgecore.org/core/journals/iraq/article/diet-in-mesopotamia-the-evidence-of-the-barley-ration-texts-c-30001400-bc/EA7C802C4A4E9640E38999D71300455C",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 3
+ },
+ {
+  "id": "ev_harappa_wheat",
+  "type": "event",
+  "title_ja": "インダス文明の冬の畑：小麦と大麦",
+  "clock": "field",
+  "when": {
+   "from": -2600,
+   "to": -1900,
+   "label": "前2600〜前1900年ごろ（ハラッパー文化の盛期）"
+  },
+  "known": {
+   "year": null,
+   "label": "1980年代からの考古植物学の調査"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "table"
+  ],
+  "field": [
+   "archaeobotany",
+   "archaeology"
+  ],
+  "place": {
+   "name_ja": "ハラッパー（パキスタン・パンジャーブ）",
+   "lat": 30.63,
+   "lng": 72.86,
+   "precision": "site"
+  },
+  "kitchen_ja": "インダス文明の都市の人々は、冬に小麦と大麦を育てていました。粒の小さい丸い小麦など、いくつもの種類の小麦が見つかっています。",
+  "research": {
+   "fact_ja": "インダス地域の遺跡の主な穀物は、小麦（パン小麦、粒の詰まったコンパクトム小麦、粒の丸い「インド矮性小麦」スファエロコックム）と六条大麦。ハラッパーでいちばんよく出る穀物は、冬作（ラビ）の皮麦・裸麦の大麦と、いくつかの種類の小麦。小麦と大麦は前期・後期を通じてよく見つかる。",
+   "unknown_ja": "燃料に家畜の糞を燃やしたことが、出土する穀物の組み合わせに影響している可能性がある。遺跡ごとに作物の組み合わせは違い、ハラッパーの初期の報告は「予備的」とされている。"
+  },
+  "sources": [
+   {
+    "title": "ハラッパーの作物と燃料（家畜の糞）に関する研究（Cambridge University Press、著者名は未照合）",
+    "url": "https://www.cambridge.org/core/product/55810416F25148D686092A0968D5AD6F",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Miller「Palaeoethnobotany」Harappa Excavations 1986–1990（予備報告）",
+    "url": "https://www.harappa.com/sites/default/files/pdf/Harappa1986-90_09_HML-Miller-Palaeoethnobotany_0_1.pdf",
+    "kind": "primary",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 3
+ },
+ {
+  "id": "ev_xiaohe_wheat",
+  "type": "event",
+  "title_ja": "小河墓地の小麦：砂漠に残ったパン小麦",
+  "clock": "field",
+  "when": {
+   "from": -1810,
+   "to": -1590,
+   "label": "約3760〜3540年前（前1800〜前1600年ごろ）"
+  },
+  "known": {
+   "year": 2010,
+   "label": "2010年の古代DNA分析"
+  },
+  "confidence": "range",
+  "lenses": [
+   "route",
+   "plant"
+  ],
+  "field": [
+   "genetics",
+   "archaeobotany"
+  ],
+  "place": {
+   "name_ja": "小河墓地（中国・新疆・タリム盆地）",
+   "lat": 40.34,
+   "lng": 88.67,
+   "precision": "site"
+  },
+  "kitchen_ja": "タリム盆地の砂漠の墓地では、小麦の粒が乾いたまま残っていました。DNA を調べると、いまのパン小麦と同じ、3つのゲノムを持つ小麦でした。",
+  "research": {
+   "fact_ja": "小河墓地の乾燥した小麦は約3760〜3540年前と年代測定されている。2010年の古代DNA分析は、その配列が六倍体のパン小麦に最も近く、D ゲノムに特有の挿入を持つことを示し、青銅器時代の中国にパン小麦があった確かな証拠とした。墓地からはキビも見つかり、人々は小麦とキビを育て、牛を飼っていた。",
+   "unknown_ja": "ここから東の黄河流域へ順に伝わったわけではない（黄河下流域の小麦はもっと早い：「中国の小麦は、まず東の海辺に」を参照）。"
+  },
+  "sources": [
+   {
+    "title": "「Buried in sands: environmental analysis at the archaeological site of Xiaohe Cemetery, Xinjiang, China」PLOS ONE (2013)（2010年の古代DNA分析の結果もここで照合）",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3718815",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 3
+ },
+ {
+  "id": "ev_first_fleet_wheat",
+  "type": "event",
+  "title_ja": "オーストラリアの最初の小麦：失敗から",
+  "clock": "field",
+  "when": {
+   "from": 1788,
+   "to": 1791,
+   "label": "1788〜1791年"
+  },
+  "known": {
+   "year": 1788,
+   "label": "総督フィリップの報告（1788年5月15日）など"
+  },
+  "confidence": "confirmed",
+  "lenses": [
+   "plant",
+   "power",
+   "route"
+  ],
+  "field": [
+   "history"
+  ],
+  "place": {
+   "name_ja": "ファーム・コーブ（シドニー）とパラマッタ",
+   "lat": -33.86,
+   "lng": 151.22,
+   "precision": "site"
+  },
+  "kitchen_ja": "1788年、イギリスの最初の船団で来た人々は、シドニーの入り江のそばに小麦を蒔きましたが、土が合わずにほとんど育ちませんでした。食料の配給は減らされ、畑は内陸のパラマッタへ移ります。",
+  "research": {
+   "fact_ja": "最初の小麦は1788年1月の到着後まもなく、いまのシドニー王立植物園のファーム・コーブに蒔かれた。土は砂岩由来で穀物に向かず、収穫は振るわなかった。1788年11月には男性の食料配給が3分の1減らされた。1791年末までにファーム・コーブの農業はやめられ、ローズ・ヒル（いまのパラマッタ）へ移った。囚人ジェームズ・ルースの小麦が実り、土地を与えられて「エクスペリメント・ファーム」と名づけた。",
+   "unknown_ja": "面積や、ルースの成功の場所の細部は資料によって違う。先住民の土地と食べ物の暮らしを入植者の農業が壊したことも、同じ時の出来事として忘れてはならない。"
+  },
+  "sources": [
+   {
+    "title": "State Library of New South Wales「Food of the colony」",
+    "url": "https://www.sl.nsw.gov.au/node/203381",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Museums of History NSW「Arthur Phillip’s gardener」",
+    "url": "https://mhnsw.au/stories/general/arthur-phillips-gardener",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "The Conversation「Colonists upended Aboriginal farming…」",
+    "url": "https://theconversation.com/colonists-upended-aboriginal-farming-growing-grain-and-running-sheep-on-rich-yamfields-and-cattle-on-arid-grainlands-207118",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 4
+ },
+ {
+  "id": "ev_federation_wheat",
+  "type": "event",
+  "title_ja": "フェデレーション小麦：乾燥とさび病に強い品種",
+  "clock": "field",
+  "when": {
+   "from": 1901,
+   "to": 1925,
+   "label": "1901年命名、1903年配布、1910〜1925年に最も多く栽培"
+  },
+  "known": {
+   "year": 1901,
+   "label": "オーストラリア国立博物館・人名事典"
+  },
+  "confidence": "confirmed",
+  "lenses": [
+   "plant",
+   "power"
+  ],
+  "field": [
+   "history",
+   "genetics"
+  ],
+  "place": {
+   "name_ja": "ランブリッグ（キャンベラ近郊、ファラーの試験地）",
+   "lat": -35.48,
+   "lng": 149.02,
+   "precision": "site"
+  },
+  "kitchen_ja": "オーストラリアの育種家ファラーが、乾いた土地とさび病に強い小麦を作り、国ができた年にちなんで「フェデレーション」と名づけました。",
+  "research": {
+   "fact_ja": "ウィリアム・ファラーは1895年にヤンディラとパープル・ストローを交配し、1901年、オーストラリア連邦の成立にちなんで「フェデレーション」と名づけた。配布は1903年から。さび病と乾燥の両方に強い最初のオーストラリアの品種とされ、1910〜1925年に国内で最も広く栽培された。",
+   "unknown_ja": "発表・配布の年は資料によって1900〜1903年の幅がある。1919〜20年の収穫の約8割という数字は一つの資料による。"
+  },
+  "sources": [
+   {
+    "title": "National Museum of Australia「Federation wheat distributed」",
+    "url": "https://digital-classroom.nma.gov.au/defining-moments/federation-wheat-distributed",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Australian Dictionary of Biography「Farrer, William James」",
+    "url": "https://adb.anu.edu.au/biography/farrer-william-james-6145",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 5
  }
 ];
 export const breadChecks = [
