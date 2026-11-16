@@ -396,7 +396,7 @@ function drawGlobe() {
     if (ts === 'future' && !sel) continue;
     const cls = ['gm', e.place.precision === 'region' ? 'region' : 'site', e.confidence, ts, sel ? 'sel' : '', lensOn(e) ? '' : 'shade'].join(' ');
     html.push({ lat: e.place.lat, lng: e.place.lng, cls, color: lensColor(e), title: `${e.title_ja}（${whenText(e)}）`, onClick: () => select(e.id) });
-    if (sel || (ts === 'now' && lensOn(e) && S.playing)) html.push({ kind: 'label', lat: e.place.lat, lng: e.place.lng, alt: 0.02, text: e.title_ja, size: 0.7, color: '#ffffff' });
+    if (sel) /* 自動再生中も地名は選んだ出来事だけ（重なり防止） */ html.push({ kind: 'label', lat: e.place.lat, lng: e.place.lng, alt: 0.02, text: e.title_ja, size: 0.7, color: '#ffffff' });
   }
   if (S.breads) {  // パンの種類：記録のある年がカーソルより前のものだけ（その時代までにあったパン）
     // 同じ地点（パリのバゲットとクロワッサンなど）は印も名前も一つにまとめる（重なって読めなくならないように）

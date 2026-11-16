@@ -71,9 +71,9 @@ button{font:inherit}
 .hero{--T:clamp(46px,5.6vw,80px)}
 .kicker{font-size:max(10px,calc(var(--T) * .146));letter-spacing:.36em;color:rgba(246,239,228,.58);margin-bottom:calc(var(--T) * .382)}
 h1{font-family:var(--serif);font-size:var(--T);font-weight:500;line-height:1;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.7)}
-.title-text{display:inline-block;letter-spacing:.14em;margin-right:-.108em;font-feature-settings:"palt"} /* 最後の字（パン 1.08em × 字間 .1em）の字間だけを打ち消して、目で見た中心を画面の中心に */
-.title-text .kana{font-size:1.08em;letter-spacing:.1em}
-.title-text .to{font-size:.786em;letter-spacing:.14em;margin:0 .04em 0 .06em;vertical-align:.05em}
+.title-text{display:inline-block;letter-spacing:.14em;margin-right:-.069em;font-feature-settings:"palt"} /* 最後の字（パン 1.15em × 字間 .06em）の字間だけを打ち消して、目で見た中心を画面の中心に */
+.title-text .kana{font-size:1.15em;letter-spacing:.06em;vertical-align:-.02em} /* 実測：明朝のカタカナは字面の高さが漢字の約2/3、面積で約1/1.4。面積の平方根（約1.18）を目安に、見本に合わせて 1.15 */
+.title-text .to{font-size:.86em;letter-spacing:.1em;margin:0 .02em 0 .04em;vertical-align:.03em} /* 「と」は字面がもともと小さい（漢字の約0.75）ので 0.86 で見た目は約0.65 */
 .life{font-family:Georgia,"Times New Roman",var(--serif);font-size:calc(var(--T) * .236);letter-spacing:.16em;margin:calc(var(--T) * .236) 0 calc(var(--T) * .618) .16em;color:rgba(243,220,174,.9);text-shadow:0 2px 16px rgba(0,0,0,.8)}
 .motto{margin-top:22px;font-family:var(--serif);font-weight:600;font-size:clamp(11px,1.05vw,14px);letter-spacing:.36em;color:rgba(246,239,228,.82);text-shadow:0 2px 14px rgba(0,0,0,.9)}
 .thesis{font-family:var(--serif);font-weight:500;font-size:calc(var(--T) * .382);line-height:1.55;margin:0 0 calc(var(--T) * .236);text-shadow:0 2px 20px rgba(0,0,0,.75);font-feature-settings:"palt"}
@@ -168,7 +168,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
   .hero{--T:44px}
   .kicker{font-size:8px}
   /* h1 は --T に従う */
-  .title-text{letter-spacing:.1em;margin-right:-.108em}
+  .title-text{letter-spacing:.1em;margin-right:-.069em}
   .motto{font-size:9px;letter-spacing:.24em;margin-top:14px}
   .thesis{font-size:17px}
   .thesis-text{letter-spacing:.04em;margin-right:-.04em}
