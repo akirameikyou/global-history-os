@@ -269,9 +269,11 @@
     <div class="sec" style="padding-top:2px">層<span class="secsub">地球に重ねる</span></div>
     <div class="layers">
       <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
+      <button class="tgl" id="areaBtn" type="button" aria-pressed="false">栽培地域（目安）</button>
       <button class="tgl" id="wildBtn" type="button" aria-pressed="false">野生種の自生域</button>
       <button class="tgl" id="gridBtn" type="button" aria-pressed="false">緯度経度の網</button>
     </div>
+    <div class="lens-note" id="areaNote" hidden>ぼかした楕円は「この地域のどこかで、このころから小麦の栽培が見つかる」目安です。境界や広さには意味がなく、人や種が移った道も示しません。面を押すと根拠の出来事が開きます。</div>
   </div>
   <div class="panel" id="linPanel">
     <div class="sec">系統<span class="secsub">パン小麦のなりたち</span></div>
@@ -325,7 +327,8 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
-import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116d';
+import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116m11b';
+import { breadAreas as AREAS } from '../data/bread_areas.js?v=20261116m12b';
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
@@ -338,7 +341,7 @@ const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
 const KIND_JA = { peer_reviewed: '査読論文', primary: '一次資料', institution: '研究機関・公的機関', book: '書籍', press: '報道', secondary: '二次資料' };
 const CLOCK_JA = { grass: '草の時計', field: '畑の時計', bread: 'パンの時計' };
-const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null };
+const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null, areas: false };
 
 /* ── 年の書き方 ── */
 function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
@@ -351,6 +354,13 @@ const world = Globe()(document.getElementById('globeViz'))
   .atmosphereColor('#e8c27a').atmosphereAltitude(0.16)
   .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1])
   .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
+  // 栽培地域（M1.2）：境界を言い切らないよう、内側ほど濃い3重の楕円でぼかす。線は引かない。
+  //   色は小麦色だと砂漠の地肌に溶けて見えないので橙。印（小麦色）とも区別できる
+  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => `rgba(255,150,40,${[0.26, 0.34, 0.44][d.ring]})`)
+  .polygonSideColor(() => 'rgba(0,0,0,0)').polygonStrokeColor(() => 'rgba(0,0,0,0)')
+  .polygonAltitude(d => 0.006 + d.ring * 0.0015).polygonsTransitionDuration(0)
+  .polygonLabel(d => `<div style="font:12px/1.5 sans-serif;color:#fff;background:rgba(5,12,22,.85);padding:4px 8px;border-radius:4px">${d.name_ja}（${d.label}）<br>${d.stage_ja}</div>`)
+  .onPolygonClick(d => select(d.basis[0]))
   // 印と地名はすべて HTML で出す。
   //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
   //  ・印：波紋（ringsData）は「そこから広がった」ように見え、広がりのデータがないのに伝播を思わせるのでやめた。
@@ -436,8 +446,10 @@ function drawGlobe() {
     }
     labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(232,194,122,0.9)' });
   }
+  const areas = S.areas ? AREAS.filter(a => a.from <= S.year) : [];
+  for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja, size: 0.4, color: 'rgba(243,220,174,0.85)' });
   world.pathsData(paths);
-  if (globeReady) world.htmlElementsData(labels);
+  if (globeReady) { world.polygonsData(areas); world.htmlElementsData(labels); }
 }
 
 /* ── 光源レンズ ── */
@@ -784,6 +796,7 @@ $('nextE').onclick = () => { stopPlay(); stepTo(1); };
 
 /* ── 層のボタン・出典 ── */
 $('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
+$('areaBtn').onclick = () => { S.areas = !S.areas; $('areaBtn').setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; drawGlobe(); };
 $('gridBtn').onclick = () => { S.grid = !S.grid; $('gridBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
 $('infoBtn').onclick = () => {
   S.sel = null; S.node = null;
