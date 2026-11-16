@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>History OS｜小麦とパン Focus</title>
+<meta name="description" content="野の草から一枚のパンまで。小麦の系統、栽培化、製粉、発酵、世界と日本のパンの歴史を、地球と年代バーでたどる History OS の小麦とパン Focus（個人制作）。" />
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/bread/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://akirameikyou.github.io/global-history-os/bread/" />
+<meta property="og:image" content="https://akirameikyou.github.io/global-history-os/bread/og-cover.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:title" content="History OS｜小麦とパン Focus" />
+<meta property="og:description" content="約14,400年前の農耕以前のパンから、いまの一枚まで。小麦の系統・製粉・発酵・世界のパンを、地球と年代バーでたどる History OS。" />
+<meta property="og:site_name" content="History OS" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="History OS｜小麦とパン Focus" />
+<meta name="twitter:image" content="https://akirameikyou.github.io/global-history-os/bread/og-cover.jpg" />
+<!--
+  小麦とパン Focus の表紙（2026-11-16、清水さん「表紙は、生成写真でカンパーニュに地球の大陸の焼き目がついている写真を背景に」）。
+  骨組みは万次郎版・北斎版の表紙と同じ：上に名前、中央に題字と一文、入口二つ、四つの案内（INTRO / HOW TO VIEW / METHOD / SOURCES）、
+  ENTER で本体（focusShell.html）を全画面の iframe で重ね、左上の「表紙へ」で戻る。
+  背景の画像は生成画像（想像図）。決まりどおり、表紙の上にも「◇ 想像図（生成画像）」の印を出し、METHOD に想像図の一覧を掲げる。
+-->
+<style>
+:root{
+  --bg:#0d0905;
+  --ink:#f6efe4;
+  --wheat:#e8c27a;
+  --wheat-soft:#f3dcae;
+  --border:rgba(246,239,228,.14);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit}
+.app{position:relative;width:100%;height:100%;isolation:isolate;background:var(--bg)}
+/* 背景：カンパーニュの焼き目を地球に見立てた生成画像。パンが画面の下半分に来るように置き、上を暗くして題字を読みやすくする */
+.cover{
+  position:absolute;inset:0;z-index:1; /* フェードは付けない（動きが止まる環境で背景が透明のまま残らないように） */
+  background:
+    linear-gradient(180deg,rgba(13,9,5,.80) 0%,rgba(13,9,5,.55) 34%,rgba(13,9,5,.18) 62%,rgba(13,9,5,.55) 100%),
+    url("cover.jpg") center 62%/cover no-repeat;
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.gen-badge{
+  position:absolute;z-index:6;right:clamp(20px,3vw,46px);bottom:max(40px,calc(env(safe-area-inset-bottom) + 34px));
+  font-size:9px;letter-spacing:.08em;color:#1b1206;background:rgba(243,220,174,.92);border-radius:3px;padding:2px 7px;font-weight:700;
+  cursor:pointer;border:0
+}
+.gen-badge::before{content:'◇ '}
+.header{
+  position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));
+  left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(246,239,228,.55)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.29em}
+.edition{font-size:9px;letter-spacing:.17em;color:rgba(246,239,228,.34);padding-top:2px}
+.hero{
+  position:absolute;z-index:4;left:50%;top:40%;transform:translate(-50%,-50%);
+  width:min(88vw,880px);text-align:center;padding:28px;
+}
+.kicker{font-size:10px;letter-spacing:.36em;color:rgba(246,239,228,.55);margin-bottom:17px}
+h1{font-family:var(--serif);font-size:clamp(40px,5.4vw,76px);font-weight:500;line-height:1.06;margin:0 0 8px;text-shadow:0 2px 30px rgba(0,0,0,.7)}
+.title-text{display:inline-block;letter-spacing:.2em;margin-right:-.2em}
+.life{font-size:11px;letter-spacing:.27em;color:rgba(243,220,174,.78);margin-bottom:30px}
+.thesis{font-family:var(--serif);font-weight:500;font-size:clamp(20px,2.35vw,32px);line-height:1.55;margin:0 0 18px;text-shadow:0 2px 20px rgba(0,0,0,.75)}
+.thesis-text{display:inline-block;letter-spacing:.09em;margin-right:-.09em}
+.lead{
+  max-width:640px;margin:0 auto;color:rgba(246,239,228,.78);text-shadow:0 1px 14px rgba(0,0,0,.9);
+  font-family:var(--serif);font-size:clamp(12px,1.15vw,15px);line-height:1.95;letter-spacing:.055em;
+}
+.enter-wrap{margin-top:30px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.enter{
+  border:1px solid rgba(246,239,228,.28);background:rgba(13,9,5,.5);
+  color:#fffaf2;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;
+  cursor:pointer;backdrop-filter:blur(9px);
+  transition:background .25s ease,border-color .25s ease,transform .25s ease;
+}
+.enter small{display:block;margin-top:5px;font-size:9px;letter-spacing:.12em;color:rgba(246,239,228,.55)}
+.enter .arw{display:inline-block;margin-left:13px;color:var(--wheat);transition:transform .25s ease}
+.enter.primary{border-color:rgba(232,194,122,.5);background:rgba(60,40,15,.45)}
+.enter:hover,.enter:focus-visible{background:rgba(90,62,24,.45);border-color:rgba(232,194,122,.7);transform:translateY(-1px);outline:none}
+.enter:hover .arw{transform:translateX(4px)}
+.guide{
+  width:min(92vw,860px);margin:24px auto 0;display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid rgba(246,239,228,.12);border-bottom:1px solid rgba(246,239,228,.12);
+}
+.guide button{
+  appearance:none;border:0;border-right:1px solid rgba(246,239,228,.10);background:rgba(13,9,5,.45);
+  min-height:74px;color:var(--ink);padding:11px 15px 12px;text-align:left;cursor:pointer;backdrop-filter:blur(6px);
+}
+.guide button:last-child{border-right:0}
+.guide button:hover,.guide button:focus-visible{background:rgba(90,62,24,.35);outline:none}
+.g-num{display:block;font-size:8px;letter-spacing:.18em;color:rgba(232,194,122,.7);margin-bottom:6px}
+.g-title{display:block;font-size:10px;letter-spacing:.13em;color:rgba(246,239,228,.88);margin-bottom:5px}
+.g-copy{display:block;font-size:9px;line-height:1.45;letter-spacing:.04em;color:rgba(246,239,228,.5)}
+.foot{
+  position:absolute;z-index:4;left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  bottom:max(19px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;
+  font-size:8px;letter-spacing:.13em;color:rgba(246,239,228,.38)
+}
+dialog{
+  width:min(90vw,600px);border:1px solid var(--border);padding:0;
+  background:rgba(18,12,7,.97);color:var(--ink);
+  box-shadow:0 28px 90px rgba(0,0,0,.6);backdrop-filter:blur(16px);
+}
+dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
+.dlg{padding:28px 30px 30px;max-height:82vh;overflow-y:auto}
+.d-kicker{font-size:9px;letter-spacing:.22em;color:rgba(232,194,122,.75);margin-bottom:12px}
+.dlg h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em;margin:0 0 18px}
+.dlg p{font-size:12px;line-height:1.95;color:rgba(246,239,228,.74);margin:0 0 12px}
+.steps{display:grid;gap:10px;margin:14px 0 0}
+.step{border-top:1px solid rgba(246,239,228,.09);padding-top:10px;display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:start}
+.step b{font-size:10px;color:rgba(232,194,122,.82);letter-spacing:.08em;font-weight:500;line-height:1.7}
+.step span{font-size:11px;line-height:1.75;color:rgba(246,239,228,.72)}
+.step strong{font-weight:500;color:rgba(246,239,228,.92)}
+.d-sub{font-size:9px;letter-spacing:.16em;color:rgba(246,239,228,.5);margin:22px 0 0}
+.d-sub+.steps{margin-top:8px}
+.btn-name{display:inline-block;border:1px solid rgba(246,239,228,.25);border-radius:5px;padding:1px 6px;font-size:10px;color:#fffaf2;letter-spacing:.04em;white-space:nowrap}
+.mk{display:inline-flex;align-items:center;gap:6px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.dot.fill{background:var(--wheat)} .dot.hollow{border:1.5px solid #e0b45f} .dot.dash{border:1.5px dashed #d8b4f0}
+.ring{display:inline-block;width:18px;height:18px;border-radius:50%;border:1.2px dashed var(--wheat);flex:none}
+.gen{display:inline-block;font-size:9px;color:#1b1206;background:#f3dcae;border-radius:3px;padding:0 5px;font-weight:700}
+.genlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+.genlist figure{margin:0}
+.genlist img{width:100%;height:84px;object-fit:cover;border-radius:3px;display:block}
+.genlist figcaption{font-size:10px;line-height:1.5;color:rgba(246,239,228,.62);margin-top:4px}
+.close{margin-top:20px;border:1px solid var(--border);background:none;color:rgba(246,239,228,.75);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+.dlg .fine{font-size:10px;line-height:1.8;color:rgba(246,239,228,.48);margin:16px 0 0}
+/* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則） */
+.dlg::-webkit-scrollbar{width:6px;background:transparent}
+.dlg::-webkit-scrollbar-track{background:transparent}
+.dlg::-webkit-scrollbar-thumb{background:rgba(232,194,122,.28);border-radius:3px}
+.dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+/* ENTER 先：本体を全画面 iframe で重ねる */
+.os-frame{position:absolute;inset:0;z-index:10;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .6s ease;background:#050c16}
+.app.entered .os-frame{opacity:1;pointer-events:auto}
+.app.entered .hero,.app.entered .header,.app.entered .foot,.app.entered .cover,.app.entered .gen-badge{opacity:0;pointer-events:none;transition:opacity .25s ease}
+.os-back{
+  position:absolute;z-index:11;top:max(14px,env(safe-area-inset-top));left:clamp(14px,2vw,22px);
+  display:none;align-items:center;
+  border:1px solid rgba(246,239,228,.24);background:rgba(13,9,5,.6);backdrop-filter:blur(8px);
+  color:rgba(246,239,228,.85);padding:7px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer;border-radius:6px;
+}
+.app.entered .os-back{display:inline-flex}
+.os-back:hover{border-color:rgba(232,194,122,.55);color:#fff}
+.os-loading{position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;color:rgba(246,239,228,.55);font-size:11px;letter-spacing:.22em;pointer-events:none}
+.app.entered.loading .os-loading{display:flex}
+@media (max-width:640px){
+  .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
+  .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
+  .cover{background-size:auto,auto 52%;background-position:center,58% 100%} /* 縦長ではパン全体を下半分に（大陸の形が見えるように） */
+  .hero{top:42%;width:100%;padding:18px}
+  .kicker{font-size:8px;margin-bottom:14px}
+  h1{font-size:42px}
+  .title-text{letter-spacing:.14em;margin-right:-.14em}
+  .life{font-size:8.5px;margin-bottom:22px}
+  .thesis{font-size:17px;margin-bottom:12px}
+  .thesis-text{letter-spacing:.04em;margin-right:-.04em}
+  .lead{font-size:11px;line-height:1.85;max-width:330px}
+  .lead br{display:none}
+  .enter-wrap{margin-top:20px;gap:8px}
+  .enter{font-size:9px;padding:11px 16px 11px 19px}
+  .guide{width:min(94vw,365px);margin-top:16px;grid-template-columns:repeat(2,1fr)}
+  .guide button{min-height:60px;padding:9px 8px 10px}
+  .guide button:nth-child(2){border-right:0}
+  .guide button:nth-child(-n+2){border-bottom:1px solid rgba(246,239,228,.09)}
+  .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
+  .foot{left:18px;right:18px;font-size:7px}.foot>span:last-child{display:none}
+  .gen-badge{right:18px;bottom:36px;font-size:8px}
+  .step{grid-template-columns:66px 1fr}
+  .dlg{padding:24px 20px 24px}
+  .os-back{left:10px;top:calc(max(14px,env(safe-area-inset-top)) + 44px);padding:5px 10px}
+}
+@media (max-height:690px){
+  .hero{top:44%}
+  .lead{display:none}
+  .guide{margin-top:14px}
+  .guide button{min-height:58px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<!-- アクセス数（GoatCounter: Cookie なし・個人を特定しない。北斎版・万次郎版と同じ） -->
+<script data-goatcounter="https://historyos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="cover" role="img" aria-label="パン・ド・カンパーニュの焼き目が地球の大陸の形に見える生成画像"></div>
+  <button class="gen-badge" type="button" data-dialog="method" title="この背景は生成画像です。想像図の一覧へ">想像図（生成画像）</button>
+
+  <header class="header">
+    <div class="brand"><strong>HISTORY OS</strong>WHEAT &amp; BREAD FOCUS</div>
+    <div class="edition">FIRST EDITION 2026</div>
+  </header>
+
+  <main class="hero">
+    <div class="kicker">約14,400年前 — いま</div>
+    <h1><span class="title-text">小麦とパン</span></h1>
+    <div class="life">GRASS · FLOUR · FIRE · YEAST</div>
+
+    <p class="thesis"><span class="thesis-text">一枚のパンから、一万年前の野の草へ。</span></p>
+
+    <p class="lead">畑を耕すより何千年も前に、人は野の草の実を挽いて焼いていた。<br>
+      二つの草が交わり、もう一つの草が加わって、いまのパン小麦が生まれる。<br>
+      粉と窯と、目に見えない生き物が、世界の食卓をつくってきた。</p>
+
+    <div class="enter-wrap">
+      <button class="enter primary" id="playEnter" type="button">順にたどる<span class="arw">▶</span><small>出来事を一つずつ、年代の順に</small></button>
+      <button class="enter" id="enterBtn" type="button">ENTER HISTORY OS<span class="arw">→</span><small>年代バーを自分でなぞる</small></button>
+    </div>
+
+    <div class="guide" aria-label="入口ガイド">
+      <button data-dialog="intro" type="button"><span class="g-num">01 / INTRO</span><span class="g-title">この世界について</span><span class="g-copy">野の草からいまの一枚まで、植物と人の手と火の歴史。</span></button>
+      <button data-dialog="view" type="button"><span class="g-num">02 / HOW TO VIEW</span><span class="g-title">見方</span><span class="g-copy">年代バー・光源・系統・パン図鑑。</span></button>
+      <button data-dialog="method" type="button"><span class="g-num">03 / METHOD</span><span class="g-title">確かさと想像図</span><span class="g-copy">確定・幅・語りを分け、生成画像には印を。</span></button>
+      <button data-dialog="sources" type="button"><span class="g-num">04 / SOURCES</span><span class="g-title">出典と資料</span><span class="g-copy">論文・発掘報告・公的機関・各国の資料。</span></button>
+    </div>
+  </main>
+
+  <footer class="foot"><span>地球の画像：NASA Blue Marble ／ 写真：Wikimedia Commons（各カードに作者とライセンス）</span><span>HISTORY OS / THEME FOCUS</span></footer>
+
+  <iframe id="osFrame" class="os-frame" title="History OS / Wheat &amp; Bread Focus" allow="fullscreen"></iframe>
+  <div class="os-loading" id="osLoading">地球を準備しています…</div>
+  <button class="os-back" id="backBtn" type="button" aria-label="表紙へ戻る">← 表紙へ</button>
+
+  <dialog id="intro"><div class="dlg">
+    <div class="d-kicker">01 / INTRO</div><h2>一枚のパンから、一万年前の野の草へ</h2>
+    <p>History OS は、歴史を年表だけでなく、時間・場所・同時代の世界を重ねて見るための試みです。小麦とパン Focus は、人物ではなく「もの」を主役にした Focus です。主役は、植物と、目に見えない微生物と、人の手と火です。</p>
+    <p>ヨルダンの遺跡では、農耕より何千年も前の約14,400年前に、野生の穀物を挽いて焼いた「パンのようなもの」が見つかっています。小麦は、二つの野の草が交わって生まれた四倍体の小麦に、さらにもう一つの草（タルホコムギ）が加わって、いまのパン小麦になりました。そのうちの一つの親は、まだ見つかっていません。</p>
+    <p>この Focus では、草の時代から、栽培化、石臼と窯、海を渡る交易、白い粉と工場のパン、そしていまの食卓までを、章ごとに縮尺の違う一本の年代バーでたどります。パン図鑑では、食パン・バゲット・カンパーニュから、ナン・ピタ・チャパティ・饅頭・インジェラまで、16種のパンの成り立ちと製法を読めます。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="view"><div class="dlg">
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見方</h2>
+    <div class="d-sub">二つの入口</div>
+    <div class="steps">
+      <div class="step"><b>順にたどる</b><span>出来事を年代の順に一つずつ開き、地点へ寄ります。<span class="btn-name">❚❚</span> で止まります。</span></div>
+      <div class="step"><b>自分で</b><span>下の年代バーを左右になぞると、その年まで地球と一覧が展開します。<span class="btn-name">‹</span> <span class="btn-name">›</span> で前後の出来事へ。章の名を押すと、その章を広げます。</span></div>
+    </div>
+    <div class="d-sub">画面の各部（PC の配置）</div>
+    <div class="steps">
+      <div class="step"><b>年代バー</b><span>章ごとに縮尺が違います（深い時間は1目盛り10万年、いまは5年）。各章に「1目盛り＝○年」を書いています。▲草の時計（植物の進化）、■畑の時計（栽培・製粉）、●パンの時計（製法・食卓）。</span></div>
+      <div class="step"><b>左上：光源</b><span>草と土・粉と窯・発酵・配る力・道・食卓と祈り。押すと、その構造の出来事だけが光ります。</span></div>
+      <div class="step"><b>左下：系統</b><span><span class="btn-name">遡る ▸</span> で、いまのパン小麦から野の草へ一段ずつ遡り、地球がその草の自生域へ動きます。</span></div>
+      <div class="step"><b>右</b><span>年表／<strong>パン図鑑</strong>（製法×発酵の表・時代順・地域）／パン種／語り（帰属の履歴）／確かめる（よくある説明を確かめる）。</span></div>
+      <div class="step"><b>カード</b><span>最初に台所の段（やさしい説明）、「研究の段」を開くと学問・証拠・出典。上の帯をつかんで動かせます。</span></div>
+    </div>
+    <div class="d-sub">地球の上の印</div>
+    <div class="steps">
+      <div class="step"><b class="mk"><i class="dot fill"></i><i class="dot hollow"></i><i class="dot dash"></i></b><span>塗り＝確定、輪＝幅（学説が割れる・推定）、破線＝語り（伝説・後付け）。</span></div>
+      <div class="step"><b class="mk"><i class="ring"></i></b><span>淡い破線の輪＝「このあたり」（地域の代表点）。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="method"><div class="dlg">
+    <div class="d-kicker">03 / METHOD</div><h2>確かさと想像図</h2>
+    <p>この Focus は、確かめられたことと、推測と、語り継がれた話を混ぜないことを原則にしています。</p>
+    <div class="steps">
+      <div class="step"><b>確かさの3段</b><span><strong>確定</strong>＝証拠がはっきりしている（年代が幅でも）。<strong>幅</strong>＝学説が割れている・推定。<strong>語り</strong>＝伝説・俗説・後から結びつけられた話。確かめられなかったことは載せていません。業界団体・企業・報道だけが出典のものは「確定」にしません。</span></div>
+      <div class="step"><b>同一視しない</b><span>名前が似ていても、古い記録と今のパンを同じものとは書きません。古代ローマの「panis focacius」と今のフォカッチャ、写本の結び目の絵と今のプレッツェルなど。</span></div>
+      <div class="step"><b>分かる年</b><span>パンによって、分かるのが「名前の年」「法令の年」「道具の年」とちがいます。図鑑の各パンに一行で書いています。</span></div>
+      <div class="step"><b>信仰の言葉</b><span>「イエスの時代のパン」では、聖書の記述・考古学・推測・信仰の言葉を分けて書き、信仰の内容は判定しません。</span></div>
+    </div>
+    <div class="d-sub">想像図（生成画像）について</div>
+    <p style="margin-top:8px">写真が存在しない場面や仕組みを示すためにだけ、生成画像を使っています。すべてに <span class="gen">◇ 想像図</span> の印を付け、何に基づいて描いたかを書いています。実物の写真や当時の資料ではありません。表紙の背景（カンパーニュの焼き目を地球に見立てた画像）も生成画像です。</p>
+    <div class="genlist" id="genlist"></div>
+    <p class="fine">写真（実物）は Wikimedia Commons のもので、各カードに作者とライセンスを表示しています。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="sources"><div class="dlg">
+    <div class="d-kicker">04 / SOURCES</div><h2>出典と資料</h2>
+    <p>主な資料です。出来事・パンごとの出典は、本体の各カードの「研究の段」に記載しています。</p>
+    <div class="steps">
+      <div class="step"><b>考古・植物</b><span>Arranz-Otaegui ほか（PNAS 2018、シュバイカ1）、Levy & Feldman（Plant Cell 2022）、Nature 2024 のパン小麦 D ゲノム研究、Heun ほか（Science 1997）、Fuller（Annals of Botany 2007）。</span></div>
+      <div class="step"><b>歴史・発掘</b><span>Samuel（Science 1996、古代エジプトのパンとビール）、ポンペイ、バルベガル、ガムラ・ナスル・エッディンの発掘報告、Hamel『Poverty and Charity in Roman Palestine』。</span></div>
+      <div class="step"><b>公的機関</b><span>フランスの政令（1993）、EU の地理的表示（バイエルンのブレッツェル、レッコのフォカッチャ、プンパーニッケル）、UNESCO（ラヴァシュ、バゲット）、イタリア官報、オーストリア農林省の伝統食品登録簿、スヴァールバル世界種子貯蔵庫、農研機構・CIMMYT・USDA。</span></div>
+      <div class="step"><b>日本</b><span>江川家文書を再検証した研究（日本大学）、国立歴史民俗博物館の書簡解説、文部科学省・農林水産省の給食の資料。</span></div>
+      <div class="step"><b>調べ方</b><span>AI Team Studio で複数の AI（GPT・Gemini・Codex・Meta・Claude）に独立に調べてもらい、Claude Code が出典に当たって照合しました。照合で直した点は、カードの注記に残しています。</span></div>
+    </div>
+    <p class="fine">各機関が本サイトを推薦・監修するものではありません。健康・体質についての助言は扱いません。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+</div>
+
+<script type="module">
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116e';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+document.getElementById('genlist').innerHTML = IMAGES.filter(i => i.generated).map(i =>
+  `<figure><img src="${esc(i.file)}" alt="" loading="lazy"><figcaption><span class="gen">◇ 想像図</span> ${esc(i.caption_ja)}</figcaption></figure>`).join('');
+const app = document.getElementById('app');
+const osFrame = document.getElementById('osFrame');
+function enter(play) {
+  app.classList.add('entered', 'loading');
+  osFrame.addEventListener('load', () => setTimeout(() => app.classList.remove('loading'), 900), { once: true });
+  osFrame.src = 'focusShell.html' + (play ? '?play=1' : '');
+}
+document.getElementById('playEnter').addEventListener('click', () => enter(true));
+document.getElementById('enterBtn').addEventListener('click', () => enter(false));
+document.getElementById('backBtn').addEventListener('click', () => { app.classList.remove('entered', 'loading'); osFrame.removeAttribute('src'); });
+document.querySelectorAll('[data-dialog]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.dialog).showModal()));
+document.querySelectorAll('.close').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+</script>
+</body>
+</html>

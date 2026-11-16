@@ -12,6 +12,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>History OS｜小麦とパン Focus</title>
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/bread/">
 <meta name="description" content="野の草から一枚のパンまで。小麦の系統、栽培化、製粉、発酵、世界と日本のパンの歴史を、地球と年代バーでたどる History OS の小麦とパン Focus（個人制作）。">
 <style>
   :root{
@@ -235,8 +236,16 @@
     .title h1{font-size:18px;letter-spacing:.3em}
     .left-col{top:auto;bottom:206px;left:12px;right:12px;width:auto;max-height:30vh;overflow:auto}
     .left-col #linPanel{display:none}
+    .left-col{display:none} /* スマホでは光源・系統の枠をしまい、地球と年代バーを主に（PC で使う） */
+    .tl-top{flex-wrap:wrap;gap:6px 10px}
+    #tlYear{font-size:20px;min-width:0}
+    .tl-mid{flex:1 1 100%;order:3}
+    .tl-hint{display:none}
+    #tl{height:104px}
     .right-panel{top:72px;right:12px;left:12px;width:auto;max-height:26vh}
-    #topCtl{top:44px;right:12px}
+    #topCtl{top:46px;right:12px}
+    #topCtl .tgl{font-size:10px;padding:2px 7px}
+    .title p{display:none}
     #timelineBar{bottom:24px;width:calc(100vw - 24px)}
     .dcard{top:72px;left:12px;right:12px;max-height:calc(100% - 300px)}
     .legend{display:none}
@@ -245,7 +254,7 @@
 </head><body>
 <div id="globeViz"></div>
 <div class="title"><h1>小麦とパン</h1><p>WHEAT &amp; BREAD FOCUS</p></div>
-<div class="attrib">地球: NASA Blue Marble ／ 個人制作 ／ 骨組み M1-0（データは出典調査の下書き）</div>
+<div class="attrib">地球: NASA Blue Marble ／ 写真: Wikimedia Commons ／ 個人制作 ／ 第1版 2026</div>
 
 <div id="topCtl">
   <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
@@ -319,7 +328,7 @@ import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_even
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
-import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116b';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116e';
 import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116d';
 
 const $ = id => document.getElementById(id);
@@ -359,7 +368,8 @@ const world = Globe()(document.getElementById('globeViz'))
 world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0); // 肥沃な三日月地帯を正面に
 // 地球の準備が終わる前に HTML の印を渡すと three-globe の isBehindGlobe が落ちる（万次郎版と同じく準備完了を待つ）
 let globeReady = false;
-const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
+const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe();
+  if (new URLSearchParams(location.search).get('play') === '1') setTimeout(() => $('playBtn').click(), 1200); }; // 表紙の「順にたどる」
 world.onGlobeReady(markGlobeReady);
 // 予備：準備の合図が来なくても、描画が進み始めたら置く（万次郎版と同じ）
 setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markGlobeReady)), 1000);
@@ -691,8 +701,8 @@ function drawTimeline() {
     const x0 = i * (sw + gap), span = c.to - c.from;
     const X = y => x0 + Math.max(0, Math.min(1, (y - c.from) / span)) * sw;
     h += `<g class="seg ${chapterAt(S.year) === c.id ? 'cur' : ''}" data-c="${c.id}"><rect class="bg" x="${x0}" y="0" width="${sw}" height="${H}" rx="3"/>
-      <text class="sname" data-c="${c.id}" x="${x0 + 6}" y="14">${c.id ? c.id + ' ' : ''}${esc(c.name)}${S.chapter === c.id ? '　◂ 全体へ' : ''}</text>
-      <text class="sscale" x="${x0 + 6}" y="27">1目盛り＝${esc(c.tickLabel)}</text>`;
+      <text class="sname" data-c="${c.id}" x="${x0 + 6}" y="14">${sw < 90 ? (c.id ? c.id : '深') : (c.id ? c.id + ' ' : '') + esc(c.name)}${S.chapter === c.id ? '　◂ 全体へ' : ''}</text>
+      ${sw < 90 ? '' : `<text class="sscale" x="${x0 + 6}" y="27">1目盛り＝${esc(c.tickLabel)}</text>`}`;
     const first = Math.ceil(c.from / c.tick) * c.tick;
     const n = Math.floor((c.to - first) / c.tick);
     const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(sw / 46))));
@@ -777,7 +787,7 @@ $('infoBtn').onclick = () => {
     <h4>出典の内訳</h4><p>${Object.entries(kinds).map(([k, n]) => `${esc(KIND_JA[k] || k)} ${n}`).join('、')}</p>
     <h4>画像について</h4><p>実物の写真・資料 ${IMAGES.filter(i => !i.generated).length} 点（Wikimedia Commons。各カードに作者・ライセンス・元のページ）。生成画像（想像図）は ${IMAGES.filter(i => i.generated).length} 点で、すべてに「◇ 想像図」の印を付け、何に基づいて描いたかを書いています。写真が残っていない場面や仕組みを示すためだけに使い、実物の代わりにはしません。</p>
     ${IMAGES.some(i => i.generated) ? `<div class="genlist">${IMAGES.filter(i => i.generated).map(i => `<figure data-t="${esc(i.target)}"><img src="${esc(i.file)}" alt=""><span class="gen-mark">想像図</span><figcaption>${esc(i.caption_ja)}</figcaption></figure>`).join('')}</div>` : ''}
-    <h4>この版</h4><p>骨組み M1-0。年表 ${EVENTS.length} 件・系統 ${NODES.length} ノード。出典調査（2026-11-15）の下書きデータで、画像・世界のパン図鑑・英語版はまだありません。健康や体質の助言は扱いません。</p></div>`;
+    <h4>この版</h4><p>第1版（2026年11月）。年表 ${EVENTS.length} 件・系統 ${NODES.length} ノード・パン図鑑 ${BREADS.length} 種。英語版はまだありません。健康や体質の助言は扱いません。</p></div>`;
   $('dcAct').hidden = true;
   $('detailCard').hidden = false;
   refresh();

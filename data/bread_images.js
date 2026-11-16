@@ -397,5 +397,17 @@ export const breadImages = [
   "made_by": "ChatGPT（OpenAI の画像生成）",
   "made_on": "2026-11-15",
   "prompt_ja": ""
+ },
+ {
+  "id": "gen_cover",
+  "target": "cover",
+  "file": "cover.jpg",
+  "generated": true,
+  "kind": "generated",
+  "caption_ja": "表紙：パン・ド・カンパーニュの焼き目を地球の大陸に見立てた画像",
+  "basis": "実在のパンや資料を写したものではない（表紙の意匠として清水さんの発案で生成）",
+  "made_by": "ChatGPT（OpenAI の画像生成）",
+  "made_on": "2026-11-16",
+  "prompt_ja": ""
  }
 ];
