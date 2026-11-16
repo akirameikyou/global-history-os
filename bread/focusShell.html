@@ -553,7 +553,7 @@ function openBread(id) {
   $('dcFig').innerHTML = figHtml(b.id);
   $('dcWhen').innerHTML = `記録：${esc(b.earliest.label)}<span class="conf ${b.confidence}">${CONF_JA[b.confidence] || ''}</span>`;
   $('dcTitle').textContent = b.name_ja;
-  $('dcPlace').textContent = `${b.name_local ? b.name_local + '　' : ''}${b.region}`;
+  $('dcPlace').textContent = `${b.name_local ? b.name_local + '　' : ''}${b.region}（いまの代表的な地域。発祥の地とは限らない）`;  /* GPT 拡張提案④：図鑑の地点を伝播の起点と混同しない */
   const rel = (b.related || []).map(r => { const e = EVENTS.find(x => x.id === r); if (e) return `<span class="ref" data-e="${r}">${esc(e.title_ja)} ▸</span>`;
     const o = BREADS.find(x => x.id === r); return o ? `<span class="ref" data-b="${r}">${esc(o.name_ja)} ▸</span>` : ''; }).join('');
   $('dcBody').innerHTML = `<p class="kitchen">${esc(b.kitchen_ja)}</p>

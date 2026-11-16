@@ -1579,6 +1579,494 @@ export const breadEvents = [
   "note": "スタジオ検討002（GPT・Gemini・Codex・Meta・Claude Web の5者）を α が出典で照合してまとめた。聖句は、日本では著作権の保護期間が終わったとされる口語訳（1955年）から短く引いた。",
   "links": null,
   "chapter": 3
+ },
+ {
+  "id": "ev_catalhoyuk_dough",
+  "type": "event",
+  "title_ja": "チャタルホユックの窯のそばの「生地」",
+  "clock": "bread",
+  "when": {
+   "from": -6700,
+   "to": -6500,
+   "label": "前6600年ごろ（放射性炭素年代）"
+  },
+  "known": {
+   "year": 2024,
+   "label": "2024年3月 発掘チームの発表"
+  },
+  "confidence": "narrative",
+  "lenses": [
+   "mill",
+   "ferment"
+  ],
+  "field": [
+   "archaeology",
+   "archaeobotany"
+  ],
+  "place": {
+   "name_ja": "チャタルホユック（トルコ・コンヤ）",
+   "lat": 37.667,
+   "lng": 32.828,
+   "precision": "site"
+  },
+  "kitchen_ja": "アナトリアの大きな村の遺跡で、窯のそばから、焼かれる前の生地のようなものが見つかったと発表されました。まわりには小麦・大麦・エンドウの粒がありました。",
+  "research": {
+   "fact_ja": "2024年3月、ネジメッティン・エルバカン大学などの発掘チームが、チャタルホユックの窯のある建物で、窯のまわりの小麦・大麦・エンドウと、スポンジ状の有機物を見つけたと発表した。分析で、粉と水を混ぜた、焼かれていない生地と判断し、放射性炭素年代で前6600年ごろとした。薄い粘土の覆いが残した、と説明されている。",
+   "unknown_ja": "「世界最古のパン」という言い方は発掘チームの評価で、査読論文による独立した確認は、α の調べた範囲では見つからなかった（2026-11-16）。発酵していたかどうかも発表の説明による。"
+  },
+  "sources": [
+   {
+    "title": "Hürriyet Daily News「Archaeologists discover 8600-year-old bread at Çatalhöyük」(2024)",
+    "url": "https://hurriyetdailynews.com/archaeologists-discover-8600-year-old-bread-at-catalhoyuk-191424",
+    "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Sci.News「8,600-Year-Old Bread Found in Türkiye」(2024)",
+    "url": "https://www.sci.news/archaeology/catalhoyuk-bread-12858.html",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_mehrgarh",
+  "type": "event",
+  "title_ja": "メヘルガル：南アジアの最初の畑",
+  "clock": "field",
+  "when": {
+   "from": -7000,
+   "to": -5500,
+   "label": "前7000〜前5500年ごろ（最初の村の時期）"
+  },
+  "known": {
+   "year": null,
+   "label": "1970年代からの発掘と、その後の研究"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "route"
+  ],
+  "field": [
+   "archaeology",
+   "archaeobotany"
+  ],
+  "place": {
+   "name_ja": "メヘルガル（パキスタン・バローチスターン）",
+   "lat": 29.39,
+   "lng": 67.61,
+   "precision": "site"
+  },
+  "kitchen_ja": "インダス川の西の山すそにある村の遺跡で、南アジアでいちばん早い畑のあとが見つかっています。穀物のほとんどは大麦で、小麦は少しだけでした。",
+  "research": {
+   "fact_ja": "メヘルガルは南アジア北西部で最も早い新石器時代の遺跡とされる。新石器時代の栽培作物の9割以上が大麦で、小麦は少量。大麦とコブウシはこの地で家畜化・栽培化された可能性が高いとされる一方、小麦は西アジア由来と考えられている。",
+   "unknown_ja": "始まりの年代は資料によって前8500年から前7000年まで幅がある。ここでは一般的な前7000〜前5500年を使った。小麦が西アジアからどの道で来たかはわからない。"
+  },
+  "sources": [
+   {
+    "title": "Gangal, Sarson & Shukurov「The Near-Eastern Roots of the Neolithic in South Asia」PLOS ONE (2014)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4012948",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_europe_naked_wheat",
+  "type": "event",
+  "title_ja": "ヨーロッパの裸性小麦：南東から地中海へ",
+  "clock": "field",
+  "when": {
+   "from": -6100,
+   "to": -5800,
+   "label": "前6000年ごろから（直接年代測定）"
+  },
+  "known": {
+   "year": 2026,
+   "label": "2026年の論文（58遺跡・116点の直接年代）"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "route"
+  ],
+  "field": [
+   "archaeobotany",
+   "geography"
+  ],
+  "place": {
+   "name_ja": "ヨーロッパ南東部（ギリシャ北部・バルカン）",
+   "lat": 41.5,
+   "lng": 23.5,
+   "precision": "region"
+  },
+  "kitchen_ja": "粒を炭のまま年代測定した小麦を集めると、脱穀しやすい「裸性」の小麦は、まずヨーロッパの南東部に現れ、地中海沿いに定着していったことが見えてきます。",
+  "research": {
+   "fact_ja": "Salvador-Baiges ほか（2026）は、58遺跡116点の裸性小麦（パン小麦・デュラムなど）の粒そのものの放射性炭素年代を分析した。最も早い出現は前6000年ごろの南東ヨーロッパに集まり、その後地中海沿いで定着、前4500〜4000年以降に中部・北部ヨーロッパへ広がる。初出現の時期を最もよく説明したのは地中海の海岸からの距離だった。",
+   "unknown_ja": "著者らは、人の移住だけでは広がりを説明できず、ネットワークを通じた伝わり方と地域ごとの農法の違いを考えるべきだとしている。点が時代順に現れることは、人がその道をそのまま移ったことを意味しない。"
+  },
+  "sources": [
+   {
+    "title": "Salvador-Baiges ほか「Tracing the influence of Western Mediterranean innovations in Neolithic Europe through directly radiocarbon-dated naked wheat」Journal of Archaeological Science: Reports 74, 105937 (2026)",
+    "url": "https://doi.org/10.1016/j.jasrep.2026.105937",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "同論文（ジュネーブ大学のリポジトリ）",
+    "url": "https://archive-ouverte.unige.ch/unige:194607",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_lbk",
+  "type": "event",
+  "title_ja": "線帯文土器文化：中部ヨーロッパ最初の農民",
+  "clock": "field",
+  "when": {
+   "from": -5550,
+   "to": -4900,
+   "label": "前5550〜前4900年"
+  },
+  "known": {
+   "year": null,
+   "label": "考古植物学の研究の積み重ね（年代は2024年の論文）"
+  },
+  "confidence": "confirmed",
+  "lenses": [
+   "plant",
+   "table"
+  ],
+  "field": [
+   "archaeology",
+   "archaeobotany"
+  ],
+  "place": {
+   "name_ja": "中部ヨーロッパ（ドナウ中流からライン川流域）",
+   "lat": 50.0,
+   "lng": 11.0,
+   "precision": "region"
+  },
+  "kitchen_ja": "中部ヨーロッパで最初に畑を作った人々は、一粒小麦とエンマー小麦という殻の固い2種類の小麦に、レンズ豆・エンドウ・亜麻を加えた5つの作物で暮らしていました。",
+  "research": {
+   "fact_ja": "線帯文土器文化（LBK、前5550〜前4900年）の共同体は、皮性の小麦2種（一粒小麦・エンマー）、豆2種（レンズ豆・エンドウ）、繊維・油の作物1種（亜麻）を主な作物にしていた。地域で割合が違い、ライン川の西ではエンマー、東では一粒小麦が多い傾向が報告されている。",
+   "unknown_ja": "この画一的な作物の組み合わせが、文化の均一化なのか、肥沃な低地に合う作物を選んだ結果なのかは議論がある。"
+  },
+  "sources": [
+   {
+    "title": "「New radiocarbon dates point to the early evolution of resilient agriculture among Central Europe's first farmers」Radiocarbon (2024)",
+    "url": "https://www.cambridge.org/core/services/aop-cambridge-core/content/view/B6BB0FE44FD36876761CAC018E6496CB/S0033822224000845a.pdf/new-radiocarbon-dates-point-to-the-early-evolution-of-resilient-agriculture-among-central-europes-first-farmers.pdf",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_europe_north",
+  "type": "event",
+  "title_ja": "裸性小麦、内陸と北のヨーロッパへ",
+  "clock": "field",
+  "when": {
+   "from": -4500,
+   "to": -4000,
+   "label": "前4500〜前4000年以降"
+  },
+  "known": {
+   "year": 2026,
+   "label": "2026年の論文（直接年代の分析）"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "route"
+  ],
+  "field": [
+   "archaeobotany",
+   "geography"
+  ],
+  "place": {
+   "name_ja": "中部・北部ヨーロッパ",
+   "lat": 53.5,
+   "lng": 10.0,
+   "precision": "region"
+  },
+  "kitchen_ja": "地中海から遠い内陸や北のヨーロッパに裸性の小麦が現れるのは、南東部より1500年ほど後のことでした。",
+  "research": {
+   "fact_ja": "Salvador-Baiges ほか（2026）の分析で、裸性小麦は前4500〜4000年以降に中部・北部ヨーロッパへ広がった。地中海の海岸からの距離が遠いほど、初出現が遅い。",
+   "unknown_ja": "一本の道でつながる移動ではなく、地域ごとに受け入れた時期が違う。北の寒い気候にどう合わせたかは、この論文の範囲の外。"
+  },
+  "sources": [
+   {
+    "title": "Salvador-Baiges ほか、Journal of Archaeological Science: Reports 74, 105937 (2026)",
+    "url": "https://doi.org/10.1016/j.jasrep.2026.105937",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_bouldnor",
+  "type": "event",
+  "title_ja": "ボールドナー・クリフの小麦のDNA（争いのある証拠）",
+  "clock": "field",
+  "when": {
+   "from": -6100,
+   "to": -6000,
+   "label": "約8000年前（前6000年ごろ）とされる"
+  },
+  "known": {
+   "year": 2015,
+   "label": "2015年 Science 誌の論文と、同年の反論"
+  },
+  "confidence": "narrative",
+  "lenses": [
+   "route",
+   "plant"
+  ],
+  "field": [
+   "genetics",
+   "archaeology"
+  ],
+  "place": {
+   "name_ja": "ボールドナー・クリフ（イギリス・ワイト島沖の海底）",
+   "lat": 50.7,
+   "lng": -1.45,
+   "precision": "site"
+  },
+  "kitchen_ja": "イギリスの海に沈んだ遺跡の泥から、農耕が始まる前の約8000年前の小麦のDNAが見つかった、という論文が出ました。ただ、本当に古いDNAなのか、強い反論があります。",
+  "research": {
+   "fact_ja": "Smith ほか（2015, Science）は、海底に沈んだ中石器時代の遺跡の堆積物から小麦のDNA断片（約7200万本の読み取りのうち152本）を報告し、農耕以前のブリテン島の人々が大陸とのつながりで小麦を手に入れていたと論じた。Weiß ほか（2015, eLife）は、古いDNAに特有の傷み方が見られず、新しいDNAの混入を否定できないと反論した。",
+   "unknown_ja": "α の調べた範囲では決着していない（2026-11-16）。ブリテン島で小麦の花粉や畑のあとは見つかっていない。History OS は「争いのある証拠」として示し、交易を確かな事実としては扱わない。"
+  },
+  "sources": [
+   {
+    "title": "Smith ほか「Sedimentary DNA from a submerged site reveals wheat in the British Isles 8000 years ago」Science (2015)",
+    "url": "https://ueaeprints.uea.ac.uk/id/eprint/70255/",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Weiß ほか「Contamination of the Bouldnor Cliff wheat sequences」eLife (2015)",
+    "url": "https://elifesciences.org/articles/10005",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Nature News「Ancient-DNA dispute raises questions about wheat trade in prehistoric Britain」(2015)",
+    "url": "https://www.nature.com/news/ancient-dna-dispute-raises-questions-about-wheat-trade-in-prehistoric-britain-1.18702",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 2
+ },
+ {
+  "id": "ev_begash",
+  "type": "event",
+  "title_ja": "遊牧民の墓に、小麦と大麦とキビ（中央アジア）",
+  "clock": "field",
+  "when": {
+   "from": -2500,
+   "to": -2200,
+   "label": "前2500〜前2200年ごろ"
+  },
+  "known": {
+   "year": 2014,
+   "label": "2014年の論文（Proceedings of the Royal Society B）"
+  },
+  "confidence": "range",
+  "lenses": [
+   "route",
+   "plant"
+  ],
+  "field": [
+   "archaeobotany",
+   "archaeology"
+  ],
+  "place": {
+   "name_ja": "ベガシュ（カザフスタン東部・ジュンガル山地）",
+   "lat": 44.7,
+   "lng": 78.8,
+   "precision": "region"
+  },
+  "kitchen_ja": "中央アジアの山の遊牧民の墓から、西アジアの小麦・大麦と、東アジアのキビが一緒に見つかりました。東西の穀物が、遊牧民の手で行き来していたことを示す早い証拠です。",
+  "research": {
+   "fact_ja": "Spengler ほか（2014）は、カザフスタンのタスバスとベガシュで、炭になった小麦・大麦・キビの粒を報告した。ベガシュでは人の火葬の石棺から出て、前2500〜2200年ごろ。中央ユーラシアで作物が交換された最も早い証拠とされる。",
+   "unknown_ja": "遊牧民が自分で育てたのか、交換で手に入れたのかは遺跡ごとに検討が要る。ここから中国まで一本の道でつながるわけではない。"
+  },
+  "sources": [
+   {
+    "title": "Spengler ほか「Early agriculture and crop transmission among Bronze Age mobile pastoralists of Central Eurasia」Proceedings of the Royal Society B 281: 20133382 (2014)（紹介記事 ScienceDaily）",
+    "url": "https://www.sciencedaily.com/releases/2014/04/140401210412.htm",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 3
+ },
+ {
+  "id": "ev_china_wheat",
+  "type": "event",
+  "title_ja": "中国の小麦は、まず東の海辺に",
+  "clock": "field",
+  "when": {
+   "from": -2700,
+   "to": -2500,
+   "label": "前2600年ごろ（黄河下流域）"
+  },
+  "known": {
+   "year": 2018,
+   "label": "2018年の論文（Nature Plants）"
+  },
+  "confidence": "range",
+  "lenses": [
+   "route",
+   "power",
+   "plant"
+  ],
+  "field": [
+   "archaeobotany",
+   "archaeology"
+  ],
+  "place": {
+   "name_ja": "黄河下流域（山東半島・趙家荘遺跡など）",
+   "lat": 36.3,
+   "lng": 120.0,
+   "precision": "region"
+  },
+  "kitchen_ja": "小麦は西から来た作物なのに、中国でいちばん早く年代が確かめられたのは、西の端ではなく東の山東半島でした。",
+  "research": {
+   "fact_ja": "Long ほか（2018）は、山東・遼東の6遺跡の炭化した小麦の直接年代と、中国の年代資料のベイズ解析から、小麦の出現を黄河下流域で前2600年ごろ、甘粛・新疆で前1900年ごろ、黄河中流域とチベットで前1600年ごろと推定した。新疆・甘粛から東へ順に伝わったという長年の説を支持せず、珍しい品として黄河下流域の有力者に伝わった可能性を示した。",
+   "unknown_ja": "著者ら自身、これで議論が終わるとは考えていない。中国にはもともとアワ・キビ・米の農業があり、小麦が主な穀物になるのはずっと後のこと。"
+  },
+  "sources": [
+   {
+    "title": "Long ほか「The early history of wheat in China from 14C dating and Bayesian chronological modelling」Nature Plants 4: 272–279 (2018)",
+    "url": "https://doi.org/10.1038/s41477-018-0141-x",
+    "kind": "peer_reviewed",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Phys.org「Radiocarbon-based wheat in eastern China」(2018)",
+    "url": "https://phys.org/news/2018-05-radiocarbon-based-wheat-eastern-china.html",
+    "kind": "press",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 3
+ },
+ {
+  "id": "ev_new_spain_wheat",
+  "type": "event",
+  "title_ja": "小麦、アメリカ大陸へ（ヌエバ・エスパーニャ）",
+  "clock": "field",
+  "when": {
+   "from": 1521,
+   "to": 1600,
+   "label": "1520年代〜16世紀末"
+  },
+  "known": {
+   "year": null,
+   "label": "16世紀の記録と後の研究"
+  },
+  "confidence": "range",
+  "lenses": [
+   "route",
+   "power",
+   "table"
+  ],
+  "field": [
+   "history"
+  ],
+  "place": {
+   "name_ja": "ヌエバ・エスパーニャ（メキシコ中央部・バヒオ）",
+   "lat": 20.6,
+   "lng": -101.0,
+   "precision": "region"
+  },
+  "kitchen_ja": "スペインの征服のあと、小麦はメキシコに根づき、16世紀の終わりには中央部の黒い土の平野でトウモロコシと並んで実るようになりました。",
+  "research": {
+   "fact_ja": "小麦はスペインの征服後のヌエバ・エスパーニャで栽培され、16世紀末にはバヒオの平野、モレリア、グアダラハラ、オアハカで小麦とトウモロコシが収穫されていた。小麦の畑とともに、犂・軛・灌漑などスペインの技術も持ち込まれた。",
+   "unknown_ja": "アフリカ生まれの兵士フアン・ガリードが米袋に混じった3粒の小麦を蒔いた、という話は伝承で、確かめられていない。コロンブスが1493年に小麦を持ち込んだという話も、α は研究の出典を確かめられなかった。南米では、インカの遺跡から小麦が出て、伝わった時期の見直しが議論されている。"
+  },
+  "sources": [
+   {
+    "title": "Mexico News Daily「A pretty comprehensive history of Mexican bread」",
+    "url": "https://mexiconewsdaily.com/food/a-pretty-comprehensive-history-of-mexico-bread-and-why-it-matters/",
+    "kind": "press",
+    "checked": "2026-11-16"
+   },
+   {
+    "title": "Cambridge University Press の研究書の章（ヌエバ・エスパーニャの小麦とトウモロコシ）",
+    "url": "https://core-prod.cambridgecore.org/core/product/identifier/CBO9781139055178A010/type/BOOK_PART",
+    "kind": "book",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 4
+ },
+ {
+  "id": "ev_turkey_red",
+  "type": "event",
+  "title_ja": "ターキー・レッド：大平原の冬小麦",
+  "clock": "field",
+  "when": {
+   "from": 1873,
+   "to": 1919,
+   "label": "1873〜74年の作付けから、1919年に州の8割"
+  },
+  "known": {
+   "year": null,
+   "label": "カンザス州歴史協会などの記録"
+  },
+  "confidence": "range",
+  "lenses": [
+   "plant",
+   "route",
+   "power"
+  ],
+  "field": [
+   "history",
+   "geography"
+  ],
+  "place": {
+   "name_ja": "カンザス州（アメリカ・マリオン郡周辺）",
+   "lat": 38.35,
+   "lng": -97.2,
+   "precision": "region"
+  },
+  "kitchen_ja": "ウクライナ方面から来た冬小麦「ターキー・レッド」が、アメリカの大平原を世界の小麦の産地に変えていきました。",
+  "research": {
+   "fact_ja": "ターキー・レッドは今のウクライナの各地から入った硬質の冬小麦（クリミア、ハリコフなどは同じ系統の別名）。最初の作付けは1873年のマリオン郡とされる。種の不足で広がりはゆっくりだったが、寒さに強いこと、1878年の鋼のロール製粉機、1890年代にほかの品種が冬に枯れたことで広がり、1919年にはカンザスの小麦畑の82%を占めた。今のカンザスの多くの品種の祖先に当たる。",
+   "unknown_ja": "「1874年にメノナイトの移民が台所の壺に種を入れて持ってきた」という有名な話について、カンザス州歴史協会は、最初の収穫に足りる量ではなく、ロシアでメノナイトがふつうに育てていた品種でもなかったとしている。鉄道会社や製粉業者の役割が大きかったという見方もある。"
+  },
+  "sources": [
+   {
+    "title": "Kansas Historical Society, Kansapedia「Turkey Red Wheat」",
+    "url": "https://www.kansashistory.gov/kansapedia/turkey-red-wheat/16789",
+    "kind": "institution",
+    "checked": "2026-11-16"
+   }
+  ],
+  "m11": true,
+  "chapter": 5
  }
 ];
 export const breadChecks = [
