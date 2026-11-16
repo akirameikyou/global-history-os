@@ -64,13 +64,19 @@ button{font:inherit}
   position:absolute;z-index:4;left:50%;top:40%;transform:translate(-50%,-50%);
   width:min(88vw,880px);text-align:center;padding:28px;
 }
-.kicker{font-size:10px;letter-spacing:.36em;color:rgba(246,239,228,.55);margin-bottom:17px}
-h1{font-family:var(--serif);font-size:clamp(40px,5.4vw,76px);font-weight:500;line-height:1.06;margin:0 0 8px;text-shadow:0 2px 30px rgba(0,0,0,.7)}
-.title-text{display:inline-block;letter-spacing:.2em;margin-right:-.2em}
-.title-text .to{font-size:.62em;letter-spacing:.12em;margin:0 .02em;vertical-align:.08em}
-.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:clamp(15px,1.6vw,22px);letter-spacing:.12em;color:rgba(243,220,174,.88);margin:2px 0 24px;text-shadow:0 2px 16px rgba(0,0,0,.8)}
+/* ── 題字の組み：題の大きさ T を基準に、黄金比 φ（1.618）の段で大きさと間を決める ──
+   題 T ／ 「と」T÷√φ（0.786T：小さくし過ぎない）／ 一文 T÷φ²（0.382T）／ 副題 T÷φ³（0.236T）／ 上の小見出し T÷φ⁴（0.146T）
+   間：小見出し→題 0.382T、題→副題 0.236T、副題→一文 0.618T。副題の幅は題の幅÷φ になるよう字間を合わせる（実測で確かめる）。
+   かな（パン）は漢字（小麦）より字面が小さく見えるので、1.08 倍にして目で同じ大きさにそろえる。字詰めは palt（約物・かなの詰め）。 */
+.hero{--T:clamp(46px,5.6vw,80px)}
+.kicker{font-size:max(10px,calc(var(--T) * .146));letter-spacing:.36em;color:rgba(246,239,228,.58);margin-bottom:calc(var(--T) * .382)}
+h1{font-family:var(--serif);font-size:var(--T);font-weight:500;line-height:1;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.7)}
+.title-text{display:inline-block;letter-spacing:.14em;margin-right:-.108em;font-feature-settings:"palt"} /* 最後の字（パン 1.08em × 字間 .1em）の字間だけを打ち消して、目で見た中心を画面の中心に */
+.title-text .kana{font-size:1.08em;letter-spacing:.1em}
+.title-text .to{font-size:.786em;letter-spacing:.14em;margin:0 .04em 0 .06em;vertical-align:.05em}
+.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:calc(var(--T) * .236);letter-spacing:.16em;margin:calc(var(--T) * .236) 0 calc(var(--T) * .618) .16em;color:rgba(243,220,174,.9);text-shadow:0 2px 16px rgba(0,0,0,.8)}
 .motto{margin-top:22px;font-family:var(--serif);font-weight:600;font-size:clamp(11px,1.05vw,14px);letter-spacing:.36em;color:rgba(246,239,228,.82);text-shadow:0 2px 14px rgba(0,0,0,.9)}
-.thesis{font-family:var(--serif);font-weight:500;font-size:clamp(20px,2.35vw,32px);line-height:1.55;margin:0 0 18px;text-shadow:0 2px 20px rgba(0,0,0,.75)}
+.thesis{font-family:var(--serif);font-weight:500;font-size:calc(var(--T) * .382);line-height:1.55;margin:0 0 calc(var(--T) * .236);text-shadow:0 2px 20px rgba(0,0,0,.75);font-feature-settings:"palt"}
 .thesis-text{display:inline-block;letter-spacing:.09em;margin-right:-.09em}
 .lead{
   max-width:640px;margin:0 auto;color:rgba(246,239,228,.78);text-shadow:0 1px 14px rgba(0,0,0,.9);
@@ -159,12 +165,12 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
   .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
   .cover{background-size:auto,auto 52%;background-position:center,58% 100%} /* 縦長ではパン全体を下半分に（大陸の形が見えるように） */
   .hero{top:42%;width:100%;padding:18px}
-  .kicker{font-size:8px;margin-bottom:14px}
-  h1{font-size:42px}
-  .title-text{letter-spacing:.14em;margin-right:-.14em}
-  .life{font-size:14px;margin-bottom:18px}
+  .hero{--T:44px}
+  .kicker{font-size:8px}
+  /* h1 は --T に従う */
+  .title-text{letter-spacing:.1em;margin-right:-.108em}
   .motto{font-size:9px;letter-spacing:.24em;margin-top:14px}
-  .thesis{font-size:17px;margin-bottom:12px}
+  .thesis{font-size:17px}
   .thesis-text{letter-spacing:.04em;margin-right:-.04em}
   .lead{font-size:11px;line-height:1.85;max-width:330px}
   .lead br{display:none}
@@ -204,7 +210,7 @@ dialog::backdrop{background:rgba(5,3,1,.72);backdrop-filter:blur(4px)}
 
   <main class="hero">
     <div class="kicker">約14,400年前 — いま</div>
-    <h1><span class="title-text">小麦<span class="to">と</span>パン</span></h1>
+    <h1><span class="title-text">小麦<span class="to">と</span><span class="kana">パン</span></span></h1>
     <div class="life">Wheat and Bread Focus</div>
 
     <p class="thesis"><span class="thesis-text">一枚のパンから、一万年前の野の草へ。</span></p>
