@@ -30,6 +30,8 @@
   html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
   #globeViz{position:fixed;inset:0;z-index:1}
   /* 地名：点に重ねず右横に。文字は細め（清水さんの指摘「点と文字が重なって読みにくい・太い」） */
+  .rarrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:9px solid currentColor;position:absolute;left:0;top:0;transform:translate(-50%,-50%);cursor:pointer;filter:drop-shadow(0 0 2px rgba(0,0,0,.8))}
+  .rarrow.hyp{border-top-width:4px;border-bottom-width:4px;border-left-width:7px}
   .glabel{pointer-events:none;white-space:nowrap;font-family:var(--sans);font-weight:500;letter-spacing:.03em;line-height:1.25;
     transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9),0 1px 8px rgba(0,0,0,.7)}
   .glabel.dot::after{content:'';position:absolute;left:50%;top:135%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
@@ -282,7 +284,7 @@
   <button class="tgl" id="guideBtn" type="button" aria-pressed="false" title="ガイド：緯線・経線（10°おき）、赤道（赤）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
   <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
 </div>
-<div id="guideNote" hidden><button class="gn-close" id="guideNoteClose" type="button" aria-label="閉じる">×</button><b>ガイド：緯度と小麦</b><br>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
+<div id="guideNote" hidden><button class="gn-close" id="guideNoteClose" type="button" aria-label="閉じる">×</button><b>ガイド：緯度と小麦</b><br>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><span style="display:inline-block;width:12px;height:9px;background:rgba(150,215,120,.55);vertical-align:middle"></span> 主な産地の緯度帯（25〜50°）　<span style="display:inline-block;width:12px;height:9px;background:rgba(120,200,210,.35);vertical-align:middle"></span> 広がりの端（15〜25°、北50〜60°）<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
 
 <div class="left-col" id="leftCol">
   <div class="panel" id="lensPanel">
@@ -384,22 +386,17 @@ const world = Globe()(document.getElementById('globeViz'))
   .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
   .backgroundColor('#050c16')
   .atmosphereColor('#e8c27a').atmosphereAltitude(0.16)
-  .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1])
+  .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1]).pathPointAlt(p => p[2] ?? 0.001)
+  .onPathClick(d => { if (d.to_ev) select(d.to_ev); })
   .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
   // 栽培地域（M1.2）：境界を言い切らないよう、内側ほど濃い3重の楕円でぼかす。線は引かない。
   //   色は小麦色だと砂漠の地肌に溶けて見えないので橙。印（小麦色）とも区別できる
-  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => `rgba(255,150,40,${(d.evidence === 'presence' ? [0.14, 0.2] : [0.26, 0.34, 0.44])[d.ring]})`) // 出土だけの地域は薄く、中心の濃い楕円なし
+  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => d.band ? d.color : `rgba(255,150,40,${(d.evidence === 'presence' ? [0.14, 0.2] : [0.26, 0.34, 0.44])[d.ring]})`) // 出土だけの地域は薄く、中心の濃い楕円なし
   .polygonSideColor(() => 'rgba(0,0,0,0)').polygonStrokeColor(() => 'rgba(0,0,0,0)')
-  .polygonAltitude(d => 0.006 + d.ring * 0.0015).polygonsTransitionDuration(0)
+  .polygonAltitude(d => d.band ? 0.003 : 0.006 + d.ring * 0.0015).polygonsTransitionDuration(0)
   // 面の吹き出し（polygonLabel）は付けない：面の上の印にはブラウザの吹き出し（title）が出るので、二重になる。地域名は地球に字で出してある
-  .onPolygonClick(d => select(d.basis[0]))
-  // 広がりの線（M1.3）：研究が考える「つながり」。道筋ではないので弧で結び、流れるような動きは付けない
-  //   inferred＝破線・小麦色、hypothesis＝点線・青み（対立する説は両方描く）、documented＝実線（いまは無し）
-  .arcStartLat(d => d.a[0]).arcStartLng(d => d.a[1]).arcEndLat(d => d.b[0]).arcEndLng(d => d.b[1])
-  .arcColor(d => d.certainty === 'hypothesis' ? ['rgba(170,205,255,0.12)', 'rgba(170,205,255,0.95)'] : ['rgba(255,214,150,0.12)', 'rgba(255,214,150,0.95)']) // 向き：出発側が淡く、到着側が濃い
-  .arcDashLength(d => d.certainty === 'documented' ? 1 : d.certainty === 'hypothesis' ? 0.012 : 0.05)
-  .arcDashGap(d => d.certainty === 'documented' ? 0 : d.certainty === 'hypothesis' ? 0.022 : 0.025)
-  .arcStroke(d => d.certainty === 'hypothesis' ? 0.16 : 0.22).arcAltitudeAutoScale(0.28).arcsTransitionDuration(0)
+  .onPolygonClick(d => { if (d.basis) select(d.basis[0]); })
+  // 広がりの線（M1.3）は drawGlobe の routePaths で path として描く（弧の形・向きの矢印「›」つき）
   .onArcClick(d => { if (d.to_ev) select(d.to_ev); })
   // 印と地名はすべて HTML で出す。
   //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
@@ -407,6 +404,11 @@ const world = Globe()(document.getElementById('globeViz'))
   //    地点がはっきりしているもの＝小さな点、地域の代表点＝淡い破線の輪（動かない）。確かさは塗り／輪／破線（年代バーと同じ）
   .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(d => d.alt ?? 0.012).htmlElement(d => {
     const el = document.createElement('div');
+    if (d.kind === 'arrow') { // 広がりの線の向き（画面上の角度は aimArrows が付ける）
+      const tri = document.createElement('div'); tri.className = 'rarrow' + (d.hyp ? ' hyp' : ''); tri.style.color = d.color; el.appendChild(tri); d.el = tri; // 外側は地球が動かす。向きは内側で回す
+      el.addEventListener('click', ev => { ev.stopPropagation(); if (d.to_ev) select(d.to_ev); });
+      return el;
+    }
     if (d.kind === 'label') {
       el.className = 'glabel'; el.textContent = d.text;
       el.style.color = d.color; el.style.fontSize = `${Math.round(9 + d.size * 5)}px`;
@@ -416,7 +418,8 @@ const world = Globe()(document.getElementById('globeViz'))
     el.addEventListener('click', ev => { ev.stopPropagation(); d.onClick && d.onClick(); });
     return el;
   });
-world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0); // 肥沃な三日月地帯を正面に
+world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0);
+world.onZoom(() => aimArrows()); // 回す・寄るたびに矢印の向きを直す // 肥沃な三日月地帯を正面に
 // 地球の準備が終わる前に HTML の印を渡すと three-globe の isBehindGlobe が落ちる（万次郎版と同じく準備完了を待つ）
 let globeReady = false;
 const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe();
@@ -438,11 +441,49 @@ function timeState(e) {
   return S.year <= e.when.to + c.tick ? 'now' : 'past';
 }
 function lit(e) { return lensOn(e) && timeState(e) !== 'future'; }
+// 緯度帯（ガイドの説明を開いている間だけ）：主な産地 25〜50°（南北）を淡い緑、広がりの端（15〜25°・北50〜60°）をさらに淡い青緑。
+// 経度90°ごとの四角に分け、緯線に沿うよう細かく点を取る（球面の GeoJSON は時計回りが内側）
+const bandRect = (la0, la1, lo0, color) => { const top = [], bot = []; for (let lo = lo0; lo <= lo0 + 90; lo += 5) { top.push([lo, la1]); bot.push([lo, la0]); }
+  return { band: true, color, geometry: { type: 'Polygon', coordinates: [[...top, ...bot.reverse(), top[0]]] } }; };
+const BANDS = [];
+for (const lo0 of [-180, -90, 0, 90]) {
+  for (const [a, b] of [[25, 50], [-50, -25]]) BANDS.push(bandRect(a, b, lo0, 'rgba(150,215,120,0.17)'));
+  for (const [a, b] of [[15, 25], [-25, -15], [50, 60]]) BANDS.push(bandRect(a, b, lo0, 'rgba(120,200,210,0.09)'));
+}
+// 広がりの線：大円に沿って点を取り、弧の高さを付ける。向きは線の上に「›」を3つ（出発→到着）
+const toV = ([la, lo]) => { const p = la * Math.PI / 180, l = lo * Math.PI / 180; return [Math.cos(p) * Math.cos(l), Math.cos(p) * Math.sin(l), Math.sin(p)]; };
+const toLL = v => [Math.asin(Math.max(-1, Math.min(1, v[2]))) * 180 / Math.PI, Math.atan2(v[1], v[0]) * 180 / Math.PI];
+function gcPoint(a, b, t) {
+  const A = toV(a), B = toV(b), w = Math.acos(Math.max(-1, Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2])));
+  if (w < 1e-6) return [...a];
+  const k1 = Math.sin((1 - t) * w) / Math.sin(w), k2 = Math.sin(t * w) / Math.sin(w);
+  return toLL([A[0] * k1 + B[0] * k2, A[1] * k1 + B[1] * k2, A[2] * k1 + B[2] * k2]);
+}
+function routePaths(r) {
+  const hyp = r.certainty === 'hypothesis', color = hyp ? 'rgba(170,205,255,0.9)' : 'rgba(255,214,150,0.92)';
+  const A = toV(r.a), B = toV(r.b), ang = Math.acos(Math.max(-1, Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2])));
+  const h = Math.min(0.12, 0.14 * ang), alt = t => 0.004 + h * Math.sin(Math.PI * t);
+  const at = t => { const p = gcPoint(r.a, r.b, t); return [p[0], p[1], alt(t)]; };
+  const pts = []; for (let i = 0; i <= 48; i++) pts.push(at(i / 48));
+  const line = { ...r, pts, color, w: hyp ? 0.4 : 0.5, dash: r.certainty === 'documented' ? 1 : hyp ? 0.012 : 0.04, gap: r.certainty === 'documented' ? 0 : hyp ? 0.02 : 0.022 };
+  const arrows = [0.3, 0.55, 0.8].map(t => { const p = at(t); return { kind: 'arrow', lat: p[0], lng: p[1], alt: p[2], p, q: at(Math.min(1, t + 0.03)), color, hyp, to_ev: r.to_ev }; });
+  return { line, arrows };
+}
+// 矢印の向き：線の上の今の点と少し先の点を画面に写して、その角度に回す（地球を回したり寄ったりするたびに）
+let ARROWS = [];
+function aimArrows() {
+  for (const a of ARROWS) {
+    if (!a.el) continue;
+    const s1 = world.getScreenCoords(a.p[0], a.p[1], a.p[2]), s2 = world.getScreenCoords(a.q[0], a.q[1], a.q[2]);
+    if (!s1 || !s2) continue;
+    a.el.style.transform = `translate(-50%,-50%) rotate(${Math.atan2(s2.y - s1.y, s2.x - s1.x)}rad)`;
+  }
+}
 const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred: ['推定', 'rgba(255,214,150,.9)'], hypothesis: ['仮説', 'rgba(170,205,255,.9)'] };
 function drawRouteNote(routes) {
   const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
   const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
-  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。破線＝複数の遺跡から推定、青い点線＝対立する仮説の一つ（両方描いています）。線は出発側が淡く、到着側が濃くなります（向きは、先に小麦が見つかる側から後の側へ）。線を押すと行き先の出来事が開きます。' +
+  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。破線＝複数の遺跡から推定、青い点線＝対立する仮説の一つ（両方描いています）。線の上の三角「▶」が向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
     (routes.length ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
     routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
       r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
@@ -494,11 +535,14 @@ function drawGlobe() {
   world.showGraticules(S.grid);
   const areas = S.areas ? AREAS.filter(a => a.from <= S.year) : [];
   if (!S.wild) for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja + (a.evidence === 'presence' ? '（出土）' : ''), size: 0.4, color: 'rgba(243,220,174,0.85)' }); // 野生種の名前と重なるので、野生種の層を出している間は地域名を出さない
-  world.pathsData(paths);
   const pt = (id, p) => { if (p) return p; const e = EVENTS.find(x => x.id === id); return e && e.place.lat != null ? [e.place.lat, e.place.lng] : null; };
   const routes = S.routes ? ROUTES.filter(r => r.from <= S.year).map(r => ({ ...r, a: pt(r.from_ev, r.from_pt), b: pt(r.to_ev, r.to_pt) })).filter(r => r.a && r.b) : [];
   drawRouteNote(routes);
-  if (globeReady) { world.polygonsData(areas); world.arcsData(routes); world.htmlElementsData(labels); }
+  ARROWS = [];
+  for (const r of routes) { const g = routePaths(r); paths.push(g.line); ARROWS.push(...g.arrows); }
+  labels.push(...ARROWS);
+  world.pathsData(paths);
+  if (globeReady) { world.polygonsData(S.bands ? [...BANDS, ...areas] : areas); world.htmlElementsData(labels); requestAnimationFrame(aimArrows); }
 }
 
 /* ── 光源レンズ ── */
@@ -850,7 +894,7 @@ $('areaBtnM').onclick = () => $('areaBtn').click();
 const layerHint = () => { $('layerHint').hidden = S.routes || S.areas; };
 $('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
 $('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
-const showGuideNote = on => { $('guideNote').hidden = !on; $('guideInfoBtn').setAttribute('aria-expanded', String(on)); $('guideInfoBtn').textContent = on ? '▶' : '◀'; };
+const showGuideNote = on => { S.bands = on; drawGlobe(); $('guideNote').hidden = !on; $('guideInfoBtn').setAttribute('aria-expanded', String(on)); $('guideInfoBtn').textContent = on ? '▶' : '◀'; };
 $('guideInfoBtn').onclick = () => showGuideNote($('guideNote').hidden);
 $('guideNoteClose').onclick = () => showGuideNote(false);
 // 層の枠の高さを年代バーに合わせる（左の列もその分だけ短く）
