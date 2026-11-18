@@ -239,6 +239,10 @@
   .genlist figcaption{font-size:9.5px;color:var(--sub);line-height:1.4;margin-top:3px}
   .genlist .gen-mark{left:3px;top:3px;font-size:8.5px;padding:0 4px}
   .mob-only{display:none}
+  #areaNote .sw{display:block;font-size:9.5px;line-height:1.45}
+  #areaNote .sw i{display:inline-block;width:10px;height:8px;margin-right:5px;vertical-align:middle;border-radius:1px}
+  #areaNote a{color:var(--dim)}
+  .farm-tip{font:11px/1.5 sans-serif;color:#fff;background:rgba(5,12,22,.88);padding:3px 7px;border-radius:4px}
   #routeNote .rt{margin:6px 0 0;padding-top:6px;border-top:1px solid rgba(232,194,122,.15)}
   #routeNote .rt b{color:var(--wheat-soft);font-weight:500}
   #routeNote .rt a{color:var(--dim)}
@@ -312,7 +316,7 @@
   </div>
   <div class="layer-notes">
     <div class="lens-note" id="routeNote" hidden></div>
-    <div class="lens-note" id="areaNote" hidden>ぼかした楕円は「この地域のどこかで、このころから小麦が見つかる」目安です。中心の濃い所は証拠の出た辺り、外側の淡い所は地域の広がりの概略で、境界や広さに意味はありません。濃い面＝栽培の証拠、薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。面を押すと根拠の出来事が開きます。</div>
+    <div class="lens-note" id="areaNote" hidden></div>
     <div class="lens-note" id="layerHint">押すと、年代バーの年までに分かっていることが地球に重なります。</div>
   </div>
 </div>
@@ -361,7 +365,14 @@
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
 import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116m11b';
 import { breadAreas as AREAS } from '../data/bread_areas.js?v=20261118a';
-import { breadRoutes as ROUTES } from '../data/bread_routes.js?v=20261118a';
+import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
+import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
+  farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA } from '../data/bread_farming.js?v=20261118b';
+// 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
+const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
+const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
+const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
+const hexA = (h, a) => `rgba(${parseInt(h.slice(1, 3), 16)},${parseInt(h.slice(3, 5), 16)},${parseInt(h.slice(5, 7), 16)},${a})`;
 import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261118a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
@@ -390,9 +401,10 @@ const world = Globe()(document.getElementById('globeViz'))
   .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
   // 栽培地域（M1.2）：境界を言い切らないよう、内側ほど濃い3重の楕円でぼかす。線は引かない。
   //   色は小麦色だと砂漠の地肌に溶けて見えないので橙。印（小麦色）とも区別できる
-  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => d.band ? d.color : `rgba(255,150,40,${(d.evidence === 'presence' ? [0.14, 0.2] : [0.26, 0.34, 0.44])[d.ring]})`) // 出土だけの地域は薄く、中心の濃い楕円なし
+  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => d.band ? d.color : d.src ? hexA(d.color, 0.55) // 図（と南アジアの年代）の面
+    : hexA(rampColor(d.from), (d.evidence === 'presence' ? [0.14, 0.2] : [0.22, 0.3, 0.4])[d.ring])) // 図の外の α の面：年代の色。出土だけの地域は薄く
   .polygonSideColor(() => 'rgba(0,0,0,0)').polygonStrokeColor(() => 'rgba(0,0,0,0)')
-  .polygonAltitude(d => d.band ? 0.003 : 0.006 + d.ring * 0.0015).polygonsTransitionDuration(0)
+  .polygonAltitude(d => d.band ? 0.003 : d.src ? 0.005 : 0.006 + (d.ring || 0) * 0.0015).polygonsTransitionDuration(0)
   // 面の吹き出し（polygonLabel）は付けない：面の上の印にはブラウザの吹き出し（title）が出るので、二重になる。地域名は地球に字で出してある
   .onPolygonClick(d => { if (d.basis) select(d.basis[0]); })
   // 広がりの線（M1.3）は drawGlobe の routePaths で path として描く（弧の形・向きの矢印「›」つき）
@@ -419,7 +431,7 @@ const world = Globe()(document.getElementById('globeViz'))
     return el;
   });
 world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0);
-world.onZoom(() => aimArrows()); // 回す・寄るたびに矢印の向きを直す // 肥沃な三日月地帯を正面に
+world.onZoom(pov => { aimArrows(); const near = pov.altitude < 1.5; if (near !== S.near) { S.near = near; drawGlobe(); } }); // 回す・寄るたびに矢印の向きを直す。年代の数字は寄ったときだけ（遠くでは密集して読めない） // 肥沃な三日月地帯を正面に
 // 地球の準備が終わる前に HTML の印を渡すと three-globe の isBehindGlobe が落ちる（万次郎版と同じく準備完了を待つ）
 let globeReady = false;
 const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe();
@@ -483,11 +495,25 @@ function aimArrows() {
   }
 }
 const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred: ['推定', 'rgba(255,214,150,.9)'], hypothesis: ['仮説', 'rgba(170,205,255,.9)'] };
-function drawRouteNote(routes) {
+function drawAreaNote() {
+  const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
+  const sw = (c, t) => `<span class="sw"><i style="background:${c}"></i>${t}</span>`;
+  el.innerHTML = '<b>西ユーラシア</b>：農耕（小麦・大麦などの畑と家畜）が始まった地域と年代。色は図と同じく考古学の文化の区分で、数字は前○年。<br>' +
+    Object.values(FARM_CLASSES).map(([name, a, b, c]) => sw(c, `前${-a}〜${-b}　${name}`)).join('') +
+    `<a href="${esc(FARM_SRC.url)}" target="_blank" rel="noopener">${esc(FARM_SRC.title)} ↗</a>（α が図の色を時期ごとに取り出し、緯度経度に戻した目安）<br>` +
+    '<b>南アジア</b>：新石器の遺跡（放射性炭素年代）の周り約50kmをつないだ範囲。<b>図の外</b>（ナイル・中央アジア・中国・アメリカ大陸・オーストラリア）は α が確かめた出来事の目安の楕円。この二つは年代の色で塗る：<br>' +
+    FARM_RAMP.map(([lim, c], i) => sw(c, i === 0 ? `前${-lim}より前` : lim > 0 ? `前${-FARM_RAMP[i - 1][0]}以降` : `前${-FARM_RAMP[i - 1][0]}〜${-lim}`)).join('') +
+    `<a href="${esc(FARM_SRC_SA.url)}" target="_blank" rel="noopener">${esc(FARM_SRC_SA.title)} ↗</a><br>` +
+    '楕円の薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。どの面も境界は目安です。';
+}
+function drawRouteNote(routesIn) {
+  let routes = routesIn;
   const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
   const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
+  const farmN = routes.filter(r => r.src === 'leiza').length; routes = routes.filter(r => r.src !== 'leiza');
   el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。小麦色の矢印の列＝複数の遺跡から推定、水色の矢印の列＝対立する仮説の一つ（両方描いています）。並んだ矢印の向きが広がりの向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
-    (routes.length ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
+    (farmN ? `<div class="rt"><span class="ck" style="color:${CERT.inferred[1]};border-color:${CERT.inferred[1]}">図</span><b>西ユーラシアの農耕の広がり（${farmN}本）</b><br>Gronenborn ほかの図の矢印を α が写したもの（行き先の地域の年代から現れる）。<br><a href="${esc(FARM_SRC.url)}" target="_blank" rel="noopener">${esc(FARM_SRC.title)} ↗</a></div>` : '') +
+    (routes.length || farmN ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
     routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
       r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
 }
@@ -536,7 +562,8 @@ function drawGlobe() {
     labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(245,110,100,0.95)' });
   }
   world.showGraticules(S.grid);
-  const areas = S.areas ? AREAS.filter(a => a.from <= S.year) : [];
+  const areas = S.areas ? [...AREAS.filter(a => a.from <= S.year && !FARM_COVERED.has(a.area)), ...FARM.filter(a => a.from <= S.year)] : [];
+  if (S.areas && !S.wild && S.near) for (const l of FARM_LABELS) if (l.year <= S.year) labels.push({ kind: 'label', lat: l.lat, lng: l.lng, alt: 0.016, text: String(-l.year), size: 0.38, color: 'rgba(255,255,255,0.92)' }); // 図と同じ年代の数字（前○年）
   if (!S.wild) for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja + (a.evidence === 'presence' ? '（出土）' : ''), size: 0.4, color: 'rgba(243,220,174,0.85)' }); // 野生種の名前と重なるので、野生種の層を出している間は地域名を出さない
   const pt = (id, p) => { if (p) return p; const e = EVENTS.find(x => x.id === id); return e && e.place.lat != null ? [e.place.lat, e.place.lng] : null; };
   const routes = S.routes ? ROUTES.filter(r => r.from <= S.year).map(r => ({ ...r, a: pt(r.from_ev, r.from_pt), b: pt(r.to_ev, r.to_pt) })).filter(r => r.a && r.b) : [];
@@ -892,7 +919,7 @@ $('nextE').onclick = () => { stopPlay(); stepTo(1); };
 
 /* ── 層のボタン・出典 ── */
 $('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
-$('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; layerHint(); drawGlobe(); };
+$('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; if (S.areas) drawAreaNote(); layerHint(); drawGlobe(); };
 $('areaBtnM').onclick = () => $('areaBtn').click();
 const layerHint = () => { $('layerHint').hidden = S.routes || S.areas; };
 $('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
