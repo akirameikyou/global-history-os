@@ -31,6 +31,7 @@
   #globeViz{position:fixed;inset:0;z-index:1}
   /* 地名：点に重ねず右横に。文字は細め（清水さんの指摘「点と文字が重なって読みにくい・太い」） */
   .rarrow{position:absolute;left:0;top:0;width:11px;height:5px;line-height:0;transform:translate(-50%,-50%);cursor:pointer;filter:drop-shadow(0 0 1px rgba(0,0,0,.7))}
+  .glabel.thin{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:300;letter-spacing:.05em;text-shadow:0 0 3px rgba(0,0,0,.9),0 0 1px rgba(0,0,0,.9)} /* 年代の数字：細い字（Segoe UI Light など） */
   .glabel{pointer-events:none;white-space:nowrap;font-family:var(--sans);font-weight:500;letter-spacing:.03em;line-height:1.25;
     transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9),0 1px 8px rgba(0,0,0,.7)}
   .glabel.dot::after{content:'';position:absolute;left:50%;top:135%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
@@ -422,7 +423,7 @@ const world = Globe()(document.getElementById('globeViz'))
       return el;
     }
     if (d.kind === 'label') {
-      el.className = 'glabel'; el.textContent = d.text;
+      el.className = 'glabel' + (d.thin ? ' thin' : ''); el.textContent = d.text;
       el.style.color = d.color; el.style.fontSize = `${Math.round(9 + d.size * 5)}px`;
       return el;
     }
@@ -563,7 +564,7 @@ function drawGlobe() {
   }
   world.showGraticules(S.grid);
   const areas = S.areas ? [...AREAS.filter(a => a.from <= S.year && !FARM_COVERED.has(a.area)), ...FARM.filter(a => a.from <= S.year)] : [];
-  if (S.areas && !S.wild && S.near) for (const l of FARM_LABELS) if (l.year <= S.year) labels.push({ kind: 'label', lat: l.lat, lng: l.lng, alt: 0.016, text: String(-l.year), size: 0.38, color: 'rgba(255,255,255,0.92)' }); // 図と同じ年代の数字（前○年）
+  if (S.areas && !S.wild && S.near) for (const l of FARM_LABELS) if (l.year <= S.year) labels.push({ kind: 'label', lat: l.lat, lng: l.lng, alt: 0.016, text: String(-l.year), size: 0.38, color: 'rgba(255,255,255,0.95)', thin: true }); // 図と同じ年代の数字（前○年）
   if (!S.wild) for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja + (a.evidence === 'presence' ? '（出土）' : ''), size: 0.4, color: 'rgba(243,220,174,0.85)' }); // 野生種の名前と重なるので、野生種の層を出している間は地域名を出さない
   const pt = (id, p) => { if (p) return p; const e = EVENTS.find(x => x.id === id); return e && e.place.lat != null ? [e.place.lat, e.place.lng] : null; };
   const routes = S.routes ? ROUTES.filter(r => r.from <= S.year).map(r => ({ ...r, a: pt(r.from_ev, r.from_pt), b: pt(r.to_ev, r.to_pt) })).filter(r => r.a && r.b) : [];
