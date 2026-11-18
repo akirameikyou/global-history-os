@@ -57,8 +57,11 @@
   #layerPanel{left:24px;bottom:28px;width:216px;height:var(--tlh,181px);display:flex;flex-direction:column}
   #layerPanel .layers{flex-direction:column;align-items:flex-start;gap:5px}
   #layerPanel .layer-notes{overflow:auto;flex:1;min-height:0;padding-bottom:4px}
-  #guideNote{position:absolute;right:24px;top:88px;width:300px;z-index:22;background:var(--panel);border:1px solid var(--rule);border-radius:5px;padding:10px 12px}
-  #guideNote a{color:var(--dim)}
+  #guideNote{position:absolute;right:24px;top:88px;width:320px;z-index:30;background:#0b1522;border:1px solid rgba(232,194,122,.45);border-radius:6px;padding:12px 30px 12px 14px;
+    font-size:12px;line-height:1.75;color:#eef3f8;box-shadow:0 8px 28px rgba(0,0,0,.55)} /* 下を透かさない（はっきり読める）。× で閉じる */
+  #guideNote b{color:var(--wheat-soft);font-weight:600}
+  #guideNote a{color:#bcd3e6}
+  #guideNote .gn-close{position:absolute;right:6px;top:4px;background:none;border:0;color:#eef3f8;font-size:16px;cursor:pointer;padding:2px 6px}
   .left-col>.panel{position:relative;left:auto;top:auto}
   .lenses{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px}
   .lens{display:inline-flex;align-items:center;gap:6px;background:rgba(7,14,24,.55);border:1px solid var(--lc);color:var(--ink);border-radius:4px;padding:3px 9px;font-size:11.5px;cursor:pointer}
@@ -275,10 +278,11 @@
 
 <div id="topCtl">
   <button class="tgl mob-only" id="areaBtnM" type="button" aria-pressed="false" title="栽培地域（目安）：境界ではありません">栽培地域</button>
+  <button class="tgl" id="guideInfoBtn" type="button" aria-expanded="false" title="ガイドの説明（緯度と小麦）">◀</button>
   <button class="tgl" id="guideBtn" type="button" aria-pressed="false" title="ガイド：緯線・経線（10°おき）、赤道（赤）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
   <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
 </div>
-<div class="lens-note" id="guideNote" hidden>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
+<div id="guideNote" hidden><button class="gn-close" id="guideNoteClose" type="button" aria-label="閉じる">×</button><b>ガイド：緯度と小麦</b><br>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
 
 <div class="left-col" id="leftCol">
   <div class="panel" id="lensPanel">
@@ -357,7 +361,7 @@ import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // �
 import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116m11b';
 import { breadAreas as AREAS } from '../data/bread_areas.js?v=20261118a';
 import { breadRoutes as ROUTES } from '../data/bread_routes.js?v=20261118a';
-import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261115a';
+import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261118a';
 import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
 import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
 import { breadImages as IMAGES } from '../data/bread_images.js?v=20261116f';
@@ -392,10 +396,10 @@ const world = Globe()(document.getElementById('globeViz'))
   // 広がりの線（M1.3）：研究が考える「つながり」。道筋ではないので弧で結び、流れるような動きは付けない
   //   inferred＝破線・小麦色、hypothesis＝点線・青み（対立する説は両方描く）、documented＝実線（いまは無し）
   .arcStartLat(d => d.a[0]).arcStartLng(d => d.a[1]).arcEndLat(d => d.b[0]).arcEndLng(d => d.b[1])
-  .arcColor(d => d.certainty === 'hypothesis' ? 'rgba(170,205,255,0.85)' : 'rgba(255,214,150,0.9)')
+  .arcColor(d => d.certainty === 'hypothesis' ? ['rgba(170,205,255,0.12)', 'rgba(170,205,255,0.95)'] : ['rgba(255,214,150,0.12)', 'rgba(255,214,150,0.95)']) // 向き：出発側が淡く、到着側が濃い
   .arcDashLength(d => d.certainty === 'documented' ? 1 : d.certainty === 'hypothesis' ? 0.012 : 0.05)
   .arcDashGap(d => d.certainty === 'documented' ? 0 : d.certainty === 'hypothesis' ? 0.022 : 0.025)
-  .arcStroke(d => d.certainty === 'hypothesis' ? 0.45 : 0.6).arcAltitudeAutoScale(0.28).arcsTransitionDuration(0)
+  .arcStroke(d => d.certainty === 'hypothesis' ? 0.16 : 0.22).arcAltitudeAutoScale(0.28).arcsTransitionDuration(0)
   .onArcClick(d => { if (d.to_ev) select(d.to_ev); })
   // 印と地名はすべて HTML で出す。
   //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
@@ -438,7 +442,7 @@ const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred
 function drawRouteNote(routes) {
   const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
   const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
-  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。破線＝複数の遺跡から推定、青い点線＝対立する仮説の一つ（両方描いています）。線を押すと行き先の出来事が開きます。' +
+  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。破線＝複数の遺跡から推定、青い点線＝対立する仮説の一つ（両方描いています）。線は出発側が淡く、到着側が濃くなります（向きは、先に小麦が見つかる側から後の側へ）。線を押すと行き先の出来事が開きます。' +
     (routes.length ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
     routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
       r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
@@ -845,7 +849,10 @@ $('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 
 $('areaBtnM').onclick = () => $('areaBtn').click();
 const layerHint = () => { $('layerHint').hidden = S.routes || S.areas; };
 $('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
-$('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); $('guideNote').hidden = !S.grid; drawGlobe(); };
+$('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
+const showGuideNote = on => { $('guideNote').hidden = !on; $('guideInfoBtn').setAttribute('aria-expanded', String(on)); $('guideInfoBtn').textContent = on ? '▶' : '◀'; };
+$('guideInfoBtn').onclick = () => showGuideNote($('guideNote').hidden);
+$('guideNoteClose').onclick = () => showGuideNote(false);
 // 層の枠の高さを年代バーに合わせる（左の列もその分だけ短く）
 const fitLayer = () => document.documentElement.style.setProperty('--tlh', $('timelineBar').offsetHeight + 'px');
 addEventListener('resize', fitLayer); requestAnimationFrame(fitLayer);

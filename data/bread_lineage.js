@@ -89,8 +89,8 @@ export const breadLineageNodes = [
   "status": "known",
   "region": "カスピ海沿岸〜コーカサス",
   "note_ja": "パン小麦Dゲノム供与種。複数の集団・系統が寄与。",
-  "lat": 37.5,
-  "lng": 52.0,
+  "lat": 38.2,
+  "lng": 48.3,
   "source": {
    "title": "Origin and evolution of the bread wheat D genome",
    "url": "https://www.nature.com/articles/s41586-024-07808-z",
@@ -105,8 +105,8 @@ export const breadLineageNodes = [
   "status": "known",
   "region": "カスピ海南岸など西アジア（推定）",
   "note_ja": "起源は約8,000〜11,000年前などの幅を持つ。",
-  "lat": 37.0,
-  "lng": 50.0,
+  "lat": 36.45,
+  "lng": 52.2,
   "source": {
    "title": "Origin and evolution of the bread wheat D genome",
    "url": "https://www.nature.com/articles/s41586-024-07808-z",
