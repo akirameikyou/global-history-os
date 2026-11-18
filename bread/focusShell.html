@@ -468,7 +468,7 @@ function routePaths(r) {
   const pts = []; for (let i = 0; i <= 48; i++) pts.push(at(i / 48));
   // 資料で確かめられた移動（documented）だけ実線。推定・仮説は矢印の並びだけで描く
   const line = r.certainty === 'documented' ? { ...r, pts, color, w: 0.45 } : null;
-  const deg = ang * 180 / Math.PI, n = Math.max(3, Math.min(9, Math.round(deg / 3.2))); // 間をあけて、矢印の並びを破線のように
+  const deg = ang * 180 / Math.PI, n = Math.max(5, Math.min(16, Math.round(deg / 1.8))); // 間をあけて、矢印の並びを破線のように
   const arrows = Array.from({ length: n }, (_, i) => { const t = 0.08 + 0.84 * (i + 0.5) / n, p = at(t);
     return { kind: 'arrow', lat: p[0], lng: p[1], alt: p[2], p, q: at(Math.min(1, t + 0.02)), color, hyp, to_ev: r.to_ev }; });
   return { line, arrows };
