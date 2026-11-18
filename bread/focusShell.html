@@ -405,8 +405,7 @@ const world = Globe()(document.getElementById('globeViz'))
     const el = document.createElement('div');
     if (d.kind === 'arrow') { // 広がりの線の向き（画面上の角度は aimArrows が付ける）
       const tri = document.createElement('div'); tri.className = 'rarrow' + (d.hyp ? ' hyp' : ''); tri.style.color = d.color; el.appendChild(tri); d.el = tri; // 外側は地球が動かす。向きは内側で回す
-      tri.innerHTML = d.hyp ? '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L6 3 Z" fill="currentColor"/></svg>' // 仮説：半分の形
-        : '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L0 6 L6 3 Z" fill="currentColor"/></svg>'; // 推定：くぼみのある矢印
+      tri.innerHTML = '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L0 6 L6 3 Z" fill="currentColor"/></svg>'; // くぼみのある矢印（推定＝小麦色、仮説＝水色。形は同じで色で見分ける）
       el.addEventListener('click', ev => { ev.stopPropagation(); if (d.to_ev) select(d.to_ev); });
       return el;
     }
@@ -487,7 +486,7 @@ const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred
 function drawRouteNote(routes) {
   const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
   const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
-  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。小麦色の矢印の列＝複数の遺跡から推定、青い半分の矢印の列＝対立する仮説の一つ（両方描いています）。並んだ矢印の向きが広がりの向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
+  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。小麦色の矢印の列＝複数の遺跡から推定、水色の矢印の列＝対立する仮説の一つ（両方描いています）。並んだ矢印の向きが広がりの向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
     (routes.length ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
     routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
       r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
