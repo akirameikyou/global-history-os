@@ -30,8 +30,7 @@
   html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
   #globeViz{position:fixed;inset:0;z-index:1}
   /* 地名：点に重ねず右横に。文字は細め（清水さんの指摘「点と文字が重なって読みにくい・太い」） */
-  .rarrow{width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:9px solid currentColor;position:absolute;left:0;top:0;transform:translate(-50%,-50%);cursor:pointer;filter:drop-shadow(0 0 2px rgba(0,0,0,.8))}
-  .rarrow.hyp{border-top-width:4px;border-bottom-width:4px;border-left-width:7px}
+  .rarrow{position:absolute;left:0;top:0;width:11px;height:5px;line-height:0;transform:translate(-50%,-50%);cursor:pointer;filter:drop-shadow(0 0 1px rgba(0,0,0,.7))}
   .glabel{pointer-events:none;white-space:nowrap;font-family:var(--sans);font-weight:500;letter-spacing:.03em;line-height:1.25;
     transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9),0 1px 8px rgba(0,0,0,.7)}
   .glabel.dot::after{content:'';position:absolute;left:50%;top:135%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
@@ -406,6 +405,8 @@ const world = Globe()(document.getElementById('globeViz'))
     const el = document.createElement('div');
     if (d.kind === 'arrow') { // 広がりの線の向き（画面上の角度は aimArrows が付ける）
       const tri = document.createElement('div'); tri.className = 'rarrow' + (d.hyp ? ' hyp' : ''); tri.style.color = d.color; el.appendChild(tri); d.el = tri; // 外側は地球が動かす。向きは内側で回す
+      tri.innerHTML = d.hyp ? '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L6 3 Z" fill="currentColor"/></svg>' // 仮説：半分の形
+        : '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L0 6 L6 3 Z" fill="currentColor"/></svg>'; // 推定：くぼみのある矢印
       el.addEventListener('click', ev => { ev.stopPropagation(); if (d.to_ev) select(d.to_ev); });
       return el;
     }
@@ -465,8 +466,11 @@ function routePaths(r) {
   const h = Math.min(0.12, 0.14 * ang), alt = t => 0.004 + h * Math.sin(Math.PI * t);
   const at = t => { const p = gcPoint(r.a, r.b, t); return [p[0], p[1], alt(t)]; };
   const pts = []; for (let i = 0; i <= 48; i++) pts.push(at(i / 48));
-  const line = { ...r, pts, color, w: hyp ? 0.4 : 0.5, dash: r.certainty === 'documented' ? 1 : hyp ? 0.012 : 0.04, gap: r.certainty === 'documented' ? 0 : hyp ? 0.02 : 0.022 };
-  const arrows = [0.3, 0.55, 0.8].map(t => { const p = at(t); return { kind: 'arrow', lat: p[0], lng: p[1], alt: p[2], p, q: at(Math.min(1, t + 0.03)), color, hyp, to_ev: r.to_ev }; });
+  // 資料で確かめられた移動（documented）だけ実線。推定・仮説は矢印の並びだけで描く
+  const line = r.certainty === 'documented' ? { ...r, pts, color, w: 0.45 } : null;
+  const deg = ang * 180 / Math.PI, n = Math.max(3, Math.min(9, Math.round(deg / 3.2))); // 間をあけて、矢印の並びを破線のように
+  const arrows = Array.from({ length: n }, (_, i) => { const t = 0.08 + 0.84 * (i + 0.5) / n, p = at(t);
+    return { kind: 'arrow', lat: p[0], lng: p[1], alt: p[2], p, q: at(Math.min(1, t + 0.02)), color, hyp, to_ev: r.to_ev }; });
   return { line, arrows };
 }
 // 矢印の向き：線の上の今の点と少し先の点を画面に写して、その角度に回す（地球を回したり寄ったりするたびに）
@@ -483,7 +487,7 @@ const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred
 function drawRouteNote(routes) {
   const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
   const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
-  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。破線＝複数の遺跡から推定、青い点線＝対立する仮説の一つ（両方描いています）。線の上の三角「▶」が向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
+  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。小麦色の矢印の列＝複数の遺跡から推定、青い半分の矢印の列＝対立する仮説の一つ（両方描いています）。並んだ矢印の向きが広がりの向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
     (routes.length ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
     routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
       r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
@@ -539,7 +543,7 @@ function drawGlobe() {
   const routes = S.routes ? ROUTES.filter(r => r.from <= S.year).map(r => ({ ...r, a: pt(r.from_ev, r.from_pt), b: pt(r.to_ev, r.to_pt) })).filter(r => r.a && r.b) : [];
   drawRouteNote(routes);
   ARROWS = [];
-  for (const r of routes) { const g = routePaths(r); paths.push(g.line); ARROWS.push(...g.arrows); }
+  for (const r of routes) { const g = routePaths(r); if (g.line) paths.push(g.line); ARROWS.push(...g.arrows); }
   labels.push(...ARROWS);
   world.pathsData(paths);
   if (globeReady) { world.polygonsData(S.bands ? [...BANDS, ...areas] : areas); world.htmlElementsData(labels); requestAnimationFrame(aimArrows); }
