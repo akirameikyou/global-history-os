@@ -52,7 +52,13 @@
   .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px}
 
   /* ── 左：光源レンズ・層・系統 ── */
-  .left-col{position:absolute;left:24px;top:96px;width:280px;z-index:20;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 300px)}
+  .left-col{position:absolute;left:24px;top:96px;width:280px;z-index:20;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 96px - var(--tlh,181px) - 40px)}
+  /* 層の枠：年代バーの左隣（左下）。高さは年代バーに合わせる（JS で --tlh） */
+  #layerPanel{left:24px;bottom:28px;width:216px;height:var(--tlh,181px);display:flex;flex-direction:column}
+  #layerPanel .layers{flex-direction:column;align-items:flex-start;gap:5px}
+  #layerPanel .layer-notes{overflow:auto;flex:1;min-height:0;padding-bottom:4px}
+  #guideNote{position:absolute;right:24px;top:88px;width:300px;z-index:22;background:var(--panel);border:1px solid var(--rule);border-radius:5px;padding:10px 12px}
+  #guideNote a{color:var(--dim)}
   .left-col>.panel{position:relative;left:auto;top:auto}
   .lenses{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px}
   .lens{display:inline-flex;align-items:center;gap:6px;background:rgba(7,14,24,.55);border:1px solid var(--lc);color:var(--ink);border-radius:4px;padding:3px 9px;font-size:11.5px;cursor:pointer}
@@ -71,7 +77,9 @@
   .lin-node.unknown rect{stroke-dasharray:3 3}
   .lin-node.sel rect{stroke:var(--wheat);stroke-width:2}
   .lin-node.trace rect{fill:rgba(232,194,122,.22)}
-  .lin-foot{display:flex;gap:6px;align-items:center;padding:6px 14px 12px}
+  .lin-foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 14px 12px}
+  .lin-foot .tgl{white-space:nowrap}
+  .lin-foot .hint{flex:1 1 100%}
   .lin-foot .hint{font-size:10px;color:var(--dim);line-height:1.5}
 
   /* ── 右：一覧とカード ── */
@@ -113,7 +121,7 @@
   #topCtl{position:absolute;right:24px;top:58px;z-index:22;display:flex;gap:6px}
 
   /* ── 下：年代バー ── */
-  #timelineBar{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:20;width:min(1100px,calc(100vw - 48px));
+  #timelineBar{position:absolute;left:252px;bottom:28px;z-index:20;width:calc(100vw - 276px); /* 左下の層の枠の右から、右端まで */
     background:var(--panel);border:1px solid var(--rule);border-radius:5px;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:10px 12px 8px}
   .tl-top{display:flex;align-items:center;gap:14px;margin-bottom:4px}
   #tlYear{font-family:var(--serif);font-size:26px;color:var(--wheat-soft);letter-spacing:.03em;line-height:1;white-space:nowrap;min-width:150px}
@@ -243,6 +251,8 @@
     .left-col{top:auto;bottom:206px;left:12px;right:12px;width:auto;max-height:30vh;overflow:auto}
     .left-col #linPanel{display:none}
     .left-col{display:none} /* スマホでは光源・系統の枠をしまい、地球と年代バーを主に（PC で使う） */
+    #layerPanel{display:none}
+    #guideNote{top:74px;left:12px;right:12px;width:auto}
     .tl-top{flex-wrap:wrap;gap:6px 10px}
     #tlYear{font-size:20px;min-width:0}
     .tl-mid{flex:1 1 100%;order:3}
@@ -252,7 +262,7 @@
     #topCtl{top:46px;right:12px}
     #topCtl .tgl{font-size:10px;padding:2px 7px}
     .title p{display:none}
-    #timelineBar{bottom:24px;width:calc(100vw - 24px)}
+    #timelineBar{bottom:24px;left:12px;width:calc(100vw - 24px)}
     .dcard{top:72px;left:12px;right:12px;max-height:calc(100% - 300px)}
     .legend{display:none}
     .mob-only{display:inline-block} /* スマホでは左の枠をしまうので、栽培地域の切り替えだけ上に出す */
@@ -265,32 +275,40 @@
 
 <div id="topCtl">
   <button class="tgl mob-only" id="areaBtnM" type="button" aria-pressed="false" title="栽培地域（目安）：境界ではありません">栽培地域</button>
+  <button class="tgl" id="guideBtn" type="button" aria-pressed="false" title="ガイド：緯線・経線（10°おき）、赤道（赤）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
   <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
 </div>
+<div class="lens-note" id="guideNote" hidden>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
 
 <div class="left-col" id="leftCol">
   <div class="panel" id="lensPanel">
     <div class="sec">光源<span class="secsub">どの構造を照らすか</span></div>
     <div class="lenses" id="lenses"></div>
     <div class="lens-note" id="lensNote">いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。</div>
-    <div class="sec" style="padding-top:2px">層<span class="secsub">地球に重ねる</span></div>
-    <div class="layers">
-      <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
-      <button class="tgl" id="areaBtn" type="button" aria-pressed="false">栽培地域（目安）</button>
-      <button class="tgl" id="routeBtn" type="button" aria-pressed="false">広がりの線（推定）</button>
-      <button class="tgl" id="wildBtn" type="button" aria-pressed="false">野生種の自生域</button>
-      <button class="tgl" id="gridBtn" type="button" aria-pressed="false">緯度経度の網</button>
-    </div>
-    <div class="lens-note" id="routeNote" hidden></div>
-    <div class="lens-note" id="areaNote" hidden>ぼかした楕円は「この地域のどこかで、このころから小麦が見つかる」目安です。中心の濃い所は証拠の出た辺り、外側の淡い所は地域の広がりの概略で、境界や広さに意味はありません。濃い面＝栽培の証拠、薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。面を押すと根拠の出来事が開きます。</div>
   </div>
   <div class="panel" id="linPanel">
     <div class="sec">系統<span class="secsub">パン小麦のなりたち</span></div>
     <svg id="lineageSvg" viewBox="0 0 268 202"></svg>
     <div class="lin-foot">
       <button class="tgl" id="traceBtn" type="button">遡る ▸</button>
+      <button class="tgl" id="wildBtn" type="button" aria-pressed="false" title="系統の図の野生種が、いま地球のどこに自生しているか">自生域を地球に</button>
       <span class="hint" id="traceHint">いまのパン小麦から、野の草へ一段ずつ遡ります。</span>
     </div>
+  </div>
+</div>
+
+<!-- 層：年代バーと連動して地球に重ねるもの。年代バーの隣（左下）に置く -->
+<div class="panel" id="layerPanel">
+  <div class="sec">層<span class="secsub">年代とともに重ねる</span></div>
+  <div class="layers">
+    <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
+    <button class="tgl" id="areaBtn" type="button" aria-pressed="false">栽培地域（目安）</button>
+    <button class="tgl" id="routeBtn" type="button" aria-pressed="false">広がりの線（推定）</button>
+  </div>
+  <div class="layer-notes">
+    <div class="lens-note" id="routeNote" hidden></div>
+    <div class="lens-note" id="areaNote" hidden>ぼかした楕円は「この地域のどこかで、このころから小麦が見つかる」目安です。中心の濃い所は証拠の出た辺り、外側の淡い所は地域の広がりの概略で、境界や広さに意味はありません。濃い面＝栽培の証拠、薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。面を押すと根拠の出来事が開きます。</div>
+    <div class="lens-note" id="layerHint">押すと、年代バーの年までに分かっていることが地球に重なります。</div>
   </div>
 </div>
 
@@ -462,17 +480,14 @@ function drawGlobe() {
     }
   }
   const labels = html; // 赤道の文字も同じ列へ
-  if (S.grid) {
-    for (let la = -60; la <= 60; la += 15) {
-      const p = []; for (let lo = -180; lo <= 180; lo += 4) p.push([la, lo]);
-      paths.push({ pts: p, color: la === 0 ? 'rgba(232,194,122,0.85)' : 'rgba(238,246,248,0.18)', w: la === 0 ? 0.9 : 0.35 });
-    }
-    for (let lo = -180; lo < 180; lo += 15) {
-      const p = []; for (let la = -80; la <= 80; la += 4) p.push([la, lo]);
-      paths.push({ pts: p, color: 'rgba(238,246,248,0.14)', w: 0.3 });
-    }
-    labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(232,194,122,0.9)' });
+  if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
+    const lat = (la, color, w, dash) => { const p = []; for (let lo = -180; lo <= 180; lo += 4) p.push([la, lo]); paths.push({ pts: p, color, w, dash, gap: dash }); };
+    lat(0, 'rgba(235,70,60,0.6)', 0.9);
+    lat(23.44, 'rgba(255,214,140,0.5)', 0.4, 0.02); lat(-23.44, 'rgba(255,214,140,0.5)', 0.4, 0.02);
+    const dl = []; for (let la = -85; la <= 85; la += 4) dl.push([la, 180]); paths.push({ pts: dl, color: 'rgba(200,180,255,0.45)', w: 0.4, dash: 0.02, gap: 0.02 });
+    labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(245,110,100,0.95)' });
   }
+  world.showGraticules(S.grid);
   const areas = S.areas ? AREAS.filter(a => a.from <= S.year) : [];
   if (!S.wild) for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja + (a.evidence === 'presence' ? '（出土）' : ''), size: 0.4, color: 'rgba(243,220,174,0.85)' }); // 野生種の名前と重なるので、野生種の層を出している間は地域名を出さない
   world.pathsData(paths);
@@ -826,10 +841,14 @@ $('nextE').onclick = () => { stopPlay(); stepTo(1); };
 
 /* ── 層のボタン・出典 ── */
 $('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
-$('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; drawGlobe(); };
+$('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; layerHint(); drawGlobe(); };
 $('areaBtnM').onclick = () => $('areaBtn').click();
-$('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); drawGlobe(); };
-$('gridBtn').onclick = () => { S.grid = !S.grid; $('gridBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
+const layerHint = () => { $('layerHint').hidden = S.routes || S.areas; };
+$('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
+$('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); $('guideNote').hidden = !S.grid; drawGlobe(); };
+// 層の枠の高さを年代バーに合わせる（左の列もその分だけ短く）
+const fitLayer = () => document.documentElement.style.setProperty('--tlh', $('timelineBar').offsetHeight + 'px');
+addEventListener('resize', fitLayer); requestAnimationFrame(fitLayer);
 $('infoBtn').onclick = () => {
   S.sel = null; S.node = null;
   $('dcWhen').textContent = 'ABOUT';
