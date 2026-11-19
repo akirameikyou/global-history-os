@@ -373,7 +373,7 @@ import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
 import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
   farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA } from '../data/bread_farming.js?v=20261118b';
 // 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
-import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC } from '../data/bread_wheat_dates.js?v=20261119b';
+import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC } from '../data/bread_wheat_dates.js?v=20261119c';
 const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
 const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
 const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
@@ -505,7 +505,7 @@ function drawWheatNote() {
   el.innerHTML = `<b>小麦の直接年代</b>：小麦の粒・穂軸そのものを放射性炭素で測った年代（${WHEAT_DATES.length} 遺跡）。点は「その試料が測られた年代」で、その地域に小麦が初めて来た年ではありません。点のない所は「なかった」ではなく「測られた資料がまだ無い（データベースに無い）」所です。<br>` +
     '遺跡ごとに最も古い試料を一つの点にし、色は年代の色（栽培地域の注記と同じ）。点に指を乗せると、遺跡・年代の幅・種・試料・測定番号・出典が出ます。年代は IntCal20 で較正した中央値。<br>' +
     `<a href="${esc(WHEAT_SRC.url)}" target="_blank" rel="noopener">${esc(WHEAT_SRC.title)}（${esc(WHEAT_SRC.license)}）↗</a>　<a href="https://doi.org/10.1017/RDC.2020.41" target="_blank" rel="noopener">IntCal20（Reimer ほか 2020）↗</a><br>` +
-    'データベースの偏り：西アジア・ヨーロッパに多く、アフリカ・南アジア・東アジアには少ない。中国・日本の小麦は論文の年代（Long ほか 2018 など）を次の段で足す予定。';
+    'データベースの偏り：西アジア・ヨーロッパに多く、アフリカ・南アジア・東アジアには少ない。日本は國木田 2025 の測定値（武田石高遺跡）を足した。中国・南アジアは論文の年代でさらに足す予定。';
 }
 function drawAreaNote() {
   const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
