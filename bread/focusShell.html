@@ -240,6 +240,7 @@
   .genlist figcaption{font-size:9.5px;color:var(--sub);line-height:1.4;margin-top:3px}
   .genlist .gen-mark{left:3px;top:3px;font-size:8.5px;padding:0 4px}
   .mob-only{display:none}
+  .wdot{width:7px;height:7px;border-radius:50%;background:var(--c);border:1px solid rgba(10,10,10,.85);transform:translate(-50%,-50%);cursor:help;box-shadow:0 0 3px rgba(0,0,0,.6)}
   #areaNote .sw{display:block;font-size:9.5px;line-height:1.45}
   #areaNote .sw i{display:inline-block;width:10px;height:8px;margin-right:5px;vertical-align:middle;border-radius:1px}
   #areaNote a{color:var(--dim)}
@@ -314,8 +315,10 @@
     <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
     <button class="tgl" id="areaBtn" type="button" aria-pressed="false">栽培地域（目安）</button>
     <button class="tgl" id="routeBtn" type="button" aria-pressed="false">広がりの線（推定）</button>
+    <button class="tgl" id="wheatBtn" type="button" aria-pressed="false" title="小麦の粒・穂軸そのものの放射性炭素年代（XRONOS）。遺跡ごとに最も古い試料">小麦の直接年代（点）</button>
   </div>
   <div class="layer-notes">
+    <div class="lens-note" id="wheatNote" hidden></div>
     <div class="lens-note" id="routeNote" hidden></div>
     <div class="lens-note" id="areaNote" hidden></div>
     <div class="lens-note" id="layerHint">押すと、年代バーの年までに分かっていることが地球に重なります。</div>
@@ -370,6 +373,7 @@ import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
 import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
   farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA } from '../data/bread_farming.js?v=20261118b';
 // 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
+import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC } from '../data/bread_wheat_dates.js?v=20261119b';
 const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
 const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
 const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
@@ -386,7 +390,7 @@ const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
 const KIND_JA = { peer_reviewed: '査読論文', primary: '一次資料', institution: '研究機関・公的機関', book: '書籍', press: '報道', secondary: '二次資料' };
 const CLOCK_JA = { grass: '草の時計', field: '畑の時計', bread: 'パンの時計' };
-const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null, areas: false, routes: false };
+const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null, areas: false, routes: false, wheatPts: false };
 
 /* ── 年の書き方 ── */
 function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
@@ -496,6 +500,13 @@ function aimArrows() {
   }
 }
 const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred: ['推定', 'rgba(255,214,150,.9)'], hypothesis: ['仮説', 'rgba(170,205,255,.9)'] };
+function drawWheatNote() {
+  const el = $('wheatNote'); if (el.dataset.done) return; el.dataset.done = '1';
+  el.innerHTML = `<b>小麦の直接年代</b>：小麦の粒・穂軸そのものを放射性炭素で測った年代（${WHEAT_DATES.length} 遺跡）。点は「その試料が測られた年代」で、その地域に小麦が初めて来た年ではありません。点のない所は「なかった」ではなく「測られた資料がまだ無い（データベースに無い）」所です。<br>` +
+    '遺跡ごとに最も古い試料を一つの点にし、色は年代の色（栽培地域の注記と同じ）。点に指を乗せると、遺跡・年代の幅・種・試料・測定番号・出典が出ます。年代は IntCal20 で較正した中央値。<br>' +
+    `<a href="${esc(WHEAT_SRC.url)}" target="_blank" rel="noopener">${esc(WHEAT_SRC.title)}（${esc(WHEAT_SRC.license)}）↗</a>　<a href="https://doi.org/10.1017/RDC.2020.41" target="_blank" rel="noopener">IntCal20（Reimer ほか 2020）↗</a><br>` +
+    'データベースの偏り：西アジア・ヨーロッパに多く、アフリカ・南アジア・東アジアには少ない。中国・日本の小麦は論文の年代（Long ほか 2018 など）を次の段で足す予定。';
+}
 function drawAreaNote() {
   const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
   const sw = (c, t) => `<span class="sw"><i style="background:${c}"></i>${t}</span>`;
@@ -553,6 +564,12 @@ function drawGlobe() {
       html.push({ kind: 'label', lat: n.lat, lng: n.lng, alt: 0.02, text: `${shortName(n)}（${n.genome}）`, size: sel || tr ? 0.7 : 0.45,
         color: sel || tr ? '#c8f0b0' : 'rgba(143,209,122,0.9)' });
     }
+  }
+  if (S.wheatPts) for (const w of WHEAT_DATES) {
+    if (w.from > S.year) continue;
+    const yr = v => v < 0 ? `前${-v}` : `${v}`;
+    html.push({ lat: w.lat, lng: w.lng, cls: 'wdot', color: rampColor(w.from), onClick: null,
+      title: `${w.site}（${w.country}）\n${yr(w.from)}年ごろ（95%の幅：${yr(w.lo)}〜${yr(w.hi)}年）\n${w.kinds.join('・')}／試料：${w.material}／この遺跡の小麦の年代 ${w.n} 点\n${w.labnr}（${w.bp}±${w.sd} BP）${w.from < -9500 ? '\n※ 栽培化より前で、野生の小麦の可能性' : ''}${w.note ? '\n※ ' + w.note : ''}\n出典：${w.ref || 'XRONOS'}` });
   }
   const labels = html; // 赤道の文字も同じ列へ
   if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
@@ -925,7 +942,8 @@ $('nextE').onclick = () => { stopPlay(); stepTo(1); };
 $('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
 $('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; if (S.areas) drawAreaNote(); layerHint(); drawGlobe(); };
 $('areaBtnM').onclick = () => $('areaBtn').click();
-const layerHint = () => { $('layerHint').hidden = S.routes || S.areas; };
+const layerHint = () => { $('layerHint').hidden = S.routes || S.areas || S.wheatPts; };
+$('wheatBtn').onclick = () => { S.wheatPts = !S.wheatPts; $('wheatBtn').setAttribute('aria-pressed', String(S.wheatPts)); $('wheatNote').hidden = !S.wheatPts; if (S.wheatPts) drawWheatNote(); layerHint(); drawGlobe(); };
 $('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
 $('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
 const showGuideNote = on => { S.bands = on; drawGlobe(); $('guideNote').hidden = !on; $('guideInfoBtn').setAttribute('aria-expanded', String(on)); $('guideInfoBtn').textContent = on ? '▶' : '◀'; };
