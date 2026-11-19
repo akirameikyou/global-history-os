@@ -248,11 +248,11 @@ export const breadImages = [
   "file": "img/b_bagel.jpg",
   "generated": false,
   "kind": "photo",
-  "caption_ja": "ベーグル",
-  "artist": "Missvain",
-  "license": "CC BY 4.0",
-  "license_url": "https://creativecommons.org/licenses/by/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Loveski_bagels_-_December_2022_-_Sarah_Stierch.jpg"
+  "caption_ja": "ベーグル（けしの実とごま、半分に切った断面。モントリオールの店）",
+  "artist": "Garyperlman（英語版ウィキペディア）",
+  "license": "Public domain",
+  "license_url": "",
+  "page": "https://commons.wikimedia.org/wiki/File:Bagels-Montreal-REAL.jpg"
  },
  {
   "id": "b_injera",
