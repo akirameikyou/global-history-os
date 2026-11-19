@@ -914,7 +914,10 @@ function stepTo(dir) {
 let playTimer = 0;
 function stopPlay() { S.playing = false; clearTimeout(playTimer); $('playBtn').textContent = '▶'; $('playBtn').setAttribute('aria-pressed', 'false'); }
 function playNext() { if (!S.playing) return; if (!stepTo(1)) { stopPlay(); return; } playTimer = setTimeout(playNext, 4200); }
-$('playBtn').onclick = () => { if (S.playing) { stopPlay(); return; } S.playing = true; $('playBtn').textContent = '❚❚'; $('playBtn').setAttribute('aria-pressed', 'true'); playNext(); };
+$('playBtn').onclick = () => { if (S.playing) { stopPlay(); return; }
+  // 初めての再生では栽培地域の層を出す（年代とともに地域が広がる様子が、この Focus の見せ場）。一度消した人には、次の再生で勝手に出さない
+  if (!S.areas && !S.areasAuto) $('areaBtn').click(); S.areasAuto = true;
+  S.playing = true; $('playBtn').textContent = '❚❚'; $('playBtn').setAttribute('aria-pressed', 'true'); playNext(); };
 $('prevE').onclick = () => { stopPlay(); stepTo(-1); };
 $('nextE').onclick = () => { stopPlay(); stepTo(1); };
 
