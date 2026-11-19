@@ -152,11 +152,11 @@ export const breadImages = [
   "file": "img/b_brioche.jpg",
   "generated": false,
   "kind": "photo",
-  "caption_ja": "ブリオッシュ（チョコレート入りの型焼き）",
-  "artist": "Jebulon",
-  "license": "Public domain",
-  "license_url": "",
-  "page": "https://commons.wikimedia.org/wiki/File:Brioche_aux_p%C3%A9pites_de_chocolat.jpg"
+  "caption_ja": "ブリオッシュ（バターと卵の多い、丸く膨らんだ生地）",
+  "artist": "David.Monniaux（Wikimedia Commons の投稿者）",
+  "license": "CC BY-SA 3.0",
+  "license_url": "https://creativecommons.org/licenses/by-sa/3.0",
+  "page": "https://commons.wikimedia.org/wiki/File:Brioche.jpg"
  },
  {
   "id": "b_rye_pumpernickel",
@@ -236,11 +236,11 @@ export const breadImages = [
   "file": "img/b_chapati_roti.jpg",
   "generated": false,
   "kind": "photo",
-  "caption_ja": "チャパティを焼くかまど",
-  "artist": "Kritzolina",
+  "caption_ja": "チャパティ（全粒粉の生地を薄くのばし、鉄板で焼く）",
+  "artist": "Gaurav Dhwaj Khadka",
   "license": "CC BY-SA 4.0",
   "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
-  "page": "https://commons.wikimedia.org/wiki/File:Chapati_making_at_the_Chokhi_Dhani_Resort_Panchkula_08.jpg"
+  "page": "https://commons.wikimedia.org/wiki/File:Chapati_1.jpg"
  },
  {
   "id": "b_bagel",
