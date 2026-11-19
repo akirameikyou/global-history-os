@@ -63,7 +63,11 @@
     font-size:12px;line-height:1.75;color:#eef3f8;box-shadow:0 8px 28px rgba(0,0,0,.55)} /* 下を透かさない（はっきり読める）。× で閉じる */
   #guideNote b{color:var(--wheat-soft);font-weight:600}
   #guideNote a{color:#bcd3e6}
-  #guideNote .gn-close{position:absolute;right:6px;top:4px;background:none;border:0;color:#eef3f8;font-size:16px;cursor:pointer;padding:2px 6px}
+  #wheatCard{position:absolute;right:24px;top:88px;width:340px;z-index:45;background:#0b1522;border:1px solid rgba(232,194,122,.45);border-radius:6px;padding:12px 30px 12px 14px;
+    font-size:12px;line-height:1.75;color:#eef3f8;box-shadow:0 8px 28px rgba(0,0,0,.55)} /* 小麦の点の説明（ガイドの説明と同じ形） */
+  #wheatCard b{color:var(--wheat-soft);font-weight:600} #wheatCard a{color:#bcd3e6} #wheatCard .wc-y{font-size:14px;color:#fff}
+  #wheatCard .wc-dim{color:var(--dim);font-size:11px}
+  #wheatCard .gn-close,#guideNote .gn-close{position:absolute;right:6px;top:4px;background:none;border:0;color:#eef3f8;font-size:16px;cursor:pointer;padding:2px 6px}
   .left-col>.panel{position:relative;left:auto;top:auto}
   .lenses{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px}
   .lens{display:inline-flex;align-items:center;gap:6px;background:rgba(7,14,24,.55);border:1px solid var(--lc);color:var(--ink);border-radius:4px;padding:3px 9px;font-size:11.5px;cursor:pointer}
@@ -262,7 +266,7 @@
     .left-col #linPanel{display:none}
     .left-col{display:none} /* スマホでは光源・系統の枠をしまい、地球と年代バーを主に（PC で使う） */
     #layerPanel{display:none}
-    #guideNote{top:74px;left:12px;right:12px;width:auto}
+    #guideNote,#wheatCard{top:74px;left:12px;right:12px;width:auto}
     .tl-top{flex-wrap:wrap;gap:6px 10px}
     #tlYear{font-size:20px;min-width:0}
     .tl-mid{flex:1 1 100%;order:3}
@@ -289,6 +293,7 @@
   <button class="tgl" id="guideBtn" type="button" aria-pressed="false" title="ガイド：緯線・経線（10°おき）、赤道（赤）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
   <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
 </div>
+<div id="wheatCard" hidden></div>
 <div id="guideNote" hidden><button class="gn-close" id="guideNoteClose" type="button" aria-label="閉じる">×</button><b>ガイド：緯度と小麦</b><br>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><span style="display:inline-block;width:12px;height:9px;background:rgba(150,215,120,.55);vertical-align:middle"></span> 主な産地の緯度帯（25〜50°）　<span style="display:inline-block;width:12px;height:9px;background:rgba(120,200,210,.35);vertical-align:middle"></span> 広がりの端（15〜25°、北50〜60°）<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
 
 <div class="left-col" id="leftCol">
@@ -500,6 +505,20 @@ function aimArrows() {
   }
 }
 const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred: ['推定', 'rgba(255,214,150,.9)'], hypothesis: ['仮説', 'rgba(170,205,255,.9)'] };
+// 小麦の点の説明の枠（ガイドの説明と同じ形・同じ場所。× で閉じる）
+function showWheat(w) {
+  const yr = v => v < 0 ? `前${-v}` : `${v}`;
+  const src = /國木田/.test(w.ref) ? 'https://hdl.handle.net/2115/94439' : WHEAT_SRC.url;
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(w.site)}</b>（${esc(w.country)}）<br>` +
+    `<span class="wc-y">${yr(w.from)}年ごろ</span>（95%の幅：${yr(w.lo)}〜${yr(w.hi)}年）<br>` +
+    `種：${esc(w.kinds.join('・'))}<br>試料：${esc(w.material)}<br>測定：${esc(w.labnr)}（${w.bp}±${w.sd} BP、IntCal20 で較正）／この遺跡の小麦の年代 ${w.n} 点のうち最も古いもの<br>` +
+    (w.from < -9500 ? '※ 栽培化より前で、野生の小麦の可能性<br>' : '') + (w.note ? `※ ${esc(w.note)}<br>` : '') +
+    `出典：${esc(w.ref || 'XRONOS')}　<a href="${esc(src)}" target="_blank" rel="noopener">${/國木田/.test(w.ref) ? '論文（北海道大学）' : 'XRONOS'} ↗</a><br>` +
+    '<span class="wc-dim">点は「その試料が測られた年代」で、この地域に小麦が初めて来た年とは限りません。</span>';
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
 function drawWheatNote() {
   const el = $('wheatNote'); if (el.dataset.done) return; el.dataset.done = '1';
   el.innerHTML = `<b>小麦の直接年代</b>：小麦の粒・穂軸そのものを放射性炭素で測った年代（${WHEAT_DATES.length} 遺跡）。点は「その試料が測られた年代」で、その地域に小麦が初めて来た年ではありません。点のない所は「なかった」ではなく「測られた資料がまだ無い（データベースに無い）」所です。<br>` +
@@ -568,8 +587,8 @@ function drawGlobe() {
   if (S.wheatPts) for (const w of WHEAT_DATES) {
     if (w.from > S.year) continue;
     const yr = v => v < 0 ? `前${-v}` : `${v}`;
-    html.push({ lat: w.lat, lng: w.lng, cls: 'wdot', color: rampColor(w.from), onClick: null,
-      title: `${w.site}（${w.country}）\n${yr(w.from)}年ごろ（95%の幅：${yr(w.lo)}〜${yr(w.hi)}年）\n${w.kinds.join('・')}／試料：${w.material}／この遺跡の小麦の年代 ${w.n} 点\n${w.labnr}（${w.bp}±${w.sd} BP）${w.from < -9500 ? '\n※ 栽培化より前で、野生の小麦の可能性' : ''}${w.note ? '\n※ ' + w.note : ''}\n出典：${w.ref || 'XRONOS'}` });
+    html.push({ lat: w.lat, lng: w.lng, cls: 'wdot', color: rampColor(w.from), onClick: () => showWheat(w), // 押すと説明の枠を開く（指を乗せた時の吹き出しは名前と年代だけ）
+      title: `${w.site}：${yr(w.from)}年ごろ（押すと説明）` });
   }
   const labels = html; // 赤道の文字も同じ列へ
   if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
