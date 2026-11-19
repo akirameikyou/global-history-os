@@ -244,6 +244,11 @@
   .genlist figcaption{font-size:9.5px;color:var(--sub);line-height:1.4;margin-top:3px}
   .genlist .gen-mark{left:3px;top:3px;font-size:8.5px;padding:0 4px}
   .mob-only{display:none}
+  .effort{margin:4px 0 6px}.ef{display:grid;grid-template-columns:auto 1fr;column-gap:6px;font-size:10px;line-height:1.5;margin-bottom:3px}
+  .ef-n{white-space:nowrap}.ef-v{color:var(--dim);white-space:nowrap;text-align:right}
+  .ef-bar{grid-column:1 / -1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden} /* 全行で同じ幅＝長さを比べられる */
+  .ef-bar i{display:block;height:100%;background:var(--wheat-soft)}
+  .fsq{pointer-events:auto;position:relative;z-index:99998 !important;width:7px;height:7px;background:var(--c);border:1px solid rgba(10,10,10,.8);transform:translate(-50%,-50%) rotate(45deg);cursor:pointer} /* 南アジアの農耕全体の遺跡（ひし形） */
   .wring{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;border:2px solid var(--c);background:rgba(0,0,0,.25);transform:translate(-50%,-50%);cursor:pointer;box-shadow:0 0 3px rgba(0,0,0,.6)} /* 出土（直接年代ではない） */
   .wdot{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;background:var(--c);border:1px solid rgba(10,10,10,.85);transform:translate(-50%,-50%);cursor:help;box-shadow:0 0 3px rgba(0,0,0,.6)}
   #areaNote .sw{display:block;font-size:9.5px;line-height:1.45}
@@ -377,9 +382,9 @@ import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_even
 import { breadAreas as AREAS } from '../data/bread_areas.js?v=20261118a';
 import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
 import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
-  farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA } from '../data/bread_farming.js?v=20261118b';
+  farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA, farmingSitesSA as FARM_SA } from '../data/bread_farming.js?v=20261120b';
 // 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
-import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC, wheatPresence as WHEAT_PRES } from '../data/bread_wheat_dates.js?v=20261119d';
+import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC, wheatPresence as WHEAT_PRES, wheatEffort as WHEAT_EFFORT } from '../data/bread_wheat_dates.js?v=20261120a';
 const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
 const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
 const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
@@ -520,6 +525,16 @@ function showWheat(w) {
   $('wheatCard').hidden = false; $('guideNote').hidden = true;
   $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
 }
+const CN_JA = {"India": "インド", "Pakistan": "パキスタン", "Afghanistan": "アフガニスタン", "Turkmenistan": "トルクメニスタン", "Iran": "イラン", "Nepal": "ネパール", "Bangladesh": "バングラデシュ", "Sri Lanka": "スリランカ"};
+function showFarmSite(f) {
+  const yr = v => v < 0 ? `前${-v}` : `${v}`;
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(f.site)}</b>（${esc(CN_JA[f.country] || f.country)}・新石器の遺跡）<br><span class="wc-y">${yr(f.year)}年ごろ</span>（この遺跡で最も古い放射性炭素年代。較正済み）<br>` +
+    (f.material ? `試料：${esc(f.material)}<br>` : '') + `※ 小麦に限らない「農耕全体」の年代です（大麦・家畜などの層の年代を含む）。小麦そのものの年代は「小麦の直接年代（点）」の層へ。<br>` +
+    `出典：${esc(f.ref)}　<a href="${esc(FARM_SRC_SA.url)}" target="_blank" rel="noopener">データ ↗</a>`;
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
 function showPresence(w) {
   $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
     `<b>${esc(w.site)}</b>（インダス文明の遺跡）<br><span class="wc-y">小麦の出土：${esc(w.period)}</span><br>` +
@@ -536,7 +551,9 @@ function drawWheatNote() {
     `<a href="${esc(WHEAT_SRC.url)}" target="_blank" rel="noopener">${esc(WHEAT_SRC.title)}（${esc(WHEAT_SRC.license)}）↗</a>　<a href="https://doi.org/10.1017/RDC.2020.41" target="_blank" rel="noopener">IntCal20（Reimer ほか 2020）↗</a><br>` +
     '<b>足した論文のデータ</b>：中国＝Long ほか 2018（Nature Plants）補足表3の小麦の粒の直接年代（著者が解析で除いた測定は地図からも除く）。日本＝國木田 2025（武田石高遺跡）。<br>' +
     '<b>中抜きの輪</b>＝南アジアの小麦の出土（Bates 2019、33 遺跡）。小麦そのものの年代ではなく、出土した層の文化期による年代です。<br>' +
-    'データの偏り：西アジア・ヨーロッパに多く、アフリカ・中央アジアは少ない。南アジア・中央アジアには公開の放射性炭素データベースが無い。';
+    '<b>測定の量</b>（地域ごとの小麦の直接年代の試料の数／遺跡の数。＋出土＝中抜きの輪の遺跡数。点の無い所は「なかった」ではなく「測られていない・データベースに無い」）：' +
+    `<div class="effort">${WHEAT_EFFORT.map(e => { const mx = Math.max(...WHEAT_EFFORT.map(x => x.samples)); return `<div class="ef"><span class="ef-n">${esc(e.region)}</span><span class="ef-v">${e.samples}点／${e.sites}遺跡${e.presence ? `＋出土${e.presence}` : ''}</span><span class="ef-bar"><i style="width:${Math.max(1, Math.round(100 * e.samples / mx))}%"></i></span></div>`; }).join('')}</div>` +
+    '小麦が西アジアから東アジアへ渡った途中の中央アジア・南アジアは、測定が特に少ない（どちらにも公開の放射性炭素データベースが無い）。';
 }
 function drawAreaNote() {
   const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
@@ -544,7 +561,7 @@ function drawAreaNote() {
   el.innerHTML = '<b>西ユーラシア</b>：農耕（小麦・大麦などの畑と家畜）が始まった地域と年代。色は図と同じく考古学の文化の区分で、数字は前○年。<br>' +
     Object.values(FARM_CLASSES).map(([name, a, b, c]) => sw(c, `前${-a}〜${-b}　${name}`)).join('') +
     `<a href="${esc(FARM_SRC.url)}" target="_blank" rel="noopener">${esc(FARM_SRC.title)} ↗</a>（α が図の色を時期ごとに取り出し、緯度経度に戻した目安）<br>` +
-    '<b>南アジア</b>：新石器の遺跡（放射性炭素年代）の周り約50kmをつないだ範囲。<b>図の外</b>（ナイル・中央アジア・中国・アメリカ大陸・オーストラリア）は α が確かめた出来事の目安の楕円。この二つは年代の色で塗る：<br>' +
+    '<b>南アジアとその北西</b>：新石器の遺跡（農耕全体の放射性炭素年代、インド・パキスタン・アフガニスタン・トルクメニスタンの 96 遺跡）を小さなひし形で。遺跡の周りを面で塗ると、測られていない所にも農耕があったように見えるので、点のまま描く。<b>図の外</b>（ナイル・中央アジア・中国・アメリカ大陸・オーストラリア）は α が確かめた出来事の目安の楕円。ひし形と楕円は年代の色：<br>' +
     FARM_RAMP.map(([lim, c], i) => sw(c, i === 0 ? `前${-lim}より前` : lim > 0 ? `前${-FARM_RAMP[i - 1][0]}以降` : `前${-FARM_RAMP[i - 1][0]}〜${-lim}`)).join('') +
     `<a href="${esc(FARM_SRC_SA.url)}" target="_blank" rel="noopener">${esc(FARM_SRC_SA.title)} ↗</a><br>` +
     '楕円の薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。どの面も境界は目安です。';
@@ -605,6 +622,10 @@ function drawGlobe() {
   if (S.wheatPts) for (const w of WHEAT_PRES) { // 南アジア：小麦の出土（直接年代ではない。文化期による年代）＝中抜きの輪
     if (w.from > S.year) continue;
     html.push({ lat: w.lat, lng: w.lng, cls: 'wring', color: rampColor(w.from), onClick: () => showPresence(w), title: `${w.site}：小麦の出土（${w.period}）（押すと説明）` });
+  }
+  if (S.areas) for (const f of FARM_SA) { // 南アジアの新石器の遺跡（農耕全体の放射性炭素年代）。面にせず点で（スタジオ検討003）
+    if (f.year > S.year) continue;
+    html.push({ lat: f.lat, lng: f.lng, cls: 'fsq', color: rampColor(f.year), onClick: () => showFarmSite(f), title: `${f.site}：農耕の年代 ${f.year < 0 ? '前' + -f.year : f.year}年ごろ（押すと説明）` });
   }
   const labels = html; // 赤道の文字も同じ列へ
   if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
