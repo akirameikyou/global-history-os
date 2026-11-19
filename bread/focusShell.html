@@ -244,6 +244,7 @@
   .genlist figcaption{font-size:9.5px;color:var(--sub);line-height:1.4;margin-top:3px}
   .genlist .gen-mark{left:3px;top:3px;font-size:8.5px;padding:0 4px}
   .mob-only{display:none}
+  .wring{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;border:2px solid var(--c);background:rgba(0,0,0,.25);transform:translate(-50%,-50%);cursor:pointer;box-shadow:0 0 3px rgba(0,0,0,.6)} /* 出土（直接年代ではない） */
   .wdot{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;background:var(--c);border:1px solid rgba(10,10,10,.85);transform:translate(-50%,-50%);cursor:help;box-shadow:0 0 3px rgba(0,0,0,.6)}
   #areaNote .sw{display:block;font-size:9.5px;line-height:1.45}
   #areaNote .sw i{display:inline-block;width:10px;height:8px;margin-right:5px;vertical-align:middle;border-radius:1px}
@@ -378,7 +379,7 @@ import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
 import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
   farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA } from '../data/bread_farming.js?v=20261118b';
 // 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
-import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC } from '../data/bread_wheat_dates.js?v=20261119c';
+import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC, wheatPresence as WHEAT_PRES } from '../data/bread_wheat_dates.js?v=20261119d';
 const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
 const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
 const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
@@ -519,12 +520,23 @@ function showWheat(w) {
   $('wheatCard').hidden = false; $('guideNote').hidden = true;
   $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
 }
+function showPresence(w) {
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(w.site)}</b>（インダス文明の遺跡）<br><span class="wc-y">小麦の出土：${esc(w.period)}</span><br>` +
+    `出た小麦：${esc(w.taxa.join('・'))}<br>` +
+    '※ 小麦そのものの放射性炭素年代ではなく、出土した層の文化期による年代です（中抜きの輪）。<br>' +
+    `出典：${esc(w.ref)}　<a href="https://doi.org/10.7910/DVN/WSHMAD" target="_blank" rel="noopener">データ ↗</a>`;
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
 function drawWheatNote() {
   const el = $('wheatNote'); if (el.dataset.done) return; el.dataset.done = '1';
   el.innerHTML = `<b>小麦の直接年代</b>：小麦の粒・穂軸そのものを放射性炭素で測った年代（${WHEAT_DATES.length} 遺跡）。点は「その試料が測られた年代」で、その地域に小麦が初めて来た年ではありません。点のない所は「なかった」ではなく「測られた資料がまだ無い（データベースに無い）」所です。<br>` +
     '遺跡ごとに最も古い試料を一つの点にし、色は年代の色（栽培地域の注記と同じ）。点に指を乗せると、遺跡・年代の幅・種・試料・測定番号・出典が出ます。年代は IntCal20 で較正した中央値。<br>' +
     `<a href="${esc(WHEAT_SRC.url)}" target="_blank" rel="noopener">${esc(WHEAT_SRC.title)}（${esc(WHEAT_SRC.license)}）↗</a>　<a href="https://doi.org/10.1017/RDC.2020.41" target="_blank" rel="noopener">IntCal20（Reimer ほか 2020）↗</a><br>` +
-    'データベースの偏り：西アジア・ヨーロッパに多く、アフリカ・南アジア・東アジアには少ない。日本は國木田 2025 の測定値（武田石高遺跡）を足した。中国・南アジアは論文の年代でさらに足す予定。';
+    '<b>足した論文のデータ</b>：中国＝Long ほか 2018（Nature Plants）補足表3の小麦の粒の直接年代（著者が解析で除いた測定は地図からも除く）。日本＝國木田 2025（武田石高遺跡）。<br>' +
+    '<b>中抜きの輪</b>＝南アジアの小麦の出土（Bates 2019、33 遺跡）。小麦そのものの年代ではなく、出土した層の文化期による年代です。<br>' +
+    'データの偏り：西アジア・ヨーロッパに多く、アフリカ・中央アジアは少ない。南アジア・中央アジアには公開の放射性炭素データベースが無い。';
 }
 function drawAreaNote() {
   const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
@@ -589,6 +601,10 @@ function drawGlobe() {
     const yr = v => v < 0 ? `前${-v}` : `${v}`;
     html.push({ lat: w.lat, lng: w.lng, cls: 'wdot', color: rampColor(w.from), onClick: () => showWheat(w), // 押すと説明の枠を開く（指を乗せた時の吹き出しは名前と年代だけ）
       title: `${w.site}：${yr(w.from)}年ごろ（押すと説明）` });
+  }
+  if (S.wheatPts) for (const w of WHEAT_PRES) { // 南アジア：小麦の出土（直接年代ではない。文化期による年代）＝中抜きの輪
+    if (w.from > S.year) continue;
+    html.push({ lat: w.lat, lng: w.lng, cls: 'wring', color: rampColor(w.from), onClick: () => showPresence(w), title: `${w.site}：小麦の出土（${w.period}）（押すと説明）` });
   }
   const labels = html; // 赤道の文字も同じ列へ
   if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
