@@ -41,17 +41,17 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);lette
 <body>
 <div class="wrap">
   <div class="head">
-    <div class="brand"><strong>HISTORY OS</strong><span data-k="brand">FOCUS PERSON — 目次</span></div>
+    <div class="brand"><strong>HISTORY OS</strong><span data-k="brand">FOCUS — 目次</span></div>
     <a class="lang" id="langLink" href="?lang=en" hreflang="en">EN</a>
   </div>
   <h1 data-k="title">Focus の目次</h1>
-  <p class="lead" data-k="lead">一人の人物を軸に、時間・場所・同時代の世界を地球の上に重ねて見る画面です。どの Focus も、同じ並び（地球・年代バー・右の年譜・左の世界の出来事）で読めます。</p>
+  <p class="lead" data-k="lead">一人の人物や一つのテーマを軸に、時間・場所・同時代の世界を地球の上に重ねて見る画面です。どの Focus も、同じ並び（地球・年代バー・右の年譜・左の世界の出来事）で読めます。</p>
   <div class="list" id="list"></div>
   <p class="foot" data-k="foot">History OS は個人制作のサイトです。各 Focus の出典は、それぞれの表紙の SOURCES にあります。</p>
 </div>
 <script>
 const LANG = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ja';
-// Focus を足したらここに一行（href は表紙。英語の表紙が無い Focus は日本語の表紙へ）
+// Focus を足したらここに一行（2026-11-20 小麦とパンを足した）（href は表紙。英語の表紙が無い Focus は日本語の表紙へ）
 const FOCUSES = [
   { href: '../manjiro/', yrs: '1827 — 1898', color: '#66e0ff', en: 'JOHN MANJIRO FOCUS', enLang: false,
     ja: { nm: '中浜万次郎', tx: '漂流から捕鯨船、アメリカでの暮らし、開国、咸臨丸まで。航海を月ごとに地球の上でたどる。' },
@@ -62,8 +62,11 @@ const FOCUSES = [
   { href: '../ueshiba/', yrs: '1883 — 1969', color: '#57c9c0', en: 'AIKIDO FOCUS — MORIHEI UESHIBA', enLang: true,
     ja: { nm: '植芝盛平', tx: '合氣道の開祖の生涯と、合氣道が世界へ広がる歩み。NOW で、世界の合気会のいまの行事も。' },
     e:  { nm: 'Morihei Ueshiba', tx: 'The life of the Founder of Aikido and its spread around the world — and, with NOW, current events of the Aikikai worldwide.' } },
+  { href: '../bread/', yrs: 'c. 14,400 years ago — present', color: '#e8c27a', en: 'WHEAT & BREAD FOCUS', enLang: false,
+    ja: { nm: '小麦とパン', tx: '一枚のパンから、一万年前の野の草へ。野生の小麦、窯と発酵、世界のパンまで。' },
+    e:  { nm: 'Wheat and Bread', tx: 'From a loaf of bread back to the wild grasses of ten thousand years ago — wild wheat, ovens and fermentation, and the breads of the world (Japanese only).' } },
 ];
-const EN = { brand: 'FOCUS PERSON — CONTENTS', title: 'Focus contents', lead: 'Each Focus takes one person as its axis and overlays time, place and the world of the era on a globe. Every Focus reads the same way: globe, timeline, chronology on the right, world events on the left.', foot: 'History OS is a personal project. Sources for each Focus are under SOURCES on its cover.' };
+const EN = { brand: 'FOCUS — CONTENTS', title: 'Focus contents', lead: 'Each Focus takes one person or theme as its axis and overlays time, place and the world of the era on a globe. Every Focus reads the same way: globe, timeline, chronology on the right, world events on the left.', foot: 'History OS is a personal project. Sources for each Focus are under SOURCES on its cover.' };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 if (LANG === 'en') {
   document.documentElement.lang = 'en'; document.title = 'History OS | Focus contents';
