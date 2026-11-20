@@ -240,7 +240,7 @@ import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // �
 import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c';
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261121d'; // 共通の地の層の部品（万次郎の試験と同じもの）
+import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261121e'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -327,12 +327,12 @@ function setLens(id) {
 }
 function groundName(id) { return id === 'none' ? 'なし' : GEOID[id].name_ja; }
 function drawDial() {
-  const g = ['none', 'relief', 'rock'];
+  const g = ['relief', 'rock'];   // 「なし」は置かない。選んでいる層をもう一度押すと消える（2026-11-21 清水さん）
   $('dialGround').innerHTML = '<span class="lbl">地</span>' + g.map(id => `<button class="seg" data-g="${id}" aria-pressed="${S.ground === id}">${esc(groundName(id))}${id !== 'none' && GEOID[id].status !== 'ready' ? '<span class="st">未</span>' : ''}</button>`).join('');
   $('dialFlow').innerHTML = '<span class="lbl">流れ</span>' + [['current', '海流']].map(([id, n]) => `<button class="seg" data-f="${id}" aria-pressed="${S.flow === id}">${n}${GEOID[id].status !== 'ready' ? '<span class="st">保留</span>' : ''}</button>`).join('') +
     (S.flow === 'current' ? `<button class="seg" id="runFlow" type="button" aria-pressed="${!!(geo && geo.state.running)}" title="押すと海流に沿って光が流れ続け、もう一度押すと止まります">${geo && geo.state.running ? '流れを止める ■' : '流す ▸'}</button>` : '');
   if ($('runFlow')) $('runFlow').onclick = () => geo.toggleFlow();
-  $('dialGround').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { S.ground = b.dataset.g; S.manual = true; S.link = null; refresh(); });
+  $('dialGround').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { S.ground = S.ground === b.dataset.g ? 'none' : b.dataset.g; S.manual = true; S.link = null; refresh(); });
   $('dialFlow').querySelectorAll('[data-f]').forEach(b => b.onclick = () => { S.flow = S.flow === b.dataset.f ? null : b.dataset.f; S.manual = true; S.link = null; refresh(); });
   if (S.link && !S.manual) {
     const l = LENS[S.link.lens];
@@ -346,7 +346,7 @@ function drawDial() {
   const legend = g => g.classes ? `<div class="rlg">${g.classes.filter(c => !['wb', 'nd'].includes(c.code)).map(c => `<span><i style="background:${c.color}"></i>${esc(c.name_ja)}</span>`).join('')}</div>` : '';
   $('groundNote').innerHTML = shown.length ? shown.map(g => `<div><b>${esc(g.name_ja)}</b>：<span class="${g.status === 'ready' ? '' : 'pend'}">${STATUS_JA[g.status]}</span>　<a href="#" data-gi="${g.id}" style="color:var(--cyan-soft)">素性</a><br>${esc(g.provenance.source.title)}・${esc(g.provenance.license.name)}<br><span class="tflag">${esc(TIME_JA[g.provenance.time])}</span>
       ${g.id === S.ground && tooClose ? `<br><span class="pend">寄りすぎました：この層は ${esc(g.provenance.resolution.label)} なので、ここでは外しています</span>` : ''}${legend(g)}</div>`).join('')
-    : '地はいま〈なし〉です。素の地球の上で見ています。';
+    : '地は出していません（素の地球）。「高さ・水深」か「岩」を押すと敷け、もう一度押すと消えます。';
   $('groundNote').querySelectorAll('[data-gi]').forEach(a => a.onclick = ev => { ev.preventDefault(); openGround(a.dataset.gi); });
 }
 

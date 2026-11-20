@@ -1531,7 +1531,9 @@ world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => 
 guideBtn.onclick = () => { State.guide = !State.guide; guideBtn.classList.toggle('on', State.guide);
   world.showGraticules(State.guide); world.pathsData(State.guide ? GUIDE_PATHS : []); };
 // 試験：共通の地の層 geoBase@1（焼き物 Focus で作った部品）を敷く。?geobase=1 の時だけ読む。付けなければ表示は今までどおり（2026-11-20 experiment/ceramics-focus）
-if (new URLSearchParams(location.search).has('geobase')) import('../assets/geobase/geobase_globe.js?v=20261121d').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib') }); });
+if (new URLSearchParams(location.search).has('geobase')) import('../assets/geobase/geobase_globe.js?v=20261121e').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib'),
+  grounds: ['relief'], labels: { relief: '水深' }, compact: true, // 岩は使わない。操作は地球の上に置かず、CHAPTER の下の空き（右上）に一列で（2026-11-21 清水さん）
+  style: 'left:auto;right:24px;width:330px;top:62px;transform:none;padding:0;background:transparent;border:0;backdrop-filter:none;justify-content:flex-start;flex-wrap:nowrap' }); }); // 左端を CHAPTER にそろえる（右の枠と同じ幅）
 const followBtn = document.getElementById('followBtn');
 followBtn.onclick = () => { if (State.auto) return; State.follow = !State.follow; followBtn.classList.toggle('on', State.follow); if (State.follow) followShip(); else resumeSpinAfter(4000); };
 

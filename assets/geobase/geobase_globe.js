@@ -20,7 +20,12 @@ export const TIME_JA = { invariant: 'この層は年代で変わりません', p
 export const STATUS_JA = { ready: '表示中', pending_download: 'データ未取得', pending_license: 'ライセンス確認待ち' };
 export { GEO as geoBase, CUR_META as currentMeta };
 
-export function mountGeoBase(world, { attribEl = null, ui = true, onChange = null } = {}) {
+// 枠の形（ui: true の時）：
+//   grounds … 出す地の層（既定 ['relief','rock']）。labels … ボタンの名（例 { relief: '水深' }）
+//   style   … 枠の置き場所の CSS（既定は地球の上の中央。万次郎は CHAPTER の下＝地球の上を避ける）
+//   compact … 説明の一行を枠に置かず、出典の行の後ろに付ける（置き場所が低い時）
+// 地の層は「なし」のボタンを置かず、選んでいる層をもう一度押すと消える（2026-11-21 清水さん）
+export function mountGeoBase(world, { attribEl = null, ui = true, onChange = null, grounds = ['relief', 'rock'], labels = {}, style = '', compact = false } = {}) {
   const G = Object.fromEntries(GEO.map(g => [g.id, g]));
   const BASE = world.globeImageUrl();
   const baseAttrib = attribEl ? attribEl.textContent : '';
@@ -63,7 +68,7 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
   if (ui) {
     box = document.createElement('div'); box.id = 'geobaseBox';
     box.style.cssText = 'position:fixed;left:50%;top:92px;transform:translateX(-50%);z-index:60;display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:center;' +
-      'background:rgba(7,14,24,.72);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:4px 8px;font:11px/1.4 "Noto Sans JP",sans-serif;color:#eef3f8;max-width:92vw;backdrop-filter:blur(8px)';
+      'background:rgba(7,14,24,.72);border:1px solid rgba(255,255,255,.12);border-radius:6px;padding:4px 8px;font:11px/1.4 "Noto Sans JP",sans-serif;color:#eef3f8;max-width:92vw;backdrop-filter:blur(8px);' + style;
     note = document.createElement('div'); note.style.cssText = 'flex-basis:100%;text-align:center;font-size:10px;color:rgba(238,243,248,.6)';
     document.body.appendChild(box);
   }
@@ -81,17 +86,24 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     mine = S.flow === 'current' && G.current.status === 'ready' ? (S.running && streams ? streams : arrows) : [];
     push();
     const shown = shownLayers().filter(x => x.status === 'ready');
-    if (attribEl) attribEl.textContent = (baseAttrib + (shown.length ? (baseAttrib ? '　' : '') + '地: ' + shown.map(x => x.provenance.source.citation).join(' / ') : '')).trim();
+    const tail = compact ? noteText() : '';
+    if (attribEl) attribEl.textContent = (baseAttrib + (shown.length ? (baseAttrib ? '　' : '') + '地: ' + shown.map(x => x.provenance.source.citation).join(' / ') : '') + (tail ? '　（' + tail + '）' : '')).trim();
     if (ui) draw();
     if (onChange) onChange(S);
   }
+  function noteText(short = compact) {
+    return shownLayers().map(g => short
+      ? (g.id === 'current' ? `海流は${CUR_META.period.map(d => d.slice(0, 4)).join('〜')}年の平均で、過去の海流ではありません` : `${g.name_ja}は年代で変わりません`)
+      : `${g.name_ja}：${TIME_JA[g.provenance.time]}` + (g.id === 'current' ? `（${CUR_META.period.join('〜')}の平均）` : '')).join('。') +
+      (S.tooClose ? '。寄りすぎたので岩の層を外しています（0.5°の格子）' : '');
+  }
   function draw() {
-    box.innerHTML = '<span style="color:rgba(238,243,248,.55);font-size:10px;letter-spacing:.1em">地 geoBase@1</span>';
-    [['none', 'なし'], ['relief', '高さ・水深'], ['rock', '岩']].forEach(([id, n]) => box.appendChild(btn(n, S.ground === id, () => { S.ground = id; apply(); })));
-    box.appendChild(btn('海流', S.flow === 'current', () => { if (S.flow) stopFlow(); S.flow = S.flow ? null : 'current'; apply(); }));
+    box.innerHTML = compact ? '' : '<span style="color:rgba(238,243,248,.55);font-size:10px;letter-spacing:.1em">地 geoBase@1</span>';
+    grounds.forEach(id => box.appendChild(btn(labels[id] || G[id].name_ja, S.ground === id, () => { S.ground = S.ground === id ? 'none' : id; apply(); })));
+    box.appendChild(btn(labels.current || '海流', S.flow === 'current', () => { if (S.flow) stopFlow(); S.flow = S.flow ? null : 'current'; apply(); }));
     if (S.flow) box.appendChild(btn(S.running ? '流れを止める ■' : '流す ▸', S.running, toggleFlow));
-    note.textContent = shownLayers().map(g => `${g.name_ja}：${TIME_JA[g.provenance.time]}` + (g.id === 'current' ? `（${CUR_META.period.join('〜')}の平均）` : '')).join('　') +
-      (S.tooClose ? '　寄りすぎたので岩の層を外しています（0.5°の格子）' : '');
+    if (compact) { box.title = '地 geoBase@1：' + noteText(false); return; }
+    note.textContent = noteText(false);
     if (note.textContent) box.appendChild(note);
   }
   // 流線：短い矢羽の上で光らせても「ちらつき」にしか見えなかった（2026-11-21 清水さん「流れはまだ動いていない？」）ので、
