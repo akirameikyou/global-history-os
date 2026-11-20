@@ -326,6 +326,8 @@ function enter(now) {
   app.classList.add('entered', 'loading');
   osFrame.addEventListener('load', () => setTimeout(() => app.classList.remove('loading'), 900), { once: true });
   const q = new URLSearchParams(); if (LANG === 'en') q.set('lang', 'en'); if (now) q.set('now', '1');
+  const here = new URLSearchParams(location.search); // 見本の行事（?samples=1）と試しの日付（?today=）は本体へ渡す（確認用のリンク）
+  if (here.get('samples') === '1') q.set('samples', '1'); if (here.get('today')) q.set('today', here.get('today'));
   osFrame.src = 'focusShell.html' + (q.toString() ? '?' + q : ''); // ここで初めて本体を読み込む
 }
 document.getElementById('enterBtn').addEventListener('click', () => enter(false));
