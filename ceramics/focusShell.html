@@ -229,8 +229,7 @@ import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // �
 import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c';
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120c';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { geoBase as GEO } from '../data/geobase_v1.js?v=20261120d';
-import { currentArrows as CUR, currentMeta as CUR_META } from '../data/geobase_current_v1.js?v=20261120d';
+import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261120b'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -238,8 +237,6 @@ const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
 const GEOID = Object.fromEntries(GEO.map(g => [g.id, g]));
 const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
 const PROV_JA = { primary: '一次資料', excavation: '発掘', measurement: '測定', institution: '博物館・公的機関', corporate: '企業の沿革', archive: '公文書館', secondary: '二次資料', tradition: '伝承' };
-const TIME_JA = { invariant: 'この層は年代で変わりません', present_observation: '現在の観測です。過去の状態ではありません', time_varying: '年代とともに変わります' };
-const STATUS_JA = { ready: '表示中', pending_download: 'データ未取得', pending_license: 'ライセンス確認待ち' };
 const S = { lens: null, ground: 'none', flow: null, manual: false, link: null, sel: null, kiln: null, chapter: null, year: -16050, tab: 'events', japan: false };
 
 function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
@@ -262,59 +259,12 @@ const world = Globe()($('globeViz'))
 world.pointOfView({ lat: 30, lng: 105, altitude: 2.4 }, 0);
 world.controls().autoRotate = false;
 
-/* ── 流れ（海流）：静止した矢羽が基本。尾は淡く頭は明るい短い線で向きを示す。
-   「流す」を押した時だけ3秒、線の上を光が走る（常に動かすと地が主題の前に出る。DECISIONS D6） ── */
-const CUR4 = CUR.filter(a => Math.round(a[0]) % 4 === 0 && Math.round(a[1]) % 4 === 0); // 画面では4°おき
-const curPaths = CUR4.map(([la, lo, u, v]) => {
-  const s = Math.hypot(u, v), k = Math.min(3.2, 0.6 + s * 3.2) / Math.max(s, 1e-6);   // 速いほど長い（上限あり）
-  const dla = v * k, dlo = u * k / Math.max(0.25, Math.cos(la * Math.PI / 180));
-  const a = Math.min(0.85, 0.3 + s * 0.9);
-  return { pts: [[la, lo], [la + dla / 2, lo + dlo / 2], [la + dla, lo + dlo]], col: [`rgba(102,209,201,0)`, `rgba(140,225,215,${a * 0.6})`, `rgba(190,245,238,${a})`] };
-});
+/* ── 地の層：共通の部品 geoBase（assets/geobase/geobase_globe.js）に任せる。
+   画面（光源と連動する地のダイヤル）はこの Focus が自前で持ち、部品には set() で伝える（ui: false） ── */
 world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => p[1]).pathPointAlt(0.004)
-  .pathColor(d => d.col).pathStroke(0.6).pathTransitionDuration(0);
-let flowing = 0;
-function drawFlow() {
-  const on = S.flow === 'current' && GEOID.current.status === 'ready';
-  world.pathsData(on ? curPaths : []);
-  if (!flowing) world.pathDashLength(1).pathDashGap(0).pathDashAnimateTime(0);
-}
-function runFlow() {   // 3秒だけ流す
-  clearTimeout(flowing);
-  world.pathDashLength(0.35).pathDashGap(0.15).pathDashAnimateTime(900);
-  flowing = setTimeout(() => { flowing = 0; drawFlow(); }, 3000);
-}
-function currentAt(lat, lng) {
-  let best = null, bd = 1e9;
-  for (const a of CUR) { const d = (a[0] - lat) ** 2 + ((a[1] - lng) * Math.cos(lat * Math.PI / 180)) ** 2; if (d < bd) { bd = d; best = a; } }
-  if (!best || bd > 2.2 ** 2) return null;   // 2°の升目のそばに値がなければ「なし」
-  const [, , u, v, n] = best, s = Math.hypot(u, v), deg = (Math.atan2(u, v) * 180 / Math.PI + 360) % 360;
-  const dir = ['北', '北東', '東', '南東', '南', '南西', '西', '北西'][Math.round(deg / 45) % 8];
-  return { s, dir, n, at: best };
-}
-
-/* ── 地の層を地球に敷く：地は「地面」なので、地球の表面の絵そのものを替える（DECISIONS D4）。
-   解像度の上限より寄ったら、その層を外して理由を一行出す（素性の resolution.max_altitude） ── */
-let curImg = BASE_IMG, tooClose = false;
-function applyGround() {
-  const g = S.ground !== 'none' && GEOID[S.ground];
-  const lim = g && g.provenance.resolution.max_altitude;
-  tooClose = !!(g && lim && world.pointOfView().altitude < lim);
-  const url = g && g.status === 'ready' && g.asset && !tooClose ? g.asset.file : BASE_IMG;
-  if (url !== curImg) { curImg = url; world.globeImageUrl(url); }
-}
-world.onZoom(() => { const was = tooClose; applyGround(); if (was !== tooClose) drawDial(); });
-/* 岩の値：画像の画素の色から分類を引く（同じ画像を読むので、地球に見えている色と食い違わない） */
-const ROCK = GEOID.rock, rockCanvas = document.createElement('canvas');
-let rockReady = false;
-if (ROCK.status === 'ready') { const im = new Image(); im.onload = () => { rockCanvas.width = im.width; rockCanvas.height = im.height; rockCanvas.getContext('2d').drawImage(im, 0, 0); rockReady = true; }; im.src = ROCK.asset.file; }
-function rockAt(lat, lng) {
-  if (!rockReady) return null;
-  const x = Math.min(rockCanvas.width - 1, Math.floor((lng + 180) / 360 * rockCanvas.width)), y = Math.min(rockCanvas.height - 1, Math.floor((90 - lat) / 180 * rockCanvas.height));
-  const [r, g, b] = rockCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
-  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
-  return ROCK.classes.find(c => c.color === hex) || { name_ja: '海', color: hex };
-}
+  .pathColor(d => d.col).pathStroke(0.6).pathDashLength(1).pathDashGap(0).pathDashAnimateTime(0).pathTransitionDuration(0);
+let geo = null; // 部品は作る時にも一度 onChange を呼ぶので、作り終わるまでは描き直さない
+geo = mountGeoBase(world, { attribEl: $('attrib'), ui: false, onChange: () => { if (geo) drawDial(); } });
 let globeReady = false;
 const markReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
 world.onGlobeReady(markReady);
@@ -370,8 +320,7 @@ function drawDial() {
   $('dialGround').innerHTML = '<span class="lbl">地</span>' + g.map(id => `<button class="seg" data-g="${id}" aria-pressed="${S.ground === id}">${esc(groundName(id))}${id !== 'none' && GEOID[id].status !== 'ready' ? '<span class="st">未</span>' : ''}</button>`).join('');
   $('dialFlow').innerHTML = '<span class="lbl">流れ</span>' + [['current', '海流']].map(([id, n]) => `<button class="seg" data-f="${id}" aria-pressed="${S.flow === id}">${n}${GEOID[id].status !== 'ready' ? '<span class="st">保留</span>' : ''}</button>`).join('') +
     (S.flow === 'current' ? '<button class="seg" id="runFlow" type="button" title="3秒だけ流れを動かします">流す ▸</button>' : '');
-  if ($('runFlow')) $('runFlow').onclick = runFlow;
-  drawFlow();
+  if ($('runFlow')) $('runFlow').onclick = () => geo.run();
   $('dialGround').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { S.ground = b.dataset.g; S.manual = true; S.link = null; refresh(); });
   $('dialFlow').querySelectorAll('[data-f]').forEach(b => b.onclick = () => { S.flow = S.flow === b.dataset.f ? null : b.dataset.f; S.manual = true; S.link = null; refresh(); });
   if (S.link && !S.manual) {
@@ -381,14 +330,13 @@ function drawDial() {
   } else $('linkLine').innerHTML = S.manual ? '手動：光源を点けても地は動きません（<button type="button" id="autoLink">連動に戻す</button>）' : '';
   if ($('autoLink')) $('autoLink').onclick = () => { S.manual = false; setLens(S.lens); };
   const shown = [S.ground !== 'none' && GEOID[S.ground], S.flow && GEOID[S.flow]].filter(Boolean);
-  applyGround();
+  geo.set(S.ground, S.flow);   // 変わった時だけ部品が描き直し、onChange でここへ戻る（同じなら何もしない）
+  const tooClose = geo.state.tooClose;
   const legend = g => g.classes ? `<div class="rlg">${g.classes.filter(c => !['wb', 'nd'].includes(c.code)).map(c => `<span><i style="background:${c.color}"></i>${esc(c.name_ja)}</span>`).join('')}</div>` : '';
   $('groundNote').innerHTML = shown.length ? shown.map(g => `<div><b>${esc(g.name_ja)}</b>：<span class="${g.status === 'ready' ? '' : 'pend'}">${STATUS_JA[g.status]}</span>　<a href="#" data-gi="${g.id}" style="color:var(--cyan-soft)">素性</a><br>${esc(g.provenance.source.title)}・${esc(g.provenance.license.name)}<br><span class="tflag">${esc(TIME_JA[g.provenance.time])}</span>
       ${g.id === S.ground && tooClose ? `<br><span class="pend">寄りすぎました：この層は ${esc(g.provenance.resolution.label)} なので、ここでは外しています</span>` : ''}${legend(g)}</div>`).join('')
     : '地はいま〈なし〉です。素の地球の上で見ています。';
   $('groundNote').querySelectorAll('[data-gi]').forEach(a => a.onclick = ev => { ev.preventDefault(); openGround(a.dataset.gi); });
-  const credits = shown.filter(g => g.status === 'ready').map(g => g.provenance.source.citation);
-  $('attrib').textContent = credits.length ? '地：' + credits.join(' / ') : '';
 }
 
 /* ── カード ── */
@@ -433,8 +381,8 @@ function pierce(lat, lng) {
     ...KILNS.map(k => ({ t: k.name_ja + '（窯業地）', d: dist(lat, lng, k.lat, k.lng), go: `openKiln('${k.id}')` }))].filter(x => x.d < 400).sort((a, b) => a.d - b.d).slice(0, 5);
   const val = g => {
     if (g.status !== 'ready') return `<span class="pend">${STATUS_JA[g.status]}</span>`;
-    if (g.id === 'current') { const c = currentAt(lat, lng); return c ? `${c.dir}へ 約${c.s.toFixed(2)} m/s<span style="color:var(--dim);font-size:10px">　${esc(CUR_META.period.join('〜'))} の平均（${c.n}回）</span>` : '<span style="color:var(--dim)">この近くに値はありません（陸か、流れが弱い所）</span>'; }
-    if (g.id === 'rock') { const c = rockAt(lat, lng); return c ? `<i style="display:inline-block;width:9px;height:9px;background:${c.color};margin-right:5px"></i>${esc(c.name_ja)}<span style="color:var(--dim);font-size:10px">　0.5°の升目の値</span>` : '読み込み中'; }
+    if (g.id === 'current') { const c = geo.currentAt(lat, lng); return c ? `${c.dir}へ 約${c.s.toFixed(2)} m/s<span style="color:var(--dim);font-size:10px">　${esc(CUR_META.period.join('〜'))} の平均（${c.n}回）</span>` : '<span style="color:var(--dim)">この近くに値はありません（陸か、流れが弱い所）</span>'; }
+    if (g.id === 'rock') { const c = geo.rockAt(lat, lng); return c ? `<i style="display:inline-block;width:9px;height:9px;background:${c.color};margin-right:5px"></i>${esc(c.name_ja)}<span style="color:var(--dim);font-size:10px">　0.5°の升目の値</span>` : '読み込み中'; }
     return '<span style="color:var(--dim)">陰影図のため値は持ちません（地球で見る）</span>';
   };
   const groundRows = GEO.map(g => `<dt>${esc(g.name_ja)}</dt><dd>${val(g)}<br><span style="color:var(--dim);font-size:10px">${esc(TIME_JA[g.provenance.time])}</span></dd>`).join('');
