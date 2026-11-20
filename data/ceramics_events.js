@@ -280,6 +280,44 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "T21",
+  "title_ja": "長次郎と楽茶碗（宗易形）",
+  "when": {
+   "from": 1573,
+   "to": 1591,
+   "label": "天正年間（1573〜1591）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 4,
+  "strand": "design",
+  "lenses": [],
+  "place": {
+   "name_ja": "京都（代表点）",
+   "lat": 35.026,
+   "lng": 135.751,
+   "precision": "city",
+   "coord_by": "source"
+  },
+  "fact_ja": "文化遺産オンラインの「黒楽茶碗（俊寛）」の解説は、楽焼の創始者長次郎が天正年間に千利休の好みを受けて「宗易形」と呼ばれる茶碗を生み出したと書く。",
+  "unknown_ja": "利休と長次郎の関わりの細部。この解説は工房の場所を書いていない（位置はαの代表点）。",
+  "sources": [
+   {
+    "title": "黒楽茶碗（俊寛）〈長次郎作〉（文化遺産オンライン）",
+    "url": "https://online.bunka.go.jp/heritages/detail/166215",
+    "kind": "institution",
+    "checked": "2026-11-20"
+   }
+  ],
+  "jp": {
+   "region_jp": "山城",
+   "tea_ware": true,
+   "tea_role": "茶碗",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
   "id": "E16",
   "title_ja": "朝鮮半島出身陶工と肥前窯業",
   "when": {

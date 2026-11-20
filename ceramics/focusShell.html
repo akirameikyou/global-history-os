@@ -226,8 +226,8 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
-import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120a';
-import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120a';
+import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c';
+import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120c';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
 import { geoBase as GEO } from '../data/geobase_v1.js?v=20261120b';
 
@@ -376,7 +376,7 @@ function select(id) {
 function openKiln(id) {
   const k = KILNS.find(x => x.id === id); if (!k) return;
   S.kiln = id; S.sel = null;
-  openCard('日本の窯業地', `${esc(k.start.label)}<span class="conf ${k.start.confidence}">${CONF_JA[k.start.confidence]}</span>`, k.name_ja, `${k.region_jp}（${k.prefecture}）・${k.kiln_group}・位置は市町の代表点`,
+  openCard('日本の窯業地', `${esc(k.start.label)}<span class="conf ${k.start.confidence}">${CONF_JA[k.start.confidence]}</span>`, k.name_ja, `${k.region_jp}（${k.prefecture}）・${k.kiln_group}・位置は${k.precision === 'site' ? '窯跡あたりの' : '市町の'}代表点（α）`,
     `<p>${esc(k.fact_ja)}</p>${k.tea_ware ? `<div><span class="chip" style="--lc:#b9e3c6">茶陶・${esc(k.tea_role)}</span></div>` : ''}
      <div class="rs"><h4>わかっていないこと</h4><p>${esc(k.unknown_ja)}</p><h4>出典</h4>${srcList(k.sources)}</div>`,
     { label: '地点を見る', go: () => world.pointOfView({ lat: k.lat, lng: k.lng, altitude: 0.5 }, 900) });
@@ -424,7 +424,7 @@ function drawRight() {
     }).join('');
     b.querySelectorAll('.item').forEach(x => x.onclick = () => select(x.dataset.id));
   } else if (S.tab === 'kilns') {
-    b.innerHTML = `<div class="empty">日本の窯業地（試作：出典で始まりの年代を確かめた ${KILNS.length} か所）。位置は市町の代表点です。茶道 Focus・日本地図版へ切り出すための下ごしらえです。</div>` +
+    b.innerHTML = `<div class="empty">日本の窯業地（試作：出典で始まりの年代を確かめた ${KILNS.length} か所）。出典に座標がないので、位置は市町や窯跡あたりの代表点です。茶道 Focus・日本地図版へ切り出すための下ごしらえです。</div>` +
       KILNS.map(k => `<div class="gl" data-k="${k.id}"><div class="nm">${esc(k.name_ja)}<span class="conf ${k.start.confidence}">${CONF_JA[k.start.confidence]}</span></div><div class="s">${esc(k.kiln_group)}・${esc(k.region_jp)}・${esc(k.start.label)}${k.tea_ware ? `・茶陶（${esc(k.tea_role)}）` : ''}</div></div>`).join('');
     b.querySelectorAll('[data-k]').forEach(x => x.onclick = () => openKiln(x.dataset.k));
   } else {
