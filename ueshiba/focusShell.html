@@ -788,9 +788,18 @@ function openFor(key, src) {
   const [k] = key.split(':'), o = keyObj(key); if (!o) return;
   if (k === 'life') showCard({ tag: T('tagLifePlace'), title: o.title, sub: o.year + SEP + o.placeName, html: para(linkify(o.description, new Set())), look: key }, src);
   else if (k === 'world') showCard({ kind: 'world', tag: T('tagWorld'), title: o.title, sub: o.endYear ? o.year + '–' + o.endYear : String(o.year), html: esc(o.description).split('\n\n').map(para).join(''), look: Number.isFinite(o.lat) ? key : null }, src);
-  else if (k === 'found') showCard({ kind: 'spread', tag: T('tagFound'), title: o.country, sub: o.year + SEP + o.org + par(o.city), html: para(esc(o.note || '')), look: key }, src);
-  else if (k === 'first') showCard({ kind: 'spread', tag: T('tagFirst'), title: o.region, sub: o.year + SEP + o.city, html: para(esc(o.note || '')), look: key }, src);
+  else if (k === 'found') showCard({ kind: 'spread', tag: T('tagFound'), title: o.country, sub: o.year + SEP + o.org + par(o.city), html: annivHtml(o, 'found'), look: key }, src);
+  else if (k === 'first') showCard({ kind: 'spread', tag: T('tagFirst'), title: o.region, sub: o.year + SEP + o.city, html: annivHtml(o, 'first'), look: key }, src);
   else showCard({ kind: 'spread', tag: T('tagNet'), title: o.country, sub: o.city, html: para(T('netNote')), look: key }, src);
+}
+// 海外の道場：書籍の年に何周年だったか（注記）ではなく、今年で何周年かを大きく出す。もとの注記は「年の根拠」として小さく残す（2026-11-20 清水さん）
+function annivHtml(o, kind) {
+  const Y = new Date().getFullYear(), n = Y - o.year;
+  const main = kind === 'found'
+    ? (isEn ? Y + ': ' + n + ' years since its founding in ' + o.year : Y + '年で創立' + n + '周年（' + o.year + '年創立）')
+    : (isEn ? Y + ': ' + n + ' years since the first teaching or visit in ' + o.year : Y + '年で' + n + '年（初の指導・訪問は' + o.year + '年）');
+  return '<p class="dc-para" style="font-size:15px;color:var(--ink)">' + esc(main) + '</p>' +
+    (o.note ? '<div class="dc-sec">' + (isEn ? 'Basis for the year' : '年の根拠') + '</div><p class="dc-para" style="font-size:11.5px;color:var(--sub)">' + esc(o.note) + '</p>' : '');
 }
 function openChrono(c, src) {
   const key = c.eventId ? 'life:' + c.eventId : null, pl = c.eventId && placeById(c.eventId);
