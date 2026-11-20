@@ -264,5 +264,38 @@ export const ceramicsKilnsJp = [
     "checked": "2026-11-20"
    }
   ]
+ },
+ {
+  "id": "A03",
+  "name_ja": "京焼・野々村仁清の窯（御室）",
+  "name_en": "Kyoto, Nonomura Ninsei kiln (Omuro)",
+  "kiln_group": "京焼",
+  "region_jp": "山城",
+  "prefecture": "京都府",
+  "lat": 35.031,
+  "lng": 135.714,
+  "precision": "site",
+  "coord_by": "alpha",
+  "start": {
+   "from": 1650,
+   "to": 1699,
+   "label": "17世紀中頃〜後半（仁清の活動）",
+   "confidence": "range"
+  },
+  "tradition_note": "",
+  "clay_or_stone": "",
+  "tea_ware": false,
+  "tea_role": "",
+  "qid": "",
+  "fact_ja": "観光庁の解説（雉香炉）は、仁清が17世紀中頃から後半に京都で活動し、京都西部の山麓の仁和寺の近くに自分の窯を構えたと書く。",
+  "unknown_ja": "窯を開いた年（正保4年＝1647年頃とする説明もあるが、この出典では確かめていない）。茶陶としての役割は、この出典では述べていない。",
+  "sources": [
+   {
+    "title": "Ninsei's Pheasants: Treasures of Overglaze Enamel（観光庁 多言語解説文データベース）",
+    "url": "https://www.mlit.go.jp/tagengo-db/en/R4-00003.html",
+    "kind": "institution",
+    "checked": "2026-11-20"
+   }
+  ]
  }
 ];
