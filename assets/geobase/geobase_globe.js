@@ -5,7 +5,7 @@
 // 地のデータ（data/geobase_v1.js・data/geobase_current_v1.js）は読むだけで変えない。
 // 決まり（焼き物 Focus の DECISIONS_001）：
 //   ・地は「地面」：地球の表面の絵を替える（なし／高さ・水深／岩）。流れ（海流）は1種
-//   ・流れは静止した矢羽。「流す」で3秒だけ動かす
+//   ・流れは静止した矢羽。「流す」を押した時だけ6秒、流線の上を光が走る
 //   ・解像度の上限より寄ったら外して理由を出す。時間の性質（不変・現在の観測）を一行で出す
 //   ・出典の一行を地球の出典欄に足す
 // 呼ぶ側の Focus の処理を壊さないための約束：
@@ -78,7 +78,7 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     S.tooClose = !!(g && lim && world.pointOfView().altitude < lim);
     const url = g && g.status === 'ready' && g.asset && !S.tooClose ? g.asset.file : BASE;
     if (world.globeImageUrl() !== url) world.globeImageUrl(url);
-    mine = S.flow === 'current' && G.current.status === 'ready' ? arrows : [];
+    mine = S.flow === 'current' && G.current.status === 'ready' ? (S.running && streams ? streams : arrows) : [];
     push();
     const shown = shownLayers().filter(x => x.status === 'ready');
     if (attribEl) attribEl.textContent = (baseAttrib + (shown.length ? (baseAttrib ? '　' : '') + '地: ' + shown.map(x => x.provenance.source.citation).join(' / ') : '')).trim();
@@ -89,19 +89,57 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     box.innerHTML = '<span style="color:rgba(238,243,248,.55);font-size:10px;letter-spacing:.1em">地 geoBase@1</span>';
     [['none', 'なし'], ['relief', '高さ・水深'], ['rock', '岩']].forEach(([id, n]) => box.appendChild(btn(n, S.ground === id, () => { S.ground = id; apply(); })));
     box.appendChild(btn('海流', S.flow === 'current', () => { S.flow = S.flow ? null : 'current'; apply(); }));
-    if (S.flow) box.appendChild(btn('流す ▸', false, run));
+    if (S.flow) box.appendChild(btn('流す（6秒） ▸', false, run));
     note.textContent = shownLayers().map(g => `${g.name_ja}：${TIME_JA[g.provenance.time]}` + (g.id === 'current' ? `（${CUR_META.period.join('〜')}の平均）` : '')).join('　') +
       (S.tooClose ? '　寄りすぎたので岩の層を外しています（0.5°の格子）' : '');
     if (note.textContent) box.appendChild(note);
   }
-  // 流す：3秒だけ。呼ぶ側の破線の決まりは終わったら元に戻す
+  // 流す：押した時だけ6秒。短い矢羽の上で光らせても「ちらつき」にしか見えなかった（2026-11-21 清水さん「流れはまだ動いていない？」）ので、
+  // 平均の流れの場をたどった長い流線を描き、その上を光が走るようにする。終わったら矢羽と、呼ぶ側の破線の決まりに戻す
+  const grid = new Map(CUR.map(a => [`${a[0]},${a[1]}`, a]));
+  const at2 = (la, lo) => grid.get(`${la},${(((lo + 180) % 360) + 360) % 360 - 180}`);
+  function sample(la, lo) {   // 2°の升目の4隅から重みをつけて混ぜる（値のない隅は使わない）
+    const la0 = Math.floor(la / 2) * 2, lo0 = Math.floor(lo / 2) * 2, fy = (la - la0) / 2, fx = (lo - lo0) / 2;
+    let u = 0, v = 0, w = 0;
+    for (const [dy, dx, k] of [[0, 0, (1 - fy) * (1 - fx)], [0, 2, (1 - fy) * fx], [2, 0, fy * (1 - fx)], [2, 2, fy * fx]]) {
+      const a = at2(la0 + dy, lo0 + dx); if (a && k > 0) { u += a[2] * k; v += a[3] * k; w += k; }
+    }
+    return w > 0.5 ? [u / w, v / w] : null;
+  }
+  let streams = null;
+  function buildStreams() {
+    const out = [];
+    for (let la = -66; la <= 66; la += 4) for (let lo = -180; lo < 180; lo += 4) {
+      let p = [la + 1, lo + 1], s0 = sample(p[0], p[1]); if (!s0 || Math.hypot(...s0) < 0.08) continue;
+      const pts = [p], h = 0.8;
+      for (let i = 0; i < 16; i++) {
+        const s = sample(p[0], p[1]); if (!s) break; const sp = Math.hypot(s[0], s[1]); if (sp < 0.03) break;
+        p = [p[0] + s[1] / sp * h, p[1] + s[0] / sp * h / Math.max(0.3, Math.cos(p[0] * Math.PI / 180))]; pts.push(p);
+      }
+      if (pts.length < 5) continue;
+      const sp = Math.hypot(...s0), a = Math.min(1, 0.6 + sp * 0.8);
+      const col = `rgba(205,250,244,${a})`;
+      out.push({ geobase: true, stream: true, pts, color: col, col });
+    }
+    return out;
+  }
   let timer = 0;
   const saved = { len: world.pathDashLength(), gap: world.pathDashGap(), anim: world.pathDashAnimateTime() };
   function run() {
+    if (!(S.flow === 'current' && G.current.status === 'ready')) return;
     clearTimeout(timer);
-    world.pathDashLength(d => d.geobase ? 0.35 : (typeof saved.len === 'function' ? saved.len(d) : saved.len))
-      .pathDashGap(d => d.geobase ? 0.15 : (typeof saved.gap === 'function' ? saved.gap(d) : saved.gap)).pathDashAnimateTime(900);
-    timer = setTimeout(() => { world.pathDashLength(saved.len).pathDashGap(saved.gap).pathDashAnimateTime(saved.anim); }, 3000);
+    streams = streams || buildStreams();
+    S.running = true; mine = streams; push();
+    const st = world.pathStroke();   // 呼ぶ側の太さ（万次郎は寄ると細くする）。流す間だけ流線を太く、終わったら戻す
+    world.pathStroke(d => d.stream ? 1.4 : (typeof st === 'function' ? st(d) : st));
+    clearTimeout(run.restoreStroke); run.restoreStroke = setTimeout(() => world.pathStroke(st), 6000);
+    world.pathDashLength(d => d.geobase ? 0.18 : (typeof saved.len === 'function' ? saved.len(d) : saved.len))
+      .pathDashGap(d => d.geobase ? 0.82 : (typeof saved.gap === 'function' ? saved.gap(d) : saved.gap))
+      .pathDashInitialGap(d => d.geobase ? Math.random() : 0).pathDashAnimateTime(2600);
+    timer = setTimeout(() => {
+      S.running = false; world.pathDashLength(saved.len).pathDashGap(saved.gap).pathDashInitialGap(0).pathDashAnimateTime(saved.anim);
+      mine = S.flow === 'current' ? arrows : []; push();
+    }, 6000);
   }
   world.controls().addEventListener('change', () => { const g = S.ground !== 'none' && G[S.ground]; const lim = g && g.provenance.resolution.max_altitude;
     if (lim && (world.pointOfView().altitude < lim) !== S.tooClose) apply(); });

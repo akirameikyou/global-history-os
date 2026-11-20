@@ -240,7 +240,7 @@ import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // �
 import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c';
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261120b'; // 共通の地の層の部品（万次郎の試験と同じもの）
+import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261121b'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -330,7 +330,7 @@ function drawDial() {
   const g = ['none', 'relief', 'rock'];
   $('dialGround').innerHTML = '<span class="lbl">地</span>' + g.map(id => `<button class="seg" data-g="${id}" aria-pressed="${S.ground === id}">${esc(groundName(id))}${id !== 'none' && GEOID[id].status !== 'ready' ? '<span class="st">未</span>' : ''}</button>`).join('');
   $('dialFlow').innerHTML = '<span class="lbl">流れ</span>' + [['current', '海流']].map(([id, n]) => `<button class="seg" data-f="${id}" aria-pressed="${S.flow === id}">${n}${GEOID[id].status !== 'ready' ? '<span class="st">保留</span>' : ''}</button>`).join('') +
-    (S.flow === 'current' ? '<button class="seg" id="runFlow" type="button" title="3秒だけ流れを動かします">流す ▸</button>' : '');
+    (S.flow === 'current' ? '<button class="seg" id="runFlow" type="button" title="6秒だけ、海流に沿って光が流れます">流す（6秒） ▸</button>' : '');
   if ($('runFlow')) $('runFlow').onclick = () => geo.run();
   $('dialGround').querySelectorAll('[data-g]').forEach(b => b.onclick = () => { S.ground = b.dataset.g; S.manual = true; S.link = null; refresh(); });
   $('dialFlow').querySelectorAll('[data-f]').forEach(b => b.onclick = () => { S.flow = S.flow === b.dataset.f ? null : b.dataset.f; S.manual = true; S.link = null; refresh(); });
