@@ -21,13 +21,16 @@ export const geoBase = [
    "confidence": "confirmed",
    "time": "invariant",
    "resolution": {
-    "label": "15秒格子（約450m）。この版は縮めた画像",
+    "label": "元は15秒格子（約450m）。この版は GEBCO の陰影図（WMS）を2048×1024に縮めた画像（約20km）",
     "max_altitude": null
    },
-   "processing_ja": "まだ取得していない"
+   "processing_ja": "GEBCO の WMS（GEBCO_LATEST の陰影図）を2026-11-20に取得し、縮小・彩度45%・明るさ62%に下げた（地を主題より鈍く）。値は持たない"
   },
-  "asset": null,
-  "status": "pending_download"
+  "asset": {
+   "file": "../assets/geobase/relief_gebco_2048.jpg",
+   "format": "jpeg"
+  },
+  "status": "ready"
  },
  {
   "id": "rock",
@@ -51,10 +54,127 @@ export const geoBase = [
     "label": "0.5°格子（約55km）。町の形までは分からない",
     "max_altitude": 0.6
    },
-   "processing_ja": "まだ取得していない"
+   "processing_ja": "第1レベル16クラスに色を付けた画像にした（2倍に拡大・境界はぼかさない）。分類は原典のまま"
   },
-  "asset": null,
-  "status": "pending_download"
+  "asset": {
+   "file": "../assets/geobase/rock_glim_05deg.png",
+   "format": "png"
+  },
+  "status": "ready",
+  "classes": [
+   {
+    "value": 1,
+    "code": "su",
+    "name_ja": "未固結の堆積物",
+    "color": "#7d7464",
+    "cells": 14687
+   },
+   {
+    "value": 3,
+    "code": "ss",
+    "name_ja": "砕屑性の堆積岩",
+    "color": "#8a7a62",
+    "cells": 11574
+   },
+   {
+    "value": 5,
+    "code": "sm",
+    "name_ja": "混合の堆積岩",
+    "color": "#84786a",
+    "cells": 11579
+   },
+   {
+    "value": 6,
+    "code": "sc",
+    "name_ja": "炭酸塩の堆積岩（石灰岩など）",
+    "color": "#8c8a74",
+    "cells": 4866
+   },
+   {
+    "value": 14,
+    "code": "ev",
+    "name_ja": "蒸発岩",
+    "color": "#948a7c",
+    "cells": 163
+   },
+   {
+    "value": 9,
+    "code": "pa",
+    "name_ja": "酸性の深成岩（花崗岩など）",
+    "color": "#9a6e6a",
+    "cells": 4178
+   },
+   {
+    "value": 13,
+    "code": "pi",
+    "name_ja": "中性の深成岩",
+    "color": "#8c6c70",
+    "cells": 268
+   },
+   {
+    "value": 4,
+    "code": "pb",
+    "name_ja": "塩基性の深成岩",
+    "color": "#7a6070",
+    "cells": 634
+   },
+   {
+    "value": 7,
+    "code": "va",
+    "name_ja": "酸性の火山岩（流紋岩など）",
+    "color": "#8e7096",
+    "cells": 667
+   },
+   {
+    "value": 10,
+    "code": "vi",
+    "name_ja": "中性の火山岩（安山岩など）",
+    "color": "#7c6c8e",
+    "cells": 1255
+   },
+   {
+    "value": 2,
+    "code": "vb",
+    "name_ja": "塩基性の火山岩（玄武岩など）",
+    "color": "#66607e",
+    "cells": 2560
+   },
+   {
+    "value": 12,
+    "code": "py",
+    "name_ja": "火砕岩",
+    "color": "#90808e",
+    "cells": 365
+   },
+   {
+    "value": 8,
+    "code": "mt",
+    "name_ja": "変成岩",
+    "color": "#6e7a6c",
+    "cells": 8959
+   },
+   {
+    "value": 16,
+    "code": "ig",
+    "name_ja": "氷河・氷床",
+    "color": "#b4bcc2",
+    "cells": 24743
+   },
+   {
+    "value": 11,
+    "code": "wb",
+    "name_ja": "水域",
+    "color": "#0b1622",
+    "cells": 553
+   },
+   {
+    "value": 15,
+    "code": "nd",
+    "name_ja": "データなし",
+    "color": "#3a3f45",
+    "cells": 47
+   }
+  ]
  },
  {
   "id": "current",

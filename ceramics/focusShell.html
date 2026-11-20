@@ -62,6 +62,9 @@
   #linkLine button{background:none;border:0;color:var(--cyan-soft);cursor:pointer;font-size:10.5px;padding:0;border-bottom:1px dotted}
   #groundNote{padding:0 16px 12px;font-size:10.5px;line-height:1.65;color:var(--sub)}
   #groundNote .tflag{display:inline-block;margin-top:4px;color:var(--est)}
+  #groundNote{max-height:34vh;overflow:auto}
+  .rlg{display:grid;grid-template-columns:1fr 1fr;gap:1px 8px;margin-top:6px;font-size:9.5px;color:var(--sub)}
+  .rlg i{display:inline-block;width:9px;height:9px;margin-right:4px;vertical-align:-1px}
 
   .right-panel{right:24px;top:100px;width:350px;max-height:calc(100% - 330px);display:flex;flex-direction:column;overflow:hidden}
   .tabs{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--rule)}
@@ -226,7 +229,7 @@ import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // �
 import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120a';
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120a';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { geoBase as GEO } from '../data/geobase_v1.js?v=20261120a';
+import { geoBase as GEO } from '../data/geobase_v1.js?v=20261120b';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -243,8 +246,9 @@ function whenText(e) { return e.when.label || (e.when.from === e.when.to ? yr(e.
 function yearText(y) { if (y < -3000) return `約${(Math.round((1950 - y) / 100) * 100).toLocaleString()}年前`; return y < 0 ? `紀元前${Math.abs(y).toLocaleString()}年` : `${y}年`; }
 
 /* ── 地球 ── */
+const BASE_IMG = 'https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg';
 const world = Globe()($('globeViz'))
-  .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
+  .globeImageUrl(BASE_IMG)
   .backgroundColor('#050c16').atmosphereColor('#d9a77a').atmosphereAltitude(0.15)
   .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(0.012).htmlElement(d => {
     const el = document.createElement('div');
@@ -256,6 +260,29 @@ const world = Globe()($('globeViz'))
   .onGlobeClick(({ lat, lng }) => pierce(lat, lng));
 world.pointOfView({ lat: 30, lng: 105, altitude: 2.4 }, 0);
 world.controls().autoRotate = false;
+
+/* ── 地の層を地球に敷く：地は「地面」なので、地球の表面の絵そのものを替える（DECISIONS D4）。
+   解像度の上限より寄ったら、その層を外して理由を一行出す（素性の resolution.max_altitude） ── */
+let curImg = BASE_IMG, tooClose = false;
+function applyGround() {
+  const g = S.ground !== 'none' && GEOID[S.ground];
+  const lim = g && g.provenance.resolution.max_altitude;
+  tooClose = !!(g && lim && world.pointOfView().altitude < lim);
+  const url = g && g.status === 'ready' && g.asset && !tooClose ? g.asset.file : BASE_IMG;
+  if (url !== curImg) { curImg = url; world.globeImageUrl(url); }
+}
+world.onZoom(() => { const was = tooClose; applyGround(); if (was !== tooClose) drawDial(); });
+/* 岩の値：画像の画素の色から分類を引く（同じ画像を読むので、地球に見えている色と食い違わない） */
+const ROCK = GEOID.rock, rockCanvas = document.createElement('canvas');
+let rockReady = false;
+if (ROCK.status === 'ready') { const im = new Image(); im.onload = () => { rockCanvas.width = im.width; rockCanvas.height = im.height; rockCanvas.getContext('2d').drawImage(im, 0, 0); rockReady = true; }; im.src = ROCK.asset.file; }
+function rockAt(lat, lng) {
+  if (!rockReady) return null;
+  const x = Math.min(rockCanvas.width - 1, Math.floor((lng + 180) / 360 * rockCanvas.width)), y = Math.min(rockCanvas.height - 1, Math.floor((90 - lat) / 180 * rockCanvas.height));
+  const [r, g, b] = rockCanvas.getContext('2d').getImageData(x, y, 1, 1).data;
+  const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+  return ROCK.classes.find(c => c.color === hex) || { name_ja: '海', color: hex };
+}
 let globeReady = false;
 const markReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
 world.onGlobeReady(markReady);
@@ -319,8 +346,12 @@ function drawDial() {
   } else $('linkLine').innerHTML = S.manual ? '手動：光源を点けても地は動きません（<button type="button" id="autoLink">連動に戻す</button>）' : '';
   if ($('autoLink')) $('autoLink').onclick = () => { S.manual = false; setLens(S.lens); };
   const shown = [S.ground !== 'none' && GEOID[S.ground], S.flow && GEOID[S.flow]].filter(Boolean);
-  $('groundNote').innerHTML = shown.length ? shown.map(g => `<div><b>${esc(g.name_ja)}</b>：<span class="pend">${STATUS_JA[g.status]}</span><br>${esc(g.provenance.source.title)}・${esc(g.provenance.license.name)}<br><span class="tflag">${esc(TIME_JA[g.provenance.time])}</span></div>`).join('') +
-    '<div style="margin-top:6px">データを取得すると、ここに地の面が敷かれます（素性は「地の層」の枠）。</div>' : '地はいま〈なし〉です。素の地球の上で見ています。';
+  applyGround();
+  const legend = g => g.classes ? `<div class="rlg">${g.classes.filter(c => !['wb', 'nd'].includes(c.code)).map(c => `<span><i style="background:${c.color}"></i>${esc(c.name_ja)}</span>`).join('')}</div>` : '';
+  $('groundNote').innerHTML = shown.length ? shown.map(g => `<div><b>${esc(g.name_ja)}</b>：<span class="${g.status === 'ready' ? '' : 'pend'}">${STATUS_JA[g.status]}</span>　<a href="#" data-gi="${g.id}" style="color:var(--cyan-soft)">素性</a><br>${esc(g.provenance.source.title)}・${esc(g.provenance.license.name)}<br><span class="tflag">${esc(TIME_JA[g.provenance.time])}</span>
+      ${g.id === S.ground && tooClose ? `<br><span class="pend">寄りすぎました：この層は ${esc(g.provenance.resolution.label)} なので、ここでは外しています</span>` : ''}${legend(g)}</div>`).join('')
+    : '地はいま〈なし〉です。素の地球の上で見ています。';
+  $('groundNote').querySelectorAll('[data-gi]').forEach(a => a.onclick = ev => { ev.preventDefault(); openGround(a.dataset.gi); });
   const credits = shown.filter(g => g.status === 'ready').map(g => g.provenance.source.citation);
   $('attrib').textContent = credits.length ? '地：' + credits.join(' / ') : '';
 }
@@ -365,7 +396,12 @@ function dist(a, b, c, d) { const r = Math.PI / 180, x = Math.sin((c - a) * r / 
 function pierce(lat, lng) {
   const near = [...EVENTS.filter(e => e.place.lat != null).map(e => ({ t: e.title_ja, d: dist(lat, lng, e.place.lat, e.place.lng), go: `select('${e.id}')` })),
     ...KILNS.map(k => ({ t: k.name_ja + '（窯業地）', d: dist(lat, lng, k.lat, k.lng), go: `openKiln('${k.id}')` }))].filter(x => x.d < 400).sort((a, b) => a.d - b.d).slice(0, 5);
-  const groundRows = GEO.map(g => `<dt>${esc(g.name_ja)}</dt><dd>${g.status === 'ready' ? '（値）' : `<span class="pend">${STATUS_JA[g.status]}</span>`}<br><span style="color:var(--dim);font-size:10px">${esc(TIME_JA[g.provenance.time])}</span></dd>`).join('');
+  const val = g => {
+    if (g.status !== 'ready') return `<span class="pend">${STATUS_JA[g.status]}</span>`;
+    if (g.id === 'rock') { const c = rockAt(lat, lng); return c ? `<i style="display:inline-block;width:9px;height:9px;background:${c.color};margin-right:5px"></i>${esc(c.name_ja)}<span style="color:var(--dim);font-size:10px">　0.5°の升目の値</span>` : '読み込み中'; }
+    return '<span style="color:var(--dim)">陰影図のため値は持ちません（地球で見る）</span>';
+  };
+  const groundRows = GEO.map(g => `<dt>${esc(g.name_ja)}</dt><dd>${val(g)}<br><span style="color:var(--dim);font-size:10px">${esc(TIME_JA[g.provenance.time])}</span></dd>`).join('');
   S.sel = null; S.kiln = null;
   openCard('一点を貫く', `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`, 'この地点の地と器', '',
     `<dl class="pierce"><dt>地</dt><dd style="color:var(--dim)">地の層（geoBase@1）</dd>${groundRows}<div class="hr"></div>
@@ -453,7 +489,7 @@ $('infoBtn').onclick = () => {
     `<p>動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。焼き物を食器に閉じず、土と石を火で変える技術（セラミック）として、焼成・発見と技術・デザインと文化・物流の筋でたどります。</p>
      <div class="rs"><h4>確かさの3段</h4><p>確定＝証拠がはっきりしている。幅＝学説が割れている・推定。語り＝伝承・俗説。出典で確かめられなかった出来事は載せていません（いまは ${EVENTS.length} 件。候補は調査中）。</p>
      <h4>年の書き方</h4><p>「cal BP」は1950年から遡った較正年代です。年代バーでは西暦に直して置いています。</p>
-     <h4>地の層</h4><p>地球の地面（高さ・水深、岩、海流）は、すべての Focus が使える部品として別に持っています。いまはデータの取得前で、素性（出典・ライセンス）だけを載せています。</p>
+     <h4>地の層</h4><p>地球の地面（高さ・水深、岩、海流）は、すべての Focus が使える部品として別に持っています。高さ・水深（GEBCO）と岩（GLiM 0.5°）を敷けます。海流はライセンスの確認待ちです。各層の出典・ライセンス・加工は「地の層」の枠にあります。</p>
      <h4>位置</h4><p>出典に座標がないものは、αが市町や地域の代表点を置きました（カードに「代表点」と書いています）。</p>
      <h4>この先</h4><p>茶道と日本の焼き物は、北斎版のような日本地図にも展開できるよう、データに旧国名・茶陶の役割を持たせています。</p></div>`, null);
 };
