@@ -151,13 +151,24 @@
   @media (max-width:760px){
     .title{top:10px} .title h1{font-size:18px} .title p{font-size:9.5px;letter-spacing:.04em}
     #shadeLine{top:80px;font-size:10px;white-space:normal;width:92vw;text-align:center}
-    .left-col{left:8px;right:8px;width:auto;top:auto;bottom:198px;flex-direction:row;gap:6px;overflow-x:auto}
-    .left-col>.panel{flex:0 0 auto;max-width:86vw}
-    .left-col .note,#groundNote{display:none}
+    /* 光源と地を上下2段の細い帯に（地が画面外に隠れないように）。見出しは隠し、1行を横に送る */
+    .left-col{left:8px;right:8px;width:auto;top:auto;bottom:194px;max-height:none;flex-direction:column;gap:5px;overflow:visible}
+    .left-col>.panel{overflow:visible}
+    .left-col .sec,.left-col .note,#groundNote{display:none}
+    .lenses,.dial{flex-wrap:nowrap;overflow-x:auto;padding:6px 8px}
+    #dialGround{padding-bottom:0}
+    .lens,.seg{flex:0 0 auto;white-space:nowrap}
+    .lens small{display:none}
+    #groundPanel{display:flex;flex-wrap:wrap;align-items:center}
+    #groundPanel .dial{flex:0 0 auto;padding:6px 4px 6px 8px}
+    #linkLine{flex:1 1 100%;padding:0 10px 6px;font-size:10px}
+    #linkLine:empty{display:none}
     .right-panel{display:none}
     #topCtl{top:104px;right:8px}
     #timelineBar{left:8px;right:8px;bottom:22px;padding:6px 8px}
-    .tl-hint{display:none} #tl{height:96px} #tlYear{font-size:18px;min-width:0}
+    .tl-hint{display:none} #tl{height:96px} #tlYear{font-size:16px;min-width:0;flex:0 0 auto}
+    .tl-top{gap:8px} .tl-top>div:last-of-type{min-width:0;flex:1 1 auto}
+    #tlChap{font-size:12px} #tlScale{font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .legend{display:none}
     .dcard{left:8px;right:8px;width:auto;top:134px;max-height:calc(100% - 350px)}
   }
