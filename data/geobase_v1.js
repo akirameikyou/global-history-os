@@ -182,25 +182,28 @@ export const geoBase = [
   "kind": "flow",
   "provenance": {
    "source": {
-    "title": "OSCAR v2.0 (NASA PO.DAAC)",
-    "url": "https://podaac.jpl.nasa.gov/dataset/OSCAR_L4_OC_FINAL_V2.0",
-    "citation": "ESR (OSCAR v2.0)"
+    "title": "OSCAR Sea Surface Velocity 1/3°, 5 Day Composite（ESR / NOAA ERDDAP jplOscar の写し）",
+    "url": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplOscar",
+    "citation": "OSCAR (ESR) via NOAA ERDDAP"
    },
    "license": {
-    "name": "PO.DAAC のデータ利用の指針（再確認待ち）",
-    "url": "https://podaac.jpl.nasa.gov/",
-    "modification": "check",
-    "redistribution": "check"
+    "name": "ERDDAP の写しの条件：無償で利用・再配布してよい（正確さの保証はない）",
+    "url": "https://coastwatch.pfeg.noaa.gov/erddap/info/jplOscar/index.html",
+    "modification": true,
+    "redistribution": true
    },
    "confidence": "confirmed",
    "time": "present_observation",
    "resolution": {
-    "label": "0.25°格子・1993年以降の解析。過去の海流ではない",
+    "label": "2011年12月〜2014年9月の平均・2°おき（画面では4°おき）・深さ15m。過去の海流ではない",
     "max_altitude": null
    },
-   "processing_ja": "まだ取得していない"
+   "processing_ja": "5日平均を4つおき（29回）・緯度経度2°おきに取得し、地点ごとに平均した。0.03 m/s 未満は描かない"
   },
-  "asset": null,
-  "status": "pending_license"
+  "asset": {
+   "file": "../data/geobase_current_v1.js",
+   "format": "js"
+  },
+  "status": "ready"
  }
 ];
