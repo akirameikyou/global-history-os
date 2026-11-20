@@ -1,0 +1,1037 @@
+<!doctype html>
+<!-- bread/focusShell.html: 小麦とパン Focus — History OS（主題型の Focus。骨組み M1-0）。
+     万次郎・北斎・合氣道の Focus と同じ見た目の言葉（全面の地球・上中央の題・左右の浮遊パネル・中央下の年代バー・浮遊カード）。
+     主題型の決まりごと（bread-focus-001 の COMPOSITION／DECISIONS／DATA_SPEC）：
+       ・年代バーは章ごとに目盛りが違う。各章の帯に「1目盛り＝○年」を常に出す（光源＝いまの縮尺が見えること）
+       ・光源レンズ6つは観測者が動かす。押すとその構造だけが光り、他は影に沈む
+       ・確かさ3段：確定（塗り）／幅（輪）／語り（破線）。未確認は載せない
+       ・カードは二段：台所の段（最初）／研究の段（開くと：学問・証拠・出典）
+       ・系統パネル：パン小麦から遡る。Bゲノムの供与種は未発見＝空白のノード
+     原則：年カーソル ≠ 年代バーの表示幅 ≠ カメラ。カメラは「地点を見る」「遡る」を押した時だけ動く。 -->
+<html lang="ja"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>History OS｜小麦とパン Focus</title>
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/bread/">
+<meta name="description" content="野の草から一枚のパンまで。小麦の系統、栽培化、製粉、発酵、世界と日本のパンの歴史を、地球と年代バーでたどる History OS の小麦とパン Focus（個人制作）。">
+<style>
+  :root{
+    --wheat:#e8c27a; --wheat-soft:#f3dcae;
+    --cyan:#66e0ff; --cyan-soft:#9becff;
+    --est:#e0b45f;
+    --bg:#050c16;
+    --panel:rgba(7,14,24,.62);
+    --rule:rgba(255,255,255,.09);
+    --ink:#eef3f8; --sub:#9db4c8; --dim:rgba(238,243,248,.42);
+    --sans:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic UI",Meiryo,sans-serif;
+    --serif:"Hiragino Mincho ProN","Yu Mincho",serif; --mono:"SFMono-Regular",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  #globeViz{position:fixed;inset:0;z-index:1}
+  /* 地名：点に重ねず右横に。文字は細め（清水さんの指摘「点と文字が重なって読みにくい・太い」） */
+  .rarrow{position:absolute;left:0;top:0;width:11px;height:5px;line-height:0;transform:translate(-50%,-50%);cursor:pointer;filter:drop-shadow(0 0 1px rgba(0,0,0,.7))}
+  .glabel.thin{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;font-weight:300;letter-spacing:.05em;text-shadow:0 0 3px rgba(0,0,0,.9),0 0 1px rgba(0,0,0,.9)} /* 年代の数字：細い字（Segoe UI Light など） */
+  .glabel{pointer-events:none;white-space:nowrap;font-family:var(--sans);font-weight:500;letter-spacing:.03em;line-height:1.25;
+    transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9),0 1px 8px rgba(0,0,0,.7)}
+  .glabel.dot::after{content:'';position:absolute;left:50%;top:135%;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:currentColor}
+  [hidden]{display:none!important}
+  button{font-family:inherit}
+
+  .title{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none}
+  .title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.5em;text-indent:.5em}
+  .title p{margin:7px 0 0;font-size:10.5px;letter-spacing:.42em;color:var(--wheat-soft)}
+  .attrib{position:absolute;right:24px;bottom:8px;z-index:12;font-size:9.5px;color:var(--dim);text-align:right}
+
+  .panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);
+    backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);border-radius:5px;overflow:auto}
+  /* 送りのバー：背景（地・白い矢印ボタン）を付けない（OSシリーズの画面の規律）。どの枠・カードにも同じものを効かせる */
+  ::-webkit-scrollbar{width:6px;height:6px;background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(232,194,122,.28);border-radius:3px}
+  ::-webkit-scrollbar-track,::-webkit-scrollbar-corner{background:transparent}
+  ::-webkit-scrollbar-button{display:none;width:0;height:0}
+  .sec{font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding:13px 16px 6px}
+  .sec .secsub{text-transform:none;letter-spacing:.06em;margin-left:8px;font-size:9.5px}
+
+  /* ── 左：光源レンズ・層・系統 ── */
+  .left-col{position:absolute;left:24px;top:96px;width:280px;z-index:20;display:flex;flex-direction:column;gap:12px;max-height:calc(100vh - 96px - var(--tlh,181px) - 40px)}
+  /* 層の枠：年代バーの左隣（左下）。高さは年代バーに合わせる（JS で --tlh） */
+  #layerPanel{left:24px;bottom:28px;width:216px;height:var(--tlh,181px);display:flex;flex-direction:column}
+  #layerPanel .layers{flex-direction:column;align-items:flex-start;gap:5px}
+  #layerPanel .layer-notes{overflow:auto;flex:1;min-height:0;padding-bottom:4px}
+  #guideNote{position:absolute;right:24px;top:88px;width:320px;z-index:30;background:#0b1522;border:1px solid rgba(232,194,122,.45);border-radius:6px;padding:12px 30px 12px 14px;
+    font-size:12px;line-height:1.75;color:#eef3f8;box-shadow:0 8px 28px rgba(0,0,0,.55)} /* 下を透かさない（はっきり読める）。× で閉じる */
+  #guideNote b{color:var(--wheat-soft);font-weight:600}
+  #guideNote a{color:#bcd3e6}
+  #wheatCard{position:absolute;right:24px;top:88px;width:340px;z-index:45;background:#0b1522;border:1px solid rgba(232,194,122,.45);border-radius:6px;padding:12px 30px 12px 14px;
+    font-size:12px;line-height:1.75;color:#eef3f8;box-shadow:0 8px 28px rgba(0,0,0,.55)} /* 小麦の点の説明（ガイドの説明と同じ形） */
+  #wheatCard b{color:var(--wheat-soft);font-weight:600} #wheatCard a{color:#bcd3e6} #wheatCard .wc-y{font-size:14px;color:#fff}
+  #wheatCard .wc-dim{color:var(--dim);font-size:11px}
+  #wheatCard .gn-close,#guideNote .gn-close{position:absolute;right:6px;top:4px;background:none;border:0;color:#eef3f8;font-size:16px;cursor:pointer;padding:2px 6px}
+  .left-col>.panel{position:relative;left:auto;top:auto}
+  .lenses{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 12px}
+  .lens{display:inline-flex;align-items:center;gap:6px;background:rgba(7,14,24,.55);border:1px solid var(--lc);color:var(--ink);border-radius:4px;padding:3px 9px;font-size:11.5px;cursor:pointer}
+  .lens::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--lc)}
+  .lens.dim{opacity:.38;border-style:dashed}
+  .lens.on{box-shadow:0 0 0 1px var(--lc) inset;background:rgba(255,255,255,.08);font-weight:700}
+  .lens-all{border-color:rgba(238,243,248,.35)} .lens-all::before{background:linear-gradient(90deg,#8fd17a,#e8c27a,#d98ee0,#66c6ff)}
+  .lens-note{padding:0 16px 12px;font-size:10px;color:var(--dim);line-height:1.6}
+  .layers{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 12px}
+  .tgl{background:rgba(7,14,24,.55);border:1px solid rgba(238,243,248,.25);color:var(--sub);border-radius:4px;padding:3px 9px;font-size:11px;cursor:pointer}
+  .tgl[aria-pressed="true"]{color:var(--ink);border-color:var(--wheat);background:rgba(232,194,122,.12)}
+  #lineageSvg{display:block;width:100%;height:auto;padding:0 6px}
+  .lin-node{cursor:pointer}
+  .lin-node text{font-size:9.5px;fill:var(--ink)}
+  .lin-node .g{font-family:var(--mono);font-size:8.5px;fill:var(--wheat-soft)}
+  .lin-node.unknown rect{stroke-dasharray:3 3}
+  .lin-node.sel rect{stroke:var(--wheat);stroke-width:2}
+  .lin-node.trace rect{fill:rgba(232,194,122,.22)}
+  .lin-foot{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:6px 14px 12px}
+  .lin-foot .tgl{white-space:nowrap}
+  .lin-foot .hint{flex:1 1 100%}
+  .lin-foot .hint{font-size:10px;color:var(--dim);line-height:1.5}
+
+  /* ── 右：一覧とカード ── */
+  .right-panel{right:24px;top:96px;width:360px;max-height:calc(100% - 300px);display:flex;flex-direction:column;overflow:hidden}
+  .tabs{display:flex;gap:2px;padding:10px 10px 0;border-bottom:1px solid var(--rule);flex:0 0 auto}
+  .tab{flex:1 1 auto;background:transparent;border:0;border-bottom:2px solid transparent;color:var(--sub);font-size:11.5px;padding:6px 4px 7px;cursor:pointer}
+  .tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--wheat)}
+  .scroll{overflow:auto;flex:1 1 auto;min-height:0}
+  .chap-head{padding:12px 16px 4px}
+  .chap-head .n{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.08em}
+  .chap-head .s{font-size:10.5px;color:var(--sub);margin-top:2px}
+  .item{padding:8px 16px 9px;border-bottom:1px solid var(--rule);cursor:pointer;border-left:2px solid transparent}
+  .item:hover{background:rgba(255,255,255,.05)}
+  .item.sel{background:rgba(232,194,122,.10);border-left-color:var(--wheat)}
+  .item.shade{opacity:.35}
+  .item.future{opacity:.38}
+  .item.now{box-shadow:inset 2px 0 0 var(--wheat-soft)}
+  .item .y{font-family:var(--mono);font-size:10.5px;color:var(--wheat-soft)}
+  .item .t{font-size:12.5px;line-height:1.5;margin-top:1px}
+  .conf{display:inline-block;font-size:9px;border-radius:3px;padding:0 5px;margin-left:6px;vertical-align:1px;border:1px solid currentColor;line-height:1.5}
+  .conf.confirmed{color:#cfe8d0} .conf.range{color:var(--est);border-style:dashed}
+  .conf.narrative{color:#d8b4f0;border-style:dotted}
+  .chip{display:inline-block;font-size:9.5px;border:1px solid var(--lc,rgba(238,243,248,.3));color:var(--lc,var(--sub));border-radius:3px;padding:0 5px;margin:2px 4px 0 0;line-height:1.55}
+  .fld{display:inline-block;font-size:9.5px;color:var(--sub);background:rgba(255,255,255,.06);border-radius:3px;padding:0 5px;margin:2px 4px 0 0;line-height:1.6}
+  .empty{padding:12px 16px;font-size:11px;color:var(--dim);line-height:1.6}
+  .lv{padding:10px 16px;border-bottom:1px solid var(--rule)}
+  .lv .nm{font-family:var(--serif);font-size:14.5px;font-weight:700}
+  .lv .lvl{font-size:9px;color:var(--dim);margin-left:6px;border:1px solid rgba(238,243,248,.25);border-radius:3px;padding:0 4px}
+  .lv p{margin:5px 0 0;font-size:11.5px;line-height:1.65;color:rgba(238,243,248,.86)}
+  .lv .org{font-size:10px;color:var(--sub);margin-top:4px}
+  .lv a,.dcard a{color:var(--cyan-soft)}
+  .chk{padding:10px 16px;border-bottom:1px solid var(--rule)}
+  .chk .q{font-size:12px;font-weight:700;line-height:1.55}
+  .chk p{margin:5px 0 0;font-size:11.5px;line-height:1.65;color:rgba(238,243,248,.86)}
+  .chk .refs{margin-top:4px}
+  .ref{font-size:10px;color:var(--cyan-soft);cursor:pointer;margin-right:8px;border-bottom:1px dotted rgba(155,236,255,.5)}
+
+  /* ── 上右：ボタン ── */
+  #topCtl{position:absolute;right:24px;top:58px;z-index:22;display:flex;gap:6px}
+
+  /* ── 下：年代バー ── */
+  #timelineBar{position:absolute;left:252px;bottom:28px;z-index:20;width:calc(100vw - 276px); /* 左下の層の枠の右から、右端まで */
+    background:var(--panel);border:1px solid var(--rule);border-radius:5px;backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);padding:10px 12px 8px}
+  .tl-top{display:flex;align-items:center;gap:14px;margin-bottom:4px}
+  #tlYear{font-family:var(--serif);font-size:26px;color:var(--wheat-soft);letter-spacing:.03em;line-height:1;white-space:nowrap;min-width:150px}
+  .tl-btns{display:flex;gap:4px}
+  .zb{background:rgba(7,14,24,.7);border:1px solid var(--rule);color:var(--ink);border-radius:6px;width:28px;height:26px;cursor:pointer;font-size:15px;line-height:1;padding:0}
+  .zb:hover{border-color:rgba(232,194,122,.6)} .zb.play[aria-pressed="true"]{color:var(--wheat);border-color:var(--wheat)}
+  .tl-mid{min-width:0}
+  #tlChap{font-family:var(--serif);font-size:14px;font-weight:700;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #tlScale{font-size:10px;color:var(--wheat-soft);margin-top:2px}
+  .tl-hint{margin-left:auto;font-size:9.5px;color:var(--dim);max-width:220px;line-height:1.5}
+  #tl{display:block;width:100%;height:118px;cursor:ew-resize;touch-action:none}
+  #tl .sname{cursor:pointer}
+  #tl .cur-line{stroke:var(--wheat);stroke-width:1.5}
+  #tl .cur-head{fill:var(--wheat)}
+  #tl .past{opacity:.45}
+  #tl .future{opacity:.16}
+  /* ── 地球の印（HTML）：波紋は使わない。点＝地点がはっきり／淡い破線の輪＝このあたり ── */
+  .gm{position:relative;pointer-events:auto;cursor:pointer;transform:translate(-50%,-50%);border-radius:50%}
+  .gm.site{width:9px;height:9px;background:var(--c);box-shadow:0 0 0 1.5px rgba(5,12,22,.85)}
+  .glabel{z-index:3}
+  .gm.site.range{background:rgba(5,12,22,.85);border:1.8px solid var(--c);width:10px;height:10px}
+  .gm.site.narrative{background:rgba(5,12,22,.85);border:1.8px dashed var(--c);width:10px;height:10px}
+  .gm.region{width:34px;height:34px;border:1.2px dashed var(--c);background:rgba(232,194,122,.06)}
+  .gm.region::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--c)}
+  .gm.past{opacity:.42} .gm.past.region{width:14px;height:14px;border-style:solid;background:transparent}
+  .gm.past.region::after{display:none}
+  .gm.now{z-index:2} .gm.now.site{width:13px;height:13px}
+  .gm.sel{box-shadow:0 0 0 2px #fff,0 0 12px rgba(255,255,255,.6)}
+  .gm.shade{opacity:.12}
+  .gm.loaf{width:11px;height:8px;border-radius:5px 5px 2px 2px;background:var(--c);box-shadow:0 0 0 1.5px rgba(5,12,22,.85)}
+  /* パン図鑑 */
+  .zk-axis{display:flex;gap:4px;padding:10px 14px 6px;flex-wrap:wrap}
+  .zk-note{padding:0 16px 8px;font-size:10px;color:var(--dim);line-height:1.6}
+  table.zk{border-collapse:collapse;margin:0 10px 12px;font-size:10.5px}
+  table.zk th{color:var(--sub);font-weight:400;padding:4px 5px;text-align:left;vertical-align:top;white-space:nowrap}
+  table.zk thead th{font-size:9.5px;color:var(--dim)}
+  table.zk td{border-top:1px solid var(--rule);padding:4px 4px;vertical-align:top;min-width:46px}
+  .bchip{display:inline-block;margin:2px 3px 2px 0;padding:1px 6px;border-radius:9px;border:1px solid var(--gc);color:var(--ink);cursor:pointer;font-size:10.5px;line-height:1.6;white-space:nowrap}
+  .bchip:hover{background:rgba(255,255,255,.08)} .bchip.sel{background:rgba(232,194,122,.2);font-weight:700}
+  .bchip.later{opacity:.35;border-style:dashed}
+  .brow{padding:8px 16px;border-bottom:1px solid var(--rule);cursor:pointer;display:flex;gap:10px;align-items:center}
+  .brow:hover{background:rgba(255,255,255,.05)} .brow.later{opacity:.4}
+  .brow img{width:54px;height:40px;object-fit:cover;border-radius:3px;flex:0 0 auto;background:#03070d}
+  .brow .nm{font-size:12.5px;font-weight:700} .brow .sub{font-size:10px;color:var(--sub);margin-top:1px}
+  .fix6{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:11px;margin:8px 0 10px}
+  .fix6 dt{color:var(--dim);font-size:10px} .fix6 dd{margin:0}
+  .brole{margin:-2px 0 8px;font-size:10.5px;line-height:1.6;color:var(--sub)}
+  .role{display:inline-block;font-size:9.5px;border-radius:3px;padding:0 6px;margin-right:6px;line-height:1.7;border:1px solid currentColor}
+  .role.staple{color:#f3dcae} .role.meal{color:#9bc7a4} .role.snack{color:#d8b4f0;border-style:dashed}
+  .yk{color:var(--sub)}
+  ol.ms{list-style:none;margin:4px 0 0;padding:0 0 0 12px;border-left:1px solid rgba(232,194,122,.35)}
+  ol.ms li{position:relative;padding:4px 0 7px;cursor:pointer;font-size:11.5px;line-height:1.6}
+  ol.ms li::before{content:'';position:absolute;left:-16px;top:10px;width:7px;height:7px;border-radius:50%;background:var(--wheat)}
+  ol.ms li.later{opacity:.42} ol.ms li.later::before{background:transparent;border:1px solid var(--wheat)}
+  ol.ms li:hover{background:rgba(255,255,255,.04)}
+  .msy{font-family:var(--mono);font-size:10.5px;color:var(--wheat-soft)}
+  .msk{font-size:9px;color:var(--dim);margin-left:6px}
+  .msn{font-size:10px;color:var(--est);margin-top:1px}
+  .legend-box{font-size:11.5px;line-height:1.7;color:#d9c9ff;border-left:2px dashed #c79bff;padding:4px 0 4px 10px;margin:8px 0}
+  .gm.wild{width:8px;height:8px;background:#8fd17a;border-radius:2px;transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 1px rgba(5,12,22,.8)}
+  #tl .seg rect.bg{fill:rgba(255,255,255,.025)}
+  #tl .seg.cur rect.bg{fill:rgba(232,194,122,.08)}
+  #tl .seg:hover rect.bg{fill:rgba(255,255,255,.06)}
+  #tl .sname{font-size:10.5px;fill:var(--ink);font-family:var(--serif);font-weight:700}
+  #tl .sscale{font-size:8.5px;fill:var(--wheat-soft)}
+  #tl .tick{stroke:rgba(238,243,248,.22)}
+  #tl .tlab{font-size:8px;fill:var(--dim);font-family:var(--mono)}
+  #tl .mk{cursor:pointer}
+  #tl .lane{font-size:8px;fill:var(--dim)}
+  .legend{position:absolute;left:24px;bottom:6px;z-index:20;font-size:9.5px;color:var(--sub);display:flex;gap:14px;white-space:nowrap}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+
+  /* ── 浮遊カード（出来事・系統ノード）── */
+  .dcard{position:absolute;z-index:30;right:400px;top:96px;width:380px;max-height:calc(100% - 300px);overflow:auto;
+    background:rgba(6,12,21,.86);border:1px solid rgba(232,194,122,.35);border-radius:6px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  /* カードの上端の帯：つかんで動かす・✕で閉じる。中を送っても帯は上に残る（画像に✕が隠れないように） */
+  .dc-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 12px;
+    background:rgba(6,12,21,.92);border-bottom:1px solid var(--rule);cursor:grab;user-select:none;touch-action:none}
+  .dc-bar:active{cursor:grabbing}
+  .dc-grip{font-size:10px;letter-spacing:.12em;color:var(--dim)}
+  .dc-x{margin-left:auto;background:transparent;border:0;color:var(--sub);font-size:15px;line-height:1;padding:4px 6px;cursor:pointer}
+  .dc-x:hover{color:var(--ink)}
+  .dcard.moved{right:auto}
+  .dc-head{padding:14px 18px 8px;border-bottom:1px solid var(--rule)}
+  .dc-when{font-family:var(--mono);font-size:11px;color:var(--wheat-soft)}
+  .dc-title{font-family:var(--serif);font-size:18px;font-weight:700;line-height:1.35;margin-top:3px;padding-right:18px}
+  .dc-place{font-size:10.5px;color:var(--sub);margin-top:4px}
+  .dc-body{padding:10px 18px 14px}
+  .kitchen{font-size:13px;line-height:1.85;margin:2px 0 10px}
+  .cross{font-size:11.5px;line-height:1.65;color:#d9c9ff;border-left:2px solid #c79bff;padding:4px 0 4px 10px;margin:0 0 10px}
+  details.research{border-top:1px solid var(--rule);padding-top:8px}
+  details.research>summary{cursor:pointer;font-size:11px;letter-spacing:.12em;color:var(--wheat-soft);list-style:none}
+  details.research>summary::-webkit-details-marker{display:none}
+  .rs{margin-top:8px}
+  .rs h4{margin:10px 0 3px;font-size:9.5px;letter-spacing:.16em;color:var(--dim);font-weight:400}
+  .rs p{margin:0;font-size:11.5px;line-height:1.7;color:rgba(238,243,248,.88)}
+  .rs ul{margin:0;padding-left:16px;font-size:11px;line-height:1.6}
+  .rs .faith{border-left:2px solid #d8b4f0;padding-left:10px;color:#ece0f6}
+  .rs .note{font-size:10px;color:var(--est);margin-top:8px;line-height:1.55}
+  /* 画像：実物は右下に作者・ライセンス。生成画像は必ず左上に「◇ 想像図」の印（実物と見分けるための決まった印） */
+  .dc-fig{margin:0;position:relative;border-bottom:1px solid var(--rule);background:#03070d}
+  .dc-fig img{display:block;width:100%;max-height:230px;object-fit:contain}
+  .dc-fig figcaption{padding:6px 18px 8px;font-size:10px;color:var(--sub);line-height:1.55}
+  .dc-fig figcaption a{color:var(--cyan-soft)}
+  .gen-mark{position:absolute;left:8px;top:8px;font-size:10px;letter-spacing:.08em;color:#1b1206;background:#f3dcae;border-radius:3px;padding:1px 6px;font-weight:700}
+  .gen-mark::before{content:'◇ '}
+  .dc-fig.gen figcaption{color:#f3dcae}
+  .genlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px;margin-top:6px}
+  .genlist figure{margin:0;position:relative;cursor:pointer}
+  .genlist img{width:100%;height:64px;object-fit:cover;border-radius:3px;display:block}
+  .genlist figcaption{font-size:9.5px;color:var(--sub);line-height:1.4;margin-top:3px}
+  .genlist .gen-mark{left:3px;top:3px;font-size:8.5px;padding:0 4px}
+  .mob-only{display:none}
+  .effort{margin:4px 0 6px}.ef{display:grid;grid-template-columns:auto 1fr;column-gap:6px;font-size:10px;line-height:1.5;margin-bottom:3px}
+  .ef-n{white-space:nowrap}.ef-v{color:var(--dim);white-space:nowrap;text-align:right}
+  .ef-bar{grid-column:1 / -1;height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden} /* 全行で同じ幅＝長さを比べられる */
+  .ef-bar i{display:block;height:100%;background:var(--wheat-soft)}
+  .fsq{pointer-events:auto;position:relative;z-index:99998 !important;width:7px;height:7px;background:var(--c);border:1px solid rgba(10,10,10,.8);transform:translate(-50%,-50%) rotate(45deg);cursor:pointer} /* 南アジアの農耕全体の遺跡（ひし形） */
+  .wring{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;border:2px solid var(--c);background:rgba(0,0,0,.25);transform:translate(-50%,-50%);cursor:pointer;box-shadow:0 0 3px rgba(0,0,0,.6)} /* 出土（直接年代ではない） */
+  .wdot{pointer-events:auto;position:relative;z-index:99999 !important;width:9px;height:9px;border-radius:50%;background:var(--c);border:1px solid rgba(10,10,10,.85);transform:translate(-50%,-50%);cursor:help;box-shadow:0 0 3px rgba(0,0,0,.6)}
+  #areaNote .sw{display:block;font-size:9.5px;line-height:1.45}
+  #areaNote .sw i{display:inline-block;width:10px;height:8px;margin-right:5px;vertical-align:middle;border-radius:1px}
+  #areaNote a{color:var(--dim)}
+  .farm-tip{font:11px/1.5 sans-serif;color:#fff;background:rgba(5,12,22,.88);padding:3px 7px;border-radius:4px}
+  #routeNote .rt{margin:6px 0 0;padding-top:6px;border-top:1px solid rgba(232,194,122,.15)}
+  #routeNote .rt b{color:var(--wheat-soft);font-weight:500}
+  #routeNote .rt a{color:var(--dim)}
+  #routeNote .ck{display:inline-block;font-size:9px;border-radius:3px;padding:0 4px;margin-right:4px;border:1px solid}
+  .dc-act{margin:0 18px 14px;background:transparent;border:1px solid rgba(232,194,122,.5);color:var(--wheat-soft);border-radius:4px;padding:4px 10px;font-size:11px;cursor:pointer}
+
+  @media (max-width:980px){
+    .dcard{right:24px;left:24px;width:auto}
+    .left-col{width:230px}
+    .right-panel{width:300px}
+  }
+  @media (max-width:760px){
+    .title h1{font-size:18px;letter-spacing:.3em}
+    .left-col{top:auto;bottom:206px;left:12px;right:12px;width:auto;max-height:30vh;overflow:auto}
+    .left-col #linPanel{display:none}
+    .left-col{display:none} /* スマホでは光源・系統の枠をしまい、地球と年代バーを主に（PC で使う） */
+    #layerPanel{display:none}
+    #guideNote,#wheatCard{top:74px;left:12px;right:12px;width:auto}
+    .tl-top{flex-wrap:wrap;gap:6px 10px}
+    #tlYear{font-size:20px;min-width:0}
+    .tl-mid{flex:1 1 100%;order:3}
+    .tl-hint{display:none}
+    #tl{height:104px}
+    .right-panel{top:72px;right:12px;left:12px;width:auto;max-height:26vh}
+    #topCtl{top:46px;right:12px}
+    #topCtl .tgl{font-size:10px;padding:2px 7px}
+    .title p{display:none}
+    #timelineBar{bottom:24px;left:12px;width:calc(100vw - 24px)}
+    .dcard{top:72px;left:12px;right:12px;max-height:calc(100% - 300px)}
+    .legend{display:none}
+    .mob-only{display:inline-block} /* スマホでは左の枠をしまうので、栽培地域の切り替えだけ上に出す */
+  }
+</style>
+</head><body>
+<div id="globeViz"></div>
+<div class="title"><h1>小麦とパン</h1><p>WHEAT &amp; BREAD FOCUS</p></div>
+<div class="attrib">地球: NASA Blue Marble ／ 写真: Wikimedia Commons ／ 個人制作 ／ 第1版 2026</div>
+
+<div id="topCtl">
+  <button class="tgl mob-only" id="areaBtnM" type="button" aria-pressed="false" title="栽培地域（目安）：境界ではありません">栽培地域</button>
+  <button class="tgl" id="guideInfoBtn" type="button" aria-expanded="false" title="ガイドの説明（緯度と小麦）">◀</button>
+  <button class="tgl" id="guideBtn" type="button" aria-pressed="false" title="ガイド：緯線・経線（10°おき）、赤道（赤）、北回帰線・南回帰線（破線）、日付変更線（180°）">ガイド</button>
+  <button class="tgl" id="infoBtn" type="button">出典・この Focus について</button>
+</div>
+<div id="wheatCard" hidden></div>
+<div id="guideNote" hidden><button class="gn-close" id="guideNoteClose" type="button" aria-label="閉じる">×</button><b>ガイド：緯度と小麦</b><br>小麦の大半は緯度25〜50度で作られ、涼しい季節の作物として15度まで、夏の作物として北緯60度まで広がっています。昼の長さ（緯度で決まる）に反応する遺伝子 Ppd-1 と、冬の寒さを経て穂を出す遺伝子 Vrn-1 の違いが、緯度の違う土地への広がりを支えたとされます。赤＝赤道、破線＝回帰線（23.4°）。<br><span style="display:inline-block;width:12px;height:9px;background:rgba(150,215,120,.55);vertical-align:middle"></span> 主な産地の緯度帯（25〜50°）　<span style="display:inline-block;width:12px;height:9px;background:rgba(120,200,210,.35);vertical-align:middle"></span> 広がりの端（15〜25°、北50〜60°）<br><a href="https://www.fao.org/4/Y4011E/y4011e0r.htm" target="_blank" rel="noopener">FAO「Bread wheat」↗</a>　<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC6117032/" target="_blank" rel="noopener">高緯度の冬小麦の Vrn・Ppd 遺伝子の研究（2018）↗</a></div>
+
+<div class="left-col" id="leftCol">
+  <div class="panel" id="lensPanel">
+    <div class="sec">光源<span class="secsub">どの構造を照らすか</span></div>
+    <div class="lenses" id="lenses"></div>
+    <div class="lens-note" id="lensNote">いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。</div>
+  </div>
+  <div class="panel" id="linPanel">
+    <div class="sec">系統<span class="secsub">パン小麦のなりたち</span></div>
+    <svg id="lineageSvg" viewBox="0 0 268 202"></svg>
+    <div class="lin-foot">
+      <button class="tgl" id="traceBtn" type="button">遡る ▸</button>
+      <button class="tgl" id="wildBtn" type="button" aria-pressed="false" title="系統の図の野生種が、いま地球のどこに自生しているか">自生域を地球に</button>
+      <span class="hint" id="traceHint">いまのパン小麦から、野の草へ一段ずつ遡ります。</span>
+    </div>
+  </div>
+</div>
+
+<!-- 層：年代バーと連動して地球に重ねるもの。年代バーの隣（左下）に置く -->
+<div class="panel" id="layerPanel">
+  <div class="sec">層<span class="secsub">年代とともに重ねる</span></div>
+  <div class="layers">
+    <button class="tgl" id="breadBtn" type="button" aria-pressed="false">パンの種類</button>
+    <button class="tgl" id="areaBtn" type="button" aria-pressed="false">栽培地域（目安）</button>
+    <button class="tgl" id="routeBtn" type="button" aria-pressed="false">広がりの線（推定）</button>
+    <button class="tgl" id="wheatBtn" type="button" aria-pressed="false" title="小麦の粒・穂軸そのものの放射性炭素年代（XRONOS）。遺跡ごとに最も古い試料">小麦の直接年代（点）</button>
+  </div>
+  <div class="layer-notes">
+    <div class="lens-note" id="wheatNote" hidden></div>
+    <div class="lens-note" id="routeNote" hidden></div>
+    <div class="lens-note" id="areaNote" hidden></div>
+    <div class="lens-note" id="layerHint">押すと、年代バーの年までに分かっていることが地球に重なります。</div>
+  </div>
+</div>
+
+<div class="panel right-panel" id="rightPanel">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="events" aria-selected="true">年表</button>
+    <button class="tab" role="tab" data-tab="zukan" aria-selected="false">パン図鑑</button>
+    <button class="tab" role="tab" data-tab="leavens" aria-selected="false">パン種</button>
+    <button class="tab" role="tab" data-tab="narr" aria-selected="false">語り</button>
+    <button class="tab" role="tab" data-tab="check" aria-selected="false">確かめる</button>
+  </div>
+  <div class="scroll" id="rpBody"></div>
+</div>
+
+<div id="detailCard" class="dcard" hidden>
+  <div class="dc-bar" id="dcBar" title="つかんで動かせます（二度押しで元の位置へ）"><span class="dc-grip">⠿ つかんで動かす</span><button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button></div>
+  <div id="dcFig"></div>
+  <div class="dc-head"><div class="dc-when" id="dcWhen"></div><div class="dc-title" id="dcTitle"></div><div class="dc-place" id="dcPlace"></div></div>
+  <div class="dc-body" id="dcBody"></div>
+  <button class="dc-act" id="dcAct" type="button" hidden>地点を見る</button>
+</div>
+
+<div id="timelineBar">
+  <div class="tl-top">
+    <div id="tlYear">—</div>
+    <div class="tl-btns">
+      <button class="zb" id="prevE" type="button" title="前の出来事へ" aria-label="前の出来事へ">‹</button>
+      <button class="zb play" id="playBtn" type="button" title="再生：出来事を一つずつたどる" aria-label="再生">▶</button>
+      <button class="zb" id="nextE" type="button" title="次の出来事へ" aria-label="次の出来事へ">›</button>
+    </div>
+    <div class="tl-mid"><div id="tlChap">全体</div><div id="tlScale"></div></div>
+    <div class="tl-hint">バーを左右になぞると時代が展開します。章の名を押すとその章を広げます。</div>
+  </div>
+  <svg id="tl"></svg>
+</div>
+<div class="legend">
+  <span><i style="background:#e8c27a"></i>確定</span>
+  <span><i style="border:1.5px solid #e0b45f"></i>幅（学説が割れる・推定）</span>
+  <span><i style="border:1.5px dashed #d8b4f0"></i>語り</span>
+  <span>▲草の時計　■畑の時計　●パンの時計</span>
+  <span>◇ 想像図＝生成画像（実物の写真ではない）</span>
+</div>
+
+<script type="module">
+import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
+import { breadEvents as EVENTS, breadChecks as CHECKS } from '../data/bread_events.js?v=20261116m11b';
+import { breadAreas as AREAS } from '../data/bread_areas.js?v=20261118a';
+import { breadRoutes as ROUTES0 } from '../data/bread_routes.js?v=20261118a';
+import { farmingAreas as FARM, farmingArrows as FARM_ARROWS, farmingLabels as FARM_LABELS, farmingClasses as FARM_CLASSES, farmingRamp as FARM_RAMP,
+  farmingSource as FARM_SRC, farmingSourceSA as FARM_SRC_SA, farmingSitesSA as FARM_SA } from '../data/bread_farming.js?v=20261120b';
+// 西ユーラシアは Gronenborn ほかの図で描くので、図と重なる α の面・線は使わない（図の外はそのまま、年代の色で塗る）
+import { wheatDates as WHEAT_DATES, wheatDatesSource as WHEAT_SRC, wheatPresence as WHEAT_PRES, wheatEffort as WHEAT_EFFORT } from '../data/bread_wheat_dates.js?v=20261120a';
+const FARM_COVERED = new Set(['fc', 'se_europe', 'lbk', 'n_europe', 'mehrgarh', 'indus']);
+const ROUTES = [...ROUTES0.filter(r => !['r_anatolia', 'r_se_europe', 'r_lbk', 'r_north'].includes(r.id)), ...FARM_ARROWS];
+const rampColor = y => (FARM_RAMP.find(([lim]) => y < lim) || FARM_RAMP[FARM_RAMP.length - 1])[1];
+const hexA = (h, a) => `rgba(${parseInt(h.slice(1, 3), 16)},${parseInt(h.slice(3, 5), 16)},${parseInt(h.slice(5, 7), 16)},${a})`;
+import { breadLineageNodes as NODES, breadLineageCross as CROSS } from '../data/bread_lineage.js?v=20261118a';
+import { breadAttributions as ATTR, breadLeavens as LEAVENS } from '../data/bread_food.js?v=20261115a';
+import { breadChapters as CHAPTERS, breadLenses as LENSES, breadFields as FIELDS } from '../data/bread_config.js?v=20261116c';
+import { breadImages as IMAGES } from '../data/bread_images.js?v=20261120b';
+import { breadKinds as BREADS } from '../data/bread_breads.js?v=20261116d';
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const LENS = Object.fromEntries(LENSES.map(l => [l.id, l]));
+const CONF_JA = { confirmed: '確定', range: '幅', narrative: '語り' };
+const KIND_JA = { peer_reviewed: '査読論文', primary: '一次資料', institution: '研究機関・公的機関', book: '書籍', press: '報道', secondary: '二次資料' };
+const CLOCK_JA = { grass: '草の時計', field: '畑の時計', bread: 'パンの時計' };
+const S = { chapter: null, lens: null, sel: null, tab: 'events', wild: false, grid: false, trace: -1, node: null, year: -12400, playing: false, breads: false, zAxis: 'matrix', bread: null, areas: false, routes: false, wheatPts: false };
+
+/* ── 年の書き方 ── */
+function yr(y) { return y < 0 ? `前${Math.abs(Math.round(y)).toLocaleString()}` : `${Math.round(y)}`; }
+function whenText(e) { return e.when.label || (e.when.from === e.when.to ? yr(e.when.from) : `${yr(e.when.from)}〜${yr(e.when.to)}`); }
+
+/* ── 地球 ── */
+const world = Globe()(document.getElementById('globeViz'))
+  .globeImageUrl('https://unpkg.com/three-globe@2.45.2/example/img/earth-blue-marble.jpg')
+  .backgroundColor('#050c16')
+  .atmosphereColor('#e8c27a').atmosphereAltitude(0.16)
+  .pathPoints(d => d.pts).pathPointLat(p => p[0]).pathPointLng(p => p[1]).pathPointAlt(p => p[2] ?? 0.001)
+  .onPathClick(d => { if (d.to_ev) select(d.to_ev); })
+  .pathColor(d => d.color).pathStroke(d => d.w).pathDashLength(d => d.dash || 1).pathDashGap(d => d.gap || 0).pathTransitionDuration(0)
+  // 栽培地域（M1.2）：境界を言い切らないよう、内側ほど濃い3重の楕円でぼかす。線は引かない。
+  //   色は小麦色だと砂漠の地肌に溶けて見えないので橙。印（小麦色）とも区別できる
+  .polygonGeoJsonGeometry(d => d.geometry).polygonCapColor(d => d.band ? d.color : d.src ? hexA(d.color, 0.55) // 図（と南アジアの年代）の面
+    : hexA(rampColor(d.from), (d.evidence === 'presence' ? [0.14, 0.2] : [0.22, 0.3, 0.4])[d.ring])) // 図の外の α の面：年代の色。出土だけの地域は薄く
+  .polygonSideColor(() => 'rgba(0,0,0,0)').polygonStrokeColor(() => 'rgba(0,0,0,0)')
+  .polygonAltitude(d => d.band ? 0.003 : d.src ? 0.005 : 0.006 + (d.ring || 0) * 0.0015).polygonsTransitionDuration(0)
+  // 面の吹き出し（polygonLabel）は付けない：面の上の印にはブラウザの吹き出し（title）が出るので、二重になる。地域名は地球に字で出してある
+  .onPolygonClick(d => { if (d.basis) select(d.basis[0]); })
+  // 広がりの線（M1.3）は drawGlobe の routePaths で path として描く（弧の形・向きの矢印「›」つき）
+  .onArcClick(d => { if (d.to_ev) select(d.to_ev); })
+  // 印と地名はすべて HTML で出す。
+  //  ・地名：labelsData の字形は英字のみで日本語が「?」になるため（万次郎版と同じ方式）
+  //  ・印：波紋（ringsData）は「そこから広がった」ように見え、広がりのデータがないのに伝播を思わせるのでやめた。
+  //    地点がはっきりしているもの＝小さな点、地域の代表点＝淡い破線の輪（動かない）。確かさは塗り／輪／破線（年代バーと同じ）
+  .htmlLat(d => d.lat).htmlLng(d => d.lng).htmlAltitude(d => d.alt ?? 0.012).htmlElement(d => {
+    const el = document.createElement('div');
+    if (d.kind === 'arrow') { // 広がりの線の向き（画面上の角度は aimArrows が付ける）
+      const tri = document.createElement('div'); tri.className = 'rarrow' + (d.hyp ? ' hyp' : ''); tri.style.color = d.color; el.appendChild(tri); d.el = tri; // 外側は地球が動かす。向きは内側で回す
+      tri.innerHTML = '<svg width="11" height="5" viewBox="0 0 14 6"><path d="M0 0 L14 3 L0 6 L6 3 Z" fill="currentColor"/></svg>'; // くぼみのある矢印（推定＝小麦色、仮説＝水色。形は同じで色で見分ける）
+      el.addEventListener('click', ev => { ev.stopPropagation(); if (d.to_ev) select(d.to_ev); });
+      return el;
+    }
+    if (d.kind === 'label') {
+      el.className = 'glabel' + (d.thin ? ' thin' : ''); el.textContent = d.text;
+      el.style.color = d.color; el.style.fontSize = `${Math.round(9 + d.size * 5)}px`;
+      return el;
+    }
+    el.className = d.cls; el.style.setProperty('--c', d.color); el.title = d.title;
+    el.addEventListener('click', ev => { ev.stopPropagation(); d.onClick && d.onClick(); });
+    return el;
+  });
+world.pointOfView({ lat: 34, lng: 42, altitude: 2.3 }, 0);
+world.onZoom(pov => { aimArrows(); const near = pov.altitude < 1.5; if (near !== S.near) { S.near = near; drawGlobe(); } }); // 回す・寄るたびに矢印の向きを直す。年代の数字は寄ったときだけ（遠くでは密集して読めない） // 肥沃な三日月地帯を正面に
+// 地球の準備が終わる前に HTML の印を渡すと three-globe の isBehindGlobe が落ちる（万次郎版と同じく準備完了を待つ）
+let globeReady = false;
+const markGlobeReady = () => { if (globeReady) return; globeReady = true; drawGlobe();
+  if (new URLSearchParams(location.search).get('play') === '1') setTimeout(() => $('playBtn').click(), 1200); }; // 表紙の「順にたどる」
+world.onGlobeReady(markGlobeReady);
+// 予備：準備の合図が来なくても、描画が進み始めたら置く（万次郎版と同じ）
+setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markGlobeReady)), 1000);
+world.controls().autoRotate = false;
+
+function lensColor(e) {
+  if (S.lens) return LENS[S.lens].color;
+  return e.confidence === 'narrative' ? '#d8b4f0' : (e.confidence === 'range' ? '#e0b45f' : '#e8c27a');
+}
+function lensOn(e) { return !S.lens || e.lenses.includes(S.lens); }
+/* 時間との関係：future＝カーソルより後（出さない）／now＝カーソルが出来事の幅の中か、直前の一目盛り以内／past＝それより前 */
+function timeState(e) {
+  if (e.when.from > S.year) return 'future';
+  const c = CHAPTERS.find(c => c.id === chapterAt(S.year));
+  return S.year <= e.when.to + c.tick ? 'now' : 'past';
+}
+function lit(e) { return lensOn(e) && timeState(e) !== 'future'; }
+// 緯度帯（ガイドの説明を開いている間だけ）：主な産地 25〜50°（南北）を淡い緑、広がりの端（15〜25°・北50〜60°）をさらに淡い青緑。
+// 経度90°ごとの四角に分け、緯線に沿うよう細かく点を取る（球面の GeoJSON は時計回りが内側）
+const bandRect = (la0, la1, lo0, color) => { const top = [], bot = []; for (let lo = lo0; lo <= lo0 + 90; lo += 5) { top.push([lo, la1]); bot.push([lo, la0]); }
+  return { band: true, color, geometry: { type: 'Polygon', coordinates: [[...top, ...bot.reverse(), top[0]]] } }; };
+const BANDS = [];
+for (const lo0 of [-180, -90, 0, 90]) {
+  for (const [a, b] of [[25, 50], [-50, -25]]) BANDS.push(bandRect(a, b, lo0, 'rgba(150,215,120,0.17)'));
+  for (const [a, b] of [[15, 25], [-25, -15], [50, 60]]) BANDS.push(bandRect(a, b, lo0, 'rgba(120,200,210,0.09)'));
+}
+// 広がりの線：大円に沿って点を取り、弧の高さを付ける。向きは線の上に「›」を3つ（出発→到着）
+const toV = ([la, lo]) => { const p = la * Math.PI / 180, l = lo * Math.PI / 180; return [Math.cos(p) * Math.cos(l), Math.cos(p) * Math.sin(l), Math.sin(p)]; };
+const toLL = v => [Math.asin(Math.max(-1, Math.min(1, v[2]))) * 180 / Math.PI, Math.atan2(v[1], v[0]) * 180 / Math.PI];
+function gcPoint(a, b, t) {
+  const A = toV(a), B = toV(b), w = Math.acos(Math.max(-1, Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2])));
+  if (w < 1e-6) return [...a];
+  const k1 = Math.sin((1 - t) * w) / Math.sin(w), k2 = Math.sin(t * w) / Math.sin(w);
+  return toLL([A[0] * k1 + B[0] * k2, A[1] * k1 + B[1] * k2, A[2] * k1 + B[2] * k2]);
+}
+function routePaths(r) {
+  const hyp = r.certainty === 'hypothesis', color = hyp ? 'rgba(170,205,255,0.9)' : 'rgba(255,214,150,0.92)';
+  const A = toV(r.a), B = toV(r.b), ang = Math.acos(Math.max(-1, Math.min(1, A[0] * B[0] + A[1] * B[1] + A[2] * B[2])));
+  const h = Math.min(0.12, 0.14 * ang), alt = t => 0.004 + h * Math.sin(Math.PI * t);
+  const at = t => { const p = gcPoint(r.a, r.b, t); return [p[0], p[1], alt(t)]; };
+  const pts = []; for (let i = 0; i <= 48; i++) pts.push(at(i / 48));
+  // 資料で確かめられた移動（documented）だけ実線。推定・仮説は矢印の並びだけで描く
+  const line = r.certainty === 'documented' ? { ...r, pts, color, w: 0.45 } : null;
+  const deg = ang * 180 / Math.PI, n = Math.max(5, Math.min(16, Math.round(deg / 1.8))); // 間をあけて、矢印の並びを破線のように
+  const arrows = Array.from({ length: n }, (_, i) => { const t = 0.08 + 0.84 * (i + 0.5) / n, p = at(t);
+    return { kind: 'arrow', lat: p[0], lng: p[1], alt: p[2], p, q: at(Math.min(1, t + 0.02)), color, hyp, to_ev: r.to_ev }; });
+  return { line, arrows };
+}
+// 矢印の向き：線の上の今の点と少し先の点を画面に写して、その角度に回す（地球を回したり寄ったりするたびに）
+let ARROWS = [];
+function aimArrows() {
+  for (const a of ARROWS) {
+    if (!a.el) continue;
+    const s1 = world.getScreenCoords(a.p[0], a.p[1], a.p[2]), s2 = world.getScreenCoords(a.q[0], a.q[1], a.q[2]);
+    if (!s1 || !s2) continue;
+    a.el.style.transform = `translate(-50%,-50%) rotate(${Math.atan2(s2.y - s1.y, s2.x - s1.x)}rad)`;
+  }
+}
+const CERT = { documented: ['資料で確認', 'rgba(255,214,150,.9)'], inferred: ['推定', 'rgba(255,214,150,.9)'], hypothesis: ['仮説', 'rgba(170,205,255,.9)'] };
+// 小麦の点の説明の枠（ガイドの説明と同じ形・同じ場所。× で閉じる）
+function showWheat(w) {
+  const yr = v => v < 0 ? `前${-v}` : `${v}`;
+  const src = /國木田/.test(w.ref) ? 'https://hdl.handle.net/2115/94439' : WHEAT_SRC.url;
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(w.site)}</b>（${esc(w.country)}）<br>` +
+    `<span class="wc-y">${yr(w.from)}年ごろ</span>（95%の幅：${yr(w.lo)}〜${yr(w.hi)}年）<br>` +
+    `この遺跡の小麦の種：${esc(w.kinds.join('・'))}<br>試料：${esc(w.material)}<br>測定：${esc(w.labnr)}（${w.bp}±${w.sd} BP、IntCal20 で較正）／この遺跡の小麦の年代 ${w.n} 点のうち最も古いもの<br>` +
+    (w.from < -9500 ? '※ 栽培化より前で、野生の小麦の可能性<br>' : '') + (w.note ? `※ ${esc(w.note)}<br>` : '') +
+    `出典：${esc(w.ref || 'XRONOS')}　<a href="${esc(src)}" target="_blank" rel="noopener">${/國木田/.test(w.ref) ? '論文（北海道大学）' : 'XRONOS'} ↗</a><br>` +
+    '<span class="wc-dim">点は「その試料が測られた年代」で、この地域に小麦が初めて来た年とは限りません。</span>';
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
+const CN_JA = {"India": "インド", "Pakistan": "パキスタン", "Afghanistan": "アフガニスタン", "Turkmenistan": "トルクメニスタン", "Iran": "イラン", "Nepal": "ネパール", "Bangladesh": "バングラデシュ", "Sri Lanka": "スリランカ"};
+function showFarmSite(f) {
+  const yr = v => v < 0 ? `前${-v}` : `${v}`;
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(f.site)}</b>（${esc(CN_JA[f.country] || f.country)}・新石器の遺跡）<br><span class="wc-y">${yr(f.year)}年ごろ</span>（この遺跡で最も古い放射性炭素年代。較正済み）<br>` +
+    (f.material ? `試料：${esc(f.material)}<br>` : '') + `※ 小麦に限らない「農耕全体」の年代です（大麦・家畜などの層の年代を含む）。小麦そのものの年代は「小麦の直接年代（点）」の層へ。<br>` +
+    `出典：${esc(f.ref)}　<a href="${esc(FARM_SRC_SA.url)}" target="_blank" rel="noopener">データ ↗</a>`;
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
+function showPresence(w) {
+  $('wheatCard').innerHTML = '<button class="gn-close" id="wheatCardClose" type="button" aria-label="閉じる">×</button>' +
+    `<b>${esc(w.site)}</b>（インダス文明の遺跡）<br><span class="wc-y">小麦の出土：${esc(w.period)}</span><br>` +
+    `出た小麦：${esc(w.taxa.join('・'))}<br>` +
+    '※ 小麦そのものの放射性炭素年代ではなく、出土した層の文化期による年代です（中抜きの輪）。<br>' +
+    `出典：${esc(w.ref)}　<a href="https://doi.org/10.7910/DVN/WSHMAD" target="_blank" rel="noopener">データ ↗</a>`;
+  $('wheatCard').hidden = false; $('guideNote').hidden = true;
+  $('wheatCardClose').onclick = () => { $('wheatCard').hidden = true; };
+}
+function drawWheatNote() {
+  const el = $('wheatNote'); if (el.dataset.done) return; el.dataset.done = '1';
+  el.innerHTML = `<b>小麦の直接年代</b>：小麦の粒・穂軸そのものを放射性炭素で測った年代（${WHEAT_DATES.length} 遺跡）。点は「その試料が測られた年代」で、その地域に小麦が初めて来た年ではありません。点のない所は「なかった」ではなく「測られた資料がまだ無い（データベースに無い）」所です。<br>` +
+    '遺跡ごとに最も古い試料を一つの点にし、色は年代の色（栽培地域の注記と同じ）。点に指を乗せると、遺跡・年代の幅・種・試料・測定番号・出典が出ます。年代は IntCal20 で較正した中央値。<br>' +
+    `<a href="${esc(WHEAT_SRC.url)}" target="_blank" rel="noopener">${esc(WHEAT_SRC.title)}（${esc(WHEAT_SRC.license)}）↗</a>　<a href="https://doi.org/10.1017/RDC.2020.41" target="_blank" rel="noopener">IntCal20（Reimer ほか 2020）↗</a><br>` +
+    '<b>足した論文のデータ</b>：中国＝Long ほか 2018（Nature Plants）補足表3の小麦の粒の直接年代（著者が解析で除いた測定は地図からも除く）。日本＝國木田 2025（武田石高遺跡）。<br>' +
+    '<b>中抜きの輪</b>＝南アジアの小麦の出土（Bates 2019、33 遺跡）。小麦そのものの年代ではなく、出土した層の文化期による年代です。<br>' +
+    '<b>測定の量</b>（地域ごとの小麦の直接年代の試料の数／遺跡の数。＋出土＝中抜きの輪の遺跡数。点の無い所は「なかった」ではなく「測られていない・データベースに無い」）：' +
+    `<div class="effort">${WHEAT_EFFORT.map(e => { const mx = Math.max(...WHEAT_EFFORT.map(x => x.samples)); return `<div class="ef"><span class="ef-n">${esc(e.region)}</span><span class="ef-v">${e.samples}点／${e.sites}遺跡${e.presence ? `＋出土${e.presence}` : ''}</span><span class="ef-bar"><i style="width:${Math.max(1, Math.round(100 * e.samples / mx))}%"></i></span></div>`; }).join('')}</div>` +
+    '小麦が西アジアから東アジアへ渡った途中の中央アジア・南アジアは、測定が特に少ない（どちらにも公開の放射性炭素データベースが無い）。';
+}
+function drawAreaNote() {
+  const el = $('areaNote'); if (el.dataset.done) return; el.dataset.done = '1';
+  const sw = (c, t) => `<span class="sw"><i style="background:${c}"></i>${t}</span>`;
+  el.innerHTML = '<b>西ユーラシア</b>：農耕（小麦・大麦などの畑と家畜）が始まった地域と年代。色は図と同じく考古学の文化の区分で、数字は前○年。<br>' +
+    Object.values(FARM_CLASSES).map(([name, a, b, c]) => sw(c, `前${-a}〜${-b}　${name}`)).join('') +
+    `<a href="${esc(FARM_SRC.url)}" target="_blank" rel="noopener">${esc(FARM_SRC.title)} ↗</a>（α が図の色を時期ごとに取り出し、緯度経度に戻した目安）<br>` +
+    '<b>南アジアとその北西</b>：新石器の遺跡（農耕全体の放射性炭素年代、インド・パキスタン・アフガニスタン・トルクメニスタンの 96 遺跡）を小さなひし形で。遺跡の周りを面で塗ると、測られていない所にも農耕があったように見えるので、点のまま描く。<b>図の外</b>（ナイル・中央アジア・中国・アメリカ大陸・オーストラリア）は α が確かめた出来事の目安の楕円。ひし形と楕円は年代の色：<br>' +
+    FARM_RAMP.map(([lim, c], i) => sw(c, i === 0 ? `前${-lim}より前` : lim > 0 ? `前${-FARM_RAMP[i - 1][0]}以降` : `前${-FARM_RAMP[i - 1][0]}〜${-lim}`)).join('') +
+    `<a href="${esc(FARM_SRC_SA.url)}" target="_blank" rel="noopener">${esc(FARM_SRC_SA.title)} ↗</a><br>` +
+    '楕円の薄い面（地名に「出土」）＝小麦が出ただけで栽培は確かめられていない所。どの面も境界は目安です。';
+}
+function drawRouteNote(routesIn) {
+  let routes = routesIn;
+  const el = $('routeNote'); el.hidden = !S.routes; if (!S.routes) return;
+  const name = (id, p) => p ? p[2] : (EVENTS.find(x => x.id === id) || {}).title_ja || id;
+  const farmN = routes.filter(r => r.src === 'leiza').length; routes = routes.filter(r => r.src !== 'leiza');
+  el.innerHTML = '線は研究が考える「つながり」で、人や荷が通った道筋ではありません。小麦色の矢印の列＝複数の遺跡から推定、水色の矢印の列＝対立する仮説の一つ（両方描いています）。並んだ矢印の向きが広がりの向きです（先に小麦が見つかる側から、後の側へ）。線を押すと行き先の出来事が開きます。' +
+    (farmN ? `<div class="rt"><span class="ck" style="color:${CERT.inferred[1]};border-color:${CERT.inferred[1]}">図</span><b>西ユーラシアの農耕の広がり（${farmN}本）</b><br>Gronenborn ほかの図の矢印を α が写したもの（行き先の地域の年代から現れる）。<br><a href="${esc(FARM_SRC.url)}" target="_blank" rel="noopener">${esc(FARM_SRC.title)} ↗</a></div>` : '') +
+    (routes.length || farmN ? '' : '<div class="rt">この年までに引ける線はまだありません。年代バーを進めてください。</div>') +
+    routes.map(r => `<div class="rt"><span class="ck" style="color:${CERT[r.certainty][1]};border-color:${CERT[r.certainty][1]}">${CERT[r.certainty][0]}</span><b>${esc(name(r.from_ev, r.from_pt))} → ${esc(name(r.to_ev, r.to_pt))}</b>（${esc(r.label)}）<br>${esc(r.note_ja)}<br>` +
+      r.sources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)} ↗</a>`).join('<br>') + '</div>').join('');
+}
+function drawGlobe() {
+  const html = [], paths = [];
+  for (const e of EVENTS) {
+    if (e.place.lat == null) continue;
+    const ts = timeState(e), sel = S.sel === e.id;
+    if (ts === 'future' && !sel) continue;
+    const cls = ['gm', e.place.precision === 'region' ? 'region' : 'site', e.confidence, ts, sel ? 'sel' : '', lensOn(e) ? '' : 'shade'].join(' ');
+    html.push({ lat: e.place.lat, lng: e.place.lng, cls, color: lensColor(e), title: `${e.title_ja}（${whenText(e)}）`, onClick: () => select(e.id) });
+    if (sel) /* 自動再生中も地名は選んだ出来事だけ（重なり防止） */ html.push({ kind: 'label', lat: e.place.lat, lng: e.place.lng, alt: 0.02, text: e.title_ja, size: 0.7, color: '#ffffff' });
+  }
+  if (S.breads) {  // パンの種類：記録のある年がカーソルより前のものだけ（その時代までにあったパン）
+    // 同じ地点（パリのバゲットとクロワッサンなど）は印も名前も一つにまとめる（重なって読めなくならないように）
+    const groups = new Map();
+    for (const b of BREADS) {
+      if (b.lat == null || !breadAvail(b)) continue;
+      const k = `${b.lat.toFixed(1)},${b.lng.toFixed(1)}`;
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push(b);
+    }
+    for (const g of groups.values()) {
+      const b0 = g.find(b => b.id === S.bread) || g[0], sel = g.some(b => b.id === S.bread);
+      html.push({ lat: b0.lat, lng: b0.lng, cls: `gm loaf ${sel ? 'sel' : ''}`, color: GRAIN_COLOR[b0.grain] || '#f3dcae',
+        title: g.map(b => `${b.name_ja}（${b.earliest.label}）`).join(' / '), onClick: () => openBread(b0.id) });
+      if (sel || S.tab === 'zukan') html.push({ kind: 'label', lat: b0.lat, lng: b0.lng, alt: 0.02, text: g.map(b => b.name_ja.replace(/（.*）/, '')).join('・'),
+        size: sel ? 0.6 : 0.35, color: sel ? '#ffffff' : 'rgba(243,220,174,.92)' });
+    }
+  }
+  if (S.wild) {
+    for (const n of NODES) {
+      if (n.lat == null) continue;
+      const tr = traceIds().includes(n.id), sel = S.node === n.id;
+      html.push({ lat: n.lat, lng: n.lng, cls: 'gm wild', color: '#8fd17a', title: n.name, onClick: () => openNode(n.id, false) });
+      html.push({ kind: 'label', lat: n.lat, lng: n.lng, alt: 0.02, text: `${shortName(n)}（${n.genome}）`, size: sel || tr ? 0.7 : 0.45,
+        color: sel || tr ? '#c8f0b0' : 'rgba(143,209,122,0.9)' });
+    }
+  }
+  if (S.wheatPts) for (const w of WHEAT_DATES) {
+    if (w.from > S.year) continue;
+    const yr = v => v < 0 ? `前${-v}` : `${v}`;
+    html.push({ lat: w.lat, lng: w.lng, cls: 'wdot', color: rampColor(w.from), onClick: () => showWheat(w), // 押すと説明の枠を開く（指を乗せた時の吹き出しは名前と年代だけ）
+      title: `${w.site}：${yr(w.from)}年ごろ（押すと説明）` });
+  }
+  if (S.wheatPts) for (const w of WHEAT_PRES) { // 南アジア：小麦の出土（直接年代ではない。文化期による年代）＝中抜きの輪
+    if (w.from > S.year) continue;
+    html.push({ lat: w.lat, lng: w.lng, cls: 'wring', color: rampColor(w.from), onClick: () => showPresence(w), title: `${w.site}：小麦の出土（${w.period}）（押すと説明）` });
+  }
+  if (S.areas) for (const f of FARM_SA) { // 南アジアの新石器の遺跡（農耕全体の放射性炭素年代）。面にせず点で（スタジオ検討003）
+    if (f.year > S.year) continue;
+    html.push({ lat: f.lat, lng: f.lng, cls: 'fsq', color: rampColor(f.year), onClick: () => showFarmSite(f), title: `${f.site}：農耕の年代 ${f.year < 0 ? '前' + -f.year : f.year}年ごろ（押すと説明）` });
+  }
+  const labels = html; // 赤道の文字も同じ列へ
+  if (S.grid) { // ガイド（万次郎版と同じ約束）：緯線・経線10°おき（graticules）＋赤道（透明感のある赤）・回帰線（破線）・日付変更線（破線）
+    const lat = (la, color, w, dash) => { const p = []; for (let lo = -180; lo <= 180; lo += 4) p.push([la, lo]); paths.push({ pts: p, color, w, dash, gap: dash }); };
+    lat(0, 'rgba(235,70,60,0.6)', 0.9);
+    lat(23.44, 'rgba(255,214,140,0.5)', 0.4, 0.02); lat(-23.44, 'rgba(255,214,140,0.5)', 0.4, 0.02);
+    const dl = []; for (let la = -85; la <= 85; la += 4) dl.push([la, 180]); paths.push({ pts: dl, color: 'rgba(200,180,255,0.45)', w: 0.4, dash: 0.02, gap: 0.02 });
+    labels.push({ kind: 'label', lat: 1.2, lng: 20, text: '赤道', size: 0.6, color: 'rgba(245,110,100,0.95)' });
+  }
+  world.showGraticules(S.grid);
+  const areas = S.areas ? [...AREAS.filter(a => a.from <= S.year && !FARM_COVERED.has(a.area)), ...FARM.filter(a => a.from <= S.year)] : [];
+  if (S.areas && !S.wild && S.near) for (const l of FARM_LABELS) if (l.year <= S.year) labels.push({ kind: 'label', lat: l.lat, lng: l.lng, alt: 0.016, text: String(-l.year), size: 0.38, color: 'rgba(255,255,255,0.95)', thin: true }); // 図と同じ年代の数字（前○年）
+  if (!S.wild) for (const a of areas) if (a.ring === 0) labels.push({ kind: 'label', lat: a.lat, lng: a.lng, alt: 0.015, text: a.name_ja + (a.evidence === 'presence' ? '（出土）' : ''), size: 0.4, color: 'rgba(243,220,174,0.85)' }); // 野生種の名前と重なるので、野生種の層を出している間は地域名を出さない
+  const pt = (id, p) => { if (p) return p; const e = EVENTS.find(x => x.id === id); return e && e.place.lat != null ? [e.place.lat, e.place.lng] : null; };
+  const routes = S.routes ? ROUTES.filter(r => r.from <= S.year).map(r => ({ ...r, a: pt(r.from_ev, r.from_pt), b: pt(r.to_ev, r.to_pt) })).filter(r => r.a && r.b) : [];
+  drawRouteNote(routes);
+  ARROWS = [];
+  for (const r of routes) { const g = routePaths(r); if (g.line) paths.push(g.line); ARROWS.push(...g.arrows); }
+  labels.push(...ARROWS);
+  world.pathsData(paths);
+  if (globeReady) { world.polygonsData(S.bands ? [...BANDS, ...areas] : areas); world.htmlElementsData(labels); requestAnimationFrame(aimArrows); }
+}
+
+/* ── 光源レンズ ── */
+function drawLenses() {
+  const box = $('lenses');
+  box.innerHTML = `<button class="lens lens-all ${S.lens ? '' : 'on'}" data-l="">全体</button>` +
+    LENSES.map(l => `<button class="lens ${S.lens === l.id ? 'on' : (S.lens ? 'dim' : '')}" style="--lc:${l.color}" data-l="${l.id}">${esc(l.name)}<span style="font-family:var(--mono);font-size:9px;color:var(--dim)">${EVENTS.filter(e => e.lenses.includes(l.id)).length}</span></button>`).join('');
+  box.querySelectorAll('.lens').forEach(b => b.onclick = () => { S.lens = b.dataset.l && S.lens !== b.dataset.l ? b.dataset.l : null; refresh(); });
+  if (!S.lens) { $('lensNote').textContent = 'いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。'; return; }
+  const n = EVENTS.filter(e => e.lenses.includes(S.lens));
+  const solo = n.filter(e => e.lenses.length === 1).length;
+  $('lensNote').innerHTML = `「${esc(LENS[S.lens].name)}」から照らしています（${n.length}件）。このレンズでしか光らない出来事：${solo}件（${Math.round(solo / n.length * 100)}%）。もう一度押すと全体へ。`;
+}
+
+/* ── 系統パネル ── */
+function shortName(n) {
+  return ({ urartu: 'T. urartu', b_donor: 'B供与種？', wild_emmer: '野生エンマー', cult_emmer: '栽培エンマー', durum: 'デュラム', tauschii: 'タルホコムギ',
+    bread_wheat: 'パン小麦', wild_einkorn: '野生一粒', cult_einkorn: '栽培一粒', spelt: 'スペルト' })[n.id] || n.name;
+}
+const LAYOUT = { // x, y（ploidy の段：2x 下・4x 中・6x 上）。箱の幅 56
+  bread_wheat: [100, 22], spelt: [190, 22],
+  cult_emmer: [72, 82], wild_emmer: [72, 128], durum: [150, 82],
+  urartu: [44, 184], b_donor: [108, 184], tauschii: [164, 128],
+  wild_einkorn: [232, 184], cult_einkorn: [232, 128],
+};
+const EDGES = [['urartu', 'wild_emmer'], ['b_donor', 'wild_emmer'], ['wild_emmer', 'cult_emmer'], ['cult_emmer', 'durum'],
+  ['cult_emmer', 'bread_wheat'], ['tauschii', 'bread_wheat'], ['bread_wheat', 'spelt'], ['wild_einkorn', 'cult_einkorn']];
+const TRACE = [['bread_wheat'], ['cult_emmer', 'tauschii'], ['wild_emmer'], ['urartu', 'b_donor']];
+function traceIds() { return S.trace < 0 ? [] : TRACE[S.trace]; }
+function drawLineage() {
+  const svg = $('lineageSvg'), W = 56, H = 28, tr = traceIds();
+  let h = '';
+  [['6x', 22], ['4x', 105], ['2x', 184]].forEach(([t, y]) => { h += `<text x="0" y="${y + 3}" style="font-size:8px;fill:rgba(238,243,248,.35);font-family:var(--mono)">${t}</text>`; });
+  h += `<line x1="200" y1="101" x2="266" y2="101" stroke="rgba(238,243,248,.12)"/><text x="204" y="96" style="font-size:7.5px;fill:rgba(238,243,248,.38)">別の枝</text>`;
+  for (const [a, b] of EDGES) {
+    const [x1, y1] = LAYOUT[a], [x2, y2] = LAYOUT[b];
+    const on = tr.includes(a) || tr.includes(b);
+    h += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${on ? '#e8c27a' : 'rgba(238,243,248,.28)'}" stroke-width="${on ? 1.6 : 1}" ${a === 'b_donor' ? 'stroke-dasharray="3 3"' : ''}/>`;
+  }
+  for (const n of NODES) {
+    const [x, y] = LAYOUT[n.id] || [0, 0];
+    const cls = ['lin-node', n.status === 'unknown' ? 'unknown' : '', S.node === n.id ? 'sel' : '', tr.includes(n.id) ? 'trace' : ''].join(' ');
+    const fill = n.status === 'unknown' ? 'rgba(0,0,0,0)' : 'rgba(7,14,24,.85)';
+    h += `<g class="${cls}" data-id="${n.id}" transform="translate(${x - W / 2},${y - H / 2})">
+      <rect width="${W}" height="${H}" rx="4" fill="${fill}" stroke="${n.status === 'unknown' ? 'rgba(238,243,248,.55)' : 'rgba(143,209,122,.6)'}"/>
+      <text x="${W / 2}" y="13" text-anchor="middle">${esc(shortName(n))}</text>
+      <text class="g" x="${W / 2}" y="24" text-anchor="middle">${esc(n.status === 'unknown' ? '未発見' : n.genome.replace(' または A', ''))}</text></g>`;
+  }
+  svg.innerHTML = h;
+  svg.querySelectorAll('.lin-node').forEach(g => g.onclick = () => openNode(g.dataset.id));
+}
+function openNode(id, fly = true) {
+  const n = NODES.find(x => x.id === id); if (!n) return;
+  S.node = id; S.sel = null;
+  const cr = CROSS.filter(c => c.child.includes(shortName(n)) || c.name.includes(n.name.split(' ')[0]));
+  $('dcWhen').textContent = `${n.ploidy}倍体 ${n.genome}`;
+  $('dcTitle').textContent = n.name;
+  $('dcFig').innerHTML = figHtml(n.id);
+  $('dcPlace').textContent = n.region ? `地域：${n.region}` : '';
+  $('dcBody').innerHTML = `<p class="kitchen">${esc(n.note_ja)}</p>` +
+    (n.status === 'unknown' ? `<div class="cross">この枠が空いているのは、まだ誰も見つけていないからです。研究では Ae. speltoides に近い系統とされますが、供与した種そのものは特定されていません。地球のどこにも置けません。</div>` : '') +
+    (cr.length ? `<details class="research" open><summary>研究の段 ▾</summary><div class="rs">${cr.map(c => `<h4>交雑・分岐</h4><p>${esc(c.parents)} → ${esc(c.child)}<br>${esc(c.label)}（${esc(c.region)}）</p><p>${esc(c.note_ja)}</p>${c.note ? `<div class="note">${esc(c.note)}</div>` : ''}`).join('')}<h4>出典</h4><ul><li><a href="${esc(n.source.url)}" target="_blank" rel="noopener">${esc(n.source.title)}</a>（${esc(KIND_JA[n.source.kind] || n.source.kind)}）</li></ul></div></details>`
+      : `<details class="research"><summary>研究の段 ▾</summary><div class="rs"><h4>出典</h4><ul><li><a href="${esc(n.source.url)}" target="_blank" rel="noopener">${esc(n.source.title)}</a></li></ul></div></details>`);
+  const act = $('dcAct');
+  act.hidden = n.lat == null;
+  act.textContent = '自生域・推定域を見る';
+  act.onclick = () => { S.wild = true; $('wildBtn').setAttribute('aria-pressed', 'true'); drawGlobe(); world.pointOfView({ lat: n.lat, lng: n.lng, altitude: 1.0 }, 900); };
+  $('detailCard').hidden = false;
+  if (fly && n.lat != null && S.wild) world.pointOfView({ lat: n.lat, lng: n.lng, altitude: 1.0 }, 900);
+  drawLineage(); drawGlobe();
+}
+$('traceBtn').onclick = () => {
+  S.trace = S.trace + 1 >= TRACE.length ? -1 : S.trace + 1;
+  const ids = traceIds();
+  S.wild = S.trace >= 0; $('wildBtn').setAttribute('aria-pressed', String(S.wild));
+  const msg = ['いまのパン小麦（六倍体 AABBDD）。カスピ海の南のあたりで生まれたと推定されています。',
+    '一段遡ると：育てていた四倍体の小麦と、野の草タルホコムギ（DD）。',
+    'もう一段：野生エンマー（AABB）。数十万年前、二つの野の草が交わって生まれました。',
+    'いちばん奥：T. urartu（A）と、もう一つの親（B）。Bの親はまだ見つかっていません。'];
+  $('traceHint').textContent = S.trace < 0 ? 'いまのパン小麦から、野の草へ一段ずつ遡ります。' : msg[S.trace];
+  $('traceBtn').textContent = S.trace < 0 ? '遡る ▸' : (S.trace === TRACE.length - 1 ? 'はじめに戻る ↺' : 'さらに遡る ▸');
+  if (ids.length) {
+    openNode(ids[0], false);
+    const ps = ids.map(i => NODES.find(n => n.id === i)).filter(n => n && n.lat != null);
+    if (ps.length) world.pointOfView({ lat: ps.reduce((a, n) => a + n.lat, 0) / ps.length, lng: ps.reduce((a, n) => a + n.lng, 0) / ps.length, altitude: 1.4 }, 1100);
+  } else { S.node = null; $('detailCard').hidden = true; drawLineage(); drawGlobe(); }
+};
+
+/* ── 画像 ── */
+function figHtml(target) {
+  const im = IMAGES.filter(i => i.target === target);
+  if (!im.length) return '';
+  return [...im].sort((a, b) => a.generated - b.generated).map(one).join(''); // 実物を先に、想像図はあとに
+}
+function one(i) {
+  if (i.generated) return `<figure class="dc-fig gen"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}（想像図）" loading="lazy"><span class="gen-mark">想像図</span>
+    <figcaption>想像図（生成画像）：${esc(i.caption_ja)}<br>基づいた資料：${esc(i.basis)}<br>制作：${esc(i.made_by)}（${esc(i.made_on)}）。実物の写真や当時の資料ではありません。</figcaption></figure>`;
+  return `<figure class="dc-fig"><img src="${esc(i.file)}" alt="${esc(i.caption_ja)}" loading="lazy">
+    <figcaption>${esc(i.caption_ja)}<br>${i.kind === 'painting' ? '絵' : '写真'}：${esc(i.artist)}／${esc(i.license)}　<a href="${esc(i.page)}" target="_blank" rel="noopener">元のページ ↗</a></figcaption></figure>`;
+}
+
+/* ── パン図鑑のカード ── */
+/* 記録年が未確認（null）のパンは架空の年を置かず、第6章（いま＝1975年〜）から出す */
+function breadAvail(b) { return b.earliest.from == null ? S.year >= 1975 : b.earliest.from <= S.year; }
+const ROLE_JA = { staple: '主食', meal: '食事のパン', snack: '軽食・祝いの日' };
+const MS_KIND = { record: '記録', tool: '道具・焼き方', material: '材料', institution: '制度', spread: '広がり', japan: '日本' };
+const GRAIN_JA = { wheat: '小麦', rye: 'ライ麦', teff: 'テフ', mixed: '小麦ほか' };
+const GRAIN_COLOR = { wheat: '#f3dcae', rye: '#b98a5e', teff: '#9bc7a4', mixed: '#e8c27a' };
+function openBread(id) {
+  const b = BREADS.find(x => x.id === id); if (!b) return;
+  S.bread = id; S.sel = null; S.node = null;
+  if (!S.breads) { S.breads = true; $('breadBtn').setAttribute('aria-pressed', 'true'); }
+  $('dcFig').innerHTML = figHtml(b.id);
+  $('dcWhen').innerHTML = `記録：${esc(b.earliest.label)}<span class="conf ${b.confidence}">${CONF_JA[b.confidence] || ''}</span>`;
+  $('dcTitle').textContent = b.name_ja;
+  $('dcPlace').textContent = `${b.name_local ? b.name_local + '　' : ''}${b.region}（いまの代表的な地域。発祥の地とは限らない）`;  /* GPT 拡張提案④：図鑑の地点を伝播の起点と混同しない */
+  const rel = (b.related || []).map(r => { const e = EVENTS.find(x => x.id === r); if (e) return `<span class="ref" data-e="${r}">${esc(e.title_ja)} ▸</span>`;
+    const o = BREADS.find(x => x.id === r); return o ? `<span class="ref" data-b="${r}">${esc(o.name_ja)} ▸</span>` : ''; }).join('');
+  $('dcBody').innerHTML = `<p class="kitchen">${esc(b.kitchen_ja)}</p>
+    <div class="brole"><span class="role ${b.role}">${ROLE_JA[b.role]}</span><span class="yk">分かる年：${esc(b.year_kind_ja)}</span></div>
+    <dl class="fix6"><dt>植物の種</dt><dd>${esc(b.species)}</dd><dt>粉</dt><dd>${esc(b.flour)}</dd><dt>発酵</dt><dd>${esc(b.leaven)}</dd>
+      <dt>熱</dt><dd>${esc(b.heat)}</dd><dt>形</dt><dd>${esc(b.form)}</dd><dt>名前</dt><dd>${esc(b.name_ja)}（${esc(b.name_level_ja)}）</dd></dl>
+    <div class="rs"><h4>成り立ちと広がり</h4><p>${esc(b.history_ja)}</p><h4>製法の要点</h4><p>${esc(b.method_ja)}</p></div>
+    ${(b.milestones || []).length ? `<div class="rs"><h4>発展の歩み</h4><ol class="ms">${b.milestones.map(m => `<li class="${m.from > S.year ? 'later' : ''}" data-y="${m.from}">
+        <span class="msy">${esc(m.label)}</span><span class="conf ${m.confidence}">${CONF_JA[m.confidence] || ''}</span><span class="msk">${esc(MS_KIND[m.kind] || '')}</span>
+        <div>${esc(m.text_ja)}</div>${m.note_ja ? `<div class="msn">${esc(m.note_ja)}</div>` : ''}</li>`).join('')}</ol></div>` : ''}
+    ${b.legend_ja ? `<div class="legend-box"><b>語り（起源譚）</b>　${esc(b.legend_ja)}</div>` : ''}
+    ${rel ? `<div class="refs" style="margin:6px 0">${rel}</div>` : ''}
+    <details class="research"><summary>研究の段 ▾　記録と出典</summary><div class="rs">
+      <h4>いちばん古い確かな記録</h4><p>${esc(b.earliest.label)}　${esc(b.earliest.evidence)}</p>
+      <h4>出典</h4><ul>${b.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>（${esc(KIND_JA[s.kind] || s.kind)}・確認 ${esc(s.checked)}）</li>`).join('')}</ul>
+      ${b.note ? `<div class="note">${esc(b.note)}</div>` : ''}</div></details>`;
+  $('dcBody').querySelectorAll('.ref[data-e]').forEach(x => x.onclick = () => select(x.dataset.e));
+  $('dcBody').querySelectorAll('.ref[data-b]').forEach(x => x.onclick = () => openBread(x.dataset.b));
+  $('dcBody').querySelectorAll('.ms li').forEach(x => x.onclick = () => { stopPlay(); setYear(+x.dataset.y); setTimeout(() => openBread(b.id), 30); });
+  const act = $('dcAct'); act.hidden = b.lat == null; act.textContent = '地点を見る';
+  act.onclick = () => world.pointOfView({ lat: b.lat, lng: b.lng, altitude: 1.2 }, 900);
+  $('detailCard').hidden = false;
+  refresh();
+}
+$('breadBtn').onclick = () => { S.breads = !S.breads; $('breadBtn').setAttribute('aria-pressed', String(S.breads)); drawGlobe(); };
+
+/* ── 出来事のカード ── */
+function select(id) {
+  const e = EVENTS.find(x => x.id === id); if (!e) return;
+  S.sel = id; S.node = null; S.bread = null;
+  S.year = e.when.from; // 選んだ出来事の年へカーソルを動かす（地球と一覧もその時点まで展開）
+  $('dcWhen').innerHTML = `${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span><span style="margin-left:8px;color:var(--dim);font-family:var(--sans);font-size:10px">${CLOCK_JA[e.clock] || ''}</span>`;
+  $('dcTitle').textContent = e.title_ja;
+  $('dcFig').innerHTML = figHtml(e.id);
+  $('dcPlace').textContent = e.place.name_ja + (e.place.precision === 'region' ? '（地域の代表点）' : '');
+  const L = e.links;
+  $('dcBody').innerHTML = `<p class="kitchen">${esc(e.kitchen_ja)}</p>` +
+    (L && L.cross_ja ? `<div class="cross">${esc(L.cross_ja)}${L.focus && L.focus.length ? '<br>' + L.focus.map(f => `<a href="../${f}/" target="_blank" rel="noopener">${f === 'manjiro' ? '万次郎 Focus' : '北斎 Focus'} ↗</a>`).join('　') : ''}</div>` : '') +
+    `<div>${e.lenses.map(l => `<span class="chip" style="--lc:${LENS[l]?.color}">${esc(LENS[l]?.name || l)}</span>`).join('')}</div>` +
+    `<details class="research"><summary>研究の段 ▾　だれが、どんな証拠で、どこまで言えているか</summary><div class="rs">
+      <h4>学問</h4><div>${e.field.map(f => `<span class="fld">${esc(FIELDS[f] || f)}</span>`).join('')}</div>
+      ${e.research.bible_ja ? `<h4>文献の記述</h4><p>${esc(e.research.bible_ja)}</p>` : ''}
+      <h4>確かめられたこと</h4><p>${esc(e.research.fact_ja)}</p>
+      ${e.research.inference_ja ? `<h4>推測</h4><p>${esc(e.research.inference_ja)}</p>` : ''}
+      <h4>わかっていないこと・学説が割れること</h4><p>${esc(e.research.unknown_ja)}</p>
+      ${e.research.faith_ja ? `<h4>信仰の言葉として</h4><p class="faith">${esc(e.research.faith_ja)}</p>` : ''}
+      <h4>知られた年</h4><p>${e.known.year ? esc(e.known.year) + '年　' : ''}${esc(e.known.label)}</p>
+      ${L && L.person_qid ? `<h4>人物年鑑</h4><p>${esc(L.person_ja)}（Wikidata ${esc(L.person_qid)}）</p>` : ''}
+      <h4>出典</h4><ul>${e.sources.map(s => `<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>（${esc(KIND_JA[s.kind] || s.kind)}・確認 ${esc(s.checked)}）</li>`).join('')}</ul>
+      ${e.note ? `<div class="note">${esc(e.note)}</div>` : ''}
+    </div></details>`;
+  const act = $('dcAct');
+  act.hidden = e.place.lat == null; act.textContent = '地点を見る';
+  act.onclick = () => world.pointOfView({ lat: e.place.lat, lng: e.place.lng, altitude: e.place.precision === 'site' || e.place.precision === 'city' ? 0.9 : 1.5 }, 900);
+  $('detailCard').hidden = false;
+  refresh();
+}
+/* カードを動かす：帯をつかんで移動。置いた位置は次のカードでも保つ。帯を二度押しで元の位置へ */
+(() => {
+  const card = $('detailCard'), bar = $('dcBar'); let d = null;
+  bar.addEventListener('pointerdown', ev => {
+    if (ev.target.closest('.dc-x') || innerWidth <= 760) return;
+    const r = card.getBoundingClientRect(); d = { dx: ev.clientX - r.left, dy: ev.clientY - r.top }; card.style.width = r.width + 'px';
+    bar.setPointerCapture(ev.pointerId); ev.preventDefault();
+  });
+  bar.addEventListener('pointermove', ev => {
+    if (!d) return;
+    const w = card.offsetWidth, x = Math.max(0, Math.min(innerWidth - w, ev.clientX - d.dx)), y = Math.max(0, Math.min(innerHeight - 60, ev.clientY - d.dy));
+    card.classList.add('moved'); card.style.left = x + 'px'; card.style.top = y + 'px';
+  });
+  bar.addEventListener('pointerup', () => { d = null; });
+  bar.addEventListener('dblclick', ev => { if (ev.target.closest('.dc-x')) return; card.classList.remove('moved'); card.style.left = ''; card.style.top = ''; card.style.width = ''; });
+})();
+$('dcClose').onclick = () => { S.sel = null; S.node = null; S.bread = null; $('detailCard').hidden = true; refresh(); };
+
+/* ── 右パネル ── */
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => { S.tab = t.dataset.tab; if (S.tab === 'zukan' && !S.breads) { S.breads = true; $('breadBtn').setAttribute('aria-pressed', 'true'); drawGlobe(); } document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); drawRight(); });
+function drawRight() {
+  const b = $('rpBody');
+  if (S.tab === 'events') {
+    const groups = CHAPTERS.filter(c => S.chapter === null || c.id === S.chapter);
+    b.innerHTML = groups.map(c => {
+      const items = EVENTS.filter(e => e.chapter === c.id).sort((a, z) => a.when.from - z.when.from);
+      if (!items.length) return '';
+      return `<div class="chap-head"><div class="n">${c.id ? `第${c.id}章　` : ''}${esc(c.name)}</div><div class="s">${esc(c.sub)}</div></div>` +
+        items.map(e => `<div class="item ${S.sel === e.id ? 'sel' : ''} ${S.lens && !e.lenses.includes(S.lens) ? 'shade' : ''} ${timeState(e) === 'future' ? 'future' : ''} ${timeState(e) === 'now' ? 'now' : ''}" data-id="${e.id}">
+          <div class="y">${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span></div><div class="t">${esc(e.title_ja)}</div></div>`).join('');
+    }).join('') || '<div class="empty">この章の出来事はまだありません。</div>';
+    b.querySelectorAll('.item').forEach(x => x.onclick = () => { stopPlay(); select(x.dataset.id); });
+    const s = b.querySelector('.item.sel') || [...b.querySelectorAll('.item.now')].pop(); if (s) s.scrollIntoView({ block: 'nearest' });
+  } else if (S.tab === 'zukan') {
+    const avail = breadAvail;
+    const nAvail = BREADS.filter(avail).length;
+    let h = `<div class="zk-axis">${[['matrix', '製法×発酵'], ['era', '時代順'], ['region', '地域']].map(([k, t]) => `<button class="tgl" data-ax="${k}" aria-pressed="${S.zAxis === k}">${t}</button>`).join('')}</div>
+      <div class="zk-note">${yearText(S.year)}までに記録のあるパン：${nAvail} / ${BREADS.length} 種（薄い名前はまだ記録がない時代）。色は穀物：${Object.entries(GRAIN_JA).map(([k, v]) => `<span style="color:${GRAIN_COLOR[k]}">●</span>${v}`).join(' ')}</div>`;
+    const chip = b => `<span class="bchip ${S.bread === b.id ? 'sel' : ''} ${avail(b) ? '' : 'later'}" style="--gc:${GRAIN_COLOR[b.grain]}" data-b="${b.id}">${esc(b.name_ja)}</span>`;
+    if (S.zAxis === 'matrix') {
+      const H = [...new Set(BREADS.map(b => b.heat_group))], L = [...new Set(BREADS.map(b => b.leaven_group))];
+      h += `<table class="zk"><thead><tr><th>発酵＼熱</th>${H.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>` +
+        L.map(l => `<tr><th>${esc(l)}</th>${H.map(x => `<td>${BREADS.filter(b => b.leaven_group === l && b.heat_group === x).map(chip).join('')}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
+    } else {
+      const list = [...BREADS].sort(S.zAxis === 'era' ? (a, b) => (a.earliest.from ?? 9999) - (b.earliest.from ?? 9999) : (a, b) => a.region.localeCompare(b.region, 'ja'));
+      h += list.map(b => { const im = IMAGES.find(i => i.target === b.id && !i.generated);
+        return `<div class="brow ${avail(b) ? '' : 'later'}" data-b="${b.id}">${im ? `<img src="${esc(im.file)}" alt="" loading="lazy">` : '<img alt="">'}<div><div class="nm">${esc(b.name_ja)}</div><div class="sub"><span class="role ${b.role}">${ROLE_JA[b.role]}</span> ${esc(S.zAxis === 'era' ? b.earliest.label : b.region)}・${esc(b.leaven)}</div></div></div>`; }).join('');
+    }
+    b.innerHTML = h;
+    b.querySelectorAll('[data-ax]').forEach(x => x.onclick = () => { S.zAxis = x.dataset.ax; drawRight(); });
+    b.querySelectorAll('[data-b]').forEach(x => x.onclick = () => openBread(x.dataset.b));
+  } else if (S.tab === 'leavens') {
+    b.innerHTML = `<div class="empty">パンは何で膨らむのか。パン種と、そこで働く小さな生き物。</div>` + LEAVENS.map(v => `<div class="lv"><span class="nm">${esc(v.name_ja)}</span><span class="lvl">${esc(v.name_level)}</span>
+      <p>${esc(v.what_ja)}</p><p style="color:var(--sub)">${esc(v.history_ja)}</p>${v.organisms ? `<div class="org">はたらく生き物：${esc(v.organisms)}</div>` : ''}
+      <div class="org"><a href="${esc(v.source.url)}" target="_blank" rel="noopener">${esc(v.source.title)}</a></div></div>`).join('');
+  } else if (S.tab === 'narr') {
+    b.innerHTML = `<div class="empty">よく知られた話の「帰属の履歴」。年は、言われたとされる年ではなく、結びつけられた年で書きます。</div>` + ATTR.map(a => `<div class="lv">
+      <span class="nm">${esc(a.claim)}</span><span class="conf ${a.confidence}">${CONF_JA[a.confidence] || a.confidence}</span>
+      <p>結びつけられた相手：${esc(a.attributed_to)}</p>
+      <p><b>いちばん古い文：</b>${esc(a.earliest.year)}　${esc(a.earliest.text)}</p>
+      <p><b>結びつけた最初：</b>${esc(a.first_link.year)}　${esc(a.first_link.text)}</p>
+      <p style="color:var(--sub)">${esc(a.note_ja)}</p>
+      <div class="org"><a href="${esc(a.source.url)}" target="_blank" rel="noopener">${esc(a.source.title)}</a>（${esc(KIND_JA[a.source.kind] || a.source.kind)}）</div></div>`).join('');
+  } else {
+    b.innerHTML = CHECKS.map(c => `<div class="chap-head"><div class="s" style="font-size:11.5px;color:var(--ink);line-height:1.6">${esc(c.title_ja)}</div></div>` +
+      c.items.map(i => `<div class="chk"><div class="q">「${esc(i.claim)}」<span class="conf ${i.verdict}">${CONF_JA[i.verdict]}</span></div><p>${esc(i.body)}</p>
+        <div class="refs">${i.refs.map(r => { const e = EVENTS.find(x => x.id === r); return e ? `<span class="ref" data-id="${r}">${esc(e.title_ja)} ▸</span>` : ''; }).join('')}</div></div>`).join('') +
+      `<div class="empty">出典：${c.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener" style="color:var(--cyan-soft)">${esc(s.title)}</a>`).join('、')}</div>`).join('');
+    b.querySelectorAll('.ref').forEach(x => x.onclick = () => select(x.dataset.id));
+  }
+}
+
+/* ── 年代バー：章ごとに縮尺が違う帯を並べ、全体を一本のスライダーとしてなぞれる ──
+   原則：年カーソル（S.year）≠ 表示幅（S.chapter＝広げた章）≠ カメラ（再生と「地点を見る」の時だけ動く） */
+function chapterAt(y) { const c = CHAPTERS.find(c => c.from <= y && y < c.to); return c ? c.id : (y < CHAPTERS[0].from ? CHAPTERS[0].id : CHAPTERS[CHAPTERS.length - 1].id); }
+let TL = { segs: [], sw: 0, gap: 3 };
+function xOfYear(y) {
+  const i = TL.segs.findIndex(c => c.from <= y && y < c.to);
+  if (i < 0) return y < TL.segs[0].from ? 0 : TL.segs.length * (TL.sw + TL.gap) - TL.gap;
+  const c = TL.segs[i]; return i * (TL.sw + TL.gap) + (y - c.from) / (c.to - c.from) * TL.sw;
+}
+function yearAtX(x) {
+  const i = Math.max(0, Math.min(TL.segs.length - 1, Math.floor(x / (TL.sw + TL.gap))));
+  const c = TL.segs[i], f = Math.max(0, Math.min(1, (x - i * (TL.sw + TL.gap)) / TL.sw));
+  return Math.round(c.from + f * (c.to - c.from - 1));
+}
+function yearText(y) {
+  if (y < -3000) { const bp = 1950 - y; return bp >= 100000 ? `約${(bp / 10000).toFixed(0)}万年前` : `約${(Math.round(bp / 100) * 100).toLocaleString()}年前`; }
+  return y < 0 ? `紀元前${Math.abs(y).toLocaleString()}年` : `${y}年`;
+}
+function drawTimeline() {
+  const svg = $('tl'), W = svg.clientWidth || 1000, H = 118, gap = 3;
+  const segs = S.chapter === null ? CHAPTERS : CHAPTERS.filter(c => c.id === S.chapter);
+  const sw = (W - gap * (segs.length - 1)) / segs.length;
+  TL = { segs, sw, gap };
+  const lanes = { grass: 50, field: 72, bread: 94 };
+  let h = '';
+  segs.forEach((c, i) => {
+    const x0 = i * (sw + gap), span = c.to - c.from;
+    const X = y => x0 + Math.max(0, Math.min(1, (y - c.from) / span)) * sw;
+    h += `<g class="seg ${chapterAt(S.year) === c.id ? 'cur' : ''}" data-c="${c.id}"><rect class="bg" x="${x0}" y="0" width="${sw}" height="${H}" rx="3"/>
+      <text class="sname" data-c="${c.id}" x="${x0 + 6}" y="14">${sw < 90 ? (c.id ? c.id : '深') : (c.id ? c.id + ' ' : '') + esc(c.name)}${S.chapter === c.id ? '　◂ 全体へ' : ''}</text>
+      ${sw < 90 ? '' : `<text class="sscale" x="${x0 + 6}" y="27">1目盛り＝${esc(c.tickLabel)}</text>`}`;
+    const first = Math.ceil(c.from / c.tick) * c.tick;
+    const n = Math.floor((c.to - first) / c.tick);
+    const every = Math.max(1, Math.ceil(n / Math.max(2, Math.floor(sw / 46))));
+    for (let k = 0; k <= n; k++) {
+      const y = first + k * c.tick, x = X(y);
+      h += `<line class="tick" x1="${x}" x2="${x}" y1="36" y2="${k % every ? 39 : 42}"/>`;
+      if (k % every === 0 && sw > 60) h += `<text class="tlab" x="${x}" y="${H - 3}" text-anchor="middle">${yr(y)}</text>`;
+    }
+    h += '</g>';
+    if (i === 0 && sw > 160) Object.entries(lanes).forEach(([k, y]) => { h += `<text class="lane" x="${x0 + sw - 4}" y="${y - 6}" text-anchor="end">${CLOCK_JA[k]}</text>`; });
+    for (const e of EVENTS.filter(e => e.chapter === c.id)) {
+      const a = X(e.when.from), b = X(e.when.to), y = lanes[e.clock] || 94, on = lensOn(e), sel = S.sel === e.id;
+      const ts = timeState(e);
+      const col = on ? lensColor(e) : 'rgba(238,246,248,0.15)';
+      h += `<g class="${ts === 'future' ? 'future' : (ts === 'past' ? 'past' : '')}">`;
+      if (b - a > 3) h += `<rect x="${a}" y="${y - 2}" width="${b - a}" height="4" rx="2" fill="${col}" opacity="${e.confidence === 'range' ? 0.35 : 0.55}"/>`;
+      const cx = (a + b) / 2, r = sel ? 6 : 4.2;
+      const st = e.confidence === 'confirmed' ? `fill="${col}" stroke="${sel ? '#fff' : 'none'}"` :
+        `fill="rgba(5,12,22,.9)" stroke="${sel ? '#fff' : col}" stroke-width="1.6" ${e.confidence === 'narrative' ? 'stroke-dasharray="2 2"' : ''}`;
+      const shape = e.clock === 'grass' ? `<path d="M${cx} ${y - r} L${cx + r} ${y + r * .8} L${cx - r} ${y + r * .8} Z" ${st}/>` :
+        e.clock === 'field' ? `<rect x="${cx - r * .85}" y="${y - r * .85}" width="${r * 1.7}" height="${r * 1.7}" ${st}/>` : `<circle cx="${cx}" cy="${y}" r="${r}" ${st}/>`;
+      h += `<g class="mk" data-id="${e.id}"><title>${esc(e.title_ja)}（${esc(whenText(e))}）</title>${shape}</g></g>`;
+    }
+  });
+  // 年カーソル
+  const cx = xOfYear(S.year);
+  h += `<line class="cur-line" x1="${cx}" x2="${cx}" y1="30" y2="${H - 12}"/><path class="cur-head" d="M${cx - 5} 30 L${cx + 5} 30 L${cx} 37 Z"/>`;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  svg.innerHTML = h;
+  svg.querySelectorAll('.mk').forEach(m => m.onclick = ev => { ev.stopPropagation(); stopPlay(); select(m.dataset.id, true); });
+  svg.querySelectorAll('.sname').forEach(t => t.onclick = ev => { ev.stopPropagation(); const c = +t.dataset.c; S.chapter = S.chapter === c ? null : c;
+    if (S.chapter !== null && chapterAt(S.year) !== c) S.year = CHAPTERS.find(x => x.id === c).from; refresh(); });
+  const cur = CHAPTERS.find(c => c.id === chapterAt(S.year));
+  $('tlYear').textContent = yearText(S.year);
+  $('tlChap').textContent = `${cur.id ? '第' + cur.id + '章　' : ''}${cur.name}　${cur.sub}`;
+  $('tlScale').textContent = S.chapter === null ? `この章は 1目盛り＝${cur.tickLabel}（章ごとに縮尺が違います）` : `${yr(cur.from)}〜${yr(cur.to)} を広げています　1目盛り＝${cur.tickLabel}`;
+}
+/* なぞる：バーの上で押したまま左右に動かすと年が進み、地球と一覧が展開する */
+(() => {
+  const svg = $('tl'); let drag = false;
+  const at = ev => { const r = svg.getBoundingClientRect(); return yearAtX((ev.clientX - r.left) * (svg.viewBox.baseVal.width / r.width)); };
+  svg.addEventListener('pointerdown', ev => { if (ev.target.closest('.mk,.sname')) return; drag = true; svg.setPointerCapture(ev.pointerId); stopPlay(); setYear(at(ev)); });
+  svg.addEventListener('pointermove', ev => { if (drag) setYear(at(ev)); });
+  svg.addEventListener('pointerup', () => { drag = false; });
+})();
+let raf = 0;
+function setYear(y) { S.year = y; cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { drawTimeline(); drawGlobe(); drawRight(); }); }
+
+/* 前・次・再生：出来事を年の順に一つずつ（再生中だけカメラがその地点へ寄る） */
+const ORDER = [...EVENTS].sort((a, b) => a.when.from - b.when.from || a.when.to - b.when.to);
+function stepTo(dir) {
+  const i = ORDER.findIndex(e => e.id === S.sel);
+  let j;
+  if (i >= 0) j = i + dir;
+  else j = dir > 0 ? ORDER.findIndex(e => e.when.from > S.year) : ORDER.map(e => e.when.from <= S.year).lastIndexOf(true);
+  if (j < 0 || j >= ORDER.length) return false;
+  select(ORDER[j].id, true);
+  const e = ORDER[j];
+  if (S.playing && e.place.lat != null) world.pointOfView({ lat: e.place.lat, lng: e.place.lng, altitude: 1.6 }, 1200);
+  return true;
+}
+let playTimer = 0;
+function stopPlay() { S.playing = false; clearTimeout(playTimer); $('playBtn').textContent = '▶'; $('playBtn').setAttribute('aria-pressed', 'false'); }
+function playNext() { if (!S.playing) return; if (!stepTo(1)) { stopPlay(); return; } playTimer = setTimeout(playNext, 4200); }
+$('playBtn').onclick = () => { if (S.playing) { stopPlay(); return; }
+  // 初めての再生では栽培地域の層を出す（年代とともに地域が広がる様子が、この Focus の見せ場）。一度消した人には、次の再生で勝手に出さない
+  if (!S.areas && !S.areasAuto) $('areaBtn').click(); S.areasAuto = true;
+  S.playing = true; $('playBtn').textContent = '❚❚'; $('playBtn').setAttribute('aria-pressed', 'true'); playNext(); };
+$('prevE').onclick = () => { stopPlay(); stepTo(-1); };
+$('nextE').onclick = () => { stopPlay(); stepTo(1); };
+
+/* ── 層のボタン・出典 ── */
+$('wildBtn').onclick = () => { S.wild = !S.wild; $('wildBtn').setAttribute('aria-pressed', String(S.wild)); drawGlobe(); if (S.wild) world.pointOfView({ lat: 36, lng: 44, altitude: 1.6 }, 900); };
+$('areaBtn').onclick = () => { S.areas = !S.areas; for (const id of ['areaBtn', 'areaBtnM']) $(id).setAttribute('aria-pressed', String(S.areas)); $('areaNote').hidden = !S.areas; if (S.areas) drawAreaNote(); layerHint(); drawGlobe(); };
+$('areaBtnM').onclick = () => $('areaBtn').click();
+const layerHint = () => { $('layerHint').hidden = S.routes || S.areas || S.wheatPts; };
+$('wheatBtn').onclick = () => { S.wheatPts = !S.wheatPts; $('wheatBtn').setAttribute('aria-pressed', String(S.wheatPts)); $('wheatNote').hidden = !S.wheatPts; if (S.wheatPts) drawWheatNote(); layerHint(); drawGlobe(); };
+$('routeBtn').onclick = () => { S.routes = !S.routes; $('routeBtn').setAttribute('aria-pressed', String(S.routes)); layerHint(); drawGlobe(); };
+$('guideBtn').onclick = () => { S.grid = !S.grid; $('guideBtn').setAttribute('aria-pressed', String(S.grid)); drawGlobe(); };
+const showGuideNote = on => { S.bands = on; drawGlobe(); $('guideNote').hidden = !on; $('guideInfoBtn').setAttribute('aria-expanded', String(on)); $('guideInfoBtn').textContent = on ? '▶' : '◀'; };
+$('guideInfoBtn').onclick = () => showGuideNote($('guideNote').hidden);
+$('guideNoteClose').onclick = () => showGuideNote(false);
+// 層の枠の高さを年代バーに合わせる（左の列もその分だけ短く）
+const fitLayer = () => document.documentElement.style.setProperty('--tlh', $('timelineBar').offsetHeight + 'px');
+addEventListener('resize', fitLayer); requestAnimationFrame(fitLayer);
+$('infoBtn').onclick = () => {
+  S.sel = null; S.node = null;
+  $('dcWhen').textContent = 'ABOUT';
+  $('dcTitle').textContent = 'この Focus について';
+  $('dcFig').innerHTML = '';
+  $('dcPlace').textContent = '';
+  const kinds = {}; EVENTS.forEach(e => e.sources.forEach(s => { kinds[s.kind] = (kinds[s.kind] || 0) + 1; }));
+  $('dcBody').innerHTML = `<p class="kitchen">いま食べている一枚のパンから、一万年前の野の草へ遡り、また戻ってくる Focus です。主役は人物ではなく、植物と微生物と人の手と火です。</p>
+    <div class="rs"><h4>確かさの3段</h4><p>確定＝証拠がはっきりしている（年代が幅でも）。幅＝学説が割れている・推定。語り＝伝説・俗説・後から結びつけられた話。確かめられなかったことは載せていません。</p>
+    <h4>パンとは</h4><p>この Focus では「粉にした穀物を水と合わせ、熱を通したもの」をパンとします。膨らませるかどうかは性質の一つです。</p>
+    <h4>出典の内訳</h4><p>${Object.entries(kinds).map(([k, n]) => `${esc(KIND_JA[k] || k)} ${n}`).join('、')}</p>
+    <h4>画像について</h4><p>実物の写真・資料 ${IMAGES.filter(i => !i.generated).length} 点（Wikimedia Commons。各カードに作者・ライセンス・元のページ）。生成画像（想像図）は ${IMAGES.filter(i => i.generated).length} 点で、すべてに「◇ 想像図」の印を付け、何に基づいて描いたかを書いています。写真が残っていない場面や仕組みを示すためだけに使い、実物の代わりにはしません。</p>
+    ${IMAGES.some(i => i.generated) ? `<div class="genlist">${IMAGES.filter(i => i.generated).map(i => `<figure data-t="${esc(i.target)}"><img src="${esc(i.file)}" alt=""><span class="gen-mark">想像図</span><figcaption>${esc(i.caption_ja)}</figcaption></figure>`).join('')}</div>` : ''}
+    <h4>この版</h4><p>第1版（2026年11月）。年表 ${EVENTS.length} 件・系統 ${NODES.length} ノード・パン図鑑 ${BREADS.length} 種。英語版はまだありません。健康や体質の助言は扱いません。</p></div>`;
+  $('dcAct').hidden = true;
+  $('detailCard').hidden = false;
+  refresh();
+};
+
+$('dcBody').addEventListener('click', ev => { const f = ev.target.closest('.genlist figure'); if (!f) return; const t = f.dataset.t;
+  if (EVENTS.some(e => e.id === t)) select(t); else openNode(t, false); });
+function refresh() { drawLenses(); drawLineage(); drawRight(); drawTimeline(); drawGlobe(); }
+window.addEventListener('resize', drawTimeline);
+refresh();
+window.__bread = { S, EVENTS, NODES, select, openNode, world, drawGlobe, get ready() { return globeReady; } }; // 確認用
+</script>
+</body></html>
