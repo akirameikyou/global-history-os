@@ -13,7 +13,7 @@
 //   ・pathsData は呼ぶ側も使うことがある（万次郎のガイド線）。呼ぶ側が渡した線の後ろに、地の矢羽を足して渡す
 //   ・矢羽の色は d.color と d.col の両方に入れる（呼ぶ側の pathColor の書き方に合わせる）
 //   ・素材のパス（'../assets/...'）はページから見た相対。ページは1段下のフォルダ（/<focus>/focusShell.html）に置く前提
-import { geoBase as GEO } from '../../data/geobase_v1.js?v=20261120d';
+import { geoBase as GEO } from '../../data/geobase_v1.js?v=20261121f';
 import { currentArrows as CUR, currentMeta as CUR_META } from '../../data/geobase_current_v1.js?v=20261120d';
 
 export const TIME_JA = { invariant: 'この層は年代で変わりません', present_observation: '現在の観測です。過去の状態ではありません', time_varying: '年代とともに変わります' };
@@ -95,7 +95,7 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     return shownLayers().map(g => short
       ? (g.id === 'current' ? `海流は${CUR_META.period.map(d => d.slice(0, 4)).join('〜')}年の平均で、過去の海流ではありません` : `${g.name_ja}は年代で変わりません`)
       : `${g.name_ja}：${TIME_JA[g.provenance.time]}` + (g.id === 'current' ? `（${CUR_META.period.join('〜')}の平均）` : '')).join('。') +
-      (S.tooClose ? '。寄りすぎたので岩の層を外しています（0.5°の格子）' : '');
+      (S.tooClose ? '。寄りすぎたので岩相の層を外しています（0.5°の格子）' : '');
   }
   function draw() {
     box.innerHTML = compact ? '' : '<span style="color:rgba(238,243,248,.55);font-size:10px;letter-spacing:.1em">地 geoBase@1</span>';

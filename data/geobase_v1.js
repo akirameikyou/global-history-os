@@ -34,7 +34,8 @@ export const geoBase = [
  },
  {
   "id": "rock",
-  "name_ja": "岩",
+  "name_ja": "岩相",
+  "name_long_ja": "岩相（地表に見られる岩石の種類）",
   "kind": "surface",
   "provenance": {
    "source": {
