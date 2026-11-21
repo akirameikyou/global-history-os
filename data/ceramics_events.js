@@ -723,6 +723,46 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "F02",
+  "title_ja": "有田の燃料の移り変わりと、レンガ煙突・猪子谷窯",
+  "when": {
+   "from": 1868,
+   "to": 1998,
+   "label": "明治（煙突の多く）〜20世紀（石炭窯・ガス窯へ）、1998年に猪子谷窯が町史跡"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 5,
+  "strand": "firing",
+  "lenses": [
+   "fire"
+  ],
+  "place": {
+   "name_ja": "有田町 応法（代表点）",
+   "lat": 33.19,
+   "lng": 129.86,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "観光庁の解説によると、有田の応法地区のレンガ煙突の大部分は明治時代に作られ、生産方法が薪から石炭や重油、そしてガス窯へと変わったため使われなくなった。20世紀初めに作られた単室の石炭窯・猪子谷窯は、もとは共同窯で、1998年に有田町の史跡に指定された。",
+  "unknown_ja": "石炭窯・ガス窯に切り替わった年（この出典は年を書いていない）。",
+  "sources": [
+   {
+    "title": "黒牟田と応法・丸尾の煙突群（観光庁 多言語解説文データベース）",
+    "url": "https://www.mlit.go.jp/tagengo-db/common/001558051.pdf",
+    "kind": "institution",
+    "checked": "2026-11-22"
+   }
+  ],
+  "jp": {
+   "region_jp": "肥前",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
   "id": "E29",
   "title_ja": "ノリタケ前身会社の設立",
   "when": {
@@ -759,6 +799,47 @@ export const ceramicsEvents = [
    "tea_ware": false,
    "tea_role": "",
    "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "F01",
+  "title_ja": "瀬戸のはげ山と、ホフマンの砂防工事",
+  "when": {
+   "from": 1905,
+   "to": 1905,
+   "label": "1905年（明治38年）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "firing",
+  "lenses": [
+   "fire",
+   "raw"
+  ],
+  "place": {
+   "name_ja": "瀬戸市東印所町（代表点）",
+   "lat": 35.2,
+   "lng": 137.11,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "愛知県の砂防の歴史によると、瀬戸では鎌倉時代から「せともの」づくりが盛んで、多量の陶土の採掘や樹木の伐採により山地・丘陵地が荒れ、はげ山が広がった。1905年、ホフマンの指導で瀬戸市東印所町の山林に砂防工事が行われた。崩れた斜面には手を加えず、土堰堤や柳柵で土砂を止め、植物が自然に戻るのを促す方法だった。",
+  "unknown_ja": "伐採のうち窯の燃料（薪）がどれだけを占めたか（この出典は燃料と書いていない）。ホフマンの国籍の書き方が愛知県の2つの頁で違う（オーストリア人／イタリア人講師アメリゴ・ホフマン）。いまの工事跡の様子。",
+  "sources": [
+   {
+    "title": "あいちの砂防の歴史・ホフマン工事（愛知県 建設局 砂防課）",
+    "url": "https://www.pref.aichi.jp/soshiki/sabo/0000021309.html",
+    "kind": "institution",
+    "checked": "2026-11-22"
+   }
+  ],
+  "jp": {
+   "region_jp": "尾張",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
   },
   "qid": []
  },
