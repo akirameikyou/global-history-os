@@ -122,6 +122,10 @@
   .gm.region::after{content:'';position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:var(--c)}
   .gm.past{opacity:.42} .gm.sel{box-shadow:0 0 0 2px #fff,0 0 12px rgba(255,255,255,.6)} .gm.shade{opacity:.12}
   .gm.kiln{width:9px;height:9px;border-radius:1px;background:rgba(5,12,22,.85);border:1.6px solid #b9e3c6}
+  /* 原料の産地：ひし形（窯＝四角、出来事＝丸と見分ける） */
+  .gm.mat{width:10px;height:10px;border-radius:1px;background:var(--c);transform:translate(-50%,-50%) rotate(45deg);box-shadow:0 0 0 1.5px rgba(5,12,22,.85)}
+  .gm.mat.range{background:rgba(5,12,22,.85);border:1.8px solid var(--c)}
+  .gm.mat.later{opacity:.35;border-style:dashed}
   .gm.kiln.later{opacity:.3;border-style:dashed}
   .glabel{pointer-events:none;white-space:nowrap;font-weight:500;font-size:11px;transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9)}
 
@@ -202,6 +206,7 @@
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-tab="events" aria-selected="true">年表</button>
     <button class="tab" role="tab" data-tab="kilns" aria-selected="false">日本の窯</button>
+    <button class="tab" role="tab" data-tab="mats" aria-selected="false">原料</button>
     <button class="tab" role="tab" data-tab="ground" aria-selected="false">地の層</button>
   </div>
   <div class="scroll" id="rpBody"></div>
@@ -239,6 +244,7 @@
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 他の Focus と同じ固定版
 import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c';
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
+import { ceramicsMaterials as MATS, ceramicsMaterialLinks as MLINKS } from '../data/ceramics_materials.js?v=20261121a';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
 import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261121f'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
@@ -273,7 +279,8 @@ world.controls().autoRotate = false;
 /* ── 地の層：共通の部品 geoBase（assets/geobase/geobase_globe.js）に任せる。
    画面（光源と連動する地のダイヤル）はこの Focus が自前で持ち、部品には set() で伝える（ui: false） ── */
 world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => p[1]).pathPointAlt(0.004)
-  .pathColor(d => d.col).pathStroke(0.6).pathDashLength(1).pathDashGap(0).pathDashAnimateTime(0).pathTransitionDuration(0);
+  .pathColor(d => d.col).pathStroke(d => d.rel ? 0.9 : 0.6).pathDashLength(d => d.rel ? 0.05 : 1).pathDashGap(d => d.rel ? 0.035 : 0).pathDashAnimateTime(0).pathTransitionDuration(0);
+// 原料の結びの線（rel）：道筋ではなく「どこからどこへ使われ・運ばれたか」。破線で、地の矢羽と見分ける
 let geo = null; // 部品は作る時にも一度 onChange を呼ぶので、作り終わるまでは描き直さない
 geo = mountGeoBase(world, { attribEl: $('attrib'), ui: false, onChange: () => { if (geo) drawDial(); } });
 let globeReady = false;
@@ -303,6 +310,23 @@ function drawGlobe() {
     els.push({ lat: k.lat, lng: k.lng, cls: `gm kiln ${k.start.from > S.year ? 'later' : ''}`, color: '#b9e3c6', title: `${k.name_ja}（${k.start.label}）`, onClick: () => openKiln(k.id) });
     if (S.japan) els.push({ kind: 'label', lat: k.lat, lng: k.lng, text: k.name_ja, color: '#b9e3c6' });
   }
+  // 原料の産地と結び：光源「原料」「運ぶ」か、右の「原料」の枠を開いた時だけ
+  const matOn = S.lens === 'raw' || S.lens === 'carry' || S.tab === 'mats';
+  const lines = [];
+  if (matOn) {
+    for (const m of MATS) {
+      const later = m.from != null && m.from > S.year;
+      els.push({ lat: m.lat, lng: m.lng, cls: `gm mat ${m.confidence === 'range' ? 'range' : ''} ${later ? 'later' : ''} ${S.mat === m.id ? 'sel' : ''}`, color: '#c9a46a', title: `${m.name_ja}（${m.label}）`, onClick: () => openMat(m.id) });
+      if (S.lens === 'raw' || S.tab === 'mats' || S.mat === m.id) els.push({ kind: 'label', lat: m.lat, lng: m.lng, text: m.name_ja, color: '#e6c99a' });
+    }
+    for (const L of MLINKS) {
+      if (!(S.tab === 'mats' || L.lenses.includes(S.lens))) continue;
+      const m = MATS.find(x => x.id === L.from); const later = L.from_year > S.year;
+      const pts = Array.from({ length: 24 }, (_, i) => { const t = i / 23; return [m.lat + (L.to[0] - m.lat) * t, m.lng + (L.to[1] - m.lng) * t]; });
+      lines.push({ rel: true, pts, col: later ? 'rgba(201,164,106,.25)' : 'rgba(230,201,154,.85)' });
+    }
+  }
+  world.pathsData(lines);   // 部品（geoBase）が後ろに地の矢羽を足す
   world.htmlElementsData(els);
 }
 
@@ -376,6 +400,16 @@ function openKiln(id) {
     { label: '地点を見る', go: () => world.pointOfView({ lat: k.lat, lng: k.lng, altitude: 0.5 }, 900) });
   refresh();
 }
+function openMat(id) {
+  const m = MATS.find(x => x.id === id); if (!m) return;
+  S.mat = id; S.sel = null; S.kiln = null;
+  const links = MLINKS.filter(L => L.from === id);
+  openCard('原料の産地', `${esc(m.label)}<span class="conf ${m.confidence}">${CONF_JA[m.confidence]}</span>`, m.name_ja, `${esc(m.kind)}・位置は${m.precision === 'site' ? '産地あたりの' : '地域の'}代表点（α）`,
+    `<p>${esc(m.fact_ja)}</p>${links.length ? `<div class="rs"><h4>結び（道筋ではなく、どこへ使われ・運ばれたか）</h4><ul>${links.map(L => `<li>${esc(L.label_ja)}</li>`).join('')}</ul></div>` : ''}
+     <div class="rs"><h4>わかっていないこと</h4><p>${esc(m.unknown_ja)}</p><h4>出典</h4>${srcList(m.sources)}</div>`,
+    { label: '地点を見る', go: () => world.pointOfView({ lat: m.lat, lng: m.lng, altitude: m.precision === 'site' ? 0.6 : 1.0 }, 900) });
+  refresh();
+}
 function openGround(id) {
   const g = GEOID[id], p = g.provenance;
   openCard('地の層の素性', `geoBase@1・${esc(STATUS_JA[g.status])}`, g.name_ja, '',
@@ -389,7 +423,8 @@ function openGround(id) {
 function dist(a, b, c, d) { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); }
 function pierce(lat, lng) {
   const near = [...EVENTS.filter(e => e.place.lat != null).map(e => ({ t: e.title_ja, d: dist(lat, lng, e.place.lat, e.place.lng), go: `select('${e.id}')` })),
-    ...KILNS.map(k => ({ t: k.name_ja + '（窯業地）', d: dist(lat, lng, k.lat, k.lng), go: `openKiln('${k.id}')` }))].filter(x => x.d < 400).sort((a, b) => a.d - b.d).slice(0, 5);
+    ...KILNS.map(k => ({ t: k.name_ja + '（窯業地）', d: dist(lat, lng, k.lat, k.lng), go: `openKiln('${k.id}')` })),
+    ...MATS.map(m => ({ t: m.name_ja + '（原料）', d: dist(lat, lng, m.lat, m.lng), go: `openMat('${m.id}')` }))].filter(x => x.d < 400).sort((a, b) => a.d - b.d).slice(0, 5);
   const val = g => {
     if (g.status !== 'ready') return `<span class="pend">${STATUS_JA[g.status]}</span>`;
     if (g.id === 'current') { const c = geo.currentAt(lat, lng); return c ? `${c.dir}へ 約${c.s.toFixed(2)} m/s<span style="color:var(--dim);font-size:10px">　${esc(CUR_META.period.join('〜'))} の平均（${c.n}回）</span>` : '<span style="color:var(--dim)">この近くに値はありません（陸か、流れが弱い所）</span>'; }
@@ -401,10 +436,10 @@ function pierce(lat, lng) {
   openCard('一点を貫く', `${lat.toFixed(2)}°, ${lng.toFixed(2)}°`, 'この地点の地と器', '',
     `<dl class="pierce"><dt>地</dt><dd style="color:var(--dim)">地の層（geoBase@1）</dd>${groundRows}<div class="hr"></div>
      <dt>主題</dt><dd>${near.length ? near.map(n => `<a href="#" data-go="${n.go}">${esc(n.t)}</a>（約${Math.round(n.d)}km）`).join('<br>') : '400km 以内に、載せた窯や出来事はありません'}</dd></dl>`, null);
-  $('dcBody').querySelectorAll('[data-go]').forEach(a => a.onclick = ev => { ev.preventDefault(); const m = a.dataset.go.match(/(\w+)\('(\w+)'\)/); (m[1] === 'select' ? select : openKiln)(m[2]); });
+  $('dcBody').querySelectorAll('[data-go]').forEach(a => a.onclick = ev => { ev.preventDefault(); const m = a.dataset.go.match(/(\w+)\('(\w+)'\)/); ({ select, openKiln, openMat })[m[1]](m[2]); });
   drawGlobe();
 }
-$('dcClose').onclick = () => { S.sel = null; S.kiln = null; $('detailCard').hidden = true; refresh(); };
+$('dcClose').onclick = () => { S.sel = null; S.kiln = null; S.mat = null; $('detailCard').hidden = true; refresh(); };
 
 /* ── 右パネル ── */
 document.querySelectorAll('.tab').forEach(t => t.onclick = () => { S.tab = t.dataset.tab; document.querySelectorAll('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); drawRight(); drawGlobe(); });
@@ -422,6 +457,10 @@ function drawRight() {
     b.innerHTML = `<div class="empty">日本の窯業地（試作：出典で始まりの年代を確かめた ${KILNS.length} か所）。出典に座標がないので、位置は市町や窯跡あたりの代表点です。茶道 Focus・日本地図版へ切り出すための下ごしらえです。</div>` +
       KILNS.map(k => `<div class="gl" data-k="${k.id}"><div class="nm">${esc(k.name_ja)}<span class="conf ${k.start.confidence}">${CONF_JA[k.start.confidence]}</span></div><div class="s">${esc(k.kiln_group)}・${esc(k.region_jp)}・${esc(k.start.label)}${k.tea_ware ? `・茶陶（${esc(k.tea_role)}）` : ''}</div></div>`).join('');
     b.querySelectorAll('[data-k]').forEach(x => x.onclick = () => openKiln(x.dataset.k));
+  } else if (S.tab === 'mats') {
+    b.innerHTML = `<div class="empty">原料の産地（陶石・粘土・カオリン）と、どこへ使われ・運ばれたかの結び。地の層（岩相）が示すのは「その種類の岩が地表にある」までで、「この窯が使った」は、ここで出典つきで示します。結びの破線は道筋ではありません。</div>` +
+      MATS.map(m => `<div class="gl" data-m="${m.id}"><div class="nm">${esc(m.name_ja)}<span class="conf ${m.confidence}">${CONF_JA[m.confidence]}</span></div><div class="s">${esc(m.kind)}・${esc(m.label)}</div></div>`).join('');
+    b.querySelectorAll('[data-m]').forEach(x => x.onclick = () => openMat(x.dataset.m));
   } else {
     b.innerHTML = `<div class="empty">地の層は、すべての Focus が使える部品（geoBase@1）です。各層の素性（出典・ライセンス・確かさ・時間・解像度・加工）から、画面の出し方が決まります。</div>` +
       GEO.map(g => `<div class="gl" data-g="${g.id}"><div class="nm">${esc(g.name_ja)}　<span class="pend" style="font-size:10px;font-weight:400">${STATUS_JA[g.status]}</span></div><div class="s">${esc(g.provenance.source.title)}<br>${esc(g.provenance.license.name)}・${esc(TIME_JA[g.provenance.time])}</div></div>`).join('');
@@ -492,6 +531,7 @@ $('infoBtn').onclick = () => {
      <p><b>高さ・水深</b>：陸の高さと海の深さ（GEBCO）。年代で変わらないものとして扱います。</p>
      <p><b>海流</b>：2011〜2014年の観測の平均（OSCAR）。過去の海流ではありません。</p>
      <p><b>陶土・陶石</b>：焼き物の原料。陶土は粘土、陶石は砕いて使う岩石です。どこで採れ、どの窯が使ったかは「地の層」ではなく、焼き物の出来事・窯のカードで扱います（岩相が「ある」ことと、その窯が「使った」ことは別です）。</p>
+     <h4>原料</h4><p>光源「原料」か右の「原料」の枠で、陶石・粘土・カオリンの産地（ひし形）と、どこへ使われ・運ばれたかの結び（破線）が出ます。結びは道筋ではありません。泉山の陶石と、いま有田の大半を支える天草の陶石、花崗岩から生まれた瀬戸の粘土などです。</p>
      <h4>位置</h4><p>出典に座標がないものは、αが市町や地域の代表点を置きました（カードに「代表点」と書いています）。</p>
      <h4>この先</h4><p>茶道と日本の焼き物は、北斎版のような日本地図にも展開できるよう、データに旧国名・茶陶の役割を持たせています。</p></div>`, null);
 };
@@ -499,6 +539,6 @@ $('infoBtn').onclick = () => {
 function refresh() { drawLenses(); drawDial(); drawRight(); drawTimeline(); drawGlobe(); }
 window.addEventListener('resize', drawTimeline);
 refresh();
-window.__ceramics = { S, EVENTS, KILNS, GEO, select, openKiln, pierce, setLens, world, get ready() { return globeReady; } }; // 確認用
+window.__ceramics = { S, EVENTS, KILNS, MATS, GEO, select, openKiln, openMat, pierce, setLens, world, get ready() { return globeReady; } }; // 確認用
 </script>
 </body></html>
