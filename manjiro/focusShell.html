@@ -41,6 +41,8 @@
   .title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.5em;text-indent:.5em}
   .title p{margin:7px 0 0;font-size:10.5px;letter-spacing:.42em;color:var(--cyan-soft)}
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
+  /* 地の層（?geobase=1）の時：出典が長くなるので左の枠の幅（270px）で折り返し、下の端（≈100px）を固定して上へ伸ばす */
+  @media (min-width:641px){ body.geobase .attrib{top:auto;bottom:calc(100% - 100px);width:270px;box-sizing:border-box;white-space:pre-line;line-height:1.5} }
 
   /* ── 浮遊パネル共通 ── */
   .panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);
@@ -1531,9 +1533,11 @@ world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => 
 guideBtn.onclick = () => { State.guide = !State.guide; guideBtn.classList.toggle('on', State.guide);
   world.showGraticules(State.guide); world.pathsData(State.guide ? GUIDE_PATHS : []); };
 // 試験：共通の地の層 geoBase@1（焼き物 Focus で作った部品）を敷く。?geobase=1 の時だけ読む。付けなければ表示は今までどおり（2026-11-20 experiment/ceramics-focus）
-if (new URLSearchParams(location.search).has('geobase')) import('../assets/geobase/geobase_globe.js?v=20261122a').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib'),
+if (new URLSearchParams(location.search).has('geobase')) document.body.classList.add('geobase');
+if (new URLSearchParams(location.search).has('geobase')) import('../assets/geobase/geobase_globe.js?v=20261122c').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib'),
   grounds: ['relief'], flows: ['current', 'wind'], labels: { relief: '水深' }, compact: true,
-  getMonth: () => Math.floor((State.t - Math.floor(State.t)) * 12 + 1e-6) + 1, // 風は年代バーの月の平均を出す（State.t は 年＋(月−1)/12） // 岩は使わない。操作は地球の上に置かず、CHAPTER の下の空き（右上）に一列で（2026-11-21 清水さん）
+  getMonth: () => Math.floor((State.t - Math.floor(State.t)) * 12 + 1e-6) + 1, // 風は年代バーの月の平均を出す（State.t は 年＋(月−1)/12）
+  attribBreak: true, // 出典の行を左の枠の幅で折り返す（下の端は今の位置に固定し、上へ伸ばす。WORLD EVENTS に重ねない） // 岩は使わない。操作は地球の上に置かず、CHAPTER の下の空き（右上）に一列で（2026-11-21 清水さん）
   style: 'left:auto;right:24px;width:330px;top:62px;transform:none;padding:0;background:transparent;border:0;backdrop-filter:none;justify-content:flex-start;flex-wrap:nowrap' }); }); // 左端を CHAPTER にそろえる（右の枠と同じ幅）
 const followBtn = document.getElementById('followBtn');
 followBtn.onclick = () => { if (State.auto) return; State.follow = !State.follow; followBtn.classList.toggle('on', State.follow); if (State.follow) followShip(); else resumeSpinAfter(4000); };

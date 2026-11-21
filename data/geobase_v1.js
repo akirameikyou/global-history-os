@@ -10,7 +10,8 @@ export const geoBase = [
    "source": {
     "title": "GEBCO Compilation Group, GEBCO Grid",
     "url": "https://www.gebco.net/data-products/gridded-bathymetry-data",
-    "citation": "GEBCO Compilation Group (GEBCO Grid)"
+    "citation": "GEBCO Compilation Group (GEBCO Grid)",
+    "citation_short": "GEBCO"
    },
    "license": {
     "name": "Public domain（GEBCO の利用条件。出典の表示が必要）",
@@ -41,7 +42,8 @@ export const geoBase = [
    "source": {
     "title": "Hartmann & Moosdorf (2012) GLiM, 0.5° grid (PANGAEA)",
     "url": "https://doi.pangaea.de/10.1594/PANGAEA.788537",
-    "citation": "Hartmann, J.; Moosdorf, N. (2012) G3 13, Q12004"
+    "citation": "Hartmann, J.; Moosdorf, N. (2012) G3 13, Q12004",
+    "citation_short": "GLiM (Hartmann & Moosdorf 2012)"
    },
    "license": {
     "name": "CC BY 3.0",
@@ -185,7 +187,8 @@ export const geoBase = [
    "source": {
     "title": "OSCAR Sea Surface Velocity 1/3°, 5 Day Composite（ESR / NOAA ERDDAP jplOscar の写し）",
     "url": "https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplOscar",
-    "citation": "OSCAR (ESR) via NOAA ERDDAP"
+    "citation": "OSCAR (ESR) via NOAA ERDDAP",
+    "citation_short": "OSCAR (NOAA ERDDAP)"
    },
    "license": {
     "name": "ERDDAP の写しの条件：無償で利用・再配布してよい（正確さの保証はない）",
@@ -215,7 +218,8 @@ export const geoBase = [
    "source": {
     "title": "NCEP/NCAR Reanalysis 1（NOAA PSL）月ごとの長期平均 1991–2020・地表近く（0.995σ）",
     "url": "https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html",
-    "citation": "NCEP/NCAR Reanalysis (Kalnay et al. 1996) via NOAA PSL"
+    "citation": "NCEP/NCAR Reanalysis (Kalnay et al. 1996) via NOAA PSL",
+    "citation_short": "NCEP/NCAR再解析 (NOAA PSL)"
    },
    "license": {
     "name": "NOAA PSL：謝辞を書いて利用（NOAA ERDDAP の同じ再解析の写しは「無償で利用・再配布してよい」）",

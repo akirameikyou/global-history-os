@@ -15,7 +15,7 @@
 //   ・破線・太さ・高さの決まりは、地の線（d.geobase）だけ部品が決め、それ以外は呼ぶ側の決まりをそのまま使う
 //   ・線の色は d.color と d.col の両方に入れる（呼ぶ側の pathColor の書き方に合わせる）
 //   ・素材のパス（'../assets/...'）はページから見た相対。ページは1段下のフォルダ（/<focus>/focusShell.html）に置く前提
-import { geoBase as GEO } from '../../data/geobase_v1.js?v=20261122a';
+import { geoBase as GEO } from '../../data/geobase_v1.js?v=20261122c';
 import { currentArrows as CUR, currentMeta as CUR_META } from '../../data/geobase_current_v1.js?v=20261120d';
 import { windGrid as WG, windMeta as WIND_META } from '../../data/geobase_wind_v1.js?v=20261122a';
 
@@ -29,8 +29,9 @@ const dirOf = (u, v) => DIR8[Math.round(((Math.atan2(u, v) * 180 / Math.PI + 360
 //   grounds … 出す地の層（既定 ['relief','rock']）。flows … 出す流れ（既定 ['current']）。labels … ボタンの名（例 { relief: '水深' }）
 //   style   … 枠の置き場所の CSS。compact … 説明の一行を枠に置かず、出典の行の後ろに付ける
 //   getMonth … 呼ぶ側のいまの月（1〜12）を返す関数。風の月を合わせる
+//   attribBreak … 出典の行を「地球の元／地の出典／説明」の行に分ける（呼ぶ側が white-space:pre-line と幅を決める）
 // 地の層は「なし」のボタンを置かず、選んでいる層をもう一度押すと消える（2026-11-21 清水さん）
-export function mountGeoBase(world, { attribEl = null, ui = true, onChange = null, grounds = ['relief', 'rock'], flows = ['current'], labels = {}, style = '', compact = false, getMonth = null } = {}) {
+export function mountGeoBase(world, { attribEl = null, ui = true, onChange = null, grounds = ['relief', 'rock'], flows = ['current'], labels = {}, style = '', compact = false, getMonth = null, attribBreak = false } = {}) {
   const G = Object.fromEntries(GEO.map(g => [g.id, g]));
   const BASE = world.globeImageUrl();
   const baseAttrib = attribEl ? attribEl.textContent : '';
@@ -178,11 +179,19 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     compose();
     const shown = shownLayers().filter(x => x.status === 'ready');
     const tail = compact ? noteText() : '';
-    if (attribEl) attribEl.textContent = (baseAttrib + (shown.length ? (baseAttrib ? '　' : '') + '地: ' + shown.map(x => x.provenance.source.citation).join(' / ') : '') + (tail ? '　（' + tail + '）' : '')).trim();
+    const sep = attribBreak ? '\n' : '　';
+    const cite = x => (attribBreak && x.provenance.source.citation_short) || x.provenance.source.citation;   // 折り返す時は短い名（素性の欄には正式な名）
+    if (attribEl) attribEl.textContent = [baseAttrib, shown.length && '地: ' + shown.map(cite).join(' / '), tail && (attribBreak ? tail : '（' + tail + '）')].filter(Boolean).join(sep).trim();
     if (ui) draw();
     if (onChange) onChange(S);
   }
   function noteText(short = compact) {
+    if (short) {   // 短い一文にまとめる：変わらない層／平均の流れ
+      const L = shownLayers(), fixed = L.filter(g => g.provenance.time === 'invariant').map(g => g.name_ja);
+      const fl = [S.flow === 'current' && `海流は${CUR_META.period.map(d => d.slice(0, 4)).join('〜')}年`, S.wind && `風は${WIND_META.period.join('〜')}年の${S.month}月`].filter(Boolean);
+      return [fixed.length && `${fixed.join('・')}は年代で変わりません`, fl.length && `${fl.join('、')}の平均で、当時の値ではありません`].filter(Boolean).join('。') +
+        (S.tooClose ? '。寄りすぎたので岩相の層を外しています' : '');
+    }
     const one = g => {
       if (g.id === 'current') return short ? `海流は${CUR_META.period.map(d => d.slice(0, 4)).join('〜')}年の平均で、過去の海流ではありません` : `海流：${TIME_JA[g.provenance.time]}（${CUR_META.period.join('〜')}の平均）`;
       if (g.id === 'wind') return `風は${WIND_META.period.join('〜')}年の${S.month}月の平均で、当時の風ではありません`;
