@@ -130,7 +130,11 @@
   .glabel{pointer-events:none;white-space:nowrap;font-weight:500;font-size:11px;transform:translate(9px,-50%);text-shadow:0 0 2px #000,0 0 5px rgba(0,0,0,.9)}
 
   .dcard{position:absolute;z-index:30;right:390px;top:100px;width:370px;max-height:calc(100% - 300px);overflow:auto;background:rgba(6,12,21,.88);border:1px solid rgba(217,167,122,.35);border-radius:6px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-  .dc-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;height:28px;padding:0 6px 0 12px;background:rgba(6,12,21,.94);border-bottom:1px solid var(--rule)}
+  /* カードの上端の帯：つかんで動かす（置いた位置は次のカードでも保つ・帯を二度押しで元の位置へ）。中を送っても帯は上に残る */
+  .dc-bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:8px;height:28px;padding:0 6px 0 12px;background:rgba(6,12,21,.94);border-bottom:1px solid var(--rule);cursor:grab;user-select:none;touch-action:none}
+  .dc-bar:active{cursor:grabbing}
+  .dc-grip{font-size:10px;letter-spacing:.12em;color:var(--dim)}
+  .dcard.moved{right:auto}
   .dc-kind{font-size:10px;letter-spacing:.12em;color:var(--dim)}
   .dc-x{margin-left:auto;background:transparent;border:0;color:var(--sub);font-size:15px;line-height:1;padding:4px 6px;cursor:pointer}
   .dc-head{padding:12px 18px 8px;border-bottom:1px solid var(--rule)}
@@ -213,7 +217,7 @@
 </div>
 
 <div id="detailCard" class="dcard" hidden>
-  <div class="dc-bar"><span class="dc-kind" id="dcKind"></span><button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button></div>
+  <div class="dc-bar" id="dcBar" title="つかんで動かせます（二度押しで元の位置へ）"><span class="dc-grip">⠿</span><span class="dc-kind" id="dcKind"></span><button class="dc-x" id="dcClose" type="button" aria-label="閉じる">✕</button></div>
   <div class="dc-head"><div class="dc-when" id="dcWhen"></div><div class="dc-title" id="dcTitle"></div><div class="dc-place" id="dcPlace"></div></div>
   <div class="dc-body" id="dcBody"></div>
   <button class="dc-act" id="dcAct" type="button" hidden>地点を見る</button>
@@ -439,6 +443,22 @@ function pierce(lat, lng) {
   $('dcBody').querySelectorAll('[data-go]').forEach(a => a.onclick = ev => { ev.preventDefault(); const m = a.dataset.go.match(/(\w+)\('(\w+)'\)/); ({ select, openKiln, openMat })[m[1]](m[2]); });
   drawGlobe();
 }
+/* カードを動かす：帯をつかんで移動（小麦とパン Focus と同じ作り）。スマホの幅では動かさない */
+(() => {
+  const card = $('detailCard'), bar = $('dcBar'); let d = null;
+  bar.addEventListener('pointerdown', ev => {
+    if (ev.target.closest('.dc-x') || innerWidth <= 760) return;
+    const r = card.getBoundingClientRect(); d = { dx: ev.clientX - r.left, dy: ev.clientY - r.top }; card.style.width = r.width + 'px';
+    bar.setPointerCapture(ev.pointerId); ev.preventDefault();
+  });
+  bar.addEventListener('pointermove', ev => {
+    if (!d) return;
+    const w = card.offsetWidth, x = Math.max(0, Math.min(innerWidth - w, ev.clientX - d.dx)), y = Math.max(0, Math.min(innerHeight - 60, ev.clientY - d.dy));
+    card.classList.add('moved'); card.style.left = x + 'px'; card.style.top = y + 'px';
+  });
+  bar.addEventListener('pointerup', () => { d = null; });
+  bar.addEventListener('dblclick', ev => { if (ev.target.closest('.dc-x')) return; card.classList.remove('moved'); card.style.left = ''; card.style.top = ''; card.style.width = ''; });
+})();
 $('dcClose').onclick = () => { S.sel = null; S.kiln = null; S.mat = null; $('detailCard').hidden = true; refresh(); };
 
 /* ── 右パネル ── */
