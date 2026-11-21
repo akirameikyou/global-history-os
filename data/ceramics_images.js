@@ -532,7 +532,7 @@ export const ceramicsImages = [
   "h": 900,
   "generated": false,
   "kind": "object",
-  "caption_ja": "火焔型土器（縄文時代中期）",
+  "caption_ja": "火焔型土器（縄文時代中期の例。早期の土器ではない）",
   "title": "Fire-flame Cooking Vessel (Ka'en Doki)",
   "date": "c. 2500 BCE",
   "place": "Japan, Jōmon period (c. 10,500–300 BCE)",

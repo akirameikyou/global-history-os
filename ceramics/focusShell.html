@@ -154,6 +154,35 @@
   .pierce dd{margin:0}
   .pierce .hr{grid-column:1/-1;border-top:1px solid var(--rule);margin:4px 0}
   .pend{color:var(--est)}
+  /* 実物の写真（所蔵館の CC0）。カードの上に一枚・写しの対照は並べる。押すと大きく */
+  .ph{margin:0 0 10px}
+  .ph-img{display:block;width:100%;padding:0;border:0;background:rgba(255,255,255,.04);border-radius:4px;cursor:zoom-in;overflow:hidden}
+  .ph-img img{display:block;width:100%;height:auto;max-height:min(220px,26vh);object-fit:contain} /* 低い画面では本文が下に追いやられないよう小さく */
+  .ph figcaption{font-size:11px;line-height:1.55;margin-top:4px;color:rgba(238,243,248,.9)}
+  .ph small,.pair small,.lb small{display:block;font-size:9.5px;color:var(--dim);line-height:1.5;margin-top:2px}
+  .ph small a,.pair small a{color:var(--cyan-soft)}
+  .pair{margin:0 0 10px;padding:8px;border:1px solid rgba(217,167,122,.28);border-radius:5px;background:rgba(217,167,122,.04)}
+  .pair-h{font-size:10px;letter-spacing:.12em;color:var(--clay-soft);margin-bottom:6px}
+  .pair-row{display:flex;gap:6px;align-items:flex-start}
+  .pair-row>div{flex:1 1 0;min-width:0}
+  .pair-row .ph-img img{height:92px;max-height:none}
+  .pair-row .arr{flex:0 0 auto;color:var(--clay);font-size:12px;align-self:center;margin-top:-18px}
+  .pair-row .cap{font-size:9.5px;line-height:1.4;margin-top:3px;color:var(--sub)}
+  .pair-line{font-size:10.5px;line-height:1.6;margin-top:6px;color:rgba(238,243,248,.85)}
+  .ph-link{font-size:11px;margin:0 0 10px;padding:6px 8px;border:1px dashed rgba(238,243,248,.2);border-radius:4px;color:var(--sub)}
+  #lightbox{position:fixed;inset:0;z-index:60;background:rgba(3,7,13,.9);display:flex;align-items:center;justify-content:center;padding:28px}
+  .lb-box{position:relative;max-width:min(1100px,96vw);max-height:92vh;overflow:auto;background:rgba(6,12,21,.96);border:1px solid rgba(217,167,122,.35);border-radius:6px;padding:16px 18px}
+  .lb-x{position:absolute;right:6px;top:4px;background:transparent;border:0;color:var(--sub);font-size:18px;cursor:pointer;padding:4px 8px}
+  .lb-h{font-family:var(--serif);font-size:16px;font-weight:700;margin:0 28px 10px 0}
+  .lb-grid{display:flex;gap:16px;align-items:flex-start}
+  .lb-grid>figure{flex:1 1 0;min-width:0;margin:0}
+  .lb-grid img{display:block;width:100%;max-height:58vh;object-fit:contain;background:rgba(255,255,255,.04);border-radius:4px}
+  .lb-grid .arr{flex:0 0 auto;align-self:center;color:var(--clay);font-size:18px}
+  .lb figcaption{font-size:12px;line-height:1.6;margin-top:6px}
+  .lb dl{display:grid;grid-template-columns:auto 1fr;gap:1px 10px;font-size:10.5px;line-height:1.55;margin:6px 0 0;color:var(--sub)}
+  .lb dt{color:var(--dim)} .lb dd{margin:0;overflow-wrap:anywhere} .lb a{color:var(--cyan-soft)}
+  .lb-line{font-size:12px;line-height:1.7;margin-top:12px;color:rgba(238,243,248,.9)}
+  @media (max-width:760px){ #lightbox{padding:8px} .lb-grid{flex-direction:column} .lb-grid .arr{transform:rotate(90deg)} .lb-grid img{max-height:40vh} }
 
   /* スマホ：地球を消さない。左右の枠は下の引き出しへ、光源と地のダイヤルは横に並べる */
   @media (max-width:760px){
@@ -223,6 +252,8 @@
   <button class="dc-act" id="dcAct" type="button" hidden>地点を見る</button>
 </div>
 
+<div id="lightbox" class="lb" hidden role="dialog" aria-modal="true" aria-label="写真"><div class="lb-box"><button class="lb-x" id="lbClose" type="button" aria-label="閉じる">✕</button><div id="lbBody"></div></div></div>
+
 <div id="timelineBar">
   <div class="tl-top">
     <div id="tlYear">—</div>
@@ -250,6 +281,7 @@ import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261122f
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
 import { ceramicsMaterials as MATS, ceramicsMaterialLinks as MLINKS } from '../data/ceramics_materials.js?v=20261121a';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
+import { ceramicsImages as PHOTOS } from '../data/ceramics_images.js?v=20261122a'; // 実物の器の写真（所蔵館の CC0）。生成画像の器は載せない（D13）
 import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261122c'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
@@ -378,9 +410,58 @@ function drawDial() {
   $('groundNote').querySelectorAll('[data-gi]').forEach(a => a.onclick = ev => { ev.preventDefault(); openGround(a.dataset.gi); });
 }
 
+/* ── 写真（実物の器・所蔵館の CC0）──
+   カードの上に一枚。写しの対照は、組の誰かがこのカードに付いていれば組ごと並べる。
+   年代・素材は所蔵館の表記のまま。写真ごとに 所蔵館・登録番号・ライセンス・元の頁 を出す（PHOTO_PLAN_001）。 */
+const PHOTO = Object.fromEntries(PHOTOS.map(p => [p.id, p]));
+const PAIRS = {
+  P1: { name: '景徳鎮 → 肥前', line: '同じ「池の雁」の図柄。中国・景徳鎮の染付（16世紀末〜17世紀初め）と、肥前の色絵（1660〜80年）。二枚の題名は所蔵館のものです。' },
+  P2: { name: '柿右衛門様式 → 英国・中国', ifMissing: { ph_p2c: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）。チェルシーの皿について、所蔵館のデータは様式を書いていません。チェルシー窯が柿右衛門に倣ったことは、所蔵館の別の皿（2018.378）の題名「日本の柿右衛門に倣った図」に書かれています。' }, line: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）、中国・景徳鎮の「虎と竹」の皿（1755年頃）。景徳鎮の皿は、所蔵館が題名で「柿右衛門様式」と書いています。写しが、写された側の中国でも作られました。チェルシーの皿について、所蔵館のデータは様式を書いていません。' },
+  P3: { name: '景徳鎮の染付 → デルフト・イラン', line: '景徳鎮の芙蓉手（1600年頃）。デルフト（1660年頃）は錫釉の陶器、イラン（17世紀）は石英を練った素地（ストーンペースト）で、どちらも磁器ではない素材で白地に青の器を作りました。イランの鉢は、所蔵館の題名そのものが「染付の写し」です。' },
+};
+const PHOTO_LINK_ONLY = { // 写真を自由に使えないもの・取得できなかったもの：所蔵館の頁へのリンクだけ
+  T21: [{ label: '長次郎作とされる黒楽茶碗「楓暮」（メトロポリタン美術館 2024.553.19）', url: 'https://www.metmuseum.org/art/collection/search/827671' }],
+};
+const photoTargets = p => String(p.target || '').split('/').map(s => s.replace('の近く', '').trim());
+const pairKey = p => p.pair ? p.no.slice(0, 2) : null;
+const pairLine = k => { const m = PAIRS[k].ifMissing || {}; const miss = Object.keys(m).find(id => !PHOTO[id]); return miss ? m[miss] : PAIRS[k].line; };
+const photoRights = p => `${esc(p.museum)} ${esc(p.accession)}・<a href="${esc(p.license_url)}" target="_blank" rel="noopener">${esc(p.license)}</a>・<a href="${esc(p.museum_page)}" target="_blank" rel="noopener">所蔵館の頁</a>`;
+function photoBlock(id) {
+  if (!id) return '';
+  const mine = PHOTOS.filter(p => photoTargets(p).includes(id));
+  const own = mine.filter(p => !p.pair);
+  const pairs = [...new Set(mine.map(pairKey).filter(Boolean))];
+  const ownH = own.map(p => `<figure class="ph"><button class="ph-img" type="button" data-ph="${p.id}" aria-label="写真を大きく見る"><img src="${esc(p.file)}" alt="${esc(p.caption_ja)}" width="${p.w}" height="${p.h}" loading="lazy"></button>
+    <figcaption>${esc(p.caption_ja)}　<span style="color:var(--clay-soft)">${esc(p.date)}</span><small>${photoRights(p)}</small></figcaption></figure>`).join('');
+  const pairH = pairs.map(k => {
+    const ms = PHOTOS.filter(p => pairKey(p) === k).sort((a, b) => a.no.localeCompare(b.no));
+    return `<div class="pair"><div class="pair-h">写しの対照：${esc(PAIRS[k].name)}</div><div class="pair-row">${ms.map((p, i) => `${i ? '<span class="arr">→</span>' : ''}<div><button class="ph-img" type="button" data-pair="${k}" aria-label="並べて大きく見る"><img src="${esc(p.file)}" alt="${esc(p.caption_ja)}" loading="lazy"></button><div class="cap">${esc(p.caption_ja.replace(/（.*$/, ''))}<br>${esc(p.date)}</div></div>`).join('')}</div>
+      <div class="pair-line">${esc(pairLine(k))}</div><small>${ms.map(p => `${esc(p.museum)} ${esc(p.accession)}`).join('／')}・CC0・押すと並べて大きく</small></div>`;
+  }).join('');
+  const linkH = (PHOTO_LINK_ONLY[id] || []).map(l => `<div class="ph-link">写真は所蔵館の頁で見られます：<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a></div>`).join('');
+  return ownH + pairH + linkH;
+}
+const photoMeta = p => `<dl><dt>原題</dt><dd>${esc(p.title)}</dd><dt>年代</dt><dd>${esc(p.date)}</dd><dt>産地・作り手</dt><dd>${esc(p.place || '—')}</dd><dt>素材</dt><dd>${esc(p.medium)}</dd><dt>寸法</dt><dd>${esc(p.dims)}</dd>
+  <dt>所蔵</dt><dd>${esc(p.museum)}　${esc(p.accession)}　<a href="${esc(p.museum_page)}" target="_blank" rel="noopener">所蔵館の頁</a></dd><dt>寄贈など</dt><dd>${esc(p.credit || '—')}</dd>
+  <dt>ライセンス</dt><dd><a href="${esc(p.license_url)}" target="_blank" rel="noopener">${esc(p.license)}</a>（所蔵館が自由利用として公開）</dd><dt>写真の経由</dt><dd>${p.file_page !== p.museum_page ? `<a href="${esc(p.file_page)}" target="_blank" rel="noopener">${esc(p.via)}</a>` : esc(p.via)}</dd></dl>`;
+function openPhoto(ids, head, line) {
+  const ps = ids.map(i => PHOTO[i]).filter(Boolean);
+  $('lbBody').innerHTML = `<div class="lb-h">${esc(head)}</div><div class="lb-grid">${ps.map((p, i) => `${i ? '<span class="arr">→</span>' : ''}<figure><img src="${esc(p.file)}" alt="${esc(p.caption_ja)}"><figcaption>${esc(p.caption_ja)}</figcaption>${photoMeta(p)}</figure>`).join('')}</div>${line ? `<div class="lb-line">${esc(line)}</div>` : ''}`;
+  $('lightbox').hidden = false; $('lbClose').focus();
+}
+const closePhoto = () => { $('lightbox').hidden = true; };
+$('lbClose').onclick = closePhoto;
+$('lightbox').addEventListener('click', ev => { if (ev.target === $('lightbox')) closePhoto(); });
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && !$('lightbox').hidden) closePhoto(); });
+$('dcBody').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-ph],[data-pair]'); if (!b) return;
+  if (b.dataset.ph) { const p = PHOTO[b.dataset.ph]; openPhoto([p.id], p.caption_ja, ''); }
+  else { const k = b.dataset.pair; openPhoto(PHOTOS.filter(p => pairKey(p) === k).sort((a, c) => a.no.localeCompare(c.no)).map(p => p.id), '写しの対照：' + PAIRS[k].name, pairLine(k)); }
+});
+
 /* ── カード ── */
-function openCard(kind, when, title, place, body, act) {
-  $('dcKind').textContent = kind; $('dcWhen').innerHTML = when; $('dcTitle').textContent = title; $('dcPlace').textContent = place; $('dcBody').innerHTML = body;
+function openCard(kind, when, title, place, body, act, photoId) {
+  $('dcKind').textContent = kind; $('dcWhen').innerHTML = when; $('dcTitle').textContent = title; $('dcPlace').textContent = place; $('dcBody').innerHTML = photoBlock(photoId) + body; $('detailCard').scrollTop = 0;
   $('dcAct').hidden = !act; if (act) { $('dcAct').textContent = act.label; $('dcAct').onclick = act.go; }
   $('detailCard').hidden = false;
 }
@@ -392,7 +473,7 @@ function select(id) {
   openCard('出来事', `${esc(whenText(e))}<span class="conf ${e.confidence}">${CONF_JA[e.confidence]}</span>`, e.title_ja, place,
     `<p>${esc(e.fact_ja)}</p><div>${e.lenses.map(l => `<span class="chip" style="--lc:${LENS[l].color}">${esc(LENS[l].name_ja)}</span>`).join('')}<span class="chip">${esc(STRANDS[e.strand] || e.strand)}</span>${e.jp.tea_ware ? `<span class="chip" style="--lc:#b9e3c6">茶陶${e.jp.tea_role ? '・' + esc(e.jp.tea_role) : ''}</span>` : ''}</div>
      <div class="rs"><h4>わかっていないこと</h4><p>${esc(e.unknown_ja)}</p><h4>証拠の種類</h4><p>${esc(PROV_JA[e.provenance] || e.provenance)}</p><h4>出典</h4>${srcList(e.sources)}</div>`,
-    e.place.lat == null ? null : { label: '地点を見る', go: () => world.pointOfView({ lat: e.place.lat, lng: e.place.lng, altitude: e.place.precision === 'region' ? 1.4 : 0.8 }, 900) });
+    e.place.lat == null ? null : { label: '地点を見る', go: () => world.pointOfView({ lat: e.place.lat, lng: e.place.lng, altitude: e.place.precision === 'region' ? 1.4 : 0.8 }, 900) }, e.id);
   refresh();
 }
 function openKiln(id) {
@@ -401,7 +482,7 @@ function openKiln(id) {
   openCard('日本の窯業地', `${esc(k.start.label)}<span class="conf ${k.start.confidence}">${CONF_JA[k.start.confidence]}</span>`, k.name_ja, `${k.region_jp}（${k.prefecture}）・${k.kiln_group}・位置は${k.precision === 'site' ? '窯跡あたりの' : '市町の'}代表点（α）`,
     `<p>${esc(k.fact_ja)}</p>${k.tea_ware ? `<div><span class="chip" style="--lc:#b9e3c6">茶陶・${esc(k.tea_role)}</span></div>` : ''}
      <div class="rs"><h4>わかっていないこと</h4><p>${esc(k.unknown_ja)}</p><h4>出典</h4>${srcList(k.sources)}</div>`,
-    { label: '地点を見る', go: () => world.pointOfView({ lat: k.lat, lng: k.lng, altitude: 0.5 }, 900) });
+    { label: '地点を見る', go: () => world.pointOfView({ lat: k.lat, lng: k.lng, altitude: 0.5 }, 900) }, k.id);
   refresh();
 }
 function openMat(id) {
@@ -553,6 +634,7 @@ $('infoBtn').onclick = () => {
      <p><b>海流</b>：2011〜2014年の観測の平均（OSCAR）。過去の海流ではありません。</p>
      <p><b>陶土・陶石</b>：焼き物の原料。陶土は粘土、陶石は砕いて使う岩石です。どこで採れ、どの窯が使ったかは「地の層」ではなく、焼き物の出来事・窯のカードで扱います（岩相が「ある」ことと、その窯が「使った」ことは別です）。</p>
      <h4>原料</h4><p>光源「原料」か右の「原料」の枠で、陶石・粘土・カオリンの産地（ひし形）と、どこへ使われ・運ばれたかの結び（破線）が出ます。結びは道筋ではありません。泉山の陶石と、いま有田の大半を支える天草の陶石、花崗岩から生まれた瀬戸の粘土などです。</p>
+     <h4>写真</h4><p>器の写真は、所蔵館（クリーブランド美術館・メトロポリタン美術館）が CC0（自由利用）で公開している実物の写真です。写真ごとに所蔵館・登録番号・元の頁を出し、年代と素材は所蔵館の表記のままにしています。写真を自由に使えない器（個人や寺の所蔵など）は、所蔵館の頁へのリンクだけにしています。生成した画像の器は載せません。</p>
      <h4>位置</h4><p>出典に座標がないものは、αが市町や地域の代表点を置きました（カードに「代表点」と書いています）。</p>
      <h4>この先</h4><p>茶道と日本の焼き物は、北斎版のような日本地図にも展開できるよう、データに旧国名・茶陶の役割を持たせています。</p></div>`, null);
 };
