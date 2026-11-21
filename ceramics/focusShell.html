@@ -250,7 +250,7 @@ import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261120c
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
 import { ceramicsMaterials as MATS, ceramicsMaterialLinks as MLINKS } from '../data/ceramics_materials.js?v=20261121a';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261121f'; // 共通の地の層の部品（万次郎の試験と同じもの）
+import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261122a'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -431,6 +431,7 @@ function pierce(lat, lng) {
     ...MATS.map(m => ({ t: m.name_ja + '（原料）', d: dist(lat, lng, m.lat, m.lng), go: `openMat('${m.id}')` }))].filter(x => x.d < 400).sort((a, b) => a.d - b.d).slice(0, 5);
   const val = g => {
     if (g.status !== 'ready') return `<span class="pend">${STATUS_JA[g.status]}</span>`;
+    if (g.id === 'wind') { const w = geo.windAt(lat, lng); return w ? `${w.dir}へ 約${w.s.toFixed(1)} m/s<span style="color:var(--dim);font-size:10px">　1991〜2020年の${w.month}月の平均</span>` : '—'; }
     if (g.id === 'current') { const c = geo.currentAt(lat, lng); return c ? `${c.dir}へ 約${c.s.toFixed(2)} m/s<span style="color:var(--dim);font-size:10px">　${esc(CUR_META.period.join('〜'))} の平均（${c.n}回）</span>` : '<span style="color:var(--dim)">この近くに値はありません（陸か、流れが弱い所）</span>'; }
     if (g.id === 'rock') { const c = geo.rockAt(lat, lng); return c ? `<i style="display:inline-block;width:9px;height:9px;background:${c.color};margin-right:5px"></i>${esc(c.name_ja)}<span style="color:var(--dim);font-size:10px">　0.5°の升目の値</span>` : '読み込み中'; }
     return '<span style="color:var(--dim)">陰影図のため値は持ちません（地球で見る）</span>';

@@ -206,5 +206,35 @@ export const geoBase = [
    "format": "js"
   },
   "status": "ready"
+ },
+ {
+  "id": "wind",
+  "name_ja": "風",
+  "kind": "flow",
+  "provenance": {
+   "source": {
+    "title": "NCEP/NCAR Reanalysis 1（NOAA PSL）月ごとの長期平均 1991–2020・地表近く（0.995σ）",
+    "url": "https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html",
+    "citation": "NCEP/NCAR Reanalysis (Kalnay et al. 1996) via NOAA PSL"
+   },
+   "license": {
+    "name": "NOAA PSL：謝辞を書いて利用（NOAA ERDDAP の同じ再解析の写しは「無償で利用・再配布してよい」）",
+    "url": "https://psl.noaa.gov/data/gridded/data.ncep.reanalysis.html",
+    "modification": true,
+    "redistribution": true
+   },
+   "confidence": "confirmed",
+   "time": "present_observation",
+   "resolution": {
+    "label": "1991〜2020年の月ごとの平均・2.5°格子を5°おきに間引いた。当時の風ではない",
+    "max_altitude": null
+   },
+   "processing_ja": "THREDDS（OPeNDAP の文字出力）で12か月分を取得し、5°おきに間引いた。画面では月ごとの流線にする"
+  },
+  "asset": {
+   "file": "../data/geobase_wind_v1.js",
+   "format": "js"
+  },
+  "status": "ready"
  }
 ];
