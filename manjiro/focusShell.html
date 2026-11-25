@@ -41,8 +41,15 @@
   .title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.5em;text-indent:.5em}
   .title p{margin:7px 0 0;font-size:10.5px;letter-spacing:.42em;color:var(--cyan-soft)}
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
-  /* 地の層（?geobase=1）の時：出典が長くなるので左の枠の幅（270px）で折り返し、下の端（≈100px）を固定して上へ伸ばす */
+  /* 地の層を読んだ時（既定。?geobase=0 で外す）：出典が長くなるので左の枠の幅（270px）で折り返し、下の端（≈100px）を固定して上へ伸ばす */
   @media (min-width:641px){ body.geobase .attrib{top:auto;bottom:calc(100% - 100px);width:270px;box-sizing:border-box;white-space:pre-line;line-height:1.5} }
+  /* スマホ：右上のボタン（追跡・W-LINK・ガイド）と重ならないよう、地の操作を一段下（80px）に一列、その下に出典を全幅で。右の枠と航路の枠はその分だけ下げる */
+  @media (max-width:640px){
+    body.geobase #geobaseBox{left:8px!important;right:auto!important;top:80px!important;width:auto!important;max-width:calc(100vw - 16px)!important}
+    body.geobase .attrib{top:106px;left:8px;right:8px;width:auto;font-size:8px;line-height:1.45;white-space:normal}
+    body.geobase .right-panel{top:150px;max-height:calc(100dvh - 150px - 330px)}
+    body.geobase .route-panel{top:150px;max-height:calc(100dvh - 150px - 220px)}
+  }
 
   /* ── 浮遊パネル共通 ── */
   .panel{position:absolute;z-index:20;border:1px solid var(--rule);background:var(--panel);
@@ -1532,9 +1539,11 @@ world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => 
   .pathDashLength(d => d.dash ? 0.02 : 1).pathDashGap(d => d.dash ? 0.012 : 0).pathDashAnimateTime(0).pathPointAlt(0.002);
 guideBtn.onclick = () => { State.guide = !State.guide; guideBtn.classList.toggle('on', State.guide);
   world.showGraticules(State.guide); world.pathsData(State.guide ? GUIDE_PATHS : []); };
-// 試験：共通の地の層 geoBase@1（焼き物 Focus で作った部品）を敷く。?geobase=1 の時だけ読む。付けなければ表示は今までどおり（2026-11-20 experiment/ceramics-focus）
-if (new URLSearchParams(location.search).has('geobase')) document.body.classList.add('geobase');
-if (new URLSearchParams(location.search).has('geobase')) import('../assets/geobase/geobase_globe.js?v=20261122c').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib'),
+// 共通の地の層 geoBase@1（焼き物 Focus で作った部品）：水深・海流・風。2026-11-25 公開で既定にした（清水さん）。
+// 最初はどれも消えていて、押した時だけ敷く。?geobase=0 を付けると読まない（今までの表示）
+const GEOBASE_ON = new URLSearchParams(location.search).get('geobase') !== '0';
+if (GEOBASE_ON) document.body.classList.add('geobase');
+if (GEOBASE_ON) import('../assets/geobase/geobase_globe.js?v=20261125b').then(m => { window.__geobase = m.mountGeoBase(world, { attribEl: document.querySelector('.attrib'),
   grounds: ['relief'], flows: ['current', 'wind'], labels: { relief: '水深' }, compact: true,
   getMonth: () => Math.floor((State.t - Math.floor(State.t)) * 12 + 1e-6) + 1, // 風は年代バーの月の平均を出す（State.t は 年＋(月−1)/12）
   attribBreak: true, // 出典の行を左の枠の幅で折り返す（下の端は今の位置に固定し、上へ伸ばす。WORLD EVENTS に重ねない） // 岩は使わない。操作は地球の上に置かず、CHAPTER の下の空き（右上）に一列で（2026-11-21 清水さん）

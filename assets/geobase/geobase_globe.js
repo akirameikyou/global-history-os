@@ -153,7 +153,7 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
   }
 
   /* ── 小さな枠（ui: true の時だけ） ── */
-  let box = null, note = null;
+  let box = null, note = null, srcOpen = false, srcPanel = null;
   if (ui) {
     box = document.createElement('div'); box.id = 'geobaseBox';
     box.style.cssText = 'position:fixed;left:50%;top:92px;transform:translateX(-50%);z-index:60;display:flex;gap:4px;align-items:center;flex-wrap:wrap;justify-content:center;' +
@@ -205,7 +205,25 @@ export function mountGeoBase(world, { attribEl = null, ui = true, onChange = nul
     if (flows.includes('current')) box.appendChild(btn(flowName('current'), S.flow === 'current', () => { S.flow = S.flow ? null : 'current'; if (S.flow) S.target = 'current'; apply(); }));
     if (flows.includes('wind')) box.appendChild(btn(flowName('wind'), S.wind, () => { S.wind = !S.wind; if (S.wind) { S.month = (getMonth && getMonth()) || S.month; S.target = 'wind'; } apply(); }, '#e8eef5'));
     if (S.target) box.appendChild(btn(S.running ? `止める ■` : `流す（${flowName(S.target)}） ▸`, S.running, toggleFlow));
-    if (compact) { box.title = '地 geoBase@1：' + noteText(false); return; }
+    if (compact) {   // 枠に説明を置かない代わりに「出典」を押すと、正式な出典名とライセンスを全部出す（公開の時の権利の表示。2026-11-25）
+      box.title = '地 geoBase@1：' + noteText(false);
+      const sb = btn(srcOpen ? '出典 ▴' : '出典', srcOpen, () => { srcOpen = !srcOpen; draw(); }, '#9db4c8'); sb.title = '地の層の出典とライセンス'; box.appendChild(sb);
+      if (srcOpen) {
+        const ids = [...grounds, ...flows.filter(f => f === 'current'), ...(flows.includes('wind') ? ['wind'] : [])].filter(id => G[id]);
+        const e = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+        // 操作の列の中に入れると列が崩れるので、列のすぐ下に浮かせた別の枠にする（地球の上に操作は置かない：読むだけの枠で、出典をもう一度押すと消える）
+        const p = srcPanel || (srcPanel = document.createElement('div'));
+        const r = box.getBoundingClientRect(), w = Math.min(330, innerWidth - 16), left = Math.max(8, Math.min(r.left, innerWidth - w - 8));
+        p.style.cssText = `position:fixed;left:${left}px;top:${Math.round(r.bottom + 4)}px;width:${w}px;z-index:61;box-sizing:border-box;text-align:left;font:10px/1.55 "Noto Sans JP",sans-serif;color:rgba(238,243,248,.85);` +
+          'background:rgba(7,14,24,.94);border:1px solid rgba(255,255,255,.14);border-radius:6px;padding:6px 10px 8px;max-height:45vh;overflow:auto';
+        p.innerHTML = ids.map(id => { const g = G[id], v = g.provenance;
+          return `<div style="margin-top:3px"><b>${e(labels[id] || g.name_ja)}</b>：<a href="${e(v.source.url)}" target="_blank" rel="noopener" style="color:#9becff">${e(v.source.citation || v.source.title)}</a><br>` +
+            `<a href="${e(v.license.url)}" target="_blank" rel="noopener" style="color:#9becff">${e(v.license.name)}</a>・${e(TIME_JA[v.time] || '')}</div>`; }).join('') +
+          '<div style="margin-top:3px;color:rgba(238,243,248,.55)">水深の図は色を淡くし、海流・風は矢と流れの線に描き直しています。</div>';
+        if (!p.isConnected) document.body.appendChild(p);
+      } else if (srcPanel) { srcPanel.remove(); }
+      return;
+    }
     note.textContent = noteText(false);
     if (note.textContent) box.appendChild(note);
   }
