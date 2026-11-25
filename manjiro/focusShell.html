@@ -43,6 +43,11 @@
   .attrib{position:absolute;left:24px;top:80px;z-index:12;font-size:10px;color:var(--sub);background:rgba(6,10,16,.6);padding:2px 8px;border-radius:5px}
   /* 地の層を読んだ時（既定。?geobase=0 で外す）：出典が長くなるので左の枠の幅（270px）で折り返し、下の端（≈100px）を固定して上へ伸ばす */
   @media (min-width:641px){ body.geobase .attrib{top:auto;bottom:calc(100% - 100px);width:270px;box-sizing:border-box;white-space:pre-line;line-height:1.5} }
+  /* 641〜1099px：右上の操作の列が中央の題（中浜万次郎・副題）に重なる。列を題の下（84px）へ下げ、右の枠をその分下げる */
+  @media (min-width:641px) and (max-width:1099px){
+    body.geobase #geobaseBox{top:84px!important}
+    body.geobase .right-panel{top:112px;max-height:calc(100% - 338px)}
+  }
   /* スマホ：右上のボタン（追跡・W-LINK・ガイド）と重ならないよう、地の操作を一段下（80px）に一列、その下に出典を全幅で。右の枠と航路の枠はその分だけ下げる */
   @media (max-width:640px){
     body.geobase #geobaseBox{left:8px!important;right:auto!important;top:80px!important;width:auto!important;max-width:calc(100vw - 16px)!important}
