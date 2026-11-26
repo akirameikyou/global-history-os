@@ -1253,6 +1253,207 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "G01",
+  "title_ja": "リーチ工房：セント・アイヴスに、ヨーロッパ初の東洋式の登り窯",
+  "when": {
+   "from": 1920,
+   "to": 1923,
+   "label": "1920年（創設）〜3年後（濱田庄司が帰国）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "design",
+  "lenses": [
+   "copy",
+   "fire"
+  ],
+  "place": {
+   "name_ja": "英国・コーンウォールのセント・アイヴス",
+   "lat": 50.21,
+   "lng": -5.49,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "ヴィクトリア＆アルバート博物館の解説によると、日本で陶芸を学んだバーナード・リーチは1920年にセント・アイヴスにリーチ工房を開き、同行した濱田庄司とともに、ヨーロッパで初めての東洋式の登り窯（斜面に築く連房式の窯）を築いた。リーチは機械に頼る工業への反対を掲げた。濱田は3年後に日本へ戻り、やがて益子に窯を開いた。工房の公式の沿革も、1920年にリーチと濱田が創設したと書く。",
+  "unknown_ja": "最初の登り窯が築かれた年と建て直した年（資料により1920・1923・1924年と分かれる）。",
+  "sources": [
+   {
+    "title": "Studio Pottery: an introduction（Victoria and Albert Museum, 2025）",
+    "url": "https://www.vam.ac.uk/articles/studio-pottery-an-introduction",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "G02",
+  "title_ja": "「民藝」：名もない職人の日用の器に美を見る",
+  "when": {
+   "from": 1925,
+   "to": 1936,
+   "label": "1925年（「民藝」という言葉）・1926年（設立趣意書）・1936年（日本民藝館）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "design",
+  "lenses": [],
+  "place": {
+   "name_ja": "東京・駒場（日本民藝館）",
+   "lat": 35.662,
+   "lng": 139.68,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "日本民藝館の沿革によると、1925年に柳宗悦は濱田庄司・河井寬次郎らと、無名の職人が作った民衆の工芸品を「民藝」と名付けた。1926年には陶芸家の富本憲吉も加わり、四人の連名で「日本民藝美術館設立趣意書」を発表した。日本民藝館は1936年に東京・駒場に開設され、初代館長は柳宗悦、二代目は陶芸家の濱田庄司。",
+  "unknown_ja": "—",
+  "sources": [
+   {
+    "title": "沿革（日本民藝館）",
+    "url": "https://mingeikan.or.jp/about/history/",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "武蔵",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "G03",
+  "title_ja": "荒川豊蔵：志野は美濃で焼かれていた",
+  "when": {
+   "from": 1930,
+   "to": 1955,
+   "label": "1930年（牟田洞で志野の陶片を発見）〜1955年（人間国宝）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "tech",
+  "lenses": [
+   "fire",
+   "raw"
+  ],
+  "place": {
+   "name_ja": "岐阜県可児市の牟田洞（窯跡、代表点）",
+   "lat": 35.4,
+   "lng": 137.06,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "観光庁の多言語解説（多治見市）によると、当時、志野は瀬戸で生まれたと考えられていた。1930年、荒川豊蔵は古い志野の茶碗の底に赤い土が付いているのを見て、その土は瀬戸になく美濃にあると気づき、2日後に牟田洞（いまの可児）の窯跡で同じ文様の志野の陶片を掘り出した。これで志野が美濃で作られていたことが確かになり、古窯跡を掘って志野・瀬戸黒・黄瀬戸・織部の源流をたどる動きが始まった。荒川は1933年に近くに窯を築いて古い技法の再現に取り組み、1955年に最初の人間国宝の一人に認定された。",
+  "unknown_ja": "—",
+  "sources": [
+   {
+    "title": "荒川豊蔵（1894-1985）（観光庁 多言語解説文データベース・多治見市）",
+    "url": "https://www.mlit.go.jp/tagengo-db/en/R3-00643.html",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "美濃",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "G04",
+  "title_ja": "ガラスセラミックス：熱に強い白い素材と、台所の器",
+  "when": {
+   "from": 1952,
+   "to": 1952,
+   "label": "1952年（発見）"
+  },
+  "confidence": "range",
+  "provenance": "corporate",
+  "chapter": 6,
+  "strand": "tech",
+  "lenses": [
+   "fire",
+   "raw"
+  ],
+  "place": {
+   "name_ja": "米国ニューヨーク州コーニング",
+   "lat": 42.14,
+   "lng": -77.05,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "コーニング社の発表によると、S・ドナルド・スーキーは1952年に、ある種のガラスが強い熱の下で不透明で軽く、急な温度変化に強い素材に変わることを見つけた。会社はこれを「パイロセラム」のガラスセラミックスとして特許を取り、台所の器「コーニングウェア」のもとになった。",
+  "unknown_ja": "発見の年（1952年とする資料と1953年とする資料がある）。コーニングウェアの発売年（この発表は書いていない）。",
+  "sources": [
+   {
+    "title": "Renowned Corning Scientist Dr Don Stookey Dies At 99（Corning Incorporated, 2014）",
+    "url": "https://www.corning.com/in/en/about-us/news-events/features/renowned-corning-scientist-dr-don-stookey-dies-at-99.html",
+    "kind": "corporate",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "G05",
+  "title_ja": "京都セラミック創業：器ではなく、電子の部品になる焼き物",
+  "when": {
+   "from": 1959,
+   "to": 1972,
+   "label": "1959年（創業）〜1972年（LSI用のセラミック多層パッケージで大河内記念生産特賞）"
+  },
+  "confidence": "confirmed",
+  "provenance": "corporate",
+  "chapter": 6,
+  "strand": "tech",
+  "lenses": [
+   "fire"
+  ],
+  "place": {
+   "name_ja": "京都市中京区西ノ京原町",
+   "lat": 35.012,
+   "lng": 135.732,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "京セラの沿革によると、1959年4月、京都市中京区西ノ京原町に資本金300万円・従業員28名で、ファインセラミックスの専門メーカー「京都セラミック株式会社」が創業した。1972年には「大規模集積回路用セラミック多層パッケージの開発」で大河内記念生産特賞を受けた。焼き物の技術が、器ではなく電子部品の素材へ移っていく例。",
+  "unknown_ja": "—",
+  "sources": [
+   {
+    "title": "沿革 〜1979年（京セラ）",
+    "url": "https://www.kyocera.co.jp/company/history/until1979.html",
+    "kind": "corporate",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "山城",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
   "id": "E30",
   "title_ja": "宇宙往還機のセラミック耐熱タイル",
   "when": {
