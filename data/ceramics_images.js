@@ -26,7 +26,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:MET_DP342691.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p1b",
@@ -52,7 +52,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:MET_DP342693.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p2a",
@@ -78,7 +78,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:MET_37336.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p2b",
@@ -104,7 +104,33 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Plate_with_tiger_and_bamboo_MET_ES4022.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
+ },
+ {
+  "id": "ph_p2c",
+  "no": "P2c",
+  "pair": "柿右衛門→英国→中国",
+  "target": "E18",
+  "file": "img/ph_p2c.jpg",
+  "w": 900,
+  "h": 701,
+  "generated": false,
+  "kind": "object",
+  "caption_ja": "柿右衛門様式の虎と竹の皿（中国・景徳鎮）",
+  "title": "Plate with molded rim and decoration of Kakiemon-style tiger and bamboo",
+  "date": "ca. 1755",
+  "place": "China",
+  "medium": "Porcelain painted in underglaze cobalt blue (Jingdezhen ware)",
+  "dims": "H. 2 3/8 in. (6 cm); Diam. 13 3/4 in. (34.9 cm); Diam. (foot) 8 7/8 in. (22.5 cm)",
+  "museum": "メトロポリタン美術館",
+  "accession": "2002.447.107",
+  "credit": "Dr. and Mrs. Roger G. Gerry Collection, Bequest of Dr. and Mrs. Roger G. Gerry, 2000",
+  "museum_page": "https://www.metmuseum.org/art/collection/search/49401",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
+  "file_page": "https://commons.wikimedia.org/wiki/File:MET_DP102600.jpg",
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p3a",
@@ -130,7 +156,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:MET_44738.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p3b",
@@ -156,7 +182,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Dish_with_flowers_and_birds_MET_DP349122.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_p3c",
@@ -182,7 +208,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Imitation_Blue-and-white_Bowl_MET_DP361177.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_x1",
@@ -208,7 +234,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Plate_depicting_a_lady_with_parasol_MET_DP315952.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b01",
@@ -234,7 +260,33 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:MET_DP244342.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
+ },
+ {
+  "id": "ph_b02",
+  "no": "B02",
+  "pair": null,
+  "target": "E17",
+  "file": "img/ph_b02.jpg",
+  "w": 900,
+  "h": 879,
+  "generated": false,
+  "kind": "object",
+  "caption_ja": "白鷺の鉢（肥前、1639年の年紀がある10客の1つ）",
+  "title": "One of Ten Bowls (Hachi) with Egrets",
+  "date": "1639",
+  "place": "Japan",
+  "medium": "Porcelain with cobalt blue under transparent glaze (Hizen ware, Arita type)",
+  "dims": "H. 1 3/4 in. (4.4 cm); Diam. 6 1/8 in. (15.6 cm)",
+  "museum": "メトロポリタン美術館",
+  "accession": "1975.268.480",
+  "credit": "The Harry G. C. Packard Collection of Asian Art, Gift of Harry G. C. Packard, and Purchase, Fletcher, Rogers, Harris Brisbane Dick, and Louis V. Bell Funds, Joseph Pulitzer Bequest, and The Annenberg Fund Inc. Gift, 1975",
+  "museum_page": "https://www.metmuseum.org/art/collection/search/52230",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
+  "file_page": "https://commons.wikimedia.org/wiki/File:%E6%9F%93%E4%BB%98%E7%99%BD%E9%B7%BA%E6%96%87%E9%89%A2-Deep_Dish_with_Egret_(from_a_set_of_ten)_MET_210526.jpg",
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b03",
@@ -260,7 +312,33 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1964.364",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
+ },
+ {
+  "id": "ph_b04",
+  "no": "B04",
+  "pair": null,
+  "target": "E20",
+  "file": "img/ph_b04.jpg",
+  "w": 680,
+  "h": 531,
+  "generated": false,
+  "kind": "object",
+  "caption_ja": "碗と受け皿（マイセン、赤い炻器）",
+  "title": "Teabowl and saucer",
+  "date": "ca. 1708–9",
+  "place": "Meissen Manufactory",
+  "medium": "Porcelaneous red stoneware",
+  "dims": "Overall (teabowl .19): 1 3/4 × 3 1/8 in. (4.4 × 7.9 cm);\n; Overall (saucer .20): 1 1/4 × 5 1/8 in. (3.2 × 13 cm)",
+  "museum": "メトロポリタン美術館",
+  "accession": "42.205.19, .20",
+  "credit": "The George B. McClellan Collection, Gift of Mrs. George B. McClellan, 1941",
+  "museum_page": "https://www.metmuseum.org/art/collection/search/199130",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
+  "file_page": "https://commons.wikimedia.org/wiki/File:Teabowl_and_saucer_MET_133539.jpg",
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b05",
@@ -286,7 +364,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Vase_MET_DP155616.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b06",
@@ -312,7 +390,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Plate_MET_DP-1687-004.jpg",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b07",
@@ -338,7 +416,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1949.15",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b08",
@@ -364,7 +442,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1919.188",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b10",
@@ -390,7 +468,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1972.9",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b11",
@@ -416,7 +494,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/2015.495",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b12",
@@ -442,7 +520,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1973.18",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b13",
@@ -468,13 +546,13 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1976.110",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b14",
   "no": "B14",
   "pair": null,
-  "target": "K01",
+  "target": "K01/C07",
   "file": "img/ph_b14.jpg",
   "w": 900,
   "h": 700,
@@ -494,7 +572,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1975.170",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b15",
@@ -520,7 +598,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1964.245",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b16",
@@ -546,7 +624,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1984.68",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b17",
@@ -572,7 +650,7 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1942.132",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  },
  {
   "id": "ph_b18",
@@ -598,6 +676,6 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1961.92",
-  "retrieved": "2026-11-22"
+  "retrieved": "2026-11-26"
  }
 ];

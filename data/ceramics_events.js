@@ -162,6 +162,292 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "C01",
+  "title_ja": "商代に、高い温度で焼いた釉のかかった器が現れる",
+  "when": {
+   "from": -1600,
+   "to": -1046,
+   "label": "商代（殷）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 2,
+  "strand": "tech",
+  "lenses": [
+   "fire"
+  ],
+  "place": {
+   "name_ja": "中国（地域の代表点）",
+   "lat": 34.8,
+   "lng": 113.6,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "台北の国立故宮博物院の陶磁の解説は、高温で焼いた釉のある磁器が商代に初めて現れたと書く。土器を焼き固めるだけの段階から、器の表面をガラス質の釉で覆う段階への移り変わり。",
+  "unknown_ja": "最初に作られた場所と年代（この解説は場所も年の数字も書いていない）。「磁器」と呼ぶか「高温の施釉陶」と呼ぶかは研究者で分かれる。",
+  "sources": [
+   {
+    "title": "The Magic of Kneaded Clay：Neolithic Age to Five Dynasties（國立故宮博物院）",
+    "url": "https://www.npm.edu.tw/exh99/ceramics/html/page_en_03.html",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C02",
+  "title_ja": "浙江の緑釉の器と、三国・晋の磁器の量産",
+  "when": {
+   "from": 220,
+   "to": 420,
+   "label": "春秋時代の終わり（浙江の緑釉）→ 三国・晋（量産の始まり）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 2,
+  "strand": "tech",
+  "lenses": [
+   "fire",
+   "raw"
+  ],
+  "place": {
+   "name_ja": "浙江（地域の代表点）",
+   "lat": 29.9,
+   "lng": 120.6,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "国立故宮博物院の解説は、春秋時代の終わりまでに浙江で緑の釉の儀礼の器が発達し、磁器の大規模な生産は三国・晋の時代まで始まらなかったと書く。",
+  "unknown_ja": "どの窯で、いつ量産が始まったか（この解説は窯の名を書いていない）。量産の場所が浙江かどうかも、この解説からは分からない。",
+  "sources": [
+   {
+    "title": "The Magic of Kneaded Clay：Neolithic Age to Five Dynasties（國立故宮博物院）",
+    "url": "https://www.npm.edu.tw/exh99/ceramics/html/page_en_03.html",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C03",
+  "title_ja": "須恵器と陶邑窯跡群：朝鮮半島から来た窖窯（あながま）",
+  "when": {
+   "from": 400,
+   "to": 899,
+   "label": "5〜9世紀（陶邑の須恵器）"
+  },
+  "confidence": "range",
+  "provenance": "excavation",
+  "chapter": 2,
+  "strand": "firing",
+  "lenses": [
+   "fire",
+   "carry",
+   "copy"
+  ],
+  "place": {
+   "name_ja": "堺市・和泉市の丘陵（陶邑窯跡群、地域の代表点）",
+   "lat": 34.48,
+   "lng": 135.5,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "堺市の文化財の解説によると、陶邑窯跡群は古墳時代から平安時代まで須恵器などを焼いた国内最古・最大規模の窯跡群で、約400基の須恵器の窯が見つかっている。朝鮮半島から新しく導入された半地下式の窖窯で、1000〜1200度の高温で焼いた。出土品は5〜9世紀の須恵器の年代の物差しで、2005年に重要文化財に指定された。",
+  "unknown_ja": "最初の窯の正確な年（この解説は開始の年を書いていない）。窯の数は数え方で違う（約400基、500基以上、800基以上とする資料がある）。",
+  "sources": [
+   {
+    "title": "大阪府陶邑窯跡群出土品（堺市 文化財課）",
+    "url": "https://www.city.sakai.lg.jp/kanko/rekishi/bunkazai/bunkazai/shokai/bunya/kouko/suemuragunshutsu.html",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "和泉",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "C04",
+  "title_ja": "イラクの陶工が、錫の白い釉で中国の白い器を写す",
+  "when": {
+   "from": 800,
+   "to": 899,
+   "label": "9世紀"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 2,
+  "strand": "design",
+  "lenses": [
+   "copy",
+   "carry"
+  ],
+  "place": {
+   "name_ja": "イラク（バスラか、地域の代表点）",
+   "lat": 30.5,
+   "lng": 47.8,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "メトロポリタン美術館の解説によると、9世紀のイラクの陶工は、中国の白い器の輝きと硬い素地を、錫で白くした釉で写そうとした。所蔵の鉢（63.159.4）は土器の上に不透明な白い釉をかけ、コバルトの青で文字を描く。磁器を焼く技術はまだなく、白い釉で白く見せた。",
+  "unknown_ja": "どの窯で作られたか（所蔵館は「イラク、おそらくバスラ」とする）。",
+  "sources": [
+   {
+    "title": "Bowl Emulating Chinese Stoneware（メトロポリタン美術館 63.159.4）",
+    "url": "https://www.metmuseum.org/art/collection/search/451715",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C05",
+  "title_ja": "唐の沈没船（黒石号）：長沙の碗5万点を積んだアラブの船",
+  "when": {
+   "from": 826,
+   "to": 839,
+   "label": "830年代ごろ（積荷の長沙窯の碗）"
+  },
+  "confidence": "range",
+  "provenance": "excavation",
+  "chapter": 2,
+  "strand": "logistics",
+  "lenses": [
+   "carry"
+  ],
+  "place": {
+   "name_ja": "シンガポールの南東約600kmの沖（代表点）",
+   "lat": -2.75,
+   "lng": 107.6,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "シンガポールのアジア文明博物館によると、約1100年前に広州から出たアラブの船がスマトラの沖で沈み、1998年に偶然見つかった。板を縫い合わせて作るペルシア湾の造りの船で、湖南省長沙で830年代ごろに作られた手描きの碗が5万点以上、館の所蔵になっている。越州の青磁、邢窯・定窯の白磁も積んでいた。",
+  "unknown_ja": "沈んだ正確な年と行き先（館の解説は行き先を書いていない）。積荷の総数は資料で違う。",
+  "sources": [
+   {
+    "title": "Tang Shipwreck（Asian Civilisations Museum, Singapore）",
+    "url": "https://www.acm.nhb.gov.sg/galleries/maritime-trade/tang-shipwreck",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C06",
+  "title_ja": "高麗青磁：宋の青磁に学び、象嵌で自分の姿へ",
+  "when": {
+   "from": 1123,
+   "to": 1170,
+   "label": "1123年（宋の使者・徐兢の記録）〜12世紀半ば"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 3,
+  "strand": "design",
+  "lenses": [
+   "copy",
+   "fire"
+  ],
+  "place": {
+   "name_ja": "全羅道の扶安・康津（地域の代表点）",
+   "lat": 34.64,
+   "lng": 126.77,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "メトロポリタン美術館の解説によると、高麗（918〜1392年）の陶工ははじめ宋の南の沿岸の青磁から技術を学んだ。1123年に都の開城を訪れた宋の使者・徐兢は、高麗の器が越州窯・汝窯の青磁に似ていると記した。12世紀半ばには自分たちの好みを表すようになり、全羅道の扶安・康津に大きな窯業が集まった。頂点は、彫った溝に白や黒の土を埋める象嵌（サンガム）で、中国にはまれな技法。",
+  "unknown_ja": "象嵌の始まった年（解説は年を書いていない）。",
+  "sources": [
+   {
+    "title": "Goryeo Celadon（Heilbrunn Timeline of Art History, メトロポリタン美術館, 2003）",
+    "url": "https://www.metmuseum.org/essays/goryeo-celadon",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C07",
+  "title_ja": "古瀬戸：中国の梅瓶を手本にした、列島ただ一つの施釉陶器",
+  "when": {
+   "from": 1185,
+   "to": 1333,
+   "label": "鎌倉時代（萱刈窯跡に1324・1325年の銘）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 3,
+  "strand": "design",
+  "lenses": [
+   "copy",
+   "fire"
+  ],
+  "place": {
+   "name_ja": "瀬戸（地域の代表点）",
+   "lat": 35.23,
+   "lng": 137.1,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "文化遺産オンライン（文化庁）の重要文化財「古瀬戸黄釉魚波文瓶」の解説によると、中世の瀬戸窯では、わが国唯一の施釉陶器が作られ、中世の窯業の中心だった。この瓶は中国製の磁器の「梅瓶」と呼ばれる瓶を手本にしている。瀬戸の萱刈窯跡からは、元亨四年（1324年）・正中二年（1325年）の銘のある狛犬の台座や陶板が出ている。",
+  "unknown_ja": "瀬戸で釉をかけた器が作られ始めた年（この解説は書いていない）。",
+  "sources": [
+   {
+    "title": "古瀬戸黄釉魚波文瓶（文化遺産オンライン・文化庁）",
+    "url": "https://online.bunka.go.jp/heritages/detail/155308",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "尾張",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
   "id": "T01",
   "title_ja": "喫茶養生記の成立",
   "when": {
@@ -196,6 +482,129 @@ export const ceramicsEvents = [
    "tea_ware": false,
    "tea_role": "",
    "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "C08",
+  "title_ja": "ペルシアのコバルトが景徳鎮へ：染付の青",
+  "when": {
+   "from": 1290,
+   "to": 1320,
+   "label": "13世紀（景徳鎮で青の絵付け）〜14世紀に入るころ（ペルシアから大量に輸入）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 3,
+  "strand": "logistics",
+  "lenses": [
+   "raw",
+   "carry",
+   "copy"
+  ],
+  "place": {
+   "name_ja": "景徳鎮",
+   "lat": 29.29,
+   "lng": 117.21,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "ウォーリック大学の展示によると、ペルシアの陶工は長く無地の器をコバルトの青で飾ろうとしていた。景徳鎮の陶工は13世紀に器へコバルトの青い文様を描き始め、14世紀に入るころから、中国の陶工はペルシアからコバルトの酸化物を大量に、いつも輸入するようになった。青は西から来て、白い器は東から出ていく。",
+  "unknown_ja": "ペルシアのどこのコバルトか（この展示は産地を書いていない）。",
+  "sources": [
+   {
+    "title": "Chinese Ceramics & the Early Modern World：6. Blue-and-White（University of Warwick, GHCC）",
+    "url": "https://warwick.ac.uk/fac/arts/history/ghcc/research/globalporcelain/exhibition/6",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C09",
+  "title_ja": "新安沈没船：1323年、博多を経て京都へ向かった船",
+  "when": {
+   "from": 1323,
+   "to": 1323,
+   "label": "1323年（至治三年の荷札）"
+  },
+  "confidence": "confirmed",
+  "provenance": "excavation",
+  "chapter": 3,
+  "strand": "logistics",
+  "lenses": [
+   "carry"
+  ],
+  "place": {
+   "name_ja": "韓国・新安郡の荏子島と曽島の間",
+   "lat": 35.02,
+   "lng": 126.085,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "韓国国立中央博物館の学芸員の論文によると、1975年に漁師の網に陶磁器がかかり、1976〜1984年に発掘された。荷札の木簡のうち8点に「至治三年」（1323年）と5月・6月の日付があり、その頃に出航したと考えられる。荷主の名で最も多いのは京都の東福寺（41点）で、博多の筥崎宮なども見え、博多を経て京都へ向かう船だったとみられる。陶磁器は青磁12,377点・白磁など5,311点ほか計2万点余り、銅銭は28トン。積荷に染付は見られなかった。",
+  "unknown_ja": "出港した港（多くの資料は寧波とする。この論文は航路と出港地を別に論じている）。",
+  "sources": [
+   {
+    "title": "Lee Taehee, Sinan Shipwreck Collection at the National Museum of Korea（Journal of Korean Art and Archaeology 5, 2011）",
+    "url": "https://www.ijkaa.org/v.5/0/105/102",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "C10",
+  "title_ja": "デイヴィッドの瓶：年のわかる最も古い染付（1351年）",
+  "when": {
+   "from": 1351,
+   "to": 1351,
+   "label": "1351年（至正十一年の銘）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 3,
+  "strand": "design",
+  "lenses": [
+   "copy",
+   "fire"
+  ],
+  "place": {
+   "name_ja": "景徳鎮",
+   "lat": 29.29,
+   "lng": 117.21,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "大英博物館の解説によると、景徳鎮で作られた一対の大きな瓶の首に長い奉納の銘があり、1351年に玉山県の張文進が香炉と花瓶一対を道観に納めたと記す。染付に書かれた奉納の銘として知られる最も古いもので、景徳鎮の染付づくりが1351年にはすでに成熟していたことを示す。",
+  "unknown_ja": "景徳鎮で染付が作られ始めた正確な年。",
+  "sources": [
+   {
+    "title": "One of the David Vases（大英博物館 PDF,B.613）",
+    "url": "https://www.britishmuseum.org/collection/object/A_PDF-B-613",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
   },
   "qid": []
  },
