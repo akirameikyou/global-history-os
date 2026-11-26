@@ -890,6 +890,47 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "H05",
+  "title_ja": "天草の砥石が、有田の磁器の原料になる",
+  "when": {
+   "from": 1690,
+   "to": 1710,
+   "label": "1690年（砥石として見つかる）・1710年ころ（有田焼の原料として出荷）"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 4,
+  "strand": "logistics",
+  "lenses": [
+   "raw",
+   "carry"
+  ],
+  "place": {
+   "name_ja": "天草下島の西岸・高浜（代表点）",
+   "lat": 32.42,
+   "lng": 130.03,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "地質ニュース（1999年）によると、天草陶石は1690年に名主の上田伝五右衛門によって見つかり、まず砥石（天草砥）として開発された。1710年ころから有田焼の原料として出荷されるようになり、以後は有田焼の主原料として重んじられた。白く焼き上がるのはチタンが0.05%以下ときわめて少ないためで、焼くときの寸法の変化も小さい。1999年の時点で、陶石は高浜港から有田や名古屋方面へ積み出されていた。",
+  "unknown_ja": "有田に出回り始めた年は資料で違う（この記事は1710年ころ、観光庁の泉山磁石場の解説は1800年代後半までに購入とする）。発見者の名は、PDFの文字の読み取りが「伝石工門」で、αが「伝五右衛門」と読んだ。",
+  "sources": [
+   {
+    "title": "濱崎聡志・須藤定久「熊本県天草地方の陶石鉱床」（地質ニュース538号, 1999年6月, 地質調査所＝現 産総研）",
+    "url": "https://www.gsj.jp/data/chishitsunews/99_06_07.pdf",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "肥後",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
   "id": "E20",
   "title_ja": "マイセン硬質磁器の初焼成",
   "when": {
@@ -1491,6 +1532,46 @@ export const ceramicsEvents = [
    "tea_ware": false,
    "tea_role": "",
    "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "H06",
+  "title_ja": "日本の陶石：年30万トンから10万トン以下へ",
+  "when": {
+   "from": 1945,
+   "to": 1999,
+   "label": "戦後の復興期（1945〜1960年）・30万トン超の時代（1960〜1980年）・1980年以降に減る"
+  },
+  "confidence": "range",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "tech",
+  "lenses": [
+   "raw"
+  ],
+  "place": {
+   "name_ja": "日本（地域の代表点）",
+   "lat": 36.0,
+   "lng": 138.0,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "地質ニュース（1999年）によると、日本の陶磁器産業は戦後（1945〜1960年）国内の豊かな粘土・陶石に支えられていち早く復興し、1960〜1980年には陶石の生産が年30万トンを超えた。1980年以降は急に減り、記事の時点で年10万トン以下になった。記事は理由として、資源の枯渇、需要の停滞、働く人の高齢化、低品位の鉱石や代わりの資源の利用、円高による輸入の増加などを挙げる。天草でも、1952年の調査で50余りあった鉱山（稼働24）が、記事の時点で業者4・採掘場6になっていた。",
+  "unknown_ja": "1999年以降の生産量（この記事の後のことは書いていない）。",
+  "sources": [
+   {
+    "title": "濱崎聡志・須藤定久「熊本県天草地方の陶石鉱床」（地質ニュース538号, 1999年6月, 地質調査所＝現 産総研）",
+    "url": "https://www.gsj.jp/data/chishitsunews/99_06_07.pdf",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
   },
   "qid": []
  },
