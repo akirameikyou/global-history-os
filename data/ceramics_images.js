@@ -859,5 +859,31 @@ export const ceramicsImages = [
   "via": "所蔵館の Open Access",
   "file_page": "https://clevelandart.org/art/1918.470",
   "retrieved": "2026-11-26"
+ },
+ {
+  "id": "ph_d07",
+  "no": "D07",
+  "pair": null,
+  "target": "H01",
+  "file": "img/ph_d07.jpg",
+  "w": 900,
+  "h": 665,
+  "generated": false,
+  "kind": "object",
+  "caption_ja": "ジャスパーウェアの碗と受け皿（ウェッジウッド、1784年頃）",
+  "title": "Cup and Saucer",
+  "date": "c. 1784",
+  "place": "England, Staffordshire, 18th century / Wedgwood Factory",
+  "medium": "jasper ware with relief decoration",
+  "dims": "Diameter: 8.6 cm (3 3/8 in.)",
+  "museum": "クリーブランド美術館",
+  "accession": "1951.304",
+  "credit": "Gift of Mrs. John Sherwin",
+  "museum_page": "https://clevelandart.org/art/1951.304",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "via": "所蔵館の Open Access",
+  "file_page": "https://clevelandart.org/art/1951.304",
+  "retrieved": "2026-11-26"
  }
 ];

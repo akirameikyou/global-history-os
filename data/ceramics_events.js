@@ -1092,6 +1092,47 @@ export const ceramicsEvents = [
   "qid": []
  },
  {
+  "id": "H01",
+  "title_ja": "ウェッジウッド：5000回の試しと、工場の前を通る運河",
+  "when": {
+   "from": 1759,
+   "to": 1777,
+   "label": "1759年（創業）・1765年（クイーンズウェアの試し）・1777年（トレント＝マージー運河の完成）"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 5,
+  "strand": "logistics",
+  "lenses": [
+   "carry",
+   "fire"
+  ],
+  "place": {
+   "name_ja": "英国・ストーク＝オン＝トレントのエトルリア（工場の跡、代表点）",
+   "lat": 53.02,
+   "lng": -2.19,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "ヴィクトリア＆アルバート博物館の解説によると、ウェッジウッドは1759年に始まった。ジョサイア・ウェッジウッドはクリームウェアの色と仕上がりを整えるために5000回近い釉と素地の試しを重ね、実験の記録を残した（1765年の「クイーンズウェア」の試し板が所蔵されている）。原料の運び賃と、悪い道で壊れる器の損失が利益を削っていたため、ジョサイアはリヴァプールとハルの港とスタッフォードシャーを結ぶトレント＝マージー運河（1777年完成）の建設運動に深く関わり、その運河は新しいエトルリア工場のすぐ前を通った。",
+  "unknown_ja": "エトルリア工場が操業を始めた年（この解説は書いていない）。",
+  "sources": [
+   {
+    "title": "Wedgwood: An introduction（Victoria and Albert Museum）",
+    "url": "https://www.vam.ac.uk/articles/wedgwood-an-introduction",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
   "id": "E23",
   "title_ja": "スポードとボーンチャイナ",
   "when": {
@@ -1165,6 +1206,87 @@ export const ceramicsEvents = [
   ],
   "jp": {
    "region_jp": "肥前",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
+  },
+  "qid": []
+ },
+ {
+  "id": "H02",
+  "title_ja": "ウィーン万博：明治政府が初めて公式に出品し、ジャポニスムが起こる",
+  "when": {
+   "from": 1873,
+   "to": 1873,
+   "label": "1873年5月1日〜11月1日"
+  },
+  "confidence": "confirmed",
+  "provenance": "archive",
+  "chapter": 5,
+  "strand": "design",
+  "lenses": [
+   "carry",
+   "copy"
+  ],
+  "place": {
+   "name_ja": "オーストリア・ウィーンのプラーター公園",
+   "lat": 48.216,
+   "lng": 16.396,
+   "precision": "site",
+   "coord_by": "source"
+  },
+  "fact_ja": "国立国会図書館の解説によると、1873年のウィーン万博は日本政府が初めて公式に参加・出品した博覧会で、日本は珍しく優れた工芸品を数多く出し、日本ブーム（ジャポニスム）を巻き起こした。出品の準備は全国の物産調査を兼ね、特産物は2点ずつ集めて、1点はウィーンへ、1点は博物館の常備陳列用とされた。",
+  "unknown_ja": "出品した陶磁器の産地ごとの点数（この解説は書いていない）。",
+  "sources": [
+   {
+    "title": "博覧会―近代技術の展示場（国立国会図書館）：1873年ウィーン万博",
+    "url": "https://www.ndl.go.jp/exposition/s1/1873.html",
+    "kind": "archive",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "H03",
+  "title_ja": "ニール号の遭難：万博から帰る陶磁器が伊豆の海に沈む",
+  "when": {
+   "from": 1874,
+   "to": 1875,
+   "label": "1874年3月20日（遭難）・翌年（一部を引き揚げ）"
+  },
+  "confidence": "confirmed",
+  "provenance": "archive",
+  "chapter": 5,
+  "strand": "logistics",
+  "lenses": [
+   "carry"
+  ],
+  "place": {
+   "name_ja": "伊豆半島の沖（代表点）",
+   "lat": 34.58,
+   "lng": 138.85,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "国立国会図書館の解説によると、ウィーン万博の終わった後、出品物192箱を積んで日本へ向かったフランス郵船ニール号は、1874年3月20日未明、伊豆半島の沖で暴風雨のため暗礁に乗り上げた。翌年、陶磁器・漆器など68箱分が博覧会事務局によって引き揚げられ、一部は博覧会事務局（いまの東京国立博物館）に収められた。残りの出品物は今も海の底にある。",
+  "unknown_ja": "沈んだ正確な位置（この解説は「伊豆半島沖」とだけ書く）。引き揚げた陶磁器の内訳。",
+  "sources": [
+   {
+    "title": "博覧会―近代技術の展示場（国立国会図書館）：ウィーン万博への道程",
+    "url": "https://www.ndl.go.jp/exposition/s1/1873-3.html",
+    "kind": "archive",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "伊豆",
    "tea_ware": false,
    "tea_role": "",
    "japan_map": true
@@ -1490,6 +1612,46 @@ export const ceramicsEvents = [
    "tea_ware": false,
    "tea_role": "",
    "japan_map": false
+  },
+  "qid": []
+ },
+ {
+  "id": "H04",
+  "title_ja": "天草陶石もまた：良質な石の不足と、使われなかった石を使う工夫",
+  "when": {
+   "from": 2014,
+   "to": 2014,
+   "label": "2014年度の研究報告"
+  },
+  "confidence": "confirmed",
+  "provenance": "institution",
+  "chapter": 6,
+  "strand": "tech",
+  "lenses": [
+   "raw"
+  ],
+  "place": {
+   "name_ja": "天草下島（陶石の産地、代表点）",
+   "lat": 32.45,
+   "lng": 130.02,
+   "precision": "region",
+   "coord_by": "source"
+  },
+  "fact_ja": "長崎県窯業技術センターの研究報告（2014年度）によると、肥前地区ではおもに天草陶石を原料にして和飲食器を作っているが、近年、天草陶石は将来的に良質な陶石の供給不足が心配されている。良質な陶石と一緒に掘られる「低火度陶石」は埋蔵量が多いのに品質が一定しないためほとんど使われてこなかったが、品質を安定させる技術ができ、これを使ってふつうより100℃低い1200℃で焼ける陶土が作られた。泉山から天草へ移った原料が、いままた足りなくなりつつある。",
+  "unknown_ja": "天草陶石の残りの量と、有田焼で天草陶石が占める割合（この報告は数字を書いていない）。天草陶石が磁器の原料として出回り始めた年。",
+  "sources": [
+   {
+    "title": "低炭素社会対応型陶磁器素材の開発（長崎県窯業技術センター研究報告 平成26年度）",
+    "url": "https://www.pref.nagasaki.jp/yogyo/report_kenkyu/pdf/h26/Report_H26_04.pdf",
+    "kind": "institution",
+    "checked": "2026-11-26"
+   }
+  ],
+  "jp": {
+   "region_jp": "肥後",
+   "tea_ware": false,
+   "tea_role": "",
+   "japan_map": true
   },
   "qid": []
  }
