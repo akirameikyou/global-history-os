@@ -281,7 +281,7 @@ import { ceramicsEvents as EVENTS } from '../data/ceramics_events.js?v=20261126a
 import { ceramicsKilnsJp as KILNS } from '../data/ceramics_kilns_jp.js?v=20261120e';
 import { ceramicsMaterials as MATS, ceramicsMaterialLinks as MLINKS } from '../data/ceramics_materials.js?v=20261121a';
 import { ceramicsChapters as CHAPTERS, ceramicsLenses as LENSES, ceramicsStrands as STRANDS } from '../data/ceramics_config.js?v=20261120a';
-import { ceramicsImages as PHOTOS } from '../data/ceramics_images.js?v=20261126b'; // 実物の器の写真（所蔵館の CC0）。生成画像の器は載せない（D13）
+import { ceramicsImages as PHOTOS } from '../data/ceramics_images.js?v=20261126c'; // 実物の器の写真（所蔵館の CC0）。生成画像の器は載せない（D13）
 import { mountGeoBase, geoBase as GEO, currentMeta as CUR_META, TIME_JA, STATUS_JA } from '../assets/geobase/geobase_globe.js?v=20261125b'; // 共通の地の層の部品（万次郎の試験と同じもの）
 
 const $ = id => document.getElementById(id);
@@ -322,7 +322,7 @@ geo = mountGeoBase(world, { attribEl: $('attrib'), ui: false, onChange: () => { 
 let globeReady = false;
 const markReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
 world.onGlobeReady(markReady);
-setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markReady)), 1000); // 予備（万次郎版と同じ）
+setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markReady)), 4000); // 予備。1秒では地球の準備（onGlobeReady）より先に印を渡してしまい、three-globe の isBehindGlobe が落ちていた（2026-11-26 4秒に）
 
 /* ── 時間・光源 ── */
 function chapterAt(y) { const c = CHAPTERS.find(c => c.from <= y && y < c.to); return c ? c.id : (y < CHAPTERS[0].from ? CHAPTERS[0].id : CHAPTERS[CHAPTERS.length - 1].id); }
@@ -417,6 +417,7 @@ const PHOTO = Object.fromEntries(PHOTOS.map(p => [p.id, p]));
 const PAIRS = {
   P1: { name: '景徳鎮 → 肥前', line: '同じ「池の雁」の図柄。中国・景徳鎮の染付（16世紀末〜17世紀初め）と、肥前の色絵（1660〜80年）。二枚の題名は所蔵館のものです。' },
   P2: { name: '柿右衛門様式 → 英国・中国', ifMissing: { ph_p2c: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）。チェルシーの皿について、所蔵館のデータは様式を書いていません。チェルシー窯が柿右衛門に倣ったことは、所蔵館の別の皿（2018.378）の題名「日本の柿右衛門に倣った図」に書かれています。' }, line: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）、中国・景徳鎮の「虎と竹」の皿（1755年頃）。景徳鎮の皿は、所蔵館が題名で「柿右衛門様式」と書いています。写しが、写された側の中国でも作られました。チェルシーの皿について、所蔵館のデータは様式を書いていません。' },
+  P4: { name: '中国の白い器 → イラクの錫釉', line: '中国の白い碗（9世紀末〜10世紀初め。所蔵館は「南方の白磁」とする）と、イラクの鉢（9世紀）。メトロポリタン美術館は、イラクの陶工が中国の白い器の輝きと硬い素地を、錫で白くした釉で写そうとしたと書いています。磁器を焼く技術はまだなく、土器の上の白い釉で白く見せました。この二つが直接の手本と写しだったわけではありません（並べているのは同じ頃の例）。' },
   P3: { name: '景徳鎮の染付 → デルフト・イラン', line: '景徳鎮の芙蓉手（1600年頃）。デルフト（1660年頃）は錫釉の陶器、イラン（17世紀）は石英を練った素地（ストーンペースト）で、どちらも磁器ではない素材で白地に青の器を作りました。イランの鉢は、所蔵館の題名そのものが「染付の写し」です。' },
 };
 const PHOTO_LINK_ONLY = { // 写真を自由に使えないもの・取得できなかったもの：所蔵館の頁へのリンクだけ

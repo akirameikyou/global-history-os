@@ -809,11 +809,11 @@ export const ceramicsImages = [
   "retrieved": "2026-11-26"
  },
  {
-  "id": "ph_d03",
-  "no": "D03",
-  "pair": null,
+  "id": "ph_p4b",
+  "no": "P4b",
+  "pair": "中国の白い器→イラクの錫釉",
   "target": "C04",
-  "file": "img/ph_d03.jpg",
+  "file": "img/ph_p4b.jpg",
   "w": 674,
   "h": 900,
   "generated": false,
@@ -832,6 +832,32 @@ export const ceramicsImages = [
   "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
   "via": "Wikimedia Commons（所蔵館が寄贈した写真）",
   "file_page": "https://commons.wikimedia.org/wiki/File:Bowl_Emulating_Chinese_Stoneware_MET_DP170381.jpg",
+  "retrieved": "2026-11-26"
+ },
+ {
+  "id": "ph_p4a",
+  "no": "P4a",
+  "pair": "中国の白い器→イラクの錫釉",
+  "target": "C04",
+  "file": "img/ph_p4a.jpg",
+  "w": 900,
+  "h": 602,
+  "generated": false,
+  "kind": "object",
+  "caption_ja": "白い碗（中国、所蔵館は「南方の白磁」、9世紀末〜10世紀初め）",
+  "title": "Bowl:  Southern White Ware",
+  "date": "late 800s-early 900s",
+  "place": "China, Tang dynasty (618-907) - Five dynasties (907-960)",
+  "medium": "Glazed porcelain, Southern white ware",
+  "dims": "Diameter: 21.6 cm (8 1/2 in.); Overall: 11.9 cm (4 11/16 in.)",
+  "museum": "クリーブランド美術館",
+  "accession": "1918.470",
+  "credit": "Gift of John L. Severance",
+  "museum_page": "https://clevelandart.org/art/1918.470",
+  "license": "CC0",
+  "license_url": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "via": "所蔵館の Open Access",
+  "file_page": "https://clevelandart.org/art/1918.470",
   "retrieved": "2026-11-26"
  }
 ];
