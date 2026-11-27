@@ -13,7 +13,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>History OS｜陶磁器 CERAMICS Focus</title>
 <meta name="description" content="動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。土器から磁器、工業のセラミックスまで、陶磁器の歴史を地球と年代バーでたどる History OS の陶磁器 Focus（CERAMICS）。">
-<meta name="robots" content="noindex">
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/ceramics/">
 <style>
   :root{
     --clay:#d9a77a; --clay-soft:#f0d2b4; --est:#e0b45f;
@@ -321,7 +321,8 @@ world.pathsData([]).pathPoints('pts').pathPointLat(p => p[0]).pathPointLng(p => 
 let geo = null; // 部品は作る時にも一度 onChange を呼ぶので、作り終わるまでは描き直さない
 geo = mountGeoBase(world, { attribEl: $('attrib'), ui: false, onChange: () => { if (geo) drawDial(); } });
 let globeReady = false;
-const markReady = () => { if (globeReady) return; globeReady = true; drawGlobe(); };
+const markReady = () => { if (globeReady) return; globeReady = true; drawGlobe();
+  if (new URLSearchParams(location.search).get('japan') === '1') $('japanBtn').click(); }; // 表紙の「日本の窯から」
 world.onGlobeReady(markReady);
 setTimeout(() => requestAnimationFrame(() => requestAnimationFrame(markReady)), 4000); // 予備。1秒では地球の準備（onGlobeReady）より先に印を渡してしまい、three-globe の isBehindGlobe が落ちていた（2026-11-26 4秒に）
 
@@ -416,7 +417,7 @@ function drawDial() {
    年代・素材は所蔵館の表記のまま。写真ごとに 所蔵館・登録番号・ライセンス・元の頁 を出す（PHOTO_PLAN_001）。 */
 const PHOTO = Object.fromEntries(PHOTOS.map(p => [p.id, p]));
 const PAIRS = {
-  P1: { name: '景徳鎮 → 肥前', line: '同じ「池の雁」の図柄。中国・景徳鎮の染付（16世紀末〜17世紀初め）と、肥前の色絵（1660〜80年）。二枚の題名は所蔵館のものです。' },
+  P1: { name: '景徳鎮 → 肥前', line: '同じ「池の雁」の図柄。中国・景徳鎮の染付（16世紀末〜17世紀初め）と、肥前の色絵（1660〜80年）。メトロポリタン美術館は、肥前の皿の形と文様は中国の芙蓉手（クラーク）に倣い、色絵の色は日本独自だと書いています。中国の政情の乱れで新しい仕入れ先を求めたオランダの注文が、日本の磁器を伸ばしたとも。' },
   P2: { name: '柿右衛門様式 → 英国・中国', ifMissing: { ph_p2c: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）。チェルシーの皿について、所蔵館のデータは様式を書いていません。チェルシー窯が柿右衛門に倣ったことは、所蔵館の別の皿（2018.378）の題名「日本の柿右衛門に倣った図」に書かれています。' }, line: '日本の柿右衛門様式（1675年頃）と、英国チェルシー窯の「虎と竹」の皿（1755年頃）、中国・景徳鎮の「虎と竹」の皿（1755年頃）。景徳鎮の皿は、所蔵館が題名で「柿右衛門様式」と書いています。写しが、写された側の中国でも作られました。チェルシーの皿について、所蔵館のデータは様式を書いていません。' },
   P4: { name: '中国の白い器 → イラクの錫釉', line: '中国の白い碗（9世紀末〜10世紀初め。所蔵館は「南方の白磁」とする）と、イラクの鉢（9世紀）。メトロポリタン美術館は、イラクの陶工が中国の白い器の輝きと硬い素地を、錫で白くした釉で写そうとしたと書いています。磁器を焼く技術はまだなく、土器の上の白い釉で白く見せました。この二つが直接の手本と写しだったわけではありません（並べているのは同じ頃の例）。' },
   P3: { name: '景徳鎮の染付 → デルフト・イラン', line: '景徳鎮の芙蓉手（1600年頃）。デルフト（1660年頃）は錫釉の陶器、イラン（17世紀）は石英を練った素地（ストーンペースト）で、どちらも磁器ではない素材で白地に青の器を作りました。イランの鉢は、所蔵館の題名そのものが「染付の写し」です。' },
