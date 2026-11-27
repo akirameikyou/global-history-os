@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- ceramics/focusShell.html: 焼き物 Focus — History OS（主題型の Focus。骨組み M1-0）。
+<!-- ceramics/focusShell.html: 陶磁器 Focus（CERAMICS）— History OS（主題型の Focus。骨組み M1-0）。
      見た目の言葉は小麦とパン Focus と同じ（全面の地球・上中央の題・左右の浮遊パネル・中央下の年代バー・浮遊カード）。
      決まりごと（ceramics-focus-001 の DECISIONS_001／DATA_SPEC_001）：
        ・主の問い「動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか」
@@ -11,8 +11,8 @@
 <html lang="ja"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>History OS｜焼き物 Focus</title>
-<meta name="description" content="動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。焼き物の歴史を地球と年代バーでたどる History OS の焼き物 Focus（試作）。">
+<title>History OS｜陶磁器 CERAMICS Focus</title>
+<meta name="description" content="動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。土器から磁器、工業のセラミックスまで、陶磁器の歴史を地球と年代バーでたどる History OS の陶磁器 Focus（CERAMICS）。">
 <meta name="robots" content="noindex">
 <style>
   :root{
@@ -36,6 +36,7 @@
   .title{position:absolute;top:18px;left:50%;transform:translateX(-50%);z-index:10;text-align:center;pointer-events:none;width:min(90vw,720px)}
   .title h1{margin:0;font-family:var(--serif);font-size:23px;font-weight:700;letter-spacing:.42em;text-indent:.42em}
   .title p{margin:7px 0 0;font-size:11px;letter-spacing:.12em;color:var(--clay-soft)}
+  .title h1 .en{font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.32em;text-indent:0;color:var(--clay-soft);margin-left:.5em;vertical-align:middle}
   /* 光源の一行：どこから照らし、何を影に沈めているか（DECISIONS D2） */
   #shadeLine{position:absolute;top:74px;left:50%;transform:translateX(-50%);z-index:10;font-size:11px;color:var(--sub);white-space:nowrap;pointer-events:none}
   #shadeLine b{color:var(--ink);font-weight:600}
@@ -212,7 +213,7 @@
 </style>
 </head><body>
 <div id="globeViz"></div>
-<div class="title"><h1>焼き物</h1><p>動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか</p></div>
+<div class="title"><h1>陶磁器<span class="en">CERAMICS</span></h1><p>動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか</p></div>
 <div id="shadeLine"></div>
 
 <div id="topCtl">
@@ -503,7 +504,7 @@ function openGround(id) {
      <dt>ライセンス</dt><dd><a href="${esc(p.license.url)}" target="_blank" rel="noopener">${esc(p.license.name)}</a>　改変：${p.license.modification === true ? '可' : p.license.modification === false ? '不可（色を替えない）' : '確認中'}</dd>
      <dt>確かさ</dt><dd>${esc(p.confidence)}</dd><dt>時間</dt><dd>${esc(TIME_JA[p.time])}</dd>
      <dt>解像度</dt><dd>${esc(p.resolution.label)}</dd><dt>加工</dt><dd>${esc(p.processing_ja)}</dd></dl>
-     <div class="rs"><h4>この層について</h4><p>すべての Focus が使える部品（geoBase@1）です。焼き物のデータ（陶石の産地など）は入れていません。</p></div>`, null);
+     <div class="rs"><h4>この層について</h4><p>すべての Focus が使える部品（geoBase@1）です。陶磁器のデータ（陶石の産地など）は入れていません。</p></div>`, null);
 }
 /* 地球をタップ：その一点を縦に貫くカード（地＝各層の値／主題＝近くの窯と出来事） */
 function dist(a, b, c, d) { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)); }
@@ -623,7 +624,7 @@ $('japanBtn').onclick = () => { S.japan = !S.japan; $('japanBtn').setAttribute('
 $('infoBtn').onclick = () => {
   S.sel = null; S.kiln = null;
   openCard('ABOUT', '試作 M1-0（2026年11月）', 'この Focus について', '',
-    `<p>動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。焼き物を食器に閉じず、土と石を火で変える技術（セラミック）として、焼成・発見と技術・デザインと文化・物流の筋でたどります。</p>
+    `<p>動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。陶磁器を食器に閉じず、土と石を火で変える技術（セラミック）として、焼成・発見と技術・デザインと文化・物流の筋でたどります。</p>
      <div class="rs"><h4>確かさの3段</h4><p>確定＝証拠がはっきりしている。幅＝学説が割れている・推定。語り＝伝承・俗説。出典で確かめられなかった出来事は載せていません（いまは ${EVENTS.length} 件。候補は調査中）。</p>
      <h4>年の書き方</h4><p>「cal BP」は1950年から遡った較正年代です。年代バーでは西暦に直して置いています。</p>
      <h4>地の層</h4><p>地球の地面（高さ・水深、岩相、海流）は、すべての Focus が使える部品として別に持っています。各層の出典・ライセンス・加工は右の「地の層」の枠にあります。</p>
@@ -633,11 +634,11 @@ $('infoBtn').onclick = () => {
      <p><b>地層</b>：積もった順に重なった層と、その時代の並び。岩相の地図は地表の種類を示すだけで、地層の重なりや年代は表しません。</p>
      <p><b>高さ・水深</b>：陸の高さと海の深さ（GEBCO）。年代で変わらないものとして扱います。</p>
      <p><b>海流</b>：2011〜2014年の観測の平均（OSCAR）。過去の海流ではありません。</p>
-     <p><b>陶土・陶石</b>：焼き物の原料。陶土は粘土、陶石は砕いて使う岩石です。どこで採れ、どの窯が使ったかは「地の層」ではなく、焼き物の出来事・窯のカードで扱います（岩相が「ある」ことと、その窯が「使った」ことは別です）。</p>
+     <p><b>陶土・陶石</b>：陶磁器の原料。陶土は粘土、陶石は砕いて使う岩石です。どこで採れ、どの窯が使ったかは「地の層」ではなく、陶磁器の出来事・窯のカードで扱います（岩相が「ある」ことと、その窯が「使った」ことは別です）。</p>
      <h4>原料</h4><p>光源「原料」か右の「原料」の枠で、陶石・粘土・カオリンの産地（ひし形）と、どこへ使われ・運ばれたかの結び（破線）が出ます。結びは道筋ではありません。泉山の陶石と、いま有田の大半を支える天草の陶石、花崗岩から生まれた瀬戸の粘土などです。</p>
      <h4>写真</h4><p>器の写真は、所蔵館（クリーブランド美術館・メトロポリタン美術館）が CC0（自由利用）で公開している実物の写真です。写真ごとに所蔵館・登録番号・元の頁を出し、年代と素材は所蔵館の表記のままにしています。写真を自由に使えない器（個人や寺の所蔵など）は、所蔵館の頁へのリンクだけにしています。生成した画像の器は載せません。</p>
      <h4>位置</h4><p>出典に座標がないものは、αが市町や地域の代表点を置きました（カードに「代表点」と書いています）。</p>
-     <h4>この先</h4><p>茶道と日本の焼き物は、北斎版のような日本地図にも展開できるよう、データに旧国名・茶陶の役割を持たせています。</p></div>`, null);
+     <h4>この先</h4><p>茶道と日本の陶磁器は、北斎版のような日本地図にも展開できるよう、データに旧国名・茶陶の役割を持たせています。</p></div>`, null);
 };
 
 function refresh() { drawLenses(); drawDial(); drawRight(); drawTimeline(); drawGlobe(); }
