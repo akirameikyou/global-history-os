@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>History OS｜陶磁器 CERAMICS Focus</title>
+<meta name="description" content="動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。土器から磁器、工業のセラミックスまで、陶磁器の歴史を地球と年代バーでたどる History OS の陶磁器 Focus（個人制作）。" />
+<link rel="canonical" href="https://akirameikyou.github.io/global-history-os/ceramics/" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://akirameikyou.github.io/global-history-os/ceramics/" />
+<meta property="og:image" content="https://akirameikyou.github.io/global-history-os/ceramics/og-cover.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:title" content="History OS｜陶磁器 CERAMICS Focus" />
+<meta property="og:description" content="約18,000年前の土器から、宇宙を往復したタイルまで。原料・火・写し・運ぶの光源で、陶磁器の歴史を地球と年代バーでたどる History OS。" />
+<meta property="og:site_name" content="History OS" />
+<meta property="og:locale" content="ja_JP" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="History OS｜陶磁器 CERAMICS Focus" />
+<meta name="twitter:image" content="https://akirameikyou.github.io/global-history-os/ceramics/og-cover.jpg" />
+<!--
+  陶磁器 Focus の表紙（2026-11-27、清水さん「表紙を作ってから公開」）。骨組みは小麦とパン・万次郎・北斎の表紙と同じ：
+  上に名前、中央に題字と主の問い、入口二つ、四つの案内（INTRO / HOW TO VIEW / METHOD / SOURCES）、ENTER で本体（focusShell.html）を全画面の iframe で重ね、左上の「表紙へ」で戻る。
+  背景は生成画像ではなく、写しの対照 P1 の実物の写真2枚（景徳鎮の皿と、それを写した肥前の皿。メトロポリタン美術館 CC0）。器の生成画像は使わない（決定 D13）。
+  生成：ceramics-focus-001/make_cover.py（cover.jpg・og-cover.jpg）。
+-->
+<style>
+:root{
+  --bg:#080c12;
+  --ink:#eef3f8;
+  --clay:#d9a77a;
+  --clay-soft:#f0d2b4;
+  --border:rgba(238,243,248,.14);
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP",sans-serif;
+  --serif:"Yu Mincho","Hiragino Mincho ProN","Hiragino Mincho Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:var(--sans);overflow:hidden}
+button{font:inherit}
+.app{position:relative;width:100%;height:100%;isolation:isolate;background:var(--bg)}
+/* 背景：元の皿（左）と写した皿（右）。皿が画面の下半分に来るように置き、上を暗くして題字を読みやすくする */
+.cover{
+  position:absolute;inset:0;z-index:1;
+  background:
+    linear-gradient(180deg,rgba(8,12,18,.45) 0%,rgba(8,12,18,.15) 45%,rgba(8,12,18,.15) 75%,rgba(8,12,18,.45) 100%),
+    url("cover.jpg") center 62%/cover no-repeat;
+}
+.photo-badge{
+  position:absolute;z-index:6;right:clamp(20px,3vw,46px);bottom:max(40px,calc(env(safe-area-inset-bottom) + 34px));
+  font-size:9px;letter-spacing:.06em;color:rgba(238,243,248,.72);background:rgba(8,12,18,.6);border:1px solid rgba(238,243,248,.18);border-radius:3px;padding:3px 8px;
+  cursor:pointer;backdrop-filter:blur(6px)
+}
+/* 皿の下の小さな札（PC：皿の中心＝幅の11.5%・88.5%） */
+.pair-label{position:absolute;z-index:3;inset:auto 0 max(64px,calc(env(safe-area-inset-bottom) + 58px)) 0;pointer-events:none;font-size:10px;letter-spacing:.14em;color:rgba(240,210,180,.72)}
+.pair-label span{position:absolute;bottom:0;transform:translateX(-50%);white-space:nowrap}
+.pair-label span:first-child{left:11.5%} .pair-label span:last-child{left:88.5%}
+.header{
+  position:absolute;z-index:5;top:max(24px,env(safe-area-inset-top));
+  left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+}
+.brand{font-size:10px;line-height:1.65;letter-spacing:.21em;color:rgba(238,243,248,.55)}
+.brand strong{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.29em}
+.edition{font-size:9px;letter-spacing:.17em;color:rgba(238,243,248,.34);padding-top:2px}
+.hero{
+  position:absolute;z-index:4;left:50%;top:0;bottom:0;transform:translateX(-50%);
+  width:min(90vw,900px);text-align:center;
+  display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+  padding:clamp(48px,5.5vh,80px) 28px 48px;
+}
+.hero>*{flex:none}
+/* ── 題字の組み（小麦とパンの表紙と同じ規律）：題の大きさ T を基準に、黄金比 φ の段で大きさと間を決める ──
+   題 T ／ 主の問い T÷φ²（0.382T）を2行 ／ 副題 T÷φ³（0.236T）／ 上の小見出し T÷φ⁴（0.146T を下限 11px）
+   間：小見出し→題 0.236T、題→副題 0.18T、副題→問い 0.382T。字詰めは palt。題は漢字3字なので、かなの字面補正は要らない。 */
+.hero{--T:clamp(42px,min(5.4vw,11.4vh),104px)}
+.kicker{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:max(11px,calc(var(--T) * .2));letter-spacing:.14em;margin-right:-.14em;color:rgba(238,243,248,.68);margin-bottom:calc(var(--T) * .236);text-shadow:0 1px 10px rgba(0,0,0,.85)}
+h1{font-family:var(--serif);font-size:var(--T);font-weight:500;line-height:1;margin:0;text-shadow:0 2px 30px rgba(0,0,0,.7)}
+.title-text{display:inline-block;letter-spacing:.24em;margin-right:-.24em;font-feature-settings:"palt"} /* 最後の字の字間を打ち消して、目で見た中心を画面の中心に */
+.life{font-family:Georgia,"Times New Roman",var(--serif);font-size:calc(var(--T) * .236);letter-spacing:.2em;margin:calc(var(--T) * .18) 0 calc(var(--T) * .382) .2em;color:rgba(240,210,180,.9);text-shadow:0 2px 16px rgba(0,0,0,.8)}
+.motto{margin-top:20px;font-family:var(--serif);font-weight:600;font-size:clamp(11px,1.05vw,14px);letter-spacing:.36em;color:rgba(238,243,248,.82);text-shadow:0 2px 14px rgba(0,0,0,.9)}
+.thesis{font-family:var(--serif);font-weight:500;font-size:calc(var(--T) * .3);line-height:1.6;margin:0 0 calc(var(--T) * .236);text-shadow:0 2px 20px rgba(0,0,0,.85);font-feature-settings:"palt"}
+.thesis-text{display:inline-block;letter-spacing:.08em;margin-right:-.08em}
+.lead{
+  max-width:660px;margin:0 auto;color:rgba(238,243,248,.8);text-shadow:0 1px 14px rgba(0,0,0,.95);
+  font-family:var(--serif);font-size:clamp(12px,1.12vw,15px);line-height:1.95;letter-spacing:.05em;
+}
+.enter-wrap{margin-top:26px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.enter{
+  border:1px solid rgba(238,243,248,.28);background:rgba(8,12,18,.55);
+  color:#fffaf2;padding:13px 25px 13px 29px;font-size:10px;letter-spacing:.21em;
+  cursor:pointer;backdrop-filter:blur(9px);
+  transition:background .25s ease,border-color .25s ease,transform .25s ease;
+}
+.enter small{display:block;margin-top:5px;font-size:9px;letter-spacing:.12em;color:rgba(238,243,248,.55)}
+.enter .arw{display:inline-block;margin-left:13px;color:var(--clay);transition:transform .25s ease}
+.enter.primary{border-color:rgba(217,167,122,.55);background:rgba(60,38,20,.5)}
+.enter:hover,.enter:focus-visible{background:rgba(90,58,30,.5);border-color:rgba(217,167,122,.75);transform:translateY(-1px);outline:none}
+.enter:hover .arw{transform:translateX(4px)}
+.guide{
+  width:min(92vw,860px);margin:22px auto 0;display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid rgba(238,243,248,.12);border-bottom:1px solid rgba(238,243,248,.12);
+}
+.guide button{
+  appearance:none;border:0;border-right:1px solid rgba(238,243,248,.10);background:rgba(8,12,18,.55);
+  min-height:74px;color:var(--ink);padding:11px 15px 12px;text-align:left;cursor:pointer;backdrop-filter:blur(6px);
+}
+.guide button:last-child{border-right:0}
+.guide button:hover,.guide button:focus-visible{background:rgba(90,58,30,.4);outline:none}
+.g-num{display:block;font-size:8px;letter-spacing:.18em;color:rgba(217,167,122,.75);margin-bottom:6px}
+.g-title{display:block;font-size:10px;letter-spacing:.13em;color:rgba(238,243,248,.88);margin-bottom:5px}
+.g-copy{display:block;font-size:9px;line-height:1.45;letter-spacing:.04em;color:rgba(238,243,248,.5)}
+.foot{
+  position:absolute;z-index:4;left:clamp(20px,3vw,46px);right:clamp(20px,3vw,46px);
+  bottom:max(19px,env(safe-area-inset-bottom));display:flex;justify-content:space-between;align-items:end;
+  font-size:8px;letter-spacing:.13em;color:rgba(238,243,248,.4)
+}
+dialog{
+  width:min(90vw,620px);border:1px solid var(--border);padding:0;
+  background:rgba(10,15,22,.97);color:var(--ink);
+  box-shadow:0 28px 90px rgba(0,0,0,.6);backdrop-filter:blur(16px);
+}
+dialog::backdrop{background:rgba(2,4,8,.72);backdrop-filter:blur(4px)}
+.dlg{padding:28px 30px 30px;max-height:82vh;overflow-y:auto}
+.d-kicker{font-size:9px;letter-spacing:.22em;color:rgba(217,167,122,.8);margin-bottom:12px}
+.dlg h2{font-family:var(--serif);font-size:24px;font-weight:500;letter-spacing:.06em;margin:0 0 18px}
+.dlg p{font-size:12px;line-height:1.95;color:rgba(238,243,248,.76);margin:0 0 12px}
+.steps{display:grid;gap:10px;margin:14px 0 0}
+.step{border-top:1px solid rgba(238,243,248,.09);padding-top:10px;display:grid;grid-template-columns:92px 1fr;gap:10px;align-items:start}
+.step b{font-size:10px;color:rgba(217,167,122,.85);letter-spacing:.08em;font-weight:500;line-height:1.7}
+.step span{font-size:11px;line-height:1.75;color:rgba(238,243,248,.74)}
+.step strong{font-weight:500;color:rgba(238,243,248,.94)}
+.d-sub{font-size:9px;letter-spacing:.16em;color:rgba(238,243,248,.5);margin:22px 0 0}
+.d-sub+.steps{margin-top:8px}
+.btn-name{display:inline-block;border:1px solid rgba(238,243,248,.25);border-radius:5px;padding:1px 6px;font-size:10px;color:#fffaf2;letter-spacing:.04em;white-space:nowrap}
+.mk{display:inline-flex;align-items:center;gap:6px}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:none}
+.dot.fill{background:var(--clay)} .dot.hollow{border:1.5px solid #e0b45f} .dot.dash{border:1.5px dashed #d8b4f0}
+.ring{display:inline-block;width:18px;height:18px;border-radius:50%;border:1.2px dashed var(--clay);flex:none}
+.sq{display:inline-block;width:9px;height:9px;border-radius:1px;border:1.6px solid #b9e3c6;flex:none}
+.dia{display:inline-block;width:9px;height:9px;background:#c9a46a;transform:rotate(45deg);flex:none}
+.close{margin-top:20px;border:1px solid var(--border);background:none;color:rgba(238,243,248,.75);padding:8px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer}
+.dlg .fine{font-size:10px;line-height:1.8;color:rgba(238,243,248,.5);margin:16px 0 0}
+.dlg a{color:#9becff}
+/* スクロールバーに背景・矢印ボタンを付けない（History OS UI原則） */
+.dlg::-webkit-scrollbar{width:6px;background:transparent}
+.dlg::-webkit-scrollbar-track{background:transparent}
+.dlg::-webkit-scrollbar-thumb{background:rgba(217,167,122,.28);border-radius:3px}
+.dlg::-webkit-scrollbar-button{display:none;width:0;height:0}
+/* ENTER 先：本体を全画面 iframe で重ねる */
+.os-frame{position:absolute;inset:0;z-index:10;border:0;width:100%;height:100%;opacity:0;pointer-events:none;transition:opacity .6s ease;background:#050c16}
+.app.entered .os-frame{opacity:1;pointer-events:auto}
+.app.entered .hero,.app.entered .header,.app.entered .foot,.app.entered .cover,.app.entered .photo-badge,.app.entered .pair-label{opacity:0;pointer-events:none;transition:opacity .25s ease}
+.os-back{
+  position:absolute;z-index:11;top:max(14px,env(safe-area-inset-top));left:clamp(14px,2vw,22px);
+  display:none;align-items:center;
+  border:1px solid rgba(238,243,248,.24);background:rgba(8,12,18,.6);backdrop-filter:blur(8px);
+  color:rgba(238,243,248,.85);padding:7px 13px;font-size:9px;letter-spacing:.14em;cursor:pointer;border-radius:6px;
+}
+.app.entered .os-back{display:inline-flex}
+.os-back:hover{border-color:rgba(217,167,122,.55);color:#fff}
+.os-loading{position:absolute;z-index:11;inset:0;display:none;align-items:center;justify-content:center;color:rgba(238,243,248,.55);font-size:11px;letter-spacing:.22em;pointer-events:none}
+.app.entered.loading .os-loading{display:flex}
+@media (max-width:640px){
+  .header{top:max(17px,env(safe-area-inset-top));left:18px;right:18px}
+  .brand{font-size:8px}.brand strong{font-size:9px}.edition{font-size:7px}
+  .cover{background:linear-gradient(180deg,rgba(8,12,18,.2) 0%,rgba(8,12,18,0) 100%),url("cover-m.jpg") 50% calc(100% - 40px)/100% auto no-repeat,var(--bg)} /* 縦長では2枚を下に並べた別の画像 */
+  .hero{width:100%;padding:96px 18px 56px}
+  .hero{--T:44px}
+  .kicker{font-size:10px}
+  .title-text{letter-spacing:.2em;margin-right:-.2em}
+  .motto{font-size:9px;letter-spacing:.24em;margin-top:12px}
+  .thesis{font-size:15px}
+  .thesis-text{letter-spacing:.03em;margin-right:-.03em}
+  .thesis br{display:none}
+  .lead{font-size:11px;line-height:1.85;max-width:330px}
+  .lead br{display:none}
+  .enter-wrap{margin-top:18px;gap:8px}
+  .enter{font-size:9px;padding:11px 16px 11px 19px}
+  .guide{width:min(94vw,365px);margin-top:14px;grid-template-columns:repeat(2,1fr)}
+  .guide button{min-height:60px;padding:9px 8px 10px}
+  .guide button:nth-child(2){border-right:0}
+  .guide button:nth-child(-n+2){border-bottom:1px solid rgba(238,243,248,.09)}
+  .g-num{font-size:7px}.g-title{font-size:8px;letter-spacing:.10em}.g-copy{font-size:7.5px;line-height:1.4}
+  .foot{left:18px;right:18px;font-size:7px}.foot>span:last-child{display:none}
+  .photo-badge{right:18px;bottom:36px;font-size:8px}
+  .pair-label{display:none}
+  .step{grid-template-columns:70px 1fr}
+  .dlg{padding:24px 20px 24px}
+  .os-back{left:10px;top:calc(max(14px,env(safe-area-inset-top)) + 44px);padding:5px 10px}
+}
+@media (max-height:690px){
+  .lead{display:none}
+  .guide{margin-top:14px}
+  .guide button{min-height:58px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<!-- アクセス数（GoatCounter: Cookie なし・個人を特定しない。北斎版・万次郎版・小麦とパン版と同じ） -->
+<script data-goatcounter="https://historyos.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="cover" role="img" aria-label="左に中国・景徳鎮の「池の雁」の染付の皿、右にそれを肥前が色絵で写した皿（どちらもメトロポリタン美術館の実物の写真）"></div>
+  <div class="pair-label" aria-hidden="true"><span>景徳鎮　16世紀末〜17世紀初め</span><span>肥前が写す　1660〜80年</span></div>
+  <button class="photo-badge" type="button" data-dialog="method" title="表紙の写真について">写真：実物（メトロポリタン美術館 CC0）</button>
+
+  <header class="header">
+    <div class="brand"><strong>HISTORY OS</strong>CERAMICS FOCUS</div>
+    <div class="edition">FIRST EDITION 2026</div>
+  </header>
+
+  <main class="hero">
+    <div class="kicker">c. 18,000 years ago – present</div>
+    <h1><span class="title-text">陶磁器</span></h1>
+    <div class="life">Ceramics Focus</div>
+
+    <p class="thesis"><span class="thesis-text">動かせない土から生まれた器が、<br>なぜ最も遠くまで運ばれ、どこでも写されたのか。</span></p>
+
+    <p class="lead">土も窯も、その土地から動かせない。けれど焼き上がった器は、船に積まれて海を渡った。<br>
+      白い器を焼けない土地では、白い釉で白く見せ、絵柄を写し、やがて自分の姿を見つけた。<br>
+      土器から磁器へ、そして宇宙を往復したタイルまで。火が土と石を変えてきた歴史。</p>
+
+    <div class="enter-wrap">
+      <button class="enter primary" id="enterBtn" type="button">ENTER HISTORY OS<span class="arw">→</span><small>年代バーを自分でなぞる</small></button>
+      <button class="enter" id="japanEnter" type="button">日本の窯から<span class="arw">→</span><small>地球を日本へ寄せて始める</small></button>
+    </div>
+
+    <div class="guide" aria-label="入口ガイド">
+      <button data-dialog="intro" type="button"><span class="g-num">01 / INTRO</span><span class="g-title">この世界について</span><span class="g-copy">土器から磁器、素材としてのセラミックスまで。</span></button>
+      <button data-dialog="view" type="button"><span class="g-num">02 / HOW TO VIEW</span><span class="g-title">見方</span><span class="g-copy">光源・地の層・写しの対照・日本の窯。</span></button>
+      <button data-dialog="method" type="button"><span class="g-num">03 / METHOD</span><span class="g-title">確かさ・写真・ことば</span><span class="g-copy">確定・幅・語りを分け、写真は実物だけ。</span></button>
+      <button data-dialog="sources" type="button"><span class="g-num">04 / SOURCES</span><span class="g-title">出典と資料</span><span class="g-copy">所蔵館・公的機関・論文・地のデータ。</span></button>
+    </div>
+    <div class="motto">CLAY · FIRE · COPY · CARRY</div>
+  </main>
+
+  <footer class="foot"><span>地球の画像：NASA Blue Marble ／ 写真：クリーブランド美術館・メトロポリタン美術館（CC0。各カードに所蔵と登録番号）</span><span>HISTORY OS / THEME FOCUS</span></footer>
+
+  <iframe id="osFrame" class="os-frame" title="History OS / Ceramics Focus" allow="fullscreen"></iframe>
+  <div class="os-loading" id="osLoading">地球を準備しています…</div>
+  <button class="os-back" id="backBtn" type="button" aria-label="表紙へ戻る">← 表紙へ</button>
+
+  <dialog id="intro"><div class="dlg">
+    <div class="d-kicker">01 / INTRO</div><h2>動かせない土から、どこへでも行く器へ</h2>
+    <p>History OS は、歴史を年表だけでなく、時間・場所・同時代の世界を重ねて見るための試みです。陶磁器 Focus は、人物ではなく「もの」を主役にした Focus です。主役は、土と石と、それを変える火と、器を運び、写した人の手です。</p>
+    <p>主の問いは一つです。<strong style="font-weight:500;color:#fff">動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。</strong>土も窯もその土地を離れられないのに、焼き上がった器は船に積まれて海を渡り、届いた先で写されました。中国の白い器をイラクの陶工が錫の白い釉で写し、景徳鎮の染付を肥前が写し、その肥前の柿右衛門様式を英国と、さらに中国までもが写しました。</p>
+    <p>年代バーは6つの章に分かれ、章ごとに縮尺が違います。<br>
+      1 火と土（約18,000年前〜）／ 2 窯と高温 ／ 3 白い石（磁器と茶の器）／ 4 海の道（陶工の移動・有田・VOC）／ 5 写される白（ヨーロッパの自製と産業）／ 6 器から素材へ（量産・デザイン・ファインセラミックス）。</p>
+    <p>「陶磁器」は厳密には陶器と磁器を指しますが、この Focus では土器や、工業・宇宙のセラミックスまでを同じ流れとして扱います。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="view"><div class="dlg">
+    <div class="d-kicker">02 / HOW TO VIEW</div><h2>見方</h2>
+    <div class="d-sub">二つの入口</div>
+    <div class="steps">
+      <div class="step"><b>ENTER</b><span>下の年代バーを左右になぞると、その年まで地球と一覧が展開します。<span class="btn-name">‹</span> <span class="btn-name">›</span> で前後の出来事へ。章の名を押すと、その章を広げます。</span></div>
+      <div class="step"><b>日本の窯から</b><span>地球を日本へ寄せ、六古窯や美濃・九谷などの窯業地（四角の印）を出して始めます。</span></div>
+    </div>
+    <div class="d-sub">画面の各部（PC の配置）</div>
+    <div class="steps">
+      <div class="step"><b>左上：光源</b><span><strong>原料・火・写し・運ぶ</strong>。押すと、その構造の出来事だけが光り、何を影に沈めたかを一行で言います。</span></div>
+      <div class="step"><b>左下：地</b><span>地球の地面を敷き替えます。<span class="btn-name">高さ・水深</span> <span class="btn-name">岩相</span>（もう一度押すと消えます）、流れは <span class="btn-name">海流</span>。<span class="btn-name">流す ▸</span> で海流が動き続けます。</span></div>
+      <div class="step"><b>右</b><span>年表／日本の窯／原料（陶石・カオリンの産地と、どこへ運ばれたかの結び）／地の層（出典と素性）。</span></div>
+      <div class="step"><b>カード</b><span>上に実物の写真。<strong>写しの対照</strong>は、元の器と写した器を並べて出し、押すと大きく並べて所蔵館のデータを全部見られます。上の帯をつかんで動かせます。</span></div>
+      <div class="step"><b>地球を押す</b><span>押した一点の地（高さ・岩相・海流）と、近くの窯と出来事を、縦に貫いて見せます。</span></div>
+    </div>
+    <div class="d-sub">地球の上の印</div>
+    <div class="steps">
+      <div class="step"><b class="mk"><i class="dot fill"></i><i class="dot hollow"></i><i class="dot dash"></i></b><span>塗り＝確定、輪＝幅（学説が割れる・推定）、破線＝語り（伝承・俗説）。</span></div>
+      <div class="step"><b class="mk"><i class="ring"></i></b><span>淡い破線の輪＝「このあたり」（地域の代表点）。</span></div>
+      <div class="step"><b class="mk"><i class="sq"></i><i class="dia"></i></b><span>四角＝日本の窯業地（市町の代表点）。ひし形＝原料の産地。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="method"><div class="dlg">
+    <div class="d-kicker">03 / METHOD</div><h2>確かさ・写真・ことば</h2>
+    <p>この Focus は、確かめられたことと、推測と、語り継がれた話を混ぜないことを原則にしています。</p>
+    <div class="steps">
+      <div class="step"><b>確かさの3段</b><span><strong>確定</strong>＝証拠がはっきりしている。<strong>幅</strong>＝学説が割れている・推定。<strong>語り</strong>＝伝承・俗説。出典で確かめられなかった出来事は載せていません。カードには「わかっていないこと」も書いています。</span></div>
+      <div class="step"><b>名前を混ぜない</b><span>様式の名・窯の名・商品の名を混ぜません。所蔵館が題名で「柿右衛門」、素材の欄で「伊万里」と書く器は、所蔵館の表記のまま出します。</span></div>
+      <div class="step"><b>年代</b><span>「cal BP」は1950年からさかのぼった較正年代です。年代バーでは西暦に直して置いています。器の年代は所蔵館の表記のままです。</span></div>
+    </div>
+    <div class="d-sub">写真について</div>
+    <div class="steps">
+      <div class="step"><b>実物だけ</b><span>器の写真は、所蔵館（クリーブランド美術館・メトロポリタン美術館）が CC0（自由利用）で公開している実物の写真です。器は形そのものが手がかりなので、生成画像の器は載せません。写真ごとに所蔵館・登録番号・元の頁を出しています。</span></div>
+      <div class="step"><b>リンクだけ</b><span>写真を自由に使えない器（個人や寺社の所蔵など）は、所蔵館の頁へのリンクだけにしています。</span></div>
+      <div class="step"><b>表紙</b><span>左：池の雁の皿（中国・景徳鎮、16世紀末〜17世紀初め、メトロポリタン美術館 16.93）。右：同じ図柄を肥前が色絵で写した皿（1660〜80年、同 2002.447.56）。どちらも CC0。</span></div>
+    </div>
+    <div class="d-sub">ことば</div>
+    <div class="steps">
+      <div class="step"><b>岩相</b><span>地表に見られる岩石の種類（花崗岩・流紋岩・砂岩・石灰岩など）。地質は「種類＋できた時代や地下のつくり」、地層は「積もった順の重なり」で、岩相はそのうちの「種類」だけです。</span></div>
+      <div class="step"><b>陶土・陶石</b><span>陶磁器の原料。陶土は粘土、陶石は砕いて使う岩石。岩相が「ある」ことと、その窯が「使った」ことは別なので、使った原料は出来事と原料のカードで扱います。</span></div>
+      <div class="step"><b>地の層の時間</b><span>高さ・水深は年代で変わらないものとして扱います。海流は2011〜2014年の観測の平均で、当時の海流ではありません。</span></div>
+    </div>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+
+  <dialog id="sources"><div class="dlg">
+    <div class="d-kicker">04 / SOURCES</div><h2>出典と資料</h2>
+    <p>主な資料です。出来事ごとの出典は、本体の各カードの下に記載しています。</p>
+    <div class="steps">
+      <div class="step"><b>所蔵館</b><span>メトロポリタン美術館、クリーブランド美術館、大英博物館、ヴィクトリア＆アルバート博物館、台北・国立故宮博物院、シンガポール・アジア文明博物館、韓国国立中央博物館（学芸員の論文）。</span></div>
+      <div class="step"><b>日本の公的機関</b><span>文化庁（文化遺産オンライン）、観光庁（多言語解説文データベース）、国立国会図書館、産業技術総合研究所（地質ニュース・地質調査総合センター）、長崎県窯業技術センター、有田町、愛知県、堺市、日本民藝館。</span></div>
+      <div class="step"><b>論文</b><span>東アジアの早期土器の年代（Kuzmin ほか）など、査読論文の評価を出来事のカードに記しています。</span></div>
+      <div class="step"><b>地の層</b><span>高さ・水深：GEBCO Compilation Group（GEBCO Grid）。岩相：GLiM（Hartmann &amp; Moosdorf 2012, CC BY 3.0）。海流：OSCAR（NOAA ERDDAP）。</span></div>
+      <div class="step"><b>調べ方</b><span>AI Team Studio で複数の AI（GPT・Gemini・Codex・Meta・Claude）に独立に調べてもらい、Claude Code が出典に当たって照合しました。確かめられなかった項目は載せず、照合で直した点はカードに残しています。</span></div>
+    </div>
+    <p class="fine">各機関が本サイトを推薦・監修するものではありません。</p>
+    <button class="close" type="button">CLOSE</button>
+  </div></dialog>
+</div>
+
+<script type="module">
+const app = document.getElementById('app');
+const osFrame = document.getElementById('osFrame');
+function enter(query) {
+  app.classList.add('entered', 'loading');
+  osFrame.addEventListener('load', () => setTimeout(() => app.classList.remove('loading'), 900), { once: true });
+  osFrame.src = 'focusShell.html' + (query || '');
+}
+document.getElementById('enterBtn').addEventListener('click', () => enter(''));
+document.getElementById('japanEnter').addEventListener('click', () => enter('?japan=1'));
+document.getElementById('backBtn').addEventListener('click', () => { app.classList.remove('entered', 'loading'); osFrame.removeAttribute('src'); });
+document.querySelectorAll('[data-dialog]').forEach(b => b.addEventListener('click', () => document.getElementById(b.dataset.dialog).showModal()));
+document.querySelectorAll('.close').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+document.querySelectorAll('dialog').forEach(d => d.addEventListener('click', e => { if (e.target === d) d.close(); }));
+</script>
+</body>
+</html>
