@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>History OS｜Focus の目次</title>
-<meta name="description" content="History OS の Focus（人物を軸に、時間・場所・同時代の世界を地球の上に重ねる画面）の目次。中浜万次郎・葛飾北斎・植芝盛平（合氣道）。" />
+<meta name="description" content="History OS の Focus（人物を軸に、時間・場所・同時代の世界を地球の上に重ねる画面）の目次。中浜万次郎・葛飾北斎・植芝盛平（合氣道）・小麦とパン・陶磁器。" />
 <link rel="alternate" hreflang="ja" href="index.html" />
 <link rel="alternate" hreflang="en" href="index.html?lang=en" />
 <!--
@@ -45,7 +45,7 @@ h1{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,44px);lette
     <a class="lang" id="langLink" href="?lang=en" hreflang="en">EN</a>
   </div>
   <h1 data-k="title">Focus の目次</h1>
-  <p class="lead" data-k="lead">一人の人物や一つのテーマを軸に、時間・場所・同時代の世界を地球の上に重ねて見る画面です。どの Focus も、同じ並び（地球・年代バー・右の年譜・左の世界の出来事）で読めます。</p>
+  <p class="lead" data-k="lead">一人の人物や一つのテーマを軸に、時間・場所・同時代の世界を地球の上に重ねて見る画面です。どの Focus も、年代バーで時をたどり、地図の上で場所を見る作りです。地図（地球か日本の地図か）や左右の欄の中身は、Focus ごとに違います。</p>
   <div class="list" id="list"></div>
   <p class="foot" data-k="foot">History OS は個人制作のサイトです。各 Focus の出典は、それぞれの表紙の SOURCES にあります。</p>
 </div>
@@ -69,7 +69,7 @@ const FOCUSES = [
     ja: { nm: '陶磁器', tx: '動かせない土から生まれた器が、なぜ最も遠くまで運ばれ、どこでも写されたのか。土器から磁器、宇宙を往復したタイルまで。' },
     e:  { nm: 'Ceramics', tx: 'Why did vessels made from immovable clay travel farthest and get copied everywhere? From the earliest pottery to porcelain and the tiles of the Space Shuttle (Japanese only).' } },
 ];
-const EN = { brand: 'FOCUS — CONTENTS', title: 'Focus contents', lead: 'Each Focus takes one person or theme as its axis and overlays time, place and the world of the era on a globe. Every Focus reads the same way: globe, timeline, chronology on the right, world events on the left.', foot: 'History OS is a personal project. Sources for each Focus are under SOURCES on its cover.' };
+const EN = { brand: 'FOCUS — CONTENTS', title: 'Focus contents', lead: 'Each Focus takes one person or theme as its axis and overlays time, place and the world of the era on a globe. Every Focus lets you move through time with a timeline and see places on a map; the map (globe or map of Japan) and the side panels differ from Focus to Focus.', foot: 'History OS is a personal project. Sources for each Focus are under SOURCES on its cover.' };
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 if (LANG === 'en') {
   document.documentElement.lang = 'en'; document.title = 'History OS | Focus contents';

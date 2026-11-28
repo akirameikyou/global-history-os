@@ -426,7 +426,7 @@ export const chronology = [
     certainty:'secondary_note', certaintyRaw:'二次記載', sourcePage:79, source:'大北斎展図録(東武美術館,1993)' },
   { id:'dh1993-1830-masterworks', year:1830, yearOriginal:'1830年代前半', age:'71', category:'work', categoryJa:'代表作', importance:'primary', scope:'life',
     title:'冨嶽三十六景ほか集中期', summary:'年譜作品欄に『冨嶽三十六景』をはじめ、風景版画・絵手本の代表作群が集中する時期。', sourceText:'年譜作品欄に『冨嶽三十六景』をはじめ、風景版画・絵手本の代表作群が集中する時期。',
-    certainty:'secondary_note', certaintyRaw:'作品欄整理', sourcePage:80, source:'大北斎展図録(東武美術館,1993)' },
+    certainty:'secondary_note', certaintyRaw:'図録の作品欄から', sourcePage:80, source:'大北斎展図録(東武美術館,1993)' },
   // 2026-10-30 図録照合: 整理資料は1831。図録は1830の欄
   { id:'dh1993-1830-family-res', year:1830, yearOriginal:'1830', age:'71', category:'residence', categoryJa:'家族・居所', importance:'secondary', scope:'life',
     title:'孫の引渡し・浅草明王院地内か', summary:'1月頃、放蕩を尽くす孫を父親に引き渡し、上州高崎より奥州へ連れて行かせる。この頃、浅草明王院地内五郎兵衛店に住むか（1月18日付書簡による）。', sourceText:'1月頃、放蕩を尽くす孫を父親に引き渡し、上州高崎より奥州へ連れて行かせる。この頃、浅草明王院地内五郎兵衛店に住むか（1月18日付書簡による）。',

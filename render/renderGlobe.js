@@ -1,5 +1,5 @@
-import Globe
-from 'https://cdn.jsdelivr.net/npm/globe.gl/+esm';
+import Globe // 2026-11-28 版を固定（版を指定しない読み込みで地球が描かれず真っ黒になっていた。万次郎 Focus と同じ版）
+from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2';
 
 /* =========================
 CREATE GLOBE

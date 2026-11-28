@@ -379,13 +379,22 @@ function drawLenses() {
 function setLens(id) {
   S.lens = id;
   const l = id && LENS[id];
+  // 光源を消して「全体」に戻したら、光源が動かした地も元へ戻す（2026-11-28 maru の点検：地だけ〈岩相〉のまま残り、「〈原料〉の光源が…」の一行も残っていた）。
+  // 連動は光源→地の一方向のまま（DECISIONS D3）。手で地を動かしていた時（manual）は触らない
+  if (!l && S.link && !S.manual) { [S.ground, S.flow] = S.link.before; S.link = null; }
   if (l && !S.manual) {
     const before = [S.ground, S.flow];
     if (l.ground !== null) S.ground = l.ground;
     S.flow = l.flow;
-    if (before[0] !== S.ground || before[1] !== S.flow) S.link = { lens: id, before };
+    if (before[0] !== S.ground || before[1] !== S.flow || S.link) S.link = { lens: id, before: S.link ? S.link.before : before }; // 光源を続けて替えた時も、戻す先は最初に連動する前の地
   }
   refresh();
+}
+// 地の層の状態の語（2026-11-28 maru の点検：「地の層」タブで出していない層まで「表示中」と出ていた。ready は「使える」の意味）
+function geoStateJa(g) {
+  if (g.status !== 'ready') return STATUS_JA[g.status];
+  if (g.id === S.ground || g.id === S.flow) return '表示中';
+  return g.id === 'wind' ? '地点を読む時に使う' : '出していない';
 }
 function groundName(id) { return id === 'none' ? 'なし' : GEOID[id].name_ja; }
 function drawDial() {
@@ -399,7 +408,7 @@ function drawDial() {
   if (S.link && !S.manual) {
     const l = LENS[S.link.lens];
     $('linkLine').innerHTML = `〈${esc(l.name_ja)}〉の光源が、地を〈${esc(groundName(S.ground))}〉${S.flow ? '・流れを〈海流〉' : ''}にしました（<button type="button" id="undoLink">戻す</button>）`;
-    $('undoLink').onclick = () => { [S.ground, S.flow] = S.link.before; S.link = null; S.manual = true; refresh(); };
+    $('undoLink').onclick = () => { [S.ground, S.flow] = S.link.before; S.link = null; refresh(); }; // 戻すは手動にしない（2026-11-28：戻した後に連動が外れていた）
   } else $('linkLine').innerHTML = S.manual ? '手動：光源を点けても地は動きません（<button type="button" id="autoLink">連動に戻す</button>）' : '';
   if ($('autoLink')) $('autoLink').onclick = () => { S.manual = false; setLens(S.lens); };
   const shown = [S.ground !== 'none' && GEOID[S.ground], S.flow && GEOID[S.flow]].filter(Boolean);
@@ -500,7 +509,7 @@ function openMat(id) {
 }
 function openGround(id) {
   const g = GEOID[id], p = g.provenance;
-  openCard('地の層の素性', `geoBase@1・${esc(STATUS_JA[g.status])}`, g.name_ja, '',
+  openCard('地の層の素性', `geoBase@1・${esc(geoStateJa(g))}`, g.name_ja, '',
     `<dl class="pierce"><dt>出典</dt><dd><a href="${esc(p.source.url)}" target="_blank" rel="noopener">${esc(p.source.title)}</a></dd>
      <dt>ライセンス</dt><dd><a href="${esc(p.license.url)}" target="_blank" rel="noopener">${esc(p.license.name)}</a>　改変：${p.license.modification === true ? '可' : p.license.modification === false ? '不可（色を替えない）' : '確認中'}</dd>
      <dt>確かさ</dt><dd>${esc(p.confidence)}</dd><dt>時間</dt><dd>${esc(TIME_JA[p.time])}</dd>
@@ -568,7 +577,7 @@ function drawRight() {
     b.querySelectorAll('[data-m]').forEach(x => x.onclick = () => openMat(x.dataset.m));
   } else {
     b.innerHTML = `<div class="empty">地の層は、すべての Focus が使える部品（geoBase@1）です。各層の素性（出典・ライセンス・確かさ・時間・解像度・加工）から、画面の出し方が決まります。</div>` +
-      GEO.map(g => `<div class="gl" data-g="${g.id}"><div class="nm">${esc(g.name_ja)}　<span class="pend" style="font-size:10px;font-weight:400">${STATUS_JA[g.status]}</span></div><div class="s">${esc(g.provenance.source.title)}<br>${esc(g.provenance.license.name)}・${esc(TIME_JA[g.provenance.time])}</div></div>`).join('');
+      GEO.map(g => `<div class="gl" data-g="${g.id}"><div class="nm">${esc(g.name_ja)}　<span class="pend" style="font-size:10px;font-weight:400">${esc(geoStateJa(g))}</span></div><div class="s">${esc(g.provenance.source.title)}<br>${esc(g.provenance.license.name)}・${esc(TIME_JA[g.provenance.time])}</div></div>`).join('');
     b.querySelectorAll('[data-g]').forEach(x => x.onclick = () => openGround(x.dataset.g));
   }
 }

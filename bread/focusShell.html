@@ -164,7 +164,10 @@
   /* パン図鑑 */
   .zk-axis{display:flex;gap:4px;padding:10px 14px 6px;flex-wrap:wrap}
   .zk-note{padding:0 16px 8px;font-size:10px;color:var(--dim);line-height:1.6}
-  table.zk{border-collapse:collapse;margin:0 10px 12px;font-size:10.5px}
+  /* 2026-11-28 maru の点検：6列の表が右の枠からはみ出して列が切れていた → 枠の中で横に送れるように。左の列（発酵）は送っても残す */
+  .zk-wrap{overflow-x:auto;margin:0 10px 12px;scrollbar-width:thin;scrollbar-color:rgba(232,194,122,.28) transparent}
+  table.zk{border-collapse:collapse;margin:0;font-size:10.5px}
+  table.zk tbody th,table.zk thead th:first-child{position:sticky;left:0;z-index:1;background:rgba(7,14,24,.92)}
   table.zk th{color:var(--sub);font-weight:400;padding:4px 5px;text-align:left;vertical-align:top;white-space:nowrap}
   table.zk thead th{font-size:9.5px;color:var(--dim)}
   table.zk td{border-top:1px solid var(--rule);padding:4px 4px;vertical-align:top;min-width:46px}
@@ -461,6 +464,11 @@ function lensColor(e) {
   if (S.lens) return LENS[S.lens].color;
   return e.confidence === 'narrative' ? '#d8b4f0' : (e.confidence === 'range' ? '#e0b45f' : '#e8c27a');
 }
+// 光源の数字の意味（2026-11-28 maru の点検：数字の合計が年表の件数の2倍を超え、意味が分からなかった）。一つの出来事が複数のレンズに入る
+function lensCountNote() {
+  const sum = LENSES.reduce((n, l) => n + EVENTS.filter(e => e.lenses.includes(l.id)).length, 0);
+  return `数字は光る件数。一つの出来事が複数のレンズに入るので、合計（${sum}）は年表の${EVENTS.length}件より多くなります。`;
+}
 function lensOn(e) { return !S.lens || e.lenses.includes(S.lens); }
 /* 時間との関係：future＝カーソルより後（出さない）／now＝カーソルが出来事の幅の中か、直前の一目盛り以内／past＝それより前 */
 function timeState(e) {
@@ -655,7 +663,7 @@ function drawLenses() {
   box.innerHTML = `<button class="lens lens-all ${S.lens ? '' : 'on'}" data-l="">全体</button>` +
     LENSES.map(l => `<button class="lens ${S.lens === l.id ? 'on' : (S.lens ? 'dim' : '')}" style="--lc:${l.color}" data-l="${l.id}">${esc(l.name)}<span style="font-family:var(--mono);font-size:9px;color:var(--dim)">${EVENTS.filter(e => e.lenses.includes(l.id)).length}</span></button>`).join('');
   box.querySelectorAll('.lens').forEach(b => b.onclick = () => { S.lens = b.dataset.l && S.lens !== b.dataset.l ? b.dataset.l : null; refresh(); });
-  if (!S.lens) { $('lensNote').textContent = 'いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。'; return; }
+  if (!S.lens) { $('lensNote').textContent = 'いまは全体を正面から照らしています。レンズを押すと、その構造の出来事だけが光ります。' + lensCountNote(); return; }
   const n = EVENTS.filter(e => e.lenses.includes(S.lens));
   const solo = n.filter(e => e.lenses.length === 1).length;
   $('lensNote').innerHTML = `「${esc(LENS[S.lens].name)}」から照らしています（${n.length}件）。このレンズでしか光らない出来事：${solo}件（${Math.round(solo / n.length * 100)}%）。もう一度押すと全体へ。`;
@@ -861,8 +869,8 @@ function drawRight() {
     const chip = b => `<span class="bchip ${S.bread === b.id ? 'sel' : ''} ${avail(b) ? '' : 'later'}" style="--gc:${GRAIN_COLOR[b.grain]}" data-b="${b.id}">${esc(b.name_ja)}</span>`;
     if (S.zAxis === 'matrix') {
       const H = [...new Set(BREADS.map(b => b.heat_group))], L = [...new Set(BREADS.map(b => b.leaven_group))];
-      h += `<table class="zk"><thead><tr><th>発酵＼熱</th>${H.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>` +
-        L.map(l => `<tr><th>${esc(l)}</th>${H.map(x => `<td>${BREADS.filter(b => b.leaven_group === l && b.heat_group === x).map(chip).join('')}</td>`).join('')}</tr>`).join('') + '</tbody></table>';
+      h += `<div class="zk-wrap"><table class="zk"><thead><tr><th>発酵＼熱</th>${H.map(x => `<th>${esc(x)}</th>`).join('')}</tr></thead><tbody>` +
+        L.map(l => `<tr><th>${esc(l)}</th>${H.map(x => `<td>${BREADS.filter(b => b.leaven_group === l && b.heat_group === x).map(chip).join('')}</td>`).join('')}</tr>`).join('') + '</tbody></table></div>';
     } else {
       const list = [...BREADS].sort(S.zAxis === 'era' ? (a, b) => (a.earliest.from ?? 9999) - (b.earliest.from ?? 9999) : (a, b) => a.region.localeCompare(b.region, 'ja'));
       h += list.map(b => { const im = IMAGES.find(i => i.target === b.id && !i.generated);

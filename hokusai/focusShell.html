@@ -180,6 +180,8 @@
   .phase-head .ph-y{font-family:var(--mono);font-size:10px;color:var(--sub)}
   .phase-head .ph-n{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--sub);white-space:nowrap}
   .phase-head.general .ph-l{color:var(--sub)}
+  .phase-head.has-note{flex-wrap:wrap}
+  .phase-head .ph-note{flex-basis:100%;font-size:10.5px;line-height:1.6;color:var(--sub);padding-top:2px}
   /* 年譜の語リンク：地名（下線のみ・背景なし）と「古地図」札 */
   .tlink{color:#cbe6ff;border-bottom:1px dotted rgba(203,230,255,.6);cursor:pointer}
   .tlink:hover{border-bottom-style:solid}
@@ -539,7 +541,7 @@
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl';
 import { hokusaiViews } from '../data/hokusai_views.js?v=20260915b';
-import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261031c';
+import { gagoPhases, gagoAt, nameAt, nameMeta, lifeEvents, chronology, lifePhases, residences, travels, lifePlaces, worldEventsJP, wlinkEvents, timelineConfig, personLinks, personLinksByRelevance, focusPersonBar, artTechEvents, worldArt, reception, holdings, impressionHoldings, worldPersonById } from '../data/hokusai_life.js?v=20261128a';
 import { museumLinks } from '../data/hokusai_museum_links.js?v=20261015';
 import { frameCorners } from '../data/hokusai_frame_corners.js?v=20261105';
 import { GUIDE_TYPES, GUIDE_NOTE, guideSVG } from './geometry_guide.js?v=20261105';
@@ -989,10 +991,12 @@ document.addEventListener('click',e=>{ const a=e.target.closest('.tlink'), m=e.t
 document.addEventListener('mouseover',e=>{ const m=e.target.closest('.tmap'); if(!m||window.innerWidth<=640)return; clearTimeout(omHideT); omPop.dataset.key=m.dataset.om+'|'+m.dataset.ey; showOldMap(oldMaps.find(o=>o.id===m.dataset.om),m); }); // PC=ホバーで表示
 document.addEventListener('mouseout',e=>{ if(window.innerWidth<=640)return; if(e.target.closest('.tmap')||e.target.closest('#oldMapPop')){ clearTimeout(omHideT); omHideT=setTimeout(()=>{ if(!omPop.matches(':hover'))omPop.hidden=true; },250); } });
 // 年代見出し（lifePhases）を各期の最初の年譜itemの前に差し込む。見出しクリック=その期の資料カード（timeCursor・cameraは動かさない）。
-const phaseHead=(ph,general)=>{ const d=document.createElement('div'); d.className='phase-head'+(general?' general':'');
+// 没後の期は年譜itemも資料も無いので「資料 0」だけの空の見出しに見えていた（2026-11-28 maru の点検）。期の注記と、没後の受容の見方を添える
+const phaseNoteHTML=ph=>(ph&&ph.scope==='posthumous')?'<span class="ph-note">'+(ph.note||'')+' 没後の受容は年譜に混ぜず、WORLD で年を没後へ進めると左下の欄が RECEPTION（北斎を受け取った世界）に変わります。</span>':'';
+const phaseHead=(ph,general)=>{ const d=document.createElement('div'); d.className='phase-head'+(general?' general':'')+(phaseNoteHTML(ph)?' has-note':'');
   const c=general?periodCounts(null):periodCounts(ph.from);
   d.innerHTML='<span class="ph-l">'+(general?'生涯全体の資料':ph.label)+'</span><span class="ph-y">'+(general?'時期を特定しない':ph.from+'–'+ph.to)+'</span>'+
-    '<span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span>';
+    '<span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span>'+phaseNoteHTML(ph);
   d.onclick=()=>showPeriodCard(general?null:ph,d); return d; };
 lifeList.appendChild(phaseHead(null,true));
 let phaseIx=0;
@@ -1422,8 +1426,8 @@ function lifeSheetHTML(selId){ let pi=0, h=lsPhaseHTML(null);
   while(pi<lifePhases.length)h+=lsPhaseHTML(lifePhases[pi++]); // 年譜itemのない期（没後）も見出しは出す
   return h; }
 function lsPhaseHTML(ph){ const c=periodCounts(ph?ph.from:null);
-  return '<div class="phase-head ls-phase'+(ph?'':' general')+'" data-pfrom="'+(ph?ph.from:'')+'"><span class="ph-l">'+(ph?ph.label:'生涯全体の資料')+'</span>'
-    +'<span class="ph-y">'+(ph?ph.from+'–'+ph.to:'時期を特定しない')+'</span><span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span></div>'; }
+  return '<div class="phase-head ls-phase'+(ph?'':' general')+(phaseNoteHTML(ph)?' has-note':'')+'" data-pfrom="'+(ph?ph.from:'')+'"><span class="ph-l">'+(ph?ph.label:'生涯全体の資料')+'</span>'
+    +'<span class="ph-y">'+(ph?ph.from+'–'+ph.to:'時期を特定しない')+'</span><span class="ph-n">資料 '+c.s+(c.a?'・逸話 '+c.a:'')+' ›</span>'+phaseNoteHTML(ph)+'</div>'; }
 // HOLDINGS（現在所蔵）：JAPAN=国内 / WORLD=国内外。選択で詳細をインライン展開。確認済みデータのみ。
 function holdingListHTML(selH){ const list=holdingsFor();
   const back = (State.selection.type==='work') ? '<button class="hl-see" id="hlAll" style="margin:2px 0 10px;display:block;width:100%;text-align:left">← 美術館一覧にもどる（作品の絞り込みを解除）</button>' : '';

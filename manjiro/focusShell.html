@@ -579,14 +579,14 @@
 
 <script type="module">
 import Globe from 'https://esm.sh/globe.gl@2.46.2?deps=three-globe@2.45.2'; // 公開に向けて版を固定（2026-11-12。部品の更新で画面が壊れないように。版は確かめた時点の最新）
-import { events } from '../data/events.js?v=20261112c';
+import { events } from '../data/events.js?v=20261128a';
 import { personLinks } from '../data/persons.js?v=20261109';
 import { buildTracks, trackAt, monthlyPositions, observationsAt, timingSourceText, ymLabel, snapMonth, tOf, dateJa, DEFAULT_SPEED_KM_PER_DAY } from './track_engine.js?v=20261109e';
 import { voyageTimings, trackMethod } from '../data/manjiro_track.js?v=20261112c';
 import { bridgeFor, personGlobeHref, personGlobeBase, personGlobeAvailable } from '../data/person_bridge.js?v=20261109c';
 import { worldLinks, WORLD_EXTRA } from '../data/manjiro_wlink.js?v=20261110d';
 import { AUTO_LEAD, AUTO_LEAD_FULL_MAX } from '../data/manjiro_auto_lead.js?v=20261111a';
-import { WORLD_EXTRA_EVENTS } from '../data/manjiro_world_extra.js?v=20261112b';
+import { WORLD_EXTRA_EVENTS } from '../data/manjiro_world_extra.js?v=20261128a';
 import { LAND_LEGS } from '../data/manjiro_land_legs.js?v=20261112d';
 import { nextStep, monthFloor, monthCeil, lifeFromEvents, chapterRanges, assignAutoChapters, autoStops as buildAutoStops, autoSegments, holdYearOnlyAfterTracks, sameMonthStops, isMonthStart, followNeeded } from './play_steps.js?v=20261112d';
 
@@ -1327,10 +1327,29 @@ on(renderCurrent);
 
 // LIFE 年譜
 const lifeList = document.getElementById('lifeList'), focusPanel = document.getElementById('focusPanel');
-LIFE.forEach(e => {
+// 年譜の並び（2026-11-28 maru の点検「年だけの出来事が、同じ年の月の分かる出来事より前に出る」）。
+// 年だけの出来事は時刻を1月に置くので、時刻の順だと「1850 金山」が「1850.04 バルパライソ」より前に出ていた。
+// 並びだけを直す：年だけの出来事は、データで前にある同じ年の月の分かる出来事のうち最も遅いものの直後へ（データの並び＝起きた順）。
+// 時刻（e.t）と LIFE の順は変えない（年代バー・自動鑑賞・currentLife はこれまでどおり）
+const LIFE_LIST = (() => {
+  const ix = new Map(events.map((e, i) => [e.id, i]));
+  const byData = [...LIFE].sort((a, b) => ix.get(a.id) - ix.get(b.id));
+  const key = new Map();
+  byData.forEach((e, i) => {
+    if (e.monthKnown) { key.set(e.id, [e.t, 0, i]); return; }
+    const y = Math.floor(e.t + 1e-9); let k = e.t;
+    for (let j = i - 1; j >= 0; j--) { const p = byData[j]; if (Math.floor(p.t + 1e-9) !== y) break; if (p.monthKnown) k = Math.max(k, p.t); }
+    key.set(e.id, [k, 1, i]);
+  });
+  const cmp = (a, b) => { const x = key.get(a.id), z = key.get(b.id); return x[0] - z[0] || x[1] - z[1] || x[2] - z[2]; };
+  return [...LIFE].sort(cmp);
+})();
+LIFE_LIST.forEach(e => {
   const d = mk('div', 'chrono-item' + (e.timelineVisible === false ? ' secondary' : ''));
   d.dataset.id = e.id;
-  d.innerHTML = '<span class="chrono-year">' + esc(e.year) + '</span>' + (e.approx ? '<span class="chrono-cert">' + esc(e.approx) + '</span>' : '') +
+  // 年の欄に「頃」が既にある時は札を重ねない（「1869頃頃」と読めていた）
+  const cert = e.approx && !String(e.year || '').includes(e.approx) ? e.approx : '';
+  d.innerHTML = '<span class="chrono-year">' + esc(e.year) + '</span>' + (cert ? '<span class="chrono-cert">' + esc(cert) + '</span>' : '') +
     '<div class="chrono-text">' + esc(e.title) + '</div>';
   d.onclick = () => { State.sel = { type: 'life', id: e.id }; setT(e.t, { force: true }); showLifeCard(e, d); }; // 年月へ移動＋カード（カメラは動かさない）
   lifeList.appendChild(d);
